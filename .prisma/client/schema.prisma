@@ -1,0 +1,490 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model BidangKeahlian {
+  id        String            @id @default(auto()) @map("_id") @db.ObjectId
+  code      String
+  name      String
+  program   ProgramKeahlian[]
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+
+  @@unique([code, name])
+}
+
+model ProgramKeahlian {
+  id          String                @id @default(auto()) @map("_id") @db.ObjectId
+  code        String
+  name        String
+  bidang      BidangKeahlian        @relation(fields: [bidangId], references: [id])
+  bidangId    String                @db.ObjectId
+  konsentrasi KonsentrasiKeahlian[]
+  createdAt   DateTime              @default(now())
+  updatedAt   DateTime              @updatedAt
+
+  @@unique([code, name])
+}
+
+model KonsentrasiKeahlian {
+  id          String          @id @default(auto()) @map("_id") @db.ObjectId
+  code        String
+  name        String
+  program     ProgramKeahlian @relation(fields: [programId], references: [id])
+  programId   String          @db.ObjectId
+  tahun       Int
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+  student     Student[]
+  instansi    Instansi[]      @relation(fields: [instansiIds], references: [id])
+  instansiIds String[]        @db.ObjectId
+
+  @@unique([programId, name])
+}
+
+enum Fase {
+  A
+  B
+  C
+  D
+  E
+  F
+  FP
+}
+
+model Achievement {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  fase        Fase     @default(A)
+  description String
+  element     Element  @relation(fields: [elementId], references: [id])
+  elementId   String   @db.ObjectId
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([elementId, fase])
+}
+
+model Element {
+  id          String        @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  description String
+  achievement Achievement[]
+  mapel       MataPelajaran @relation(fields: [mapelId], references: [id])
+  mapelId     String        @db.ObjectId
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  @@unique([mapelId, name])
+}
+
+enum Religion {
+  Islam
+  Protestan
+  Katolik
+  Hindu
+  Buddha
+  Khonghucu
+}
+
+model MataPelajaran {
+  id         String    @id @default(auto()) @map("_id") @db.ObjectId
+  code       String
+  name       String
+  religion   Religion?
+  vocational Boolean
+  element    Element[]
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  @@unique([code, name])
+}
+
+type Coordinate {
+  longitude Float
+  latitude  Float
+}
+
+type Address {
+  provinsi   String
+  kabupaten  String
+  kecamatan  String
+  kelurahan  String
+  kodepos    String
+  coordinate Coordinate
+}
+
+enum Level {
+  SD
+  SMP
+  SMA
+  SMK
+}
+
+model Instansi {
+  id         String                @id @default(auto()) @map("_id") @db.ObjectId
+  npsn       String                @unique
+  name       String
+  isPrivate  Boolean
+  address    Address
+  level      Level
+  religion   Religion?
+  major      Boolean?
+  majors     KonsentrasiKeahlian[] @relation(fields: [majorIds], references: [id])
+  majorIds   String[]              @db.ObjectId
+  createdAt  DateTime              @default(now())
+  updatedAt  DateTime              @updatedAt
+  role       Role[]
+  schoolYear SchoolYear[]
+  teacher    Teacher[]
+  student    Student[]
+}
+
+enum Roles {
+  SU
+  GURU
+  STAF
+  SISWA
+}
+
+model Role {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  key        Roles
+  instansi   Instansi @relation(fields: [instansiId], references: [id])
+  instansiId String   @db.ObjectId
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  users      User[]
+
+  @@unique([instansiId, key])
+}
+
+model User {
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  picture   String?
+  username  String    @unique
+  active    Boolean
+  verify    Boolean   @default(false)
+  password  String
+  passhash  String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  role      Role?     @relation(fields: [roleId], references: [id])
+  roleId    String?   @db.ObjectId
+  personal  Personal?
+  student   Student?
+  teacher   Teacher?
+}
+
+enum Gender {
+  L
+  P
+}
+
+enum TypePersonal {
+  ADMIN
+  GURU
+  SISWA
+  IBU
+  AYAH
+  WALI
+}
+
+type Born {
+  place String
+  date  String
+}
+
+model Personal {
+  id        String           @id @default(auto()) @map("_id") @db.ObjectId
+  nik       String?
+  nisn      String?
+  type      TypePersonal
+  user      User?            @relation(fields: [userId], references: [id])
+  userId    String?          @unique @db.ObjectId
+  fullname  String
+  gender    Gender
+  foreign   Boolean
+  country   String?
+  religion  Religion
+  born      Born
+  email     String
+  belajarId String?
+  nophone   String
+  isLife    Boolean?
+  address   Address?
+  father    FamilyTree[]     @relation("FamilyTreeFather")
+  mother    FamilyTree[]     @relation("FamilyTreeMother")
+  wali      FamilyTree[]     @relation("FamilyTreeWali")
+  child     FamilyTreeChild?
+}
+
+model FamilyTree {
+  id       String            @id @default(auto()) @map("_id") @db.ObjectId
+  nokk     String
+  father   Personal?         @relation("FamilyTreeFather", fields: [fatherId], references: [id])
+  fatherId String?           @db.ObjectId
+  mother   Personal?         @relation("FamilyTreeMother", fields: [motherId], references: [id])
+  motherId String?           @db.ObjectId
+  wali     Personal?         @relation("FamilyTreeWali", fields: [waliId], references: [id])
+  waliId   String?           @db.ObjectId
+  childs   FamilyTreeChild[]
+  address  Address
+}
+
+enum ChildType {
+  KANDUNG
+  TIRI
+  ANGKAT
+}
+
+model FamilyTreeChild {
+  id         String     @id @default(auto()) @map("_id") @db.ObjectId
+  no         Int
+  type       ChildType
+  kk         FamilyTree @relation(fields: [kkId], references: [id])
+  kkId       String     @db.ObjectId
+  personal   Personal   @relation(fields: [personalId], references: [id])
+  personalId String     @unique @db.ObjectId
+}
+
+model Student {
+  id           String               @id @default(auto()) @map("_id") @db.ObjectId
+  user         User?                @relation(fields: [userId], references: [id])
+  userId       String?              @unique @db.ObjectId
+  major        KonsentrasiKeahlian? @relation(fields: [majorId], references: [id])
+  majorId      String?              @db.ObjectId
+  classRoom    ClassRoom[]          @relation(fields: [classRoomIds], references: [id])
+  classRoomIds String[]             @db.ObjectId
+  startYear    SchoolYear           @relation("StudentsIn", fields: [startYearId], references: [id])
+  startYearId  String               @db.ObjectId
+  instansi     Instansi             @relation(fields: [instansiId], references: [id])
+  instansiId   String               @db.ObjectId
+  event        Calendar[]           @relation(fields: [eventIds], references: [id])
+  eventIds     String[]             @db.ObjectId
+}
+
+enum LevelEdu {
+  SD
+  SMP
+  SMA
+  D1
+  D2
+  D3
+  D4
+  S1
+  S2
+  S3
+}
+
+type Education {
+  instansi   String
+  level      LevelEdu
+  major      String?
+  year       Int
+  attachment String?
+}
+
+type Training {
+  name       String
+  instansi   String
+  long       Int
+  year       Int
+  place      String
+  attachment String?
+}
+
+type Profession {
+  name       String
+  instansi   String
+  year       Int
+  attachment String?
+}
+
+type Employment {
+  position String
+  year     Int
+  place    String
+  note     String?
+}
+
+type Overseas {
+  country    String
+  instansi   String
+  objective  String
+  long       Int
+  year       Int
+  attachment String?
+}
+
+type Scientific {
+  name       String
+  instansi   String
+  position   String
+  place      String
+  period     String
+  attachment String?
+}
+
+type Organization {
+  name     String
+  position String
+  period   String
+  leader   String
+  place    String
+}
+
+type Research {
+  name       String
+  year       Int
+  position   String
+  fund       String
+  attachment String?
+}
+
+type Papers {
+  name      String
+  year      Int
+  published String
+}
+
+type Innovation {
+  name   String
+  year   Int
+  patent Boolean
+}
+
+type Award {
+  name       String
+  year       Int
+  instansi   String
+  attachment String?
+}
+
+type SourcePerson {
+  name       String
+  date       String
+  instansi   String
+  note       String?
+  attachment String?
+}
+
+type Contest {
+  name       String
+  date       String
+  instansi   String
+  level      String
+  attachment String?
+}
+
+type Documents {
+  name       String
+  date       String
+  instansi   String
+  note       String?
+  attachment String?
+}
+
+type Additional {
+  position   String
+  date       String
+  instansi   String
+  note       String?
+  attachment String?
+}
+
+model Teacher {
+  id           String         @id @default(auto()) @map("_id") @db.ObjectId
+  user         User?          @relation(fields: [userId], references: [id])
+  userId       String?        @unique @db.ObjectId
+  classRoom    ClassRoom[]
+  instansi     Instansi       @relation(fields: [instansiId], references: [id])
+  instansiId   String         @db.ObjectId
+  event        Calendar[]     @relation(fields: [eventIds], references: [id])
+  eventIds     String[]       @db.ObjectId
+  nip          String?
+  nrg          String?
+  noKarpeg     String?
+  tmtTugas     String?
+  tmtGol       String?
+  position     String?
+  rank         String?
+  period       String?
+  certificate  String?
+  education    Education[]
+  training     Training[]
+  employment   Employment[]
+  profession   Profession[]
+  overseas     Overseas[]
+  scientific   Scientific[]
+  organization Organization[]
+  papers       Papers[]
+  innovation   Innovation[]
+  award        Award[]
+  sourcePerson SourcePerson[]
+  contest      Contest[]
+  documents    Documents[]
+  additional   Additional[]
+}
+
+model ClassRoom {
+  id         String     @id @default(auto()) @map("_id") @db.ObjectId
+  name       String
+  year       SchoolYear @relation(fields: [yearId], references: [id])
+  yearId     String     @db.ObjectId
+  wali       Teacher    @relation(fields: [waliId], references: [id])
+  waliId     String     @db.ObjectId
+  students   Student[]  @relation(fields: [studentIds], references: [id])
+  studentIds String[]   @db.ObjectId
+  event      Calendar[] @relation(fields: [eventIds], references: [id])
+  eventIds   String[]   @db.ObjectId
+
+  @@unique([yearId, name])
+}
+
+type Organizational {
+  kepsek  String  @db.ObjectId
+  wakasek String  @db.ObjectId
+  wakakur String  @db.ObjectId
+  wakasiw String  @db.ObjectId
+  wakapra String  @db.ObjectId
+  wakahum String? @db.ObjectId
+}
+
+model SchoolYear {
+  id             String         @id @default(auto()) @map("_id") @db.ObjectId
+  year           Int
+  instansi       Instansi       @relation(fields: [instansiId], references: [id])
+  instansiId     String         @db.ObjectId
+  organizational Organizational
+  classRoom      ClassRoom[]
+  studentsIn     Student[]      @relation("StudentsIn")
+  calendar       Calendar[]
+
+  @@unique([instansiId, year])
+}
+
+model Calendar {
+  id           String      @id @default(auto()) @map("_id") @db.ObjectId
+  ref          SchoolYear  @relation(fields: [refId], references: [id])
+  refId        String      @db.ObjectId
+  name         String
+  description  String?
+  start        DateTime
+  end          DateTime?
+  color        String
+  classRoom    ClassRoom[] @relation(fields: [classRoomIds], references: [id])
+  classRoomIds String[]    @db.ObjectId
+  student      Student[]   @relation(fields: [studentIds], references: [id])
+  studentIds   String[]    @db.ObjectId
+  teacher      Teacher[]   @relation(fields: [teacherIds], references: [id])
+  teacherIds   String[]    @db.ObjectId
+}
