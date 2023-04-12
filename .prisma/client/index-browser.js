@@ -190,6 +190,7 @@ exports.Prisma.KonsentrasiKeahlianScalarFieldEnum = makeEnum({
 
 exports.Prisma.MataPelajaranScalarFieldEnum = makeEnum({
   id: 'id',
+  no: 'no',
   code: 'code',
   name: 'name',
   religion: 'religion',

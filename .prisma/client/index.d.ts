@@ -294,6 +294,7 @@ export type Element = {
  */
 export type MataPelajaran = {
   id: string
+  no: string
   code: string
   name: string
   religion: Religion | null
@@ -9288,6 +9289,7 @@ export namespace Prisma {
 
   export type MataPelajaranMinAggregateOutputType = {
     id: string | null
+    no: string | null
     code: string | null
     name: string | null
     religion: Religion | null
@@ -9298,6 +9300,7 @@ export namespace Prisma {
 
   export type MataPelajaranMaxAggregateOutputType = {
     id: string | null
+    no: string | null
     code: string | null
     name: string | null
     religion: Religion | null
@@ -9308,6 +9311,7 @@ export namespace Prisma {
 
   export type MataPelajaranCountAggregateOutputType = {
     id: number
+    no: number
     code: number
     name: number
     religion: number
@@ -9320,6 +9324,7 @@ export namespace Prisma {
 
   export type MataPelajaranMinAggregateInputType = {
     id?: true
+    no?: true
     code?: true
     name?: true
     religion?: true
@@ -9330,6 +9335,7 @@ export namespace Prisma {
 
   export type MataPelajaranMaxAggregateInputType = {
     id?: true
+    no?: true
     code?: true
     name?: true
     religion?: true
@@ -9340,6 +9346,7 @@ export namespace Prisma {
 
   export type MataPelajaranCountAggregateInputType = {
     id?: true
+    no?: true
     code?: true
     name?: true
     religion?: true
@@ -9424,6 +9431,7 @@ export namespace Prisma {
 
   export type MataPelajaranGroupByOutputType = {
     id: string
+    no: string
     code: string
     name: string
     religion: Religion | null
@@ -9451,6 +9459,7 @@ export namespace Prisma {
 
   export type MataPelajaranSelect = {
     id?: boolean
+    no?: boolean
     code?: boolean
     name?: boolean
     religion?: boolean
@@ -23498,6 +23507,7 @@ export namespace Prisma {
 
   export const MataPelajaranScalarFieldEnum: {
     id: 'id',
+    no: 'no',
     code: 'code',
     name: 'name',
     religion: 'religion',
@@ -23925,6 +23935,7 @@ export namespace Prisma {
     OR?: Enumerable<MataPelajaranWhereInput>
     NOT?: Enumerable<MataPelajaranWhereInput>
     id?: StringFilter | string
+    no?: StringFilter | string
     code?: StringFilter | string
     name?: StringFilter | string
     religion?: EnumReligionNullableFilter | Religion | null
@@ -23936,6 +23947,7 @@ export namespace Prisma {
 
   export type MataPelajaranOrderByWithRelationInput = {
     id?: SortOrder
+    no?: SortOrder
     code?: SortOrder
     name?: SortOrder
     religion?: SortOrder
@@ -23952,6 +23964,7 @@ export namespace Prisma {
 
   export type MataPelajaranOrderByWithAggregationInput = {
     id?: SortOrder
+    no?: SortOrder
     code?: SortOrder
     name?: SortOrder
     religion?: SortOrder
@@ -23968,6 +23981,7 @@ export namespace Prisma {
     OR?: Enumerable<MataPelajaranScalarWhereWithAggregatesInput>
     NOT?: Enumerable<MataPelajaranScalarWhereWithAggregatesInput>
     id?: StringWithAggregatesFilter | string
+    no?: StringWithAggregatesFilter | string
     code?: StringWithAggregatesFilter | string
     name?: StringWithAggregatesFilter | string
     religion?: EnumReligionNullableWithAggregatesFilter | Religion | null
@@ -25148,6 +25162,7 @@ export namespace Prisma {
 
   export type MataPelajaranCreateInput = {
     id?: string
+    no: string
     code: string
     name: string
     religion?: Religion | null
@@ -25159,6 +25174,7 @@ export namespace Prisma {
 
   export type MataPelajaranUncheckedCreateInput = {
     id?: string
+    no: string
     code: string
     name: string
     religion?: Religion | null
@@ -25169,6 +25185,7 @@ export namespace Prisma {
   }
 
   export type MataPelajaranUpdateInput = {
+    no?: StringFieldUpdateOperationsInput | string
     code?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     religion?: NullableEnumReligionFieldUpdateOperationsInput | Religion | null
@@ -25179,6 +25196,7 @@ export namespace Prisma {
   }
 
   export type MataPelajaranUncheckedUpdateInput = {
+    no?: StringFieldUpdateOperationsInput | string
     code?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     religion?: NullableEnumReligionFieldUpdateOperationsInput | Religion | null
@@ -25190,6 +25208,7 @@ export namespace Prisma {
 
   export type MataPelajaranCreateManyInput = {
     id?: string
+    no: string
     code: string
     name: string
     religion?: Religion | null
@@ -25199,6 +25218,7 @@ export namespace Prisma {
   }
 
   export type MataPelajaranUpdateManyMutationInput = {
+    no?: StringFieldUpdateOperationsInput | string
     code?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     religion?: NullableEnumReligionFieldUpdateOperationsInput | Religion | null
@@ -25208,6 +25228,7 @@ export namespace Prisma {
   }
 
   export type MataPelajaranUncheckedUpdateManyInput = {
+    no?: StringFieldUpdateOperationsInput | string
     code?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     religion?: NullableEnumReligionFieldUpdateOperationsInput | Religion | null
@@ -26701,6 +26722,7 @@ export namespace Prisma {
 
   export type MataPelajaranCountOrderByAggregateInput = {
     id?: SortOrder
+    no?: SortOrder
     code?: SortOrder
     name?: SortOrder
     religion?: SortOrder
@@ -26711,6 +26733,7 @@ export namespace Prisma {
 
   export type MataPelajaranMaxOrderByAggregateInput = {
     id?: SortOrder
+    no?: SortOrder
     code?: SortOrder
     name?: SortOrder
     religion?: SortOrder
@@ -26721,6 +26744,7 @@ export namespace Prisma {
 
   export type MataPelajaranMinOrderByAggregateInput = {
     id?: SortOrder
+    no?: SortOrder
     code?: SortOrder
     name?: SortOrder
     religion?: SortOrder
@@ -31085,6 +31109,7 @@ export namespace Prisma {
 
   export type MataPelajaranCreateWithoutElementInput = {
     id?: string
+    no: string
     code: string
     name: string
     religion?: Religion | null
@@ -31095,6 +31120,7 @@ export namespace Prisma {
 
   export type MataPelajaranUncheckedCreateWithoutElementInput = {
     id?: string
+    no: string
     code: string
     name: string
     religion?: Religion | null
@@ -31143,6 +31169,7 @@ export namespace Prisma {
   }
 
   export type MataPelajaranUpdateWithoutElementInput = {
+    no?: StringFieldUpdateOperationsInput | string
     code?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     religion?: NullableEnumReligionFieldUpdateOperationsInput | Religion | null
@@ -31152,6 +31179,7 @@ export namespace Prisma {
   }
 
   export type MataPelajaranUncheckedUpdateWithoutElementInput = {
+    no?: StringFieldUpdateOperationsInput | string
     code?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     religion?: NullableEnumReligionFieldUpdateOperationsInput | Religion | null
