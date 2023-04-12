@@ -18,7 +18,7 @@ model BidangKeahlian {
   createdAt DateTime          @default(now())
   updatedAt DateTime          @updatedAt
 
-  @@unique([code, name])
+  @@unique([code, name], name: "nameBidang")
 }
 
 model ProgramKeahlian {
@@ -31,7 +31,7 @@ model ProgramKeahlian {
   createdAt   DateTime              @default(now())
   updatedAt   DateTime              @updatedAt
 
-  @@unique([code, name])
+  @@unique([code, name], name: "nameProgram")
 }
 
 model KonsentrasiKeahlian {
@@ -46,8 +46,9 @@ model KonsentrasiKeahlian {
   student     Student[]
   instansi    Instansi[]      @relation(fields: [instansiIds], references: [id])
   instansiIds String[]        @db.ObjectId
+  ClassRoom   ClassRoom[]
 
-  @@unique([programId, name])
+  @@unique([programId, name], name: "nameKonsentrasi")
 }
 
 enum Fase {
@@ -62,6 +63,7 @@ enum Fase {
 
 model Achievement {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  no          Int
   fase        Fase     @default(A)
   description String
   element     Element  @relation(fields: [elementId], references: [id])
@@ -69,11 +71,12 @@ model Achievement {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  @@unique([elementId, fase])
+  @@unique([elementId, fase], name: "nameCP")
 }
 
 model Element {
   id          String        @id @default(auto()) @map("_id") @db.ObjectId
+  no          Int
   name        String
   description String
   achievement Achievement[]
@@ -82,7 +85,7 @@ model Element {
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
 
-  @@unique([mapelId, name])
+  @@unique([mapelId, name], name: "nameElement")
 }
 
 enum Religion {
@@ -104,7 +107,7 @@ model MataPelajaran {
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt
 
-  @@unique([code, name])
+  @@unique([code, name], name: "nameMapel")
 }
 
 type Coordinate {
@@ -163,25 +166,23 @@ model Role {
   updatedAt  DateTime @updatedAt
   users      User[]
 
-  @@unique([instansiId, key])
+  @@unique([instansiId, key], name: "nameRole")
 }
 
 model User {
-  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
   name      String
   picture   String?
-  username  String    @unique
+  username  String   @unique
   active    Boolean
-  verify    Boolean   @default(false)
+  verify    Boolean  @default(false)
   password  String
   passhash  String
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  role      Role?     @relation(fields: [roleId], references: [id])
-  roleId    String?   @db.ObjectId
-  personal  Personal?
-  student   Student?
-  teacher   Teacher?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  role      Role?    @relation(fields: [roleId], references: [id])
+  roleId    String?  @db.ObjectId
+  auth      Auth?
 }
 
 enum Gender {
@@ -200,76 +201,7 @@ enum TypePersonal {
 
 type Born {
   place String
-  date  String
-}
-
-model Personal {
-  id        String           @id @default(auto()) @map("_id") @db.ObjectId
-  nik       String?
-  nisn      String?
-  type      TypePersonal
-  user      User?            @relation(fields: [userId], references: [id])
-  userId    String?          @unique @db.ObjectId
-  fullname  String
-  gender    Gender
-  foreign   Boolean
-  country   String?
-  religion  Religion
-  born      Born
-  email     String
-  belajarId String?
-  nophone   String
-  isLife    Boolean?
-  address   Address?
-  father    FamilyTree[]     @relation("FamilyTreeFather")
-  mother    FamilyTree[]     @relation("FamilyTreeMother")
-  wali      FamilyTree[]     @relation("FamilyTreeWali")
-  child     FamilyTreeChild?
-}
-
-model FamilyTree {
-  id       String            @id @default(auto()) @map("_id") @db.ObjectId
-  nokk     String
-  father   Personal?         @relation("FamilyTreeFather", fields: [fatherId], references: [id])
-  fatherId String?           @db.ObjectId
-  mother   Personal?         @relation("FamilyTreeMother", fields: [motherId], references: [id])
-  motherId String?           @db.ObjectId
-  wali     Personal?         @relation("FamilyTreeWali", fields: [waliId], references: [id])
-  waliId   String?           @db.ObjectId
-  childs   FamilyTreeChild[]
-  address  Address
-}
-
-enum ChildType {
-  KANDUNG
-  TIRI
-  ANGKAT
-}
-
-model FamilyTreeChild {
-  id         String     @id @default(auto()) @map("_id") @db.ObjectId
-  no         Int
-  type       ChildType
-  kk         FamilyTree @relation(fields: [kkId], references: [id])
-  kkId       String     @db.ObjectId
-  personal   Personal   @relation(fields: [personalId], references: [id])
-  personalId String     @unique @db.ObjectId
-}
-
-model Student {
-  id           String               @id @default(auto()) @map("_id") @db.ObjectId
-  user         User?                @relation(fields: [userId], references: [id])
-  userId       String?              @unique @db.ObjectId
-  major        KonsentrasiKeahlian? @relation(fields: [majorId], references: [id])
-  majorId      String?              @db.ObjectId
-  classRoom    ClassRoom[]          @relation(fields: [classRoomIds], references: [id])
-  classRoomIds String[]             @db.ObjectId
-  startYear    SchoolYear           @relation("StudentsIn", fields: [startYearId], references: [id])
-  startYearId  String               @db.ObjectId
-  instansi     Instansi             @relation(fields: [instansiId], references: [id])
-  instansiId   String               @db.ObjectId
-  event        Calendar[]           @relation(fields: [eventIds], references: [id])
-  eventIds     String[]             @db.ObjectId
+  date  DateTime
 }
 
 enum LevelEdu {
@@ -401,24 +333,30 @@ type Additional {
   attachment String?
 }
 
-model Teacher {
-  id           String         @id @default(auto()) @map("_id") @db.ObjectId
-  user         User?          @relation(fields: [userId], references: [id])
-  userId       String?        @unique @db.ObjectId
-  classRoom    ClassRoom[]
-  instansi     Instansi       @relation(fields: [instansiId], references: [id])
-  instansiId   String         @db.ObjectId
-  event        Calendar[]     @relation(fields: [eventIds], references: [id])
-  eventIds     String[]       @db.ObjectId
-  nip          String?
-  nrg          String?
-  noKarpeg     String?
-  tmtTugas     String?
-  tmtGol       String?
-  position     String?
-  rank         String?
-  period       String?
-  certificate  String?
+model Personal {
+  id           String           @id @default(auto()) @map("_id") @db.ObjectId
+  nik          String?
+  nisn         String?
+  type         TypePersonal
+  auth         Auth?
+  fullname     String
+  gender       Gender
+  foreign      Boolean
+  country      String?
+  religion     Religion
+  born         Born
+  email        String
+  belajarId    String?
+  nophone      String
+  isLife       Boolean?
+  address      Address?
+  father       FamilyTree[]     @relation("FamilyTreeFather")
+  mother       FamilyTree[]     @relation("FamilyTreeMother")
+  wali         FamilyTree[]     @relation("FamilyTreeWali")
+  couple       FamilyTree[]     @relation("FamilyTreeCouple")
+  child        FamilyTreeChild?
+  student      Student[]
+  teacher      Teacher[]
   education    Education[]
   training     Training[]
   employment   Employment[]
@@ -435,19 +373,105 @@ model Teacher {
   additional   Additional[]
 }
 
-model ClassRoom {
-  id         String     @id @default(auto()) @map("_id") @db.ObjectId
-  name       String
-  year       SchoolYear @relation(fields: [yearId], references: [id])
-  yearId     String     @db.ObjectId
-  wali       Teacher    @relation(fields: [waliId], references: [id])
-  waliId     String     @db.ObjectId
-  students   Student[]  @relation(fields: [studentIds], references: [id])
-  studentIds String[]   @db.ObjectId
-  event      Calendar[] @relation(fields: [eventIds], references: [id])
-  eventIds   String[]   @db.ObjectId
+model Auth {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  user       User     @relation(fields: [userId], references: [id])
+  userId     String   @unique @db.ObjectId
+  personal   Personal @relation(fields: [personalId], references: [id])
+  personalId String   @unique @db.ObjectId
 
-  @@unique([yearId, name])
+  @@unique([userId, personalId], name: "AuthUserPersonal")
+}
+
+model FamilyTree {
+  id       String            @id @default(auto()) @map("_id") @db.ObjectId
+  nokk     String
+  father   Personal?         @relation("FamilyTreeFather", fields: [fatherId], references: [id])
+  fatherId String?           @db.ObjectId
+  mother   Personal?         @relation("FamilyTreeMother", fields: [motherId], references: [id])
+  motherId String?           @db.ObjectId
+  wali     Personal?         @relation("FamilyTreeWali", fields: [waliId], references: [id])
+  waliId   String?           @db.ObjectId
+  couple   Personal?         @relation("FamilyTreeCouple", fields: [coupleId], references: [id])
+  coupleId String?           @db.ObjectId
+  childs   FamilyTreeChild[]
+  address  Address
+}
+
+enum ChildType {
+  KANDUNG
+  TIRI
+  ANGKAT
+}
+
+model FamilyTreeChild {
+  id         String     @id @default(auto()) @map("_id") @db.ObjectId
+  no         Int
+  type       ChildType
+  kk         FamilyTree @relation(fields: [kkId], references: [id])
+  kkId       String     @db.ObjectId
+  personal   Personal   @relation(fields: [personalId], references: [id])
+  personalId String     @unique @db.ObjectId
+}
+
+model Student {
+  id           String               @id @default(auto()) @map("_id") @db.ObjectId
+  nis          String
+  nisn         String
+  personal     Personal             @relation(fields: [personalId], references: [id])
+  personalId   String               @db.ObjectId
+  major        KonsentrasiKeahlian? @relation(fields: [majorId], references: [id])
+  majorId      String?              @db.ObjectId
+  classRoom    ClassRoom[]          @relation(fields: [classRoomIds], references: [id])
+  classRoomIds String[]             @db.ObjectId
+  startYear    SchoolYear           @relation(fields: [startYearId], references: [id])
+  startYearId  String               @db.ObjectId
+  instansi     Instansi             @relation(fields: [instansiId], references: [id])
+  instansiId   String               @db.ObjectId
+  event        Calendar[]           @relation(fields: [eventIds], references: [id])
+  eventIds     String[]             @db.ObjectId
+
+  @@unique([personalId, instansiId], name: "studyIn")
+}
+
+model Teacher {
+  id          String      @id @default(auto()) @map("_id") @db.ObjectId
+  personal    Personal    @relation(fields: [personalId], references: [id])
+  personalId  String      @db.ObjectId
+  classRoom   ClassRoom[]
+  instansi    Instansi    @relation(fields: [instansiId], references: [id])
+  instansiId  String      @db.ObjectId
+  event       Calendar[]  @relation(fields: [eventIds], references: [id])
+  eventIds    String[]    @db.ObjectId
+  nip         String?
+  nrg         String?
+  noKarpeg    String?
+  tmtTugas    DateTime?
+  tmtGol      DateTime?
+  position    String?
+  rank        String?
+  period      String?
+  certificate String?
+
+  @@unique([personalId, instansiId], name: "teachIn")
+}
+
+model ClassRoom {
+  id         String               @id @default(auto()) @map("_id") @db.ObjectId
+  name       String
+  year       SchoolYear           @relation(fields: [yearId], references: [id])
+  yearId     String               @db.ObjectId
+  wali       Teacher              @relation(fields: [waliId], references: [id])
+  waliId     String               @db.ObjectId
+  level      Int
+  major      KonsentrasiKeahlian? @relation(fields: [majorId], references: [id])
+  majorId    String?              @db.ObjectId
+  students   Student[]            @relation(fields: [studentIds], references: [id])
+  studentIds String[]             @db.ObjectId
+  event      Calendar[]           @relation(fields: [eventIds], references: [id])
+  eventIds   String[]             @db.ObjectId
+
+  @@unique([yearId, name], name: "nameClassRoom")
 }
 
 type Organizational {
@@ -466,10 +490,10 @@ model SchoolYear {
   instansiId     String         @db.ObjectId
   organizational Organizational
   classRoom      ClassRoom[]
-  studentsIn     Student[]      @relation("StudentsIn")
+  students       Student[]
   calendar       Calendar[]
 
-  @@unique([instansiId, year])
+  @@unique([instansiId, year], name: "eSchoolYear")
 }
 
 model Calendar {

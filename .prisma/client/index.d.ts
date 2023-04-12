@@ -40,7 +40,7 @@ export type Address = {
  */
 export type Born = {
   place: string
-  date: string
+  date: Date
 }
 
 /**
@@ -266,6 +266,7 @@ export type KonsentrasiKeahlian = {
  */
 export type Achievement = {
   id: string
+  no: number
   fase: Fase
   description: string
   elementId: string
@@ -279,6 +280,7 @@ export type Achievement = {
  */
 export type Element = {
   id: string
+  no: number
   name: string
   description: string
   mapelId: string
@@ -357,7 +359,6 @@ export type Personal = {
   nik: string | null
   nisn: string | null
   type: TypePersonal
-  userId: string | null
   fullname: string
   gender: Gender
   foreign: boolean
@@ -369,6 +370,30 @@ export type Personal = {
   nophone: string
   isLife: boolean | null
   address: Address | null
+  education: Education[]
+  training: Training[]
+  employment: Employment[]
+  profession: Profession[]
+  overseas: Overseas[]
+  scientific: Scientific[]
+  organization: Organization[]
+  papers: Papers[]
+  innovation: Innovation[]
+  award: Award[]
+  sourcePerson: SourcePerson[]
+  contest: Contest[]
+  documents: Documents[]
+  additional: Additional[]
+}
+
+/**
+ * Model Auth
+ * 
+ */
+export type Auth = {
+  id: string
+  userId: string
+  personalId: string
 }
 
 /**
@@ -381,6 +406,7 @@ export type FamilyTree = {
   fatherId: string | null
   motherId: string | null
   waliId: string | null
+  coupleId: string | null
   address: Address
 }
 
@@ -402,7 +428,9 @@ export type FamilyTreeChild = {
  */
 export type Student = {
   id: string
-  userId: string | null
+  nis: string
+  nisn: string
+  personalId: string
   majorId: string | null
   classRoomIds: string[]
   startYearId: string
@@ -416,32 +444,18 @@ export type Student = {
  */
 export type Teacher = {
   id: string
-  userId: string | null
+  personalId: string
   instansiId: string
   eventIds: string[]
   nip: string | null
   nrg: string | null
   noKarpeg: string | null
-  tmtTugas: string | null
-  tmtGol: string | null
+  tmtTugas: Date | null
+  tmtGol: Date | null
   position: string | null
   rank: string | null
   period: string | null
   certificate: string | null
-  education: Education[]
-  training: Training[]
-  employment: Employment[]
-  profession: Profession[]
-  overseas: Overseas[]
-  scientific: Scientific[]
-  organization: Organization[]
-  papers: Papers[]
-  innovation: Innovation[]
-  award: Award[]
-  sourcePerson: SourcePerson[]
-  contest: Contest[]
-  documents: Documents[]
-  additional: Additional[]
 }
 
 /**
@@ -453,6 +467,8 @@ export type ClassRoom = {
   name: string
   yearId: string
   waliId: string
+  level: number
+  majorId: string | null
   studentIds: string[]
   eventIds: string[]
 }
@@ -768,6 +784,16 @@ export class PrismaClient<
     * ```
     */
   get personal(): Prisma.PersonalDelegate<GlobalReject>;
+
+  /**
+   * `prisma.auth`: Exposes CRUD operations for the **Auth** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Auths
+    * const auths = await prisma.auth.findMany()
+    * ```
+    */
+  get auth(): Prisma.AuthDelegate<GlobalReject>;
 
   /**
    * `prisma.familyTree`: Exposes CRUD operations for the **FamilyTree** model.
@@ -1317,6 +1343,7 @@ export namespace Prisma {
     Role: 'Role',
     User: 'User',
     Personal: 'Personal',
+    Auth: 'Auth',
     FamilyTree: 'FamilyTree',
     FamilyTreeChild: 'FamilyTreeChild',
     Student: 'Student',
@@ -1578,11 +1605,13 @@ export namespace Prisma {
   export type KonsentrasiKeahlianCountOutputType = {
     student: number
     instansi: number
+    ClassRoom: number
   }
 
   export type KonsentrasiKeahlianCountOutputTypeSelect = {
     student?: boolean
     instansi?: boolean
+    ClassRoom?: boolean
   }
 
   export type KonsentrasiKeahlianCountOutputTypeGetPayload<S extends boolean | null | undefined | KonsentrasiKeahlianCountOutputTypeArgs> =
@@ -1804,12 +1833,18 @@ export namespace Prisma {
     father: number
     mother: number
     wali: number
+    couple: number
+    student: number
+    teacher: number
   }
 
   export type PersonalCountOutputTypeSelect = {
     father?: boolean
     mother?: boolean
     wali?: boolean
+    couple?: boolean
+    student?: boolean
+    teacher?: boolean
   }
 
   export type PersonalCountOutputTypeGetPayload<S extends boolean | null | undefined | PersonalCountOutputTypeArgs> =
@@ -2027,13 +2062,13 @@ export namespace Prisma {
 
   export type SchoolYearCountOutputType = {
     classRoom: number
-    studentsIn: number
+    students: number
     calendar: number
   }
 
   export type SchoolYearCountOutputTypeSelect = {
     classRoom?: boolean
-    studentsIn?: boolean
+    students?: boolean
     calendar?: boolean
   }
 
@@ -6232,6 +6267,7 @@ export namespace Prisma {
     program?: boolean | ProgramKeahlianArgs
     student?: boolean | KonsentrasiKeahlian$studentArgs
     instansi?: boolean | KonsentrasiKeahlian$instansiArgs
+    ClassRoom?: boolean | KonsentrasiKeahlian$ClassRoomArgs
     _count?: boolean | KonsentrasiKeahlianCountOutputTypeArgs
   }
 
@@ -6240,6 +6276,7 @@ export namespace Prisma {
     program?: boolean | ProgramKeahlianArgs
     student?: boolean | KonsentrasiKeahlian$studentArgs
     instansi?: boolean | KonsentrasiKeahlian$instansiArgs
+    ClassRoom?: boolean | KonsentrasiKeahlian$ClassRoomArgs
     _count?: boolean | KonsentrasiKeahlianCountOutputTypeArgs
   }
 
@@ -6253,6 +6290,7 @@ export namespace Prisma {
         P extends 'program' ? ProgramKeahlianGetPayload<S['include'][P]> :
         P extends 'student' ? Array < StudentGetPayload<S['include'][P]>>  :
         P extends 'instansi' ? Array < InstansiGetPayload<S['include'][P]>>  :
+        P extends 'ClassRoom' ? Array < ClassRoomGetPayload<S['include'][P]>>  :
         P extends '_count' ? KonsentrasiKeahlianCountOutputTypeGetPayload<S['include'][P]> :  never
   } 
     : S extends { select: any } & (KonsentrasiKeahlianArgs | KonsentrasiKeahlianFindManyArgs)
@@ -6261,6 +6299,7 @@ export namespace Prisma {
         P extends 'program' ? ProgramKeahlianGetPayload<S['select'][P]> :
         P extends 'student' ? Array < StudentGetPayload<S['select'][P]>>  :
         P extends 'instansi' ? Array < InstansiGetPayload<S['select'][P]>>  :
+        P extends 'ClassRoom' ? Array < ClassRoomGetPayload<S['select'][P]>>  :
         P extends '_count' ? KonsentrasiKeahlianCountOutputTypeGetPayload<S['select'][P]> :  P extends keyof KonsentrasiKeahlian ? KonsentrasiKeahlian[P] : never
   } 
       : KonsentrasiKeahlian
@@ -6665,6 +6704,8 @@ export namespace Prisma {
     student<T extends KonsentrasiKeahlian$studentArgs= {}>(args?: Subset<T, KonsentrasiKeahlian$studentArgs>): Prisma.PrismaPromise<Array<StudentGetPayload<T>>| Null>;
 
     instansi<T extends KonsentrasiKeahlian$instansiArgs= {}>(args?: Subset<T, KonsentrasiKeahlian$instansiArgs>): Prisma.PrismaPromise<Array<InstansiGetPayload<T>>| Null>;
+
+    ClassRoom<T extends KonsentrasiKeahlian$ClassRoomArgs= {}>(args?: Subset<T, KonsentrasiKeahlian$ClassRoomArgs>): Prisma.PrismaPromise<Array<ClassRoomGetPayload<T>>| Null>;
 
     private get _document();
     /**
@@ -7093,6 +7134,27 @@ export namespace Prisma {
 
 
   /**
+   * KonsentrasiKeahlian.ClassRoom
+   */
+  export type KonsentrasiKeahlian$ClassRoomArgs = {
+    /**
+     * Select specific fields to fetch from the ClassRoom
+     */
+    select?: ClassRoomSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: ClassRoomInclude | null
+    where?: ClassRoomWhereInput
+    orderBy?: Enumerable<ClassRoomOrderByWithRelationInput>
+    cursor?: ClassRoomWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: Enumerable<ClassRoomScalarFieldEnum>
+  }
+
+
+  /**
    * KonsentrasiKeahlian without action
    */
   export type KonsentrasiKeahlianArgs = {
@@ -7115,12 +7177,23 @@ export namespace Prisma {
 
   export type AggregateAchievement = {
     _count: AchievementCountAggregateOutputType | null
+    _avg: AchievementAvgAggregateOutputType | null
+    _sum: AchievementSumAggregateOutputType | null
     _min: AchievementMinAggregateOutputType | null
     _max: AchievementMaxAggregateOutputType | null
   }
 
+  export type AchievementAvgAggregateOutputType = {
+    no: number | null
+  }
+
+  export type AchievementSumAggregateOutputType = {
+    no: number | null
+  }
+
   export type AchievementMinAggregateOutputType = {
     id: string | null
+    no: number | null
     fase: Fase | null
     description: string | null
     elementId: string | null
@@ -7130,6 +7203,7 @@ export namespace Prisma {
 
   export type AchievementMaxAggregateOutputType = {
     id: string | null
+    no: number | null
     fase: Fase | null
     description: string | null
     elementId: string | null
@@ -7139,6 +7213,7 @@ export namespace Prisma {
 
   export type AchievementCountAggregateOutputType = {
     id: number
+    no: number
     fase: number
     description: number
     elementId: number
@@ -7148,8 +7223,17 @@ export namespace Prisma {
   }
 
 
+  export type AchievementAvgAggregateInputType = {
+    no?: true
+  }
+
+  export type AchievementSumAggregateInputType = {
+    no?: true
+  }
+
   export type AchievementMinAggregateInputType = {
     id?: true
+    no?: true
     fase?: true
     description?: true
     elementId?: true
@@ -7159,6 +7243,7 @@ export namespace Prisma {
 
   export type AchievementMaxAggregateInputType = {
     id?: true
+    no?: true
     fase?: true
     description?: true
     elementId?: true
@@ -7168,6 +7253,7 @@ export namespace Prisma {
 
   export type AchievementCountAggregateInputType = {
     id?: true
+    no?: true
     fase?: true
     description?: true
     elementId?: true
@@ -7214,6 +7300,18 @@ export namespace Prisma {
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
+     * Select which fields to average
+    **/
+    _avg?: AchievementAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: AchievementSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
      * Select which fields to find the minimum value
     **/
     _min?: AchievementMinAggregateInputType
@@ -7244,6 +7342,8 @@ export namespace Prisma {
     take?: number
     skip?: number
     _count?: AchievementCountAggregateInputType | true
+    _avg?: AchievementAvgAggregateInputType
+    _sum?: AchievementSumAggregateInputType
     _min?: AchievementMinAggregateInputType
     _max?: AchievementMaxAggregateInputType
   }
@@ -7251,12 +7351,15 @@ export namespace Prisma {
 
   export type AchievementGroupByOutputType = {
     id: string
+    no: number
     fase: Fase
     description: string
     elementId: string
     createdAt: Date
     updatedAt: Date
     _count: AchievementCountAggregateOutputType | null
+    _avg: AchievementAvgAggregateOutputType | null
+    _sum: AchievementSumAggregateOutputType | null
     _min: AchievementMinAggregateOutputType | null
     _max: AchievementMaxAggregateOutputType | null
   }
@@ -7277,6 +7380,7 @@ export namespace Prisma {
 
   export type AchievementSelect = {
     id?: boolean
+    no?: boolean
     fase?: boolean
     description?: boolean
     elementId?: boolean
@@ -8110,12 +8214,23 @@ export namespace Prisma {
 
   export type AggregateElement = {
     _count: ElementCountAggregateOutputType | null
+    _avg: ElementAvgAggregateOutputType | null
+    _sum: ElementSumAggregateOutputType | null
     _min: ElementMinAggregateOutputType | null
     _max: ElementMaxAggregateOutputType | null
   }
 
+  export type ElementAvgAggregateOutputType = {
+    no: number | null
+  }
+
+  export type ElementSumAggregateOutputType = {
+    no: number | null
+  }
+
   export type ElementMinAggregateOutputType = {
     id: string | null
+    no: number | null
     name: string | null
     description: string | null
     mapelId: string | null
@@ -8125,6 +8240,7 @@ export namespace Prisma {
 
   export type ElementMaxAggregateOutputType = {
     id: string | null
+    no: number | null
     name: string | null
     description: string | null
     mapelId: string | null
@@ -8134,6 +8250,7 @@ export namespace Prisma {
 
   export type ElementCountAggregateOutputType = {
     id: number
+    no: number
     name: number
     description: number
     mapelId: number
@@ -8143,8 +8260,17 @@ export namespace Prisma {
   }
 
 
+  export type ElementAvgAggregateInputType = {
+    no?: true
+  }
+
+  export type ElementSumAggregateInputType = {
+    no?: true
+  }
+
   export type ElementMinAggregateInputType = {
     id?: true
+    no?: true
     name?: true
     description?: true
     mapelId?: true
@@ -8154,6 +8280,7 @@ export namespace Prisma {
 
   export type ElementMaxAggregateInputType = {
     id?: true
+    no?: true
     name?: true
     description?: true
     mapelId?: true
@@ -8163,6 +8290,7 @@ export namespace Prisma {
 
   export type ElementCountAggregateInputType = {
     id?: true
+    no?: true
     name?: true
     description?: true
     mapelId?: true
@@ -8209,6 +8337,18 @@ export namespace Prisma {
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
+     * Select which fields to average
+    **/
+    _avg?: ElementAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: ElementSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
      * Select which fields to find the minimum value
     **/
     _min?: ElementMinAggregateInputType
@@ -8239,6 +8379,8 @@ export namespace Prisma {
     take?: number
     skip?: number
     _count?: ElementCountAggregateInputType | true
+    _avg?: ElementAvgAggregateInputType
+    _sum?: ElementSumAggregateInputType
     _min?: ElementMinAggregateInputType
     _max?: ElementMaxAggregateInputType
   }
@@ -8246,12 +8388,15 @@ export namespace Prisma {
 
   export type ElementGroupByOutputType = {
     id: string
+    no: number
     name: string
     description: string
     mapelId: string
     createdAt: Date
     updatedAt: Date
     _count: ElementCountAggregateOutputType | null
+    _avg: ElementAvgAggregateOutputType | null
+    _sum: ElementSumAggregateOutputType | null
     _min: ElementMinAggregateOutputType | null
     _max: ElementMaxAggregateOutputType | null
   }
@@ -8272,6 +8417,7 @@ export namespace Prisma {
 
   export type ElementSelect = {
     id?: boolean
+    no?: boolean
     name?: boolean
     description?: boolean
     mapelId?: boolean
@@ -12550,17 +12696,13 @@ export namespace Prisma {
     updatedAt?: boolean
     roleId?: boolean
     role?: boolean | RoleArgs
-    personal?: boolean | PersonalArgs
-    student?: boolean | StudentArgs
-    teacher?: boolean | TeacherArgs
+    auth?: boolean | AuthArgs
   }
 
 
   export type UserInclude = {
     role?: boolean | RoleArgs
-    personal?: boolean | PersonalArgs
-    student?: boolean | StudentArgs
-    teacher?: boolean | TeacherArgs
+    auth?: boolean | AuthArgs
   }
 
   export type UserGetPayload<S extends boolean | null | undefined | UserArgs> =
@@ -12571,17 +12713,13 @@ export namespace Prisma {
     ? User  & {
     [P in TruthyKeys<S['include']>]:
         P extends 'role' ? RoleGetPayload<S['include'][P]> | null :
-        P extends 'personal' ? PersonalGetPayload<S['include'][P]> | null :
-        P extends 'student' ? StudentGetPayload<S['include'][P]> | null :
-        P extends 'teacher' ? TeacherGetPayload<S['include'][P]> | null :  never
+        P extends 'auth' ? AuthGetPayload<S['include'][P]> | null :  never
   } 
     : S extends { select: any } & (UserArgs | UserFindManyArgs)
       ? {
     [P in TruthyKeys<S['select']>]:
         P extends 'role' ? RoleGetPayload<S['select'][P]> | null :
-        P extends 'personal' ? PersonalGetPayload<S['select'][P]> | null :
-        P extends 'student' ? StudentGetPayload<S['select'][P]> | null :
-        P extends 'teacher' ? TeacherGetPayload<S['select'][P]> | null :  P extends keyof User ? User[P] : never
+        P extends 'auth' ? AuthGetPayload<S['select'][P]> | null :  P extends keyof User ? User[P] : never
   } 
       : User
 
@@ -12982,11 +13120,7 @@ export namespace Prisma {
 
     role<T extends RoleArgs= {}>(args?: Subset<T, RoleArgs>): Prisma__RoleClient<RoleGetPayload<T> | Null>;
 
-    personal<T extends PersonalArgs= {}>(args?: Subset<T, PersonalArgs>): Prisma__PersonalClient<PersonalGetPayload<T> | Null>;
-
-    student<T extends StudentArgs= {}>(args?: Subset<T, StudentArgs>): Prisma__StudentClient<StudentGetPayload<T> | Null>;
-
-    teacher<T extends TeacherArgs= {}>(args?: Subset<T, TeacherArgs>): Prisma__TeacherClient<TeacherGetPayload<T> | Null>;
+    auth<T extends AuthArgs= {}>(args?: Subset<T, AuthArgs>): Prisma__AuthClient<AuthGetPayload<T> | Null>;
 
     private get _document();
     /**
@@ -13404,7 +13538,6 @@ export namespace Prisma {
     nik: string | null
     nisn: string | null
     type: TypePersonal | null
-    userId: string | null
     fullname: string | null
     gender: Gender | null
     foreign: boolean | null
@@ -13421,7 +13554,6 @@ export namespace Prisma {
     nik: string | null
     nisn: string | null
     type: TypePersonal | null
-    userId: string | null
     fullname: string | null
     gender: Gender | null
     foreign: boolean | null
@@ -13438,7 +13570,6 @@ export namespace Prisma {
     nik: number
     nisn: number
     type: number
-    userId: number
     fullname: number
     gender: number
     foreign: number
@@ -13457,7 +13588,6 @@ export namespace Prisma {
     nik?: true
     nisn?: true
     type?: true
-    userId?: true
     fullname?: true
     gender?: true
     foreign?: true
@@ -13474,7 +13604,6 @@ export namespace Prisma {
     nik?: true
     nisn?: true
     type?: true
-    userId?: true
     fullname?: true
     gender?: true
     foreign?: true
@@ -13491,7 +13620,6 @@ export namespace Prisma {
     nik?: true
     nisn?: true
     type?: true
-    userId?: true
     fullname?: true
     gender?: true
     foreign?: true
@@ -13582,7 +13710,6 @@ export namespace Prisma {
     nik: string | null
     nisn: string | null
     type: TypePersonal
-    userId: string | null
     fullname: string
     gender: Gender
     foreign: boolean
@@ -13616,7 +13743,6 @@ export namespace Prisma {
     nik?: boolean
     nisn?: boolean
     type?: boolean
-    userId?: boolean
     fullname?: boolean
     gender?: boolean
     foreign?: boolean
@@ -13628,21 +13754,41 @@ export namespace Prisma {
     nophone?: boolean
     isLife?: boolean
     address?: boolean | AddressArgs
-    user?: boolean | UserArgs
+    education?: boolean | EducationArgs
+    training?: boolean | TrainingArgs
+    employment?: boolean | EmploymentArgs
+    profession?: boolean | ProfessionArgs
+    overseas?: boolean | OverseasArgs
+    scientific?: boolean | ScientificArgs
+    organization?: boolean | OrganizationArgs
+    papers?: boolean | PapersArgs
+    innovation?: boolean | InnovationArgs
+    award?: boolean | AwardArgs
+    sourcePerson?: boolean | SourcePersonArgs
+    contest?: boolean | ContestArgs
+    documents?: boolean | DocumentsArgs
+    additional?: boolean | AdditionalArgs
+    auth?: boolean | AuthArgs
     father?: boolean | Personal$fatherArgs
     mother?: boolean | Personal$motherArgs
     wali?: boolean | Personal$waliArgs
+    couple?: boolean | Personal$coupleArgs
     child?: boolean | FamilyTreeChildArgs
+    student?: boolean | Personal$studentArgs
+    teacher?: boolean | Personal$teacherArgs
     _count?: boolean | PersonalCountOutputTypeArgs
   }
 
 
   export type PersonalInclude = {
-    user?: boolean | UserArgs
+    auth?: boolean | AuthArgs
     father?: boolean | Personal$fatherArgs
     mother?: boolean | Personal$motherArgs
     wali?: boolean | Personal$waliArgs
+    couple?: boolean | Personal$coupleArgs
     child?: boolean | FamilyTreeChildArgs
+    student?: boolean | Personal$studentArgs
+    teacher?: boolean | Personal$teacherArgs
     _count?: boolean | PersonalCountOutputTypeArgs
   }
 
@@ -13653,11 +13799,14 @@ export namespace Prisma {
     S extends { include: any } & (PersonalArgs | PersonalFindManyArgs)
     ? Personal  & {
     [P in TruthyKeys<S['include']>]:
-        P extends 'user' ? UserGetPayload<S['include'][P]> | null :
+        P extends 'auth' ? AuthGetPayload<S['include'][P]> | null :
         P extends 'father' ? Array < FamilyTreeGetPayload<S['include'][P]>>  :
         P extends 'mother' ? Array < FamilyTreeGetPayload<S['include'][P]>>  :
         P extends 'wali' ? Array < FamilyTreeGetPayload<S['include'][P]>>  :
+        P extends 'couple' ? Array < FamilyTreeGetPayload<S['include'][P]>>  :
         P extends 'child' ? FamilyTreeChildGetPayload<S['include'][P]> | null :
+        P extends 'student' ? Array < StudentGetPayload<S['include'][P]>>  :
+        P extends 'teacher' ? Array < TeacherGetPayload<S['include'][P]>>  :
         P extends '_count' ? PersonalCountOutputTypeGetPayload<S['include'][P]> :  never
   } 
     : S extends { select: any } & (PersonalArgs | PersonalFindManyArgs)
@@ -13665,11 +13814,28 @@ export namespace Prisma {
     [P in TruthyKeys<S['select']>]:
         P extends 'born' ? BornGetPayload<S['select'][P]> :
         P extends 'address' ? AddressGetPayload<S['select'][P]> | null :
-        P extends 'user' ? UserGetPayload<S['select'][P]> | null :
+        P extends 'education' ? Array < EducationGetPayload<S['select'][P]>>  :
+        P extends 'training' ? Array < TrainingGetPayload<S['select'][P]>>  :
+        P extends 'employment' ? Array < EmploymentGetPayload<S['select'][P]>>  :
+        P extends 'profession' ? Array < ProfessionGetPayload<S['select'][P]>>  :
+        P extends 'overseas' ? Array < OverseasGetPayload<S['select'][P]>>  :
+        P extends 'scientific' ? Array < ScientificGetPayload<S['select'][P]>>  :
+        P extends 'organization' ? Array < OrganizationGetPayload<S['select'][P]>>  :
+        P extends 'papers' ? Array < PapersGetPayload<S['select'][P]>>  :
+        P extends 'innovation' ? Array < InnovationGetPayload<S['select'][P]>>  :
+        P extends 'award' ? Array < AwardGetPayload<S['select'][P]>>  :
+        P extends 'sourcePerson' ? Array < SourcePersonGetPayload<S['select'][P]>>  :
+        P extends 'contest' ? Array < ContestGetPayload<S['select'][P]>>  :
+        P extends 'documents' ? Array < DocumentsGetPayload<S['select'][P]>>  :
+        P extends 'additional' ? Array < AdditionalGetPayload<S['select'][P]>>  :
+        P extends 'auth' ? AuthGetPayload<S['select'][P]> | null :
         P extends 'father' ? Array < FamilyTreeGetPayload<S['select'][P]>>  :
         P extends 'mother' ? Array < FamilyTreeGetPayload<S['select'][P]>>  :
         P extends 'wali' ? Array < FamilyTreeGetPayload<S['select'][P]>>  :
+        P extends 'couple' ? Array < FamilyTreeGetPayload<S['select'][P]>>  :
         P extends 'child' ? FamilyTreeChildGetPayload<S['select'][P]> | null :
+        P extends 'student' ? Array < StudentGetPayload<S['select'][P]>>  :
+        P extends 'teacher' ? Array < TeacherGetPayload<S['select'][P]>>  :
         P extends '_count' ? PersonalCountOutputTypeGetPayload<S['select'][P]> :  P extends keyof Personal ? Personal[P] : never
   } 
       : Personal
@@ -14073,7 +14239,35 @@ export namespace Prisma {
 
     address<T extends AddressArgs= {}>(args?: Subset<T, AddressArgs>): Prisma__AddressClient<AddressGetPayload<T> | Null>;
 
-    user<T extends UserArgs= {}>(args?: Subset<T, UserArgs>): Prisma__UserClient<UserGetPayload<T> | Null>;
+    education<T extends EducationArgs= {}>(args?: Subset<T, EducationArgs>): Prisma.PrismaPromise<Array<EducationGetPayload<T>>| Null>;
+
+    training<T extends TrainingArgs= {}>(args?: Subset<T, TrainingArgs>): Prisma.PrismaPromise<Array<TrainingGetPayload<T>>| Null>;
+
+    employment<T extends EmploymentArgs= {}>(args?: Subset<T, EmploymentArgs>): Prisma.PrismaPromise<Array<EmploymentGetPayload<T>>| Null>;
+
+    profession<T extends ProfessionArgs= {}>(args?: Subset<T, ProfessionArgs>): Prisma.PrismaPromise<Array<ProfessionGetPayload<T>>| Null>;
+
+    overseas<T extends OverseasArgs= {}>(args?: Subset<T, OverseasArgs>): Prisma.PrismaPromise<Array<OverseasGetPayload<T>>| Null>;
+
+    scientific<T extends ScientificArgs= {}>(args?: Subset<T, ScientificArgs>): Prisma.PrismaPromise<Array<ScientificGetPayload<T>>| Null>;
+
+    organization<T extends OrganizationArgs= {}>(args?: Subset<T, OrganizationArgs>): Prisma.PrismaPromise<Array<OrganizationGetPayload<T>>| Null>;
+
+    papers<T extends PapersArgs= {}>(args?: Subset<T, PapersArgs>): Prisma.PrismaPromise<Array<PapersGetPayload<T>>| Null>;
+
+    innovation<T extends InnovationArgs= {}>(args?: Subset<T, InnovationArgs>): Prisma.PrismaPromise<Array<InnovationGetPayload<T>>| Null>;
+
+    award<T extends AwardArgs= {}>(args?: Subset<T, AwardArgs>): Prisma.PrismaPromise<Array<AwardGetPayload<T>>| Null>;
+
+    sourcePerson<T extends SourcePersonArgs= {}>(args?: Subset<T, SourcePersonArgs>): Prisma.PrismaPromise<Array<SourcePersonGetPayload<T>>| Null>;
+
+    contest<T extends ContestArgs= {}>(args?: Subset<T, ContestArgs>): Prisma.PrismaPromise<Array<ContestGetPayload<T>>| Null>;
+
+    documents<T extends DocumentsArgs= {}>(args?: Subset<T, DocumentsArgs>): Prisma.PrismaPromise<Array<DocumentsGetPayload<T>>| Null>;
+
+    additional<T extends AdditionalArgs= {}>(args?: Subset<T, AdditionalArgs>): Prisma.PrismaPromise<Array<AdditionalGetPayload<T>>| Null>;
+
+    auth<T extends AuthArgs= {}>(args?: Subset<T, AuthArgs>): Prisma__AuthClient<AuthGetPayload<T> | Null>;
 
     father<T extends Personal$fatherArgs= {}>(args?: Subset<T, Personal$fatherArgs>): Prisma.PrismaPromise<Array<FamilyTreeGetPayload<T>>| Null>;
 
@@ -14081,7 +14275,13 @@ export namespace Prisma {
 
     wali<T extends Personal$waliArgs= {}>(args?: Subset<T, Personal$waliArgs>): Prisma.PrismaPromise<Array<FamilyTreeGetPayload<T>>| Null>;
 
+    couple<T extends Personal$coupleArgs= {}>(args?: Subset<T, Personal$coupleArgs>): Prisma.PrismaPromise<Array<FamilyTreeGetPayload<T>>| Null>;
+
     child<T extends FamilyTreeChildArgs= {}>(args?: Subset<T, FamilyTreeChildArgs>): Prisma__FamilyTreeChildClient<FamilyTreeChildGetPayload<T> | Null>;
+
+    student<T extends Personal$studentArgs= {}>(args?: Subset<T, Personal$studentArgs>): Prisma.PrismaPromise<Array<StudentGetPayload<T>>| Null>;
+
+    teacher<T extends Personal$teacherArgs= {}>(args?: Subset<T, Personal$teacherArgs>): Prisma.PrismaPromise<Array<TeacherGetPayload<T>>| Null>;
 
     private get _document();
     /**
@@ -14531,6 +14731,69 @@ export namespace Prisma {
 
 
   /**
+   * Personal.couple
+   */
+  export type Personal$coupleArgs = {
+    /**
+     * Select specific fields to fetch from the FamilyTree
+     */
+    select?: FamilyTreeSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: FamilyTreeInclude | null
+    where?: FamilyTreeWhereInput
+    orderBy?: Enumerable<FamilyTreeOrderByWithRelationInput>
+    cursor?: FamilyTreeWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: Enumerable<FamilyTreeScalarFieldEnum>
+  }
+
+
+  /**
+   * Personal.student
+   */
+  export type Personal$studentArgs = {
+    /**
+     * Select specific fields to fetch from the Student
+     */
+    select?: StudentSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: StudentInclude | null
+    where?: StudentWhereInput
+    orderBy?: Enumerable<StudentOrderByWithRelationInput>
+    cursor?: StudentWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: Enumerable<StudentScalarFieldEnum>
+  }
+
+
+  /**
+   * Personal.teacher
+   */
+  export type Personal$teacherArgs = {
+    /**
+     * Select specific fields to fetch from the Teacher
+     */
+    select?: TeacherSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: TeacherInclude | null
+    where?: TeacherWhereInput
+    orderBy?: Enumerable<TeacherOrderByWithRelationInput>
+    cursor?: TeacherWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: Enumerable<TeacherScalarFieldEnum>
+  }
+
+
+  /**
    * Personal without action
    */
   export type PersonalArgs = {
@@ -14542,6 +14805,983 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well.
      */
     include?: PersonalInclude | null
+  }
+
+
+
+  /**
+   * Model Auth
+   */
+
+
+  export type AggregateAuth = {
+    _count: AuthCountAggregateOutputType | null
+    _min: AuthMinAggregateOutputType | null
+    _max: AuthMaxAggregateOutputType | null
+  }
+
+  export type AuthMinAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    personalId: string | null
+  }
+
+  export type AuthMaxAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    personalId: string | null
+  }
+
+  export type AuthCountAggregateOutputType = {
+    id: number
+    userId: number
+    personalId: number
+    _all: number
+  }
+
+
+  export type AuthMinAggregateInputType = {
+    id?: true
+    userId?: true
+    personalId?: true
+  }
+
+  export type AuthMaxAggregateInputType = {
+    id?: true
+    userId?: true
+    personalId?: true
+  }
+
+  export type AuthCountAggregateInputType = {
+    id?: true
+    userId?: true
+    personalId?: true
+    _all?: true
+  }
+
+  export type AuthAggregateArgs = {
+    /**
+     * Filter which Auth to aggregate.
+     */
+    where?: AuthWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Auths to fetch.
+     */
+    orderBy?: Enumerable<AuthOrderByWithRelationInput>
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: AuthWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Auths from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Auths.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Auths
+    **/
+    _count?: true | AuthCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: AuthMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: AuthMaxAggregateInputType
+  }
+
+  export type GetAuthAggregateType<T extends AuthAggregateArgs> = {
+        [P in keyof T & keyof AggregateAuth]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateAuth[P]>
+      : GetScalarType<T[P], AggregateAuth[P]>
+  }
+
+
+
+
+  export type AuthGroupByArgs = {
+    where?: AuthWhereInput
+    orderBy?: Enumerable<AuthOrderByWithAggregationInput>
+    by: AuthScalarFieldEnum[]
+    having?: AuthScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: AuthCountAggregateInputType | true
+    _min?: AuthMinAggregateInputType
+    _max?: AuthMaxAggregateInputType
+  }
+
+
+  export type AuthGroupByOutputType = {
+    id: string
+    userId: string
+    personalId: string
+    _count: AuthCountAggregateOutputType | null
+    _min: AuthMinAggregateOutputType | null
+    _max: AuthMaxAggregateOutputType | null
+  }
+
+  type GetAuthGroupByPayload<T extends AuthGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickArray<AuthGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof AuthGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], AuthGroupByOutputType[P]>
+            : GetScalarType<T[P], AuthGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type AuthSelect = {
+    id?: boolean
+    userId?: boolean
+    personalId?: boolean
+    user?: boolean | UserArgs
+    personal?: boolean | PersonalArgs
+  }
+
+
+  export type AuthInclude = {
+    user?: boolean | UserArgs
+    personal?: boolean | PersonalArgs
+  }
+
+  export type AuthGetPayload<S extends boolean | null | undefined | AuthArgs> =
+    S extends { select: any, include: any } ? 'Please either choose `select` or `include`' :
+    S extends true ? Auth :
+    S extends undefined ? never :
+    S extends { include: any } & (AuthArgs | AuthFindManyArgs)
+    ? Auth  & {
+    [P in TruthyKeys<S['include']>]:
+        P extends 'user' ? UserGetPayload<S['include'][P]> :
+        P extends 'personal' ? PersonalGetPayload<S['include'][P]> :  never
+  } 
+    : S extends { select: any } & (AuthArgs | AuthFindManyArgs)
+      ? {
+    [P in TruthyKeys<S['select']>]:
+        P extends 'user' ? UserGetPayload<S['select'][P]> :
+        P extends 'personal' ? PersonalGetPayload<S['select'][P]> :  P extends keyof Auth ? Auth[P] : never
+  } 
+      : Auth
+
+
+  type AuthCountArgs = 
+    Omit<AuthFindManyArgs, 'select' | 'include'> & {
+      select?: AuthCountAggregateInputType | true
+    }
+
+  export interface AuthDelegate<GlobalRejectSettings extends Prisma.RejectOnNotFound | Prisma.RejectPerOperation | false | undefined> {
+
+    /**
+     * Find zero or one Auth that matches the filter.
+     * @param {AuthFindUniqueArgs} args - Arguments to find a Auth
+     * @example
+     * // Get one Auth
+     * const auth = await prisma.auth.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findUnique<T extends AuthFindUniqueArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
+      args: SelectSubset<T, AuthFindUniqueArgs>
+    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findUnique', 'Auth'> extends True ? Prisma__AuthClient<AuthGetPayload<T>> : Prisma__AuthClient<AuthGetPayload<T> | null, null>
+
+    /**
+     * Find one Auth that matches the filter or throw an error  with `error.code='P2025'` 
+     *     if no matches were found.
+     * @param {AuthFindUniqueOrThrowArgs} args - Arguments to find a Auth
+     * @example
+     * // Get one Auth
+     * const auth = await prisma.auth.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findUniqueOrThrow<T extends AuthFindUniqueOrThrowArgs>(
+      args?: SelectSubset<T, AuthFindUniqueOrThrowArgs>
+    ): Prisma__AuthClient<AuthGetPayload<T>>
+
+    /**
+     * Find the first Auth that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AuthFindFirstArgs} args - Arguments to find a Auth
+     * @example
+     * // Get one Auth
+     * const auth = await prisma.auth.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findFirst<T extends AuthFindFirstArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
+      args?: SelectSubset<T, AuthFindFirstArgs>
+    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findFirst', 'Auth'> extends True ? Prisma__AuthClient<AuthGetPayload<T>> : Prisma__AuthClient<AuthGetPayload<T> | null, null>
+
+    /**
+     * Find the first Auth that matches the filter or
+     * throw `NotFoundError` if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AuthFindFirstOrThrowArgs} args - Arguments to find a Auth
+     * @example
+     * // Get one Auth
+     * const auth = await prisma.auth.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findFirstOrThrow<T extends AuthFindFirstOrThrowArgs>(
+      args?: SelectSubset<T, AuthFindFirstOrThrowArgs>
+    ): Prisma__AuthClient<AuthGetPayload<T>>
+
+    /**
+     * Find zero or more Auths that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AuthFindManyArgs=} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Auths
+     * const auths = await prisma.auth.findMany()
+     * 
+     * // Get first 10 Auths
+     * const auths = await prisma.auth.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const authWithIdOnly = await prisma.auth.findMany({ select: { id: true } })
+     * 
+    **/
+    findMany<T extends AuthFindManyArgs>(
+      args?: SelectSubset<T, AuthFindManyArgs>
+    ): Prisma.PrismaPromise<Array<AuthGetPayload<T>>>
+
+    /**
+     * Create a Auth.
+     * @param {AuthCreateArgs} args - Arguments to create a Auth.
+     * @example
+     * // Create one Auth
+     * const Auth = await prisma.auth.create({
+     *   data: {
+     *     // ... data to create a Auth
+     *   }
+     * })
+     * 
+    **/
+    create<T extends AuthCreateArgs>(
+      args: SelectSubset<T, AuthCreateArgs>
+    ): Prisma__AuthClient<AuthGetPayload<T>>
+
+    /**
+     * Create many Auths.
+     *     @param {AuthCreateManyArgs} args - Arguments to create many Auths.
+     *     @example
+     *     // Create many Auths
+     *     const auth = await prisma.auth.createMany({
+     *       data: {
+     *         // ... provide data here
+     *       }
+     *     })
+     *     
+    **/
+    createMany<T extends AuthCreateManyArgs>(
+      args?: SelectSubset<T, AuthCreateManyArgs>
+    ): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Delete a Auth.
+     * @param {AuthDeleteArgs} args - Arguments to delete one Auth.
+     * @example
+     * // Delete one Auth
+     * const Auth = await prisma.auth.delete({
+     *   where: {
+     *     // ... filter to delete one Auth
+     *   }
+     * })
+     * 
+    **/
+    delete<T extends AuthDeleteArgs>(
+      args: SelectSubset<T, AuthDeleteArgs>
+    ): Prisma__AuthClient<AuthGetPayload<T>>
+
+    /**
+     * Update one Auth.
+     * @param {AuthUpdateArgs} args - Arguments to update one Auth.
+     * @example
+     * // Update one Auth
+     * const auth = await prisma.auth.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+    **/
+    update<T extends AuthUpdateArgs>(
+      args: SelectSubset<T, AuthUpdateArgs>
+    ): Prisma__AuthClient<AuthGetPayload<T>>
+
+    /**
+     * Delete zero or more Auths.
+     * @param {AuthDeleteManyArgs} args - Arguments to filter Auths to delete.
+     * @example
+     * // Delete a few Auths
+     * const { count } = await prisma.auth.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+    **/
+    deleteMany<T extends AuthDeleteManyArgs>(
+      args?: SelectSubset<T, AuthDeleteManyArgs>
+    ): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Auths.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AuthUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Auths
+     * const auth = await prisma.auth.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+    **/
+    updateMany<T extends AuthUpdateManyArgs>(
+      args: SelectSubset<T, AuthUpdateManyArgs>
+    ): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one Auth.
+     * @param {AuthUpsertArgs} args - Arguments to update or create a Auth.
+     * @example
+     * // Update or create a Auth
+     * const auth = await prisma.auth.upsert({
+     *   create: {
+     *     // ... data to create a Auth
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Auth we want to update
+     *   }
+     * })
+    **/
+    upsert<T extends AuthUpsertArgs>(
+      args: SelectSubset<T, AuthUpsertArgs>
+    ): Prisma__AuthClient<AuthGetPayload<T>>
+
+    /**
+     * Find zero or more Auths that matches the filter.
+     * @param {AuthFindRawArgs} args - Select which filters you would like to apply.
+     * @example
+     * const auth = await prisma.auth.findRaw({
+     *   filter: { age: { $gt: 25 } } 
+     * })
+    **/
+    findRaw(
+      args?: AuthFindRawArgs
+    ): Prisma.PrismaPromise<JsonObject>
+
+    /**
+     * Perform aggregation operations on a Auth.
+     * @param {AuthAggregateRawArgs} args - Select which aggregations you would like to apply.
+     * @example
+     * const auth = await prisma.auth.aggregateRaw({
+     *   pipeline: [
+     *     { $match: { status: "registered" } },
+     *     { $group: { _id: "$country", total: { $sum: 1 } } }
+     *   ]
+     * })
+    **/
+    aggregateRaw(
+      args?: AuthAggregateRawArgs
+    ): Prisma.PrismaPromise<JsonObject>
+
+    /**
+     * Count the number of Auths.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AuthCountArgs} args - Arguments to filter Auths to count.
+     * @example
+     * // Count the number of Auths
+     * const count = await prisma.auth.count({
+     *   where: {
+     *     // ... the filter for the Auths we want to count
+     *   }
+     * })
+    **/
+    count<T extends AuthCountArgs>(
+      args?: Subset<T, AuthCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends _Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], AuthCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Auth.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AuthAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends AuthAggregateArgs>(args: Subset<T, AuthAggregateArgs>): Prisma.PrismaPromise<GetAuthAggregateType<T>>
+
+    /**
+     * Group by Auth.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AuthGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends AuthGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: AuthGroupByArgs['orderBy'] }
+        : { orderBy?: AuthGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends TupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, AuthGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetAuthGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Auth.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export class Prisma__AuthClient<T, Null = never> implements Prisma.PrismaPromise<T> {
+    private readonly _dmmf;
+    private readonly _queryType;
+    private readonly _rootField;
+    private readonly _clientMethod;
+    private readonly _args;
+    private readonly _dataPath;
+    private readonly _errorFormat;
+    private readonly _measurePerformance?;
+    private _isList;
+    private _callsite;
+    private _requestPromise?;
+    readonly [Symbol.toStringTag]: 'PrismaPromise';
+    constructor(_dmmf: runtime.DMMFClass, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
+
+    user<T extends UserArgs= {}>(args?: Subset<T, UserArgs>): Prisma__UserClient<UserGetPayload<T> | Null>;
+
+    personal<T extends PersonalArgs= {}>(args?: Subset<T, PersonalArgs>): Prisma__PersonalClient<PersonalGetPayload<T> | Null>;
+
+    private get _document();
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): Promise<TResult1 | TResult2>;
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): Promise<T | TResult>;
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): Promise<T>;
+  }
+
+
+
+  // Custom InputTypes
+
+  /**
+   * Auth base type for findUnique actions
+   */
+  export type AuthFindUniqueArgsBase = {
+    /**
+     * Select specific fields to fetch from the Auth
+     */
+    select?: AuthSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: AuthInclude | null
+    /**
+     * Filter, which Auth to fetch.
+     */
+    where: AuthWhereUniqueInput
+  }
+
+  /**
+   * Auth findUnique
+   */
+  export interface AuthFindUniqueArgs extends AuthFindUniqueArgsBase {
+   /**
+    * Throw an Error if query returns no results
+    * @deprecated since 4.0.0: use `findUniqueOrThrow` method instead
+    */
+    rejectOnNotFound?: RejectOnNotFound
+  }
+      
+
+  /**
+   * Auth findUniqueOrThrow
+   */
+  export type AuthFindUniqueOrThrowArgs = {
+    /**
+     * Select specific fields to fetch from the Auth
+     */
+    select?: AuthSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: AuthInclude | null
+    /**
+     * Filter, which Auth to fetch.
+     */
+    where: AuthWhereUniqueInput
+  }
+
+
+  /**
+   * Auth base type for findFirst actions
+   */
+  export type AuthFindFirstArgsBase = {
+    /**
+     * Select specific fields to fetch from the Auth
+     */
+    select?: AuthSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: AuthInclude | null
+    /**
+     * Filter, which Auth to fetch.
+     */
+    where?: AuthWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Auths to fetch.
+     */
+    orderBy?: Enumerable<AuthOrderByWithRelationInput>
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Auths.
+     */
+    cursor?: AuthWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Auths from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Auths.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Auths.
+     */
+    distinct?: Enumerable<AuthScalarFieldEnum>
+  }
+
+  /**
+   * Auth findFirst
+   */
+  export interface AuthFindFirstArgs extends AuthFindFirstArgsBase {
+   /**
+    * Throw an Error if query returns no results
+    * @deprecated since 4.0.0: use `findFirstOrThrow` method instead
+    */
+    rejectOnNotFound?: RejectOnNotFound
+  }
+      
+
+  /**
+   * Auth findFirstOrThrow
+   */
+  export type AuthFindFirstOrThrowArgs = {
+    /**
+     * Select specific fields to fetch from the Auth
+     */
+    select?: AuthSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: AuthInclude | null
+    /**
+     * Filter, which Auth to fetch.
+     */
+    where?: AuthWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Auths to fetch.
+     */
+    orderBy?: Enumerable<AuthOrderByWithRelationInput>
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Auths.
+     */
+    cursor?: AuthWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Auths from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Auths.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Auths.
+     */
+    distinct?: Enumerable<AuthScalarFieldEnum>
+  }
+
+
+  /**
+   * Auth findMany
+   */
+  export type AuthFindManyArgs = {
+    /**
+     * Select specific fields to fetch from the Auth
+     */
+    select?: AuthSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: AuthInclude | null
+    /**
+     * Filter, which Auths to fetch.
+     */
+    where?: AuthWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Auths to fetch.
+     */
+    orderBy?: Enumerable<AuthOrderByWithRelationInput>
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Auths.
+     */
+    cursor?: AuthWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Auths from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Auths.
+     */
+    skip?: number
+    distinct?: Enumerable<AuthScalarFieldEnum>
+  }
+
+
+  /**
+   * Auth create
+   */
+  export type AuthCreateArgs = {
+    /**
+     * Select specific fields to fetch from the Auth
+     */
+    select?: AuthSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: AuthInclude | null
+    /**
+     * The data needed to create a Auth.
+     */
+    data: XOR<AuthCreateInput, AuthUncheckedCreateInput>
+  }
+
+
+  /**
+   * Auth createMany
+   */
+  export type AuthCreateManyArgs = {
+    /**
+     * The data used to create many Auths.
+     */
+    data: Enumerable<AuthCreateManyInput>
+  }
+
+
+  /**
+   * Auth update
+   */
+  export type AuthUpdateArgs = {
+    /**
+     * Select specific fields to fetch from the Auth
+     */
+    select?: AuthSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: AuthInclude | null
+    /**
+     * The data needed to update a Auth.
+     */
+    data: XOR<AuthUpdateInput, AuthUncheckedUpdateInput>
+    /**
+     * Choose, which Auth to update.
+     */
+    where: AuthWhereUniqueInput
+  }
+
+
+  /**
+   * Auth updateMany
+   */
+  export type AuthUpdateManyArgs = {
+    /**
+     * The data used to update Auths.
+     */
+    data: XOR<AuthUpdateManyMutationInput, AuthUncheckedUpdateManyInput>
+    /**
+     * Filter which Auths to update
+     */
+    where?: AuthWhereInput
+  }
+
+
+  /**
+   * Auth upsert
+   */
+  export type AuthUpsertArgs = {
+    /**
+     * Select specific fields to fetch from the Auth
+     */
+    select?: AuthSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: AuthInclude | null
+    /**
+     * The filter to search for the Auth to update in case it exists.
+     */
+    where: AuthWhereUniqueInput
+    /**
+     * In case the Auth found by the `where` argument doesn't exist, create a new Auth with this data.
+     */
+    create: XOR<AuthCreateInput, AuthUncheckedCreateInput>
+    /**
+     * In case the Auth was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<AuthUpdateInput, AuthUncheckedUpdateInput>
+  }
+
+
+  /**
+   * Auth delete
+   */
+  export type AuthDeleteArgs = {
+    /**
+     * Select specific fields to fetch from the Auth
+     */
+    select?: AuthSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: AuthInclude | null
+    /**
+     * Filter which Auth to delete.
+     */
+    where: AuthWhereUniqueInput
+  }
+
+
+  /**
+   * Auth deleteMany
+   */
+  export type AuthDeleteManyArgs = {
+    /**
+     * Filter which Auths to delete
+     */
+    where?: AuthWhereInput
+  }
+
+
+  /**
+   * Auth findRaw
+   */
+  export type AuthFindRawArgs = {
+    /**
+     * The query predicate filter. If unspecified, then all documents in the collection will match the predicate. ${@link https://docs.mongodb.com/manual/reference/operator/query MongoDB Docs}.
+     */
+    filter?: InputJsonValue
+    /**
+     * Additional options to pass to the `find` command ${@link https://docs.mongodb.com/manual/reference/command/find/#command-fields MongoDB Docs}.
+     */
+    options?: InputJsonValue
+  }
+
+
+  /**
+   * Auth aggregateRaw
+   */
+  export type AuthAggregateRawArgs = {
+    /**
+     * An array of aggregation stages to process and transform the document stream via the aggregation pipeline. ${@link https://docs.mongodb.com/manual/reference/operator/aggregation-pipeline MongoDB Docs}.
+     */
+    pipeline?: InputJsonValue[]
+    /**
+     * Additional options to pass to the `aggregate` command ${@link https://docs.mongodb.com/manual/reference/command/aggregate/#command-fields MongoDB Docs}.
+     */
+    options?: InputJsonValue
+  }
+
+
+  /**
+   * Auth without action
+   */
+  export type AuthArgs = {
+    /**
+     * Select specific fields to fetch from the Auth
+     */
+    select?: AuthSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: AuthInclude | null
   }
 
 
@@ -14563,6 +15803,7 @@ export namespace Prisma {
     fatherId: string | null
     motherId: string | null
     waliId: string | null
+    coupleId: string | null
   }
 
   export type FamilyTreeMaxAggregateOutputType = {
@@ -14571,6 +15812,7 @@ export namespace Prisma {
     fatherId: string | null
     motherId: string | null
     waliId: string | null
+    coupleId: string | null
   }
 
   export type FamilyTreeCountAggregateOutputType = {
@@ -14579,6 +15821,7 @@ export namespace Prisma {
     fatherId: number
     motherId: number
     waliId: number
+    coupleId: number
     _all: number
   }
 
@@ -14589,6 +15832,7 @@ export namespace Prisma {
     fatherId?: true
     motherId?: true
     waliId?: true
+    coupleId?: true
   }
 
   export type FamilyTreeMaxAggregateInputType = {
@@ -14597,6 +15841,7 @@ export namespace Prisma {
     fatherId?: true
     motherId?: true
     waliId?: true
+    coupleId?: true
   }
 
   export type FamilyTreeCountAggregateInputType = {
@@ -14605,6 +15850,7 @@ export namespace Prisma {
     fatherId?: true
     motherId?: true
     waliId?: true
+    coupleId?: true
     _all?: true
   }
 
@@ -14687,6 +15933,7 @@ export namespace Prisma {
     fatherId: string | null
     motherId: string | null
     waliId: string | null
+    coupleId: string | null
     _count: FamilyTreeCountAggregateOutputType | null
     _min: FamilyTreeMinAggregateOutputType | null
     _max: FamilyTreeMaxAggregateOutputType | null
@@ -14712,10 +15959,12 @@ export namespace Prisma {
     fatherId?: boolean
     motherId?: boolean
     waliId?: boolean
+    coupleId?: boolean
     address?: boolean | AddressArgs
     father?: boolean | PersonalArgs
     mother?: boolean | PersonalArgs
     wali?: boolean | PersonalArgs
+    couple?: boolean | PersonalArgs
     childs?: boolean | FamilyTree$childsArgs
     _count?: boolean | FamilyTreeCountOutputTypeArgs
   }
@@ -14725,6 +15974,7 @@ export namespace Prisma {
     father?: boolean | PersonalArgs
     mother?: boolean | PersonalArgs
     wali?: boolean | PersonalArgs
+    couple?: boolean | PersonalArgs
     childs?: boolean | FamilyTree$childsArgs
     _count?: boolean | FamilyTreeCountOutputTypeArgs
   }
@@ -14739,6 +15989,7 @@ export namespace Prisma {
         P extends 'father' ? PersonalGetPayload<S['include'][P]> | null :
         P extends 'mother' ? PersonalGetPayload<S['include'][P]> | null :
         P extends 'wali' ? PersonalGetPayload<S['include'][P]> | null :
+        P extends 'couple' ? PersonalGetPayload<S['include'][P]> | null :
         P extends 'childs' ? Array < FamilyTreeChildGetPayload<S['include'][P]>>  :
         P extends '_count' ? FamilyTreeCountOutputTypeGetPayload<S['include'][P]> :  never
   } 
@@ -14749,6 +16000,7 @@ export namespace Prisma {
         P extends 'father' ? PersonalGetPayload<S['select'][P]> | null :
         P extends 'mother' ? PersonalGetPayload<S['select'][P]> | null :
         P extends 'wali' ? PersonalGetPayload<S['select'][P]> | null :
+        P extends 'couple' ? PersonalGetPayload<S['select'][P]> | null :
         P extends 'childs' ? Array < FamilyTreeChildGetPayload<S['select'][P]>>  :
         P extends '_count' ? FamilyTreeCountOutputTypeGetPayload<S['select'][P]> :  P extends keyof FamilyTree ? FamilyTree[P] : never
   } 
@@ -15156,6 +16408,8 @@ export namespace Prisma {
     mother<T extends PersonalArgs= {}>(args?: Subset<T, PersonalArgs>): Prisma__PersonalClient<PersonalGetPayload<T> | Null>;
 
     wali<T extends PersonalArgs= {}>(args?: Subset<T, PersonalArgs>): Prisma__PersonalClient<PersonalGetPayload<T> | Null>;
+
+    couple<T extends PersonalArgs= {}>(args?: Subset<T, PersonalArgs>): Prisma__PersonalClient<PersonalGetPayload<T> | Null>;
 
     childs<T extends FamilyTree$childsArgs= {}>(args?: Subset<T, FamilyTree$childsArgs>): Prisma.PrismaPromise<Array<FamilyTreeChildGetPayload<T>>| Null>;
 
@@ -16620,7 +17874,9 @@ export namespace Prisma {
 
   export type StudentMinAggregateOutputType = {
     id: string | null
-    userId: string | null
+    nis: string | null
+    nisn: string | null
+    personalId: string | null
     majorId: string | null
     startYearId: string | null
     instansiId: string | null
@@ -16628,7 +17884,9 @@ export namespace Prisma {
 
   export type StudentMaxAggregateOutputType = {
     id: string | null
-    userId: string | null
+    nis: string | null
+    nisn: string | null
+    personalId: string | null
     majorId: string | null
     startYearId: string | null
     instansiId: string | null
@@ -16636,7 +17894,9 @@ export namespace Prisma {
 
   export type StudentCountAggregateOutputType = {
     id: number
-    userId: number
+    nis: number
+    nisn: number
+    personalId: number
     majorId: number
     classRoomIds: number
     startYearId: number
@@ -16648,7 +17908,9 @@ export namespace Prisma {
 
   export type StudentMinAggregateInputType = {
     id?: true
-    userId?: true
+    nis?: true
+    nisn?: true
+    personalId?: true
     majorId?: true
     startYearId?: true
     instansiId?: true
@@ -16656,7 +17918,9 @@ export namespace Prisma {
 
   export type StudentMaxAggregateInputType = {
     id?: true
-    userId?: true
+    nis?: true
+    nisn?: true
+    personalId?: true
     majorId?: true
     startYearId?: true
     instansiId?: true
@@ -16664,7 +17928,9 @@ export namespace Prisma {
 
   export type StudentCountAggregateInputType = {
     id?: true
-    userId?: true
+    nis?: true
+    nisn?: true
+    personalId?: true
     majorId?: true
     classRoomIds?: true
     startYearId?: true
@@ -16748,7 +18014,9 @@ export namespace Prisma {
 
   export type StudentGroupByOutputType = {
     id: string
-    userId: string | null
+    nis: string
+    nisn: string
+    personalId: string
     majorId: string | null
     classRoomIds: string[]
     startYearId: string
@@ -16775,13 +18043,15 @@ export namespace Prisma {
 
   export type StudentSelect = {
     id?: boolean
-    userId?: boolean
+    nis?: boolean
+    nisn?: boolean
+    personalId?: boolean
     majorId?: boolean
     classRoomIds?: boolean
     startYearId?: boolean
     instansiId?: boolean
     eventIds?: boolean
-    user?: boolean | UserArgs
+    personal?: boolean | PersonalArgs
     major?: boolean | KonsentrasiKeahlianArgs
     classRoom?: boolean | Student$classRoomArgs
     startYear?: boolean | SchoolYearArgs
@@ -16792,7 +18062,7 @@ export namespace Prisma {
 
 
   export type StudentInclude = {
-    user?: boolean | UserArgs
+    personal?: boolean | PersonalArgs
     major?: boolean | KonsentrasiKeahlianArgs
     classRoom?: boolean | Student$classRoomArgs
     startYear?: boolean | SchoolYearArgs
@@ -16808,7 +18078,7 @@ export namespace Prisma {
     S extends { include: any } & (StudentArgs | StudentFindManyArgs)
     ? Student  & {
     [P in TruthyKeys<S['include']>]:
-        P extends 'user' ? UserGetPayload<S['include'][P]> | null :
+        P extends 'personal' ? PersonalGetPayload<S['include'][P]> :
         P extends 'major' ? KonsentrasiKeahlianGetPayload<S['include'][P]> | null :
         P extends 'classRoom' ? Array < ClassRoomGetPayload<S['include'][P]>>  :
         P extends 'startYear' ? SchoolYearGetPayload<S['include'][P]> :
@@ -16819,7 +18089,7 @@ export namespace Prisma {
     : S extends { select: any } & (StudentArgs | StudentFindManyArgs)
       ? {
     [P in TruthyKeys<S['select']>]:
-        P extends 'user' ? UserGetPayload<S['select'][P]> | null :
+        P extends 'personal' ? PersonalGetPayload<S['select'][P]> :
         P extends 'major' ? KonsentrasiKeahlianGetPayload<S['select'][P]> | null :
         P extends 'classRoom' ? Array < ClassRoomGetPayload<S['select'][P]>>  :
         P extends 'startYear' ? SchoolYearGetPayload<S['select'][P]> :
@@ -17224,7 +18494,7 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: 'PrismaPromise';
     constructor(_dmmf: runtime.DMMFClass, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
 
-    user<T extends UserArgs= {}>(args?: Subset<T, UserArgs>): Prisma__UserClient<UserGetPayload<T> | Null>;
+    personal<T extends PersonalArgs= {}>(args?: Subset<T, PersonalArgs>): Prisma__PersonalClient<PersonalGetPayload<T> | Null>;
 
     major<T extends KonsentrasiKeahlianArgs= {}>(args?: Subset<T, KonsentrasiKeahlianArgs>): Prisma__KonsentrasiKeahlianClient<KonsentrasiKeahlianGetPayload<T> | Null>;
 
@@ -17691,13 +18961,13 @@ export namespace Prisma {
 
   export type TeacherMinAggregateOutputType = {
     id: string | null
-    userId: string | null
+    personalId: string | null
     instansiId: string | null
     nip: string | null
     nrg: string | null
     noKarpeg: string | null
-    tmtTugas: string | null
-    tmtGol: string | null
+    tmtTugas: Date | null
+    tmtGol: Date | null
     position: string | null
     rank: string | null
     period: string | null
@@ -17706,13 +18976,13 @@ export namespace Prisma {
 
   export type TeacherMaxAggregateOutputType = {
     id: string | null
-    userId: string | null
+    personalId: string | null
     instansiId: string | null
     nip: string | null
     nrg: string | null
     noKarpeg: string | null
-    tmtTugas: string | null
-    tmtGol: string | null
+    tmtTugas: Date | null
+    tmtGol: Date | null
     position: string | null
     rank: string | null
     period: string | null
@@ -17721,7 +18991,7 @@ export namespace Prisma {
 
   export type TeacherCountAggregateOutputType = {
     id: number
-    userId: number
+    personalId: number
     instansiId: number
     eventIds: number
     nip: number
@@ -17739,7 +19009,7 @@ export namespace Prisma {
 
   export type TeacherMinAggregateInputType = {
     id?: true
-    userId?: true
+    personalId?: true
     instansiId?: true
     nip?: true
     nrg?: true
@@ -17754,7 +19024,7 @@ export namespace Prisma {
 
   export type TeacherMaxAggregateInputType = {
     id?: true
-    userId?: true
+    personalId?: true
     instansiId?: true
     nip?: true
     nrg?: true
@@ -17769,7 +19039,7 @@ export namespace Prisma {
 
   export type TeacherCountAggregateInputType = {
     id?: true
-    userId?: true
+    personalId?: true
     instansiId?: true
     eventIds?: true
     nip?: true
@@ -17859,14 +19129,14 @@ export namespace Prisma {
 
   export type TeacherGroupByOutputType = {
     id: string
-    userId: string | null
+    personalId: string
     instansiId: string
     eventIds: string[]
     nip: string | null
     nrg: string | null
     noKarpeg: string | null
-    tmtTugas: string | null
-    tmtGol: string | null
+    tmtTugas: Date | null
+    tmtGol: Date | null
     position: string | null
     rank: string | null
     period: string | null
@@ -17892,7 +19162,7 @@ export namespace Prisma {
 
   export type TeacherSelect = {
     id?: boolean
-    userId?: boolean
+    personalId?: boolean
     instansiId?: boolean
     eventIds?: boolean
     nip?: boolean
@@ -17904,21 +19174,7 @@ export namespace Prisma {
     rank?: boolean
     period?: boolean
     certificate?: boolean
-    education?: boolean | EducationArgs
-    training?: boolean | TrainingArgs
-    employment?: boolean | EmploymentArgs
-    profession?: boolean | ProfessionArgs
-    overseas?: boolean | OverseasArgs
-    scientific?: boolean | ScientificArgs
-    organization?: boolean | OrganizationArgs
-    papers?: boolean | PapersArgs
-    innovation?: boolean | InnovationArgs
-    award?: boolean | AwardArgs
-    sourcePerson?: boolean | SourcePersonArgs
-    contest?: boolean | ContestArgs
-    documents?: boolean | DocumentsArgs
-    additional?: boolean | AdditionalArgs
-    user?: boolean | UserArgs
+    personal?: boolean | PersonalArgs
     classRoom?: boolean | Teacher$classRoomArgs
     instansi?: boolean | InstansiArgs
     event?: boolean | Teacher$eventArgs
@@ -17927,7 +19183,7 @@ export namespace Prisma {
 
 
   export type TeacherInclude = {
-    user?: boolean | UserArgs
+    personal?: boolean | PersonalArgs
     classRoom?: boolean | Teacher$classRoomArgs
     instansi?: boolean | InstansiArgs
     event?: boolean | Teacher$eventArgs
@@ -17941,7 +19197,7 @@ export namespace Prisma {
     S extends { include: any } & (TeacherArgs | TeacherFindManyArgs)
     ? Teacher  & {
     [P in TruthyKeys<S['include']>]:
-        P extends 'user' ? UserGetPayload<S['include'][P]> | null :
+        P extends 'personal' ? PersonalGetPayload<S['include'][P]> :
         P extends 'classRoom' ? Array < ClassRoomGetPayload<S['include'][P]>>  :
         P extends 'instansi' ? InstansiGetPayload<S['include'][P]> :
         P extends 'event' ? Array < CalendarGetPayload<S['include'][P]>>  :
@@ -17950,21 +19206,7 @@ export namespace Prisma {
     : S extends { select: any } & (TeacherArgs | TeacherFindManyArgs)
       ? {
     [P in TruthyKeys<S['select']>]:
-        P extends 'education' ? Array < EducationGetPayload<S['select'][P]>>  :
-        P extends 'training' ? Array < TrainingGetPayload<S['select'][P]>>  :
-        P extends 'employment' ? Array < EmploymentGetPayload<S['select'][P]>>  :
-        P extends 'profession' ? Array < ProfessionGetPayload<S['select'][P]>>  :
-        P extends 'overseas' ? Array < OverseasGetPayload<S['select'][P]>>  :
-        P extends 'scientific' ? Array < ScientificGetPayload<S['select'][P]>>  :
-        P extends 'organization' ? Array < OrganizationGetPayload<S['select'][P]>>  :
-        P extends 'papers' ? Array < PapersGetPayload<S['select'][P]>>  :
-        P extends 'innovation' ? Array < InnovationGetPayload<S['select'][P]>>  :
-        P extends 'award' ? Array < AwardGetPayload<S['select'][P]>>  :
-        P extends 'sourcePerson' ? Array < SourcePersonGetPayload<S['select'][P]>>  :
-        P extends 'contest' ? Array < ContestGetPayload<S['select'][P]>>  :
-        P extends 'documents' ? Array < DocumentsGetPayload<S['select'][P]>>  :
-        P extends 'additional' ? Array < AdditionalGetPayload<S['select'][P]>>  :
-        P extends 'user' ? UserGetPayload<S['select'][P]> | null :
+        P extends 'personal' ? PersonalGetPayload<S['select'][P]> :
         P extends 'classRoom' ? Array < ClassRoomGetPayload<S['select'][P]>>  :
         P extends 'instansi' ? InstansiGetPayload<S['select'][P]> :
         P extends 'event' ? Array < CalendarGetPayload<S['select'][P]>>  :
@@ -18367,35 +19609,7 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: 'PrismaPromise';
     constructor(_dmmf: runtime.DMMFClass, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
 
-    education<T extends EducationArgs= {}>(args?: Subset<T, EducationArgs>): Prisma.PrismaPromise<Array<EducationGetPayload<T>>| Null>;
-
-    training<T extends TrainingArgs= {}>(args?: Subset<T, TrainingArgs>): Prisma.PrismaPromise<Array<TrainingGetPayload<T>>| Null>;
-
-    employment<T extends EmploymentArgs= {}>(args?: Subset<T, EmploymentArgs>): Prisma.PrismaPromise<Array<EmploymentGetPayload<T>>| Null>;
-
-    profession<T extends ProfessionArgs= {}>(args?: Subset<T, ProfessionArgs>): Prisma.PrismaPromise<Array<ProfessionGetPayload<T>>| Null>;
-
-    overseas<T extends OverseasArgs= {}>(args?: Subset<T, OverseasArgs>): Prisma.PrismaPromise<Array<OverseasGetPayload<T>>| Null>;
-
-    scientific<T extends ScientificArgs= {}>(args?: Subset<T, ScientificArgs>): Prisma.PrismaPromise<Array<ScientificGetPayload<T>>| Null>;
-
-    organization<T extends OrganizationArgs= {}>(args?: Subset<T, OrganizationArgs>): Prisma.PrismaPromise<Array<OrganizationGetPayload<T>>| Null>;
-
-    papers<T extends PapersArgs= {}>(args?: Subset<T, PapersArgs>): Prisma.PrismaPromise<Array<PapersGetPayload<T>>| Null>;
-
-    innovation<T extends InnovationArgs= {}>(args?: Subset<T, InnovationArgs>): Prisma.PrismaPromise<Array<InnovationGetPayload<T>>| Null>;
-
-    award<T extends AwardArgs= {}>(args?: Subset<T, AwardArgs>): Prisma.PrismaPromise<Array<AwardGetPayload<T>>| Null>;
-
-    sourcePerson<T extends SourcePersonArgs= {}>(args?: Subset<T, SourcePersonArgs>): Prisma.PrismaPromise<Array<SourcePersonGetPayload<T>>| Null>;
-
-    contest<T extends ContestArgs= {}>(args?: Subset<T, ContestArgs>): Prisma.PrismaPromise<Array<ContestGetPayload<T>>| Null>;
-
-    documents<T extends DocumentsArgs= {}>(args?: Subset<T, DocumentsArgs>): Prisma.PrismaPromise<Array<DocumentsGetPayload<T>>| Null>;
-
-    additional<T extends AdditionalArgs= {}>(args?: Subset<T, AdditionalArgs>): Prisma.PrismaPromise<Array<AdditionalGetPayload<T>>| Null>;
-
-    user<T extends UserArgs= {}>(args?: Subset<T, UserArgs>): Prisma__UserClient<UserGetPayload<T> | Null>;
+    personal<T extends PersonalArgs= {}>(args?: Subset<T, PersonalArgs>): Prisma__PersonalClient<PersonalGetPayload<T> | Null>;
 
     classRoom<T extends Teacher$classRoomArgs= {}>(args?: Subset<T, Teacher$classRoomArgs>): Prisma.PrismaPromise<Array<ClassRoomGetPayload<T>>| Null>;
 
@@ -18852,8 +20066,18 @@ export namespace Prisma {
 
   export type AggregateClassRoom = {
     _count: ClassRoomCountAggregateOutputType | null
+    _avg: ClassRoomAvgAggregateOutputType | null
+    _sum: ClassRoomSumAggregateOutputType | null
     _min: ClassRoomMinAggregateOutputType | null
     _max: ClassRoomMaxAggregateOutputType | null
+  }
+
+  export type ClassRoomAvgAggregateOutputType = {
+    level: number | null
+  }
+
+  export type ClassRoomSumAggregateOutputType = {
+    level: number | null
   }
 
   export type ClassRoomMinAggregateOutputType = {
@@ -18861,6 +20085,8 @@ export namespace Prisma {
     name: string | null
     yearId: string | null
     waliId: string | null
+    level: number | null
+    majorId: string | null
   }
 
   export type ClassRoomMaxAggregateOutputType = {
@@ -18868,6 +20094,8 @@ export namespace Prisma {
     name: string | null
     yearId: string | null
     waliId: string | null
+    level: number | null
+    majorId: string | null
   }
 
   export type ClassRoomCountAggregateOutputType = {
@@ -18875,17 +20103,29 @@ export namespace Prisma {
     name: number
     yearId: number
     waliId: number
+    level: number
+    majorId: number
     studentIds: number
     eventIds: number
     _all: number
   }
 
 
+  export type ClassRoomAvgAggregateInputType = {
+    level?: true
+  }
+
+  export type ClassRoomSumAggregateInputType = {
+    level?: true
+  }
+
   export type ClassRoomMinAggregateInputType = {
     id?: true
     name?: true
     yearId?: true
     waliId?: true
+    level?: true
+    majorId?: true
   }
 
   export type ClassRoomMaxAggregateInputType = {
@@ -18893,6 +20133,8 @@ export namespace Prisma {
     name?: true
     yearId?: true
     waliId?: true
+    level?: true
+    majorId?: true
   }
 
   export type ClassRoomCountAggregateInputType = {
@@ -18900,6 +20142,8 @@ export namespace Prisma {
     name?: true
     yearId?: true
     waliId?: true
+    level?: true
+    majorId?: true
     studentIds?: true
     eventIds?: true
     _all?: true
@@ -18943,6 +20187,18 @@ export namespace Prisma {
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
+     * Select which fields to average
+    **/
+    _avg?: ClassRoomAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: ClassRoomSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
      * Select which fields to find the minimum value
     **/
     _min?: ClassRoomMinAggregateInputType
@@ -18973,6 +20229,8 @@ export namespace Prisma {
     take?: number
     skip?: number
     _count?: ClassRoomCountAggregateInputType | true
+    _avg?: ClassRoomAvgAggregateInputType
+    _sum?: ClassRoomSumAggregateInputType
     _min?: ClassRoomMinAggregateInputType
     _max?: ClassRoomMaxAggregateInputType
   }
@@ -18983,9 +20241,13 @@ export namespace Prisma {
     name: string
     yearId: string
     waliId: string
+    level: number
+    majorId: string | null
     studentIds: string[]
     eventIds: string[]
     _count: ClassRoomCountAggregateOutputType | null
+    _avg: ClassRoomAvgAggregateOutputType | null
+    _sum: ClassRoomSumAggregateOutputType | null
     _min: ClassRoomMinAggregateOutputType | null
     _max: ClassRoomMaxAggregateOutputType | null
   }
@@ -19009,10 +20271,13 @@ export namespace Prisma {
     name?: boolean
     yearId?: boolean
     waliId?: boolean
+    level?: boolean
+    majorId?: boolean
     studentIds?: boolean
     eventIds?: boolean
     year?: boolean | SchoolYearArgs
     wali?: boolean | TeacherArgs
+    major?: boolean | KonsentrasiKeahlianArgs
     students?: boolean | ClassRoom$studentsArgs
     event?: boolean | ClassRoom$eventArgs
     _count?: boolean | ClassRoomCountOutputTypeArgs
@@ -19022,6 +20287,7 @@ export namespace Prisma {
   export type ClassRoomInclude = {
     year?: boolean | SchoolYearArgs
     wali?: boolean | TeacherArgs
+    major?: boolean | KonsentrasiKeahlianArgs
     students?: boolean | ClassRoom$studentsArgs
     event?: boolean | ClassRoom$eventArgs
     _count?: boolean | ClassRoomCountOutputTypeArgs
@@ -19036,6 +20302,7 @@ export namespace Prisma {
     [P in TruthyKeys<S['include']>]:
         P extends 'year' ? SchoolYearGetPayload<S['include'][P]> :
         P extends 'wali' ? TeacherGetPayload<S['include'][P]> :
+        P extends 'major' ? KonsentrasiKeahlianGetPayload<S['include'][P]> | null :
         P extends 'students' ? Array < StudentGetPayload<S['include'][P]>>  :
         P extends 'event' ? Array < CalendarGetPayload<S['include'][P]>>  :
         P extends '_count' ? ClassRoomCountOutputTypeGetPayload<S['include'][P]> :  never
@@ -19045,6 +20312,7 @@ export namespace Prisma {
     [P in TruthyKeys<S['select']>]:
         P extends 'year' ? SchoolYearGetPayload<S['select'][P]> :
         P extends 'wali' ? TeacherGetPayload<S['select'][P]> :
+        P extends 'major' ? KonsentrasiKeahlianGetPayload<S['select'][P]> | null :
         P extends 'students' ? Array < StudentGetPayload<S['select'][P]>>  :
         P extends 'event' ? Array < CalendarGetPayload<S['select'][P]>>  :
         P extends '_count' ? ClassRoomCountOutputTypeGetPayload<S['select'][P]> :  P extends keyof ClassRoom ? ClassRoom[P] : never
@@ -19449,6 +20717,8 @@ export namespace Prisma {
     year<T extends SchoolYearArgs= {}>(args?: Subset<T, SchoolYearArgs>): Prisma__SchoolYearClient<SchoolYearGetPayload<T> | Null>;
 
     wali<T extends TeacherArgs= {}>(args?: Subset<T, TeacherArgs>): Prisma__TeacherClient<TeacherGetPayload<T> | Null>;
+
+    major<T extends KonsentrasiKeahlianArgs= {}>(args?: Subset<T, KonsentrasiKeahlianArgs>): Prisma__KonsentrasiKeahlianClient<KonsentrasiKeahlianGetPayload<T> | Null>;
 
     students<T extends ClassRoom$studentsArgs= {}>(args?: Subset<T, ClassRoom$studentsArgs>): Prisma.PrismaPromise<Array<StudentGetPayload<T>>| Null>;
 
@@ -20083,7 +21353,7 @@ export namespace Prisma {
     organizational?: boolean | OrganizationalArgs
     instansi?: boolean | InstansiArgs
     classRoom?: boolean | SchoolYear$classRoomArgs
-    studentsIn?: boolean | SchoolYear$studentsInArgs
+    students?: boolean | SchoolYear$studentsArgs
     calendar?: boolean | SchoolYear$calendarArgs
     _count?: boolean | SchoolYearCountOutputTypeArgs
   }
@@ -20092,7 +21362,7 @@ export namespace Prisma {
   export type SchoolYearInclude = {
     instansi?: boolean | InstansiArgs
     classRoom?: boolean | SchoolYear$classRoomArgs
-    studentsIn?: boolean | SchoolYear$studentsInArgs
+    students?: boolean | SchoolYear$studentsArgs
     calendar?: boolean | SchoolYear$calendarArgs
     _count?: boolean | SchoolYearCountOutputTypeArgs
   }
@@ -20106,7 +21376,7 @@ export namespace Prisma {
     [P in TruthyKeys<S['include']>]:
         P extends 'instansi' ? InstansiGetPayload<S['include'][P]> :
         P extends 'classRoom' ? Array < ClassRoomGetPayload<S['include'][P]>>  :
-        P extends 'studentsIn' ? Array < StudentGetPayload<S['include'][P]>>  :
+        P extends 'students' ? Array < StudentGetPayload<S['include'][P]>>  :
         P extends 'calendar' ? Array < CalendarGetPayload<S['include'][P]>>  :
         P extends '_count' ? SchoolYearCountOutputTypeGetPayload<S['include'][P]> :  never
   } 
@@ -20116,7 +21386,7 @@ export namespace Prisma {
         P extends 'organizational' ? OrganizationalGetPayload<S['select'][P]> :
         P extends 'instansi' ? InstansiGetPayload<S['select'][P]> :
         P extends 'classRoom' ? Array < ClassRoomGetPayload<S['select'][P]>>  :
-        P extends 'studentsIn' ? Array < StudentGetPayload<S['select'][P]>>  :
+        P extends 'students' ? Array < StudentGetPayload<S['select'][P]>>  :
         P extends 'calendar' ? Array < CalendarGetPayload<S['select'][P]>>  :
         P extends '_count' ? SchoolYearCountOutputTypeGetPayload<S['select'][P]> :  P extends keyof SchoolYear ? SchoolYear[P] : never
   } 
@@ -20523,7 +21793,7 @@ export namespace Prisma {
 
     classRoom<T extends SchoolYear$classRoomArgs= {}>(args?: Subset<T, SchoolYear$classRoomArgs>): Prisma.PrismaPromise<Array<ClassRoomGetPayload<T>>| Null>;
 
-    studentsIn<T extends SchoolYear$studentsInArgs= {}>(args?: Subset<T, SchoolYear$studentsInArgs>): Prisma.PrismaPromise<Array<StudentGetPayload<T>>| Null>;
+    students<T extends SchoolYear$studentsArgs= {}>(args?: Subset<T, SchoolYear$studentsArgs>): Prisma.PrismaPromise<Array<StudentGetPayload<T>>| Null>;
 
     calendar<T extends SchoolYear$calendarArgs= {}>(args?: Subset<T, SchoolYear$calendarArgs>): Prisma.PrismaPromise<Array<CalendarGetPayload<T>>| Null>;
 
@@ -20933,9 +22203,9 @@ export namespace Prisma {
 
 
   /**
-   * SchoolYear.studentsIn
+   * SchoolYear.students
    */
-  export type SchoolYear$studentsInArgs = {
+  export type SchoolYear$studentsArgs = {
     /**
      * Select specific fields to fetch from the Student
      */
@@ -22099,6 +23369,7 @@ export namespace Prisma {
 
   export const AchievementScalarFieldEnum: {
     id: 'id',
+    no: 'no',
     fase: 'fase',
     description: 'description',
     elementId: 'elementId',
@@ -22107,6 +23378,15 @@ export namespace Prisma {
   };
 
   export type AchievementScalarFieldEnum = (typeof AchievementScalarFieldEnum)[keyof typeof AchievementScalarFieldEnum]
+
+
+  export const AuthScalarFieldEnum: {
+    id: 'id',
+    userId: 'userId',
+    personalId: 'personalId'
+  };
+
+  export type AuthScalarFieldEnum = (typeof AuthScalarFieldEnum)[keyof typeof AuthScalarFieldEnum]
 
 
   export const BidangKeahlianScalarFieldEnum: {
@@ -22141,6 +23421,8 @@ export namespace Prisma {
     name: 'name',
     yearId: 'yearId',
     waliId: 'waliId',
+    level: 'level',
+    majorId: 'majorId',
     studentIds: 'studentIds',
     eventIds: 'eventIds'
   };
@@ -22150,6 +23432,7 @@ export namespace Prisma {
 
   export const ElementScalarFieldEnum: {
     id: 'id',
+    no: 'no',
     name: 'name',
     description: 'description',
     mapelId: 'mapelId',
@@ -22176,7 +23459,8 @@ export namespace Prisma {
     nokk: 'nokk',
     fatherId: 'fatherId',
     motherId: 'motherId',
-    waliId: 'waliId'
+    waliId: 'waliId',
+    coupleId: 'coupleId'
   };
 
   export type FamilyTreeScalarFieldEnum = (typeof FamilyTreeScalarFieldEnum)[keyof typeof FamilyTreeScalarFieldEnum]
@@ -22230,7 +23514,6 @@ export namespace Prisma {
     nik: 'nik',
     nisn: 'nisn',
     type: 'type',
-    userId: 'userId',
     fullname: 'fullname',
     gender: 'gender',
     foreign: 'foreign',
@@ -22295,7 +23578,9 @@ export namespace Prisma {
 
   export const StudentScalarFieldEnum: {
     id: 'id',
-    userId: 'userId',
+    nis: 'nis',
+    nisn: 'nisn',
+    personalId: 'personalId',
     majorId: 'majorId',
     classRoomIds: 'classRoomIds',
     startYearId: 'startYearId',
@@ -22308,7 +23593,7 @@ export namespace Prisma {
 
   export const TeacherScalarFieldEnum: {
     id: 'id',
-    userId: 'userId',
+    personalId: 'personalId',
     instansiId: 'instansiId',
     eventIds: 'eventIds',
     nip: 'nip',
@@ -22370,7 +23655,7 @@ export namespace Prisma {
 
   export type BidangKeahlianWhereUniqueInput = {
     id?: string
-    code_name?: BidangKeahlianCodeNameCompoundUniqueInput
+    nameBidang?: BidangKeahlianNameBidangCompoundUniqueInput
   }
 
   export type BidangKeahlianOrderByWithAggregationInput = {
@@ -22422,7 +23707,7 @@ export namespace Prisma {
 
   export type ProgramKeahlianWhereUniqueInput = {
     id?: string
-    code_name?: ProgramKeahlianCodeNameCompoundUniqueInput
+    nameProgram?: ProgramKeahlianNameProgramCompoundUniqueInput
   }
 
   export type ProgramKeahlianOrderByWithAggregationInput = {
@@ -22464,6 +23749,7 @@ export namespace Prisma {
     program?: XOR<ProgramKeahlianRelationFilter, ProgramKeahlianWhereInput>
     student?: StudentListRelationFilter
     instansi?: InstansiListRelationFilter
+    ClassRoom?: ClassRoomListRelationFilter
   }
 
   export type KonsentrasiKeahlianOrderByWithRelationInput = {
@@ -22478,11 +23764,12 @@ export namespace Prisma {
     program?: ProgramKeahlianOrderByWithRelationInput
     student?: StudentOrderByRelationAggregateInput
     instansi?: InstansiOrderByRelationAggregateInput
+    ClassRoom?: ClassRoomOrderByRelationAggregateInput
   }
 
   export type KonsentrasiKeahlianWhereUniqueInput = {
     id?: string
-    programId_name?: KonsentrasiKeahlianProgramIdNameCompoundUniqueInput
+    nameKonsentrasi?: KonsentrasiKeahlianNameKonsentrasiCompoundUniqueInput
   }
 
   export type KonsentrasiKeahlianOrderByWithAggregationInput = {
@@ -22520,6 +23807,7 @@ export namespace Prisma {
     OR?: Enumerable<AchievementWhereInput>
     NOT?: Enumerable<AchievementWhereInput>
     id?: StringFilter | string
+    no?: IntFilter | number
     fase?: EnumFaseFilter | Fase
     description?: StringFilter | string
     elementId?: StringFilter | string
@@ -22530,6 +23818,7 @@ export namespace Prisma {
 
   export type AchievementOrderByWithRelationInput = {
     id?: SortOrder
+    no?: SortOrder
     fase?: SortOrder
     description?: SortOrder
     elementId?: SortOrder
@@ -22540,19 +23829,22 @@ export namespace Prisma {
 
   export type AchievementWhereUniqueInput = {
     id?: string
-    elementId_fase?: AchievementElementIdFaseCompoundUniqueInput
+    nameCP?: AchievementNameCPCompoundUniqueInput
   }
 
   export type AchievementOrderByWithAggregationInput = {
     id?: SortOrder
+    no?: SortOrder
     fase?: SortOrder
     description?: SortOrder
     elementId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: AchievementCountOrderByAggregateInput
+    _avg?: AchievementAvgOrderByAggregateInput
     _max?: AchievementMaxOrderByAggregateInput
     _min?: AchievementMinOrderByAggregateInput
+    _sum?: AchievementSumOrderByAggregateInput
   }
 
   export type AchievementScalarWhereWithAggregatesInput = {
@@ -22560,6 +23852,7 @@ export namespace Prisma {
     OR?: Enumerable<AchievementScalarWhereWithAggregatesInput>
     NOT?: Enumerable<AchievementScalarWhereWithAggregatesInput>
     id?: StringWithAggregatesFilter | string
+    no?: IntWithAggregatesFilter | number
     fase?: EnumFaseWithAggregatesFilter | Fase
     description?: StringWithAggregatesFilter | string
     elementId?: StringWithAggregatesFilter | string
@@ -22572,6 +23865,7 @@ export namespace Prisma {
     OR?: Enumerable<ElementWhereInput>
     NOT?: Enumerable<ElementWhereInput>
     id?: StringFilter | string
+    no?: IntFilter | number
     name?: StringFilter | string
     description?: StringFilter | string
     mapelId?: StringFilter | string
@@ -22583,6 +23877,7 @@ export namespace Prisma {
 
   export type ElementOrderByWithRelationInput = {
     id?: SortOrder
+    no?: SortOrder
     name?: SortOrder
     description?: SortOrder
     mapelId?: SortOrder
@@ -22594,19 +23889,22 @@ export namespace Prisma {
 
   export type ElementWhereUniqueInput = {
     id?: string
-    mapelId_name?: ElementMapelIdNameCompoundUniqueInput
+    nameElement?: ElementNameElementCompoundUniqueInput
   }
 
   export type ElementOrderByWithAggregationInput = {
     id?: SortOrder
+    no?: SortOrder
     name?: SortOrder
     description?: SortOrder
     mapelId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: ElementCountOrderByAggregateInput
+    _avg?: ElementAvgOrderByAggregateInput
     _max?: ElementMaxOrderByAggregateInput
     _min?: ElementMinOrderByAggregateInput
+    _sum?: ElementSumOrderByAggregateInput
   }
 
   export type ElementScalarWhereWithAggregatesInput = {
@@ -22614,6 +23912,7 @@ export namespace Prisma {
     OR?: Enumerable<ElementScalarWhereWithAggregatesInput>
     NOT?: Enumerable<ElementScalarWhereWithAggregatesInput>
     id?: StringWithAggregatesFilter | string
+    no?: IntWithAggregatesFilter | number
     name?: StringWithAggregatesFilter | string
     description?: StringWithAggregatesFilter | string
     mapelId?: StringWithAggregatesFilter | string
@@ -22648,7 +23947,7 @@ export namespace Prisma {
 
   export type MataPelajaranWhereUniqueInput = {
     id?: string
-    code_name?: MataPelajaranCodeNameCompoundUniqueInput
+    nameMapel?: MataPelajaranNameMapelCompoundUniqueInput
   }
 
   export type MataPelajaranOrderByWithAggregationInput = {
@@ -22780,7 +24079,7 @@ export namespace Prisma {
 
   export type RoleWhereUniqueInput = {
     id?: string
-    instansiId_key?: RoleInstansiIdKeyCompoundUniqueInput
+    nameRole?: RoleNameRoleCompoundUniqueInput
   }
 
   export type RoleOrderByWithAggregationInput = {
@@ -22821,9 +24120,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter | Date | string
     roleId?: StringNullableFilter | string | null
     role?: XOR<RoleRelationFilter, RoleWhereInput> | null
-    personal?: XOR<PersonalRelationFilter, PersonalWhereInput> | null
-    student?: XOR<StudentRelationFilter, StudentWhereInput> | null
-    teacher?: XOR<TeacherRelationFilter, TeacherWhereInput> | null
+    auth?: XOR<AuthRelationFilter, AuthWhereInput> | null
   }
 
   export type UserOrderByWithRelationInput = {
@@ -22839,9 +24136,7 @@ export namespace Prisma {
     updatedAt?: SortOrder
     roleId?: SortOrder
     role?: RoleOrderByWithRelationInput
-    personal?: PersonalOrderByWithRelationInput
-    student?: StudentOrderByWithRelationInput
-    teacher?: TeacherOrderByWithRelationInput
+    auth?: AuthOrderByWithRelationInput
   }
 
   export type UserWhereUniqueInput = {
@@ -22891,7 +24186,6 @@ export namespace Prisma {
     nik?: StringNullableFilter | string | null
     nisn?: StringNullableFilter | string | null
     type?: EnumTypePersonalFilter | TypePersonal
-    userId?: StringNullableFilter | string | null
     fullname?: StringFilter | string
     gender?: EnumGenderFilter | Gender
     foreign?: BoolFilter | boolean
@@ -22903,11 +24197,28 @@ export namespace Prisma {
     nophone?: StringFilter | string
     isLife?: BoolNullableFilter | boolean | null
     address?: XOR<AddressNullableCompositeFilter, AddressObjectEqualityInput> | null
-    user?: XOR<UserRelationFilter, UserWhereInput> | null
+    education?: XOR<EducationCompositeListFilter, Enumerable<EducationObjectEqualityInput>>
+    training?: XOR<TrainingCompositeListFilter, Enumerable<TrainingObjectEqualityInput>>
+    employment?: XOR<EmploymentCompositeListFilter, Enumerable<EmploymentObjectEqualityInput>>
+    profession?: XOR<ProfessionCompositeListFilter, Enumerable<ProfessionObjectEqualityInput>>
+    overseas?: XOR<OverseasCompositeListFilter, Enumerable<OverseasObjectEqualityInput>>
+    scientific?: XOR<ScientificCompositeListFilter, Enumerable<ScientificObjectEqualityInput>>
+    organization?: XOR<OrganizationCompositeListFilter, Enumerable<OrganizationObjectEqualityInput>>
+    papers?: XOR<PapersCompositeListFilter, Enumerable<PapersObjectEqualityInput>>
+    innovation?: XOR<InnovationCompositeListFilter, Enumerable<InnovationObjectEqualityInput>>
+    award?: XOR<AwardCompositeListFilter, Enumerable<AwardObjectEqualityInput>>
+    sourcePerson?: XOR<SourcePersonCompositeListFilter, Enumerable<SourcePersonObjectEqualityInput>>
+    contest?: XOR<ContestCompositeListFilter, Enumerable<ContestObjectEqualityInput>>
+    documents?: XOR<DocumentsCompositeListFilter, Enumerable<DocumentsObjectEqualityInput>>
+    additional?: XOR<AdditionalCompositeListFilter, Enumerable<AdditionalObjectEqualityInput>>
+    auth?: XOR<AuthRelationFilter, AuthWhereInput> | null
     father?: FamilyTreeListRelationFilter
     mother?: FamilyTreeListRelationFilter
     wali?: FamilyTreeListRelationFilter
+    couple?: FamilyTreeListRelationFilter
     child?: XOR<FamilyTreeChildRelationFilter, FamilyTreeChildWhereInput> | null
+    student?: StudentListRelationFilter
+    teacher?: TeacherListRelationFilter
   }
 
   export type PersonalOrderByWithRelationInput = {
@@ -22915,7 +24226,6 @@ export namespace Prisma {
     nik?: SortOrder
     nisn?: SortOrder
     type?: SortOrder
-    userId?: SortOrder
     fullname?: SortOrder
     gender?: SortOrder
     foreign?: SortOrder
@@ -22927,16 +24237,32 @@ export namespace Prisma {
     nophone?: SortOrder
     isLife?: SortOrder
     address?: AddressOrderByInput
-    user?: UserOrderByWithRelationInput
+    education?: EducationOrderByCompositeAggregateInput
+    training?: TrainingOrderByCompositeAggregateInput
+    employment?: EmploymentOrderByCompositeAggregateInput
+    profession?: ProfessionOrderByCompositeAggregateInput
+    overseas?: OverseasOrderByCompositeAggregateInput
+    scientific?: ScientificOrderByCompositeAggregateInput
+    organization?: OrganizationOrderByCompositeAggregateInput
+    papers?: PapersOrderByCompositeAggregateInput
+    innovation?: InnovationOrderByCompositeAggregateInput
+    award?: AwardOrderByCompositeAggregateInput
+    sourcePerson?: SourcePersonOrderByCompositeAggregateInput
+    contest?: ContestOrderByCompositeAggregateInput
+    documents?: DocumentsOrderByCompositeAggregateInput
+    additional?: AdditionalOrderByCompositeAggregateInput
+    auth?: AuthOrderByWithRelationInput
     father?: FamilyTreeOrderByRelationAggregateInput
     mother?: FamilyTreeOrderByRelationAggregateInput
     wali?: FamilyTreeOrderByRelationAggregateInput
+    couple?: FamilyTreeOrderByRelationAggregateInput
     child?: FamilyTreeChildOrderByWithRelationInput
+    student?: StudentOrderByRelationAggregateInput
+    teacher?: TeacherOrderByRelationAggregateInput
   }
 
   export type PersonalWhereUniqueInput = {
     id?: string
-    userId?: string
   }
 
   export type PersonalOrderByWithAggregationInput = {
@@ -22944,7 +24270,6 @@ export namespace Prisma {
     nik?: SortOrder
     nisn?: SortOrder
     type?: SortOrder
-    userId?: SortOrder
     fullname?: SortOrder
     gender?: SortOrder
     foreign?: SortOrder
@@ -22967,7 +24292,6 @@ export namespace Prisma {
     nik?: StringNullableWithAggregatesFilter | string | null
     nisn?: StringNullableWithAggregatesFilter | string | null
     type?: EnumTypePersonalWithAggregatesFilter | TypePersonal
-    userId?: StringNullableWithAggregatesFilter | string | null
     fullname?: StringWithAggregatesFilter | string
     gender?: EnumGenderWithAggregatesFilter | Gender
     foreign?: BoolWithAggregatesFilter | boolean
@@ -22979,6 +24303,50 @@ export namespace Prisma {
     isLife?: BoolNullableWithAggregatesFilter | boolean | null
   }
 
+  export type AuthWhereInput = {
+    AND?: Enumerable<AuthWhereInput>
+    OR?: Enumerable<AuthWhereInput>
+    NOT?: Enumerable<AuthWhereInput>
+    id?: StringFilter | string
+    userId?: StringFilter | string
+    personalId?: StringFilter | string
+    user?: XOR<UserRelationFilter, UserWhereInput>
+    personal?: XOR<PersonalRelationFilter, PersonalWhereInput>
+  }
+
+  export type AuthOrderByWithRelationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    personalId?: SortOrder
+    user?: UserOrderByWithRelationInput
+    personal?: PersonalOrderByWithRelationInput
+  }
+
+  export type AuthWhereUniqueInput = {
+    id?: string
+    userId?: string
+    personalId?: string
+    AuthUserPersonal?: AuthAuthUserPersonalCompoundUniqueInput
+  }
+
+  export type AuthOrderByWithAggregationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    personalId?: SortOrder
+    _count?: AuthCountOrderByAggregateInput
+    _max?: AuthMaxOrderByAggregateInput
+    _min?: AuthMinOrderByAggregateInput
+  }
+
+  export type AuthScalarWhereWithAggregatesInput = {
+    AND?: Enumerable<AuthScalarWhereWithAggregatesInput>
+    OR?: Enumerable<AuthScalarWhereWithAggregatesInput>
+    NOT?: Enumerable<AuthScalarWhereWithAggregatesInput>
+    id?: StringWithAggregatesFilter | string
+    userId?: StringWithAggregatesFilter | string
+    personalId?: StringWithAggregatesFilter | string
+  }
+
   export type FamilyTreeWhereInput = {
     AND?: Enumerable<FamilyTreeWhereInput>
     OR?: Enumerable<FamilyTreeWhereInput>
@@ -22988,10 +24356,12 @@ export namespace Prisma {
     fatherId?: StringNullableFilter | string | null
     motherId?: StringNullableFilter | string | null
     waliId?: StringNullableFilter | string | null
+    coupleId?: StringNullableFilter | string | null
     address?: XOR<AddressCompositeFilter, AddressObjectEqualityInput>
     father?: XOR<PersonalRelationFilter, PersonalWhereInput> | null
     mother?: XOR<PersonalRelationFilter, PersonalWhereInput> | null
     wali?: XOR<PersonalRelationFilter, PersonalWhereInput> | null
+    couple?: XOR<PersonalRelationFilter, PersonalWhereInput> | null
     childs?: FamilyTreeChildListRelationFilter
   }
 
@@ -23001,10 +24371,12 @@ export namespace Prisma {
     fatherId?: SortOrder
     motherId?: SortOrder
     waliId?: SortOrder
+    coupleId?: SortOrder
     address?: AddressOrderByInput
     father?: PersonalOrderByWithRelationInput
     mother?: PersonalOrderByWithRelationInput
     wali?: PersonalOrderByWithRelationInput
+    couple?: PersonalOrderByWithRelationInput
     childs?: FamilyTreeChildOrderByRelationAggregateInput
   }
 
@@ -23018,6 +24390,7 @@ export namespace Prisma {
     fatherId?: SortOrder
     motherId?: SortOrder
     waliId?: SortOrder
+    coupleId?: SortOrder
     _count?: FamilyTreeCountOrderByAggregateInput
     _max?: FamilyTreeMaxOrderByAggregateInput
     _min?: FamilyTreeMinOrderByAggregateInput
@@ -23032,6 +24405,7 @@ export namespace Prisma {
     fatherId?: StringNullableWithAggregatesFilter | string | null
     motherId?: StringNullableWithAggregatesFilter | string | null
     waliId?: StringNullableWithAggregatesFilter | string | null
+    coupleId?: StringNullableWithAggregatesFilter | string | null
   }
 
   export type FamilyTreeChildWhereInput = {
@@ -23091,13 +24465,15 @@ export namespace Prisma {
     OR?: Enumerable<StudentWhereInput>
     NOT?: Enumerable<StudentWhereInput>
     id?: StringFilter | string
-    userId?: StringNullableFilter | string | null
+    nis?: StringFilter | string
+    nisn?: StringFilter | string
+    personalId?: StringFilter | string
     majorId?: StringNullableFilter | string | null
     classRoomIds?: StringNullableListFilter
     startYearId?: StringFilter | string
     instansiId?: StringFilter | string
     eventIds?: StringNullableListFilter
-    user?: XOR<UserRelationFilter, UserWhereInput> | null
+    personal?: XOR<PersonalRelationFilter, PersonalWhereInput>
     major?: XOR<KonsentrasiKeahlianRelationFilter, KonsentrasiKeahlianWhereInput> | null
     classRoom?: ClassRoomListRelationFilter
     startYear?: XOR<SchoolYearRelationFilter, SchoolYearWhereInput>
@@ -23107,13 +24483,15 @@ export namespace Prisma {
 
   export type StudentOrderByWithRelationInput = {
     id?: SortOrder
-    userId?: SortOrder
+    nis?: SortOrder
+    nisn?: SortOrder
+    personalId?: SortOrder
     majorId?: SortOrder
     classRoomIds?: SortOrder
     startYearId?: SortOrder
     instansiId?: SortOrder
     eventIds?: SortOrder
-    user?: UserOrderByWithRelationInput
+    personal?: PersonalOrderByWithRelationInput
     major?: KonsentrasiKeahlianOrderByWithRelationInput
     classRoom?: ClassRoomOrderByRelationAggregateInput
     startYear?: SchoolYearOrderByWithRelationInput
@@ -23123,12 +24501,14 @@ export namespace Prisma {
 
   export type StudentWhereUniqueInput = {
     id?: string
-    userId?: string
+    studyIn?: StudentStudyInCompoundUniqueInput
   }
 
   export type StudentOrderByWithAggregationInput = {
     id?: SortOrder
-    userId?: SortOrder
+    nis?: SortOrder
+    nisn?: SortOrder
+    personalId?: SortOrder
     majorId?: SortOrder
     classRoomIds?: SortOrder
     startYearId?: SortOrder
@@ -23144,7 +24524,9 @@ export namespace Prisma {
     OR?: Enumerable<StudentScalarWhereWithAggregatesInput>
     NOT?: Enumerable<StudentScalarWhereWithAggregatesInput>
     id?: StringWithAggregatesFilter | string
-    userId?: StringNullableWithAggregatesFilter | string | null
+    nis?: StringWithAggregatesFilter | string
+    nisn?: StringWithAggregatesFilter | string
+    personalId?: StringWithAggregatesFilter | string
     majorId?: StringNullableWithAggregatesFilter | string | null
     classRoomIds?: StringNullableListFilter
     startYearId?: StringWithAggregatesFilter | string
@@ -23157,33 +24539,19 @@ export namespace Prisma {
     OR?: Enumerable<TeacherWhereInput>
     NOT?: Enumerable<TeacherWhereInput>
     id?: StringFilter | string
-    userId?: StringNullableFilter | string | null
+    personalId?: StringFilter | string
     instansiId?: StringFilter | string
     eventIds?: StringNullableListFilter
     nip?: StringNullableFilter | string | null
     nrg?: StringNullableFilter | string | null
     noKarpeg?: StringNullableFilter | string | null
-    tmtTugas?: StringNullableFilter | string | null
-    tmtGol?: StringNullableFilter | string | null
+    tmtTugas?: DateTimeNullableFilter | Date | string | null
+    tmtGol?: DateTimeNullableFilter | Date | string | null
     position?: StringNullableFilter | string | null
     rank?: StringNullableFilter | string | null
     period?: StringNullableFilter | string | null
     certificate?: StringNullableFilter | string | null
-    education?: XOR<EducationCompositeListFilter, Enumerable<EducationObjectEqualityInput>>
-    training?: XOR<TrainingCompositeListFilter, Enumerable<TrainingObjectEqualityInput>>
-    employment?: XOR<EmploymentCompositeListFilter, Enumerable<EmploymentObjectEqualityInput>>
-    profession?: XOR<ProfessionCompositeListFilter, Enumerable<ProfessionObjectEqualityInput>>
-    overseas?: XOR<OverseasCompositeListFilter, Enumerable<OverseasObjectEqualityInput>>
-    scientific?: XOR<ScientificCompositeListFilter, Enumerable<ScientificObjectEqualityInput>>
-    organization?: XOR<OrganizationCompositeListFilter, Enumerable<OrganizationObjectEqualityInput>>
-    papers?: XOR<PapersCompositeListFilter, Enumerable<PapersObjectEqualityInput>>
-    innovation?: XOR<InnovationCompositeListFilter, Enumerable<InnovationObjectEqualityInput>>
-    award?: XOR<AwardCompositeListFilter, Enumerable<AwardObjectEqualityInput>>
-    sourcePerson?: XOR<SourcePersonCompositeListFilter, Enumerable<SourcePersonObjectEqualityInput>>
-    contest?: XOR<ContestCompositeListFilter, Enumerable<ContestObjectEqualityInput>>
-    documents?: XOR<DocumentsCompositeListFilter, Enumerable<DocumentsObjectEqualityInput>>
-    additional?: XOR<AdditionalCompositeListFilter, Enumerable<AdditionalObjectEqualityInput>>
-    user?: XOR<UserRelationFilter, UserWhereInput> | null
+    personal?: XOR<PersonalRelationFilter, PersonalWhereInput>
     classRoom?: ClassRoomListRelationFilter
     instansi?: XOR<InstansiRelationFilter, InstansiWhereInput>
     event?: CalendarListRelationFilter
@@ -23191,7 +24559,7 @@ export namespace Prisma {
 
   export type TeacherOrderByWithRelationInput = {
     id?: SortOrder
-    userId?: SortOrder
+    personalId?: SortOrder
     instansiId?: SortOrder
     eventIds?: SortOrder
     nip?: SortOrder
@@ -23203,21 +24571,7 @@ export namespace Prisma {
     rank?: SortOrder
     period?: SortOrder
     certificate?: SortOrder
-    education?: EducationOrderByCompositeAggregateInput
-    training?: TrainingOrderByCompositeAggregateInput
-    employment?: EmploymentOrderByCompositeAggregateInput
-    profession?: ProfessionOrderByCompositeAggregateInput
-    overseas?: OverseasOrderByCompositeAggregateInput
-    scientific?: ScientificOrderByCompositeAggregateInput
-    organization?: OrganizationOrderByCompositeAggregateInput
-    papers?: PapersOrderByCompositeAggregateInput
-    innovation?: InnovationOrderByCompositeAggregateInput
-    award?: AwardOrderByCompositeAggregateInput
-    sourcePerson?: SourcePersonOrderByCompositeAggregateInput
-    contest?: ContestOrderByCompositeAggregateInput
-    documents?: DocumentsOrderByCompositeAggregateInput
-    additional?: AdditionalOrderByCompositeAggregateInput
-    user?: UserOrderByWithRelationInput
+    personal?: PersonalOrderByWithRelationInput
     classRoom?: ClassRoomOrderByRelationAggregateInput
     instansi?: InstansiOrderByWithRelationInput
     event?: CalendarOrderByRelationAggregateInput
@@ -23225,12 +24579,12 @@ export namespace Prisma {
 
   export type TeacherWhereUniqueInput = {
     id?: string
-    userId?: string
+    teachIn?: TeacherTeachInCompoundUniqueInput
   }
 
   export type TeacherOrderByWithAggregationInput = {
     id?: SortOrder
-    userId?: SortOrder
+    personalId?: SortOrder
     instansiId?: SortOrder
     eventIds?: SortOrder
     nip?: SortOrder
@@ -23252,14 +24606,14 @@ export namespace Prisma {
     OR?: Enumerable<TeacherScalarWhereWithAggregatesInput>
     NOT?: Enumerable<TeacherScalarWhereWithAggregatesInput>
     id?: StringWithAggregatesFilter | string
-    userId?: StringNullableWithAggregatesFilter | string | null
+    personalId?: StringWithAggregatesFilter | string
     instansiId?: StringWithAggregatesFilter | string
     eventIds?: StringNullableListFilter
     nip?: StringNullableWithAggregatesFilter | string | null
     nrg?: StringNullableWithAggregatesFilter | string | null
     noKarpeg?: StringNullableWithAggregatesFilter | string | null
-    tmtTugas?: StringNullableWithAggregatesFilter | string | null
-    tmtGol?: StringNullableWithAggregatesFilter | string | null
+    tmtTugas?: DateTimeNullableWithAggregatesFilter | Date | string | null
+    tmtGol?: DateTimeNullableWithAggregatesFilter | Date | string | null
     position?: StringNullableWithAggregatesFilter | string | null
     rank?: StringNullableWithAggregatesFilter | string | null
     period?: StringNullableWithAggregatesFilter | string | null
@@ -23274,10 +24628,13 @@ export namespace Prisma {
     name?: StringFilter | string
     yearId?: StringFilter | string
     waliId?: StringFilter | string
+    level?: IntFilter | number
+    majorId?: StringNullableFilter | string | null
     studentIds?: StringNullableListFilter
     eventIds?: StringNullableListFilter
     year?: XOR<SchoolYearRelationFilter, SchoolYearWhereInput>
     wali?: XOR<TeacherRelationFilter, TeacherWhereInput>
+    major?: XOR<KonsentrasiKeahlianRelationFilter, KonsentrasiKeahlianWhereInput> | null
     students?: StudentListRelationFilter
     event?: CalendarListRelationFilter
   }
@@ -23287,17 +24644,20 @@ export namespace Prisma {
     name?: SortOrder
     yearId?: SortOrder
     waliId?: SortOrder
+    level?: SortOrder
+    majorId?: SortOrder
     studentIds?: SortOrder
     eventIds?: SortOrder
     year?: SchoolYearOrderByWithRelationInput
     wali?: TeacherOrderByWithRelationInput
+    major?: KonsentrasiKeahlianOrderByWithRelationInput
     students?: StudentOrderByRelationAggregateInput
     event?: CalendarOrderByRelationAggregateInput
   }
 
   export type ClassRoomWhereUniqueInput = {
     id?: string
-    yearId_name?: ClassRoomYearIdNameCompoundUniqueInput
+    nameClassRoom?: ClassRoomNameClassRoomCompoundUniqueInput
   }
 
   export type ClassRoomOrderByWithAggregationInput = {
@@ -23305,11 +24665,15 @@ export namespace Prisma {
     name?: SortOrder
     yearId?: SortOrder
     waliId?: SortOrder
+    level?: SortOrder
+    majorId?: SortOrder
     studentIds?: SortOrder
     eventIds?: SortOrder
     _count?: ClassRoomCountOrderByAggregateInput
+    _avg?: ClassRoomAvgOrderByAggregateInput
     _max?: ClassRoomMaxOrderByAggregateInput
     _min?: ClassRoomMinOrderByAggregateInput
+    _sum?: ClassRoomSumOrderByAggregateInput
   }
 
   export type ClassRoomScalarWhereWithAggregatesInput = {
@@ -23320,6 +24684,8 @@ export namespace Prisma {
     name?: StringWithAggregatesFilter | string
     yearId?: StringWithAggregatesFilter | string
     waliId?: StringWithAggregatesFilter | string
+    level?: IntWithAggregatesFilter | number
+    majorId?: StringNullableWithAggregatesFilter | string | null
     studentIds?: StringNullableListFilter
     eventIds?: StringNullableListFilter
   }
@@ -23334,7 +24700,7 @@ export namespace Prisma {
     organizational?: XOR<OrganizationalCompositeFilter, OrganizationalObjectEqualityInput>
     instansi?: XOR<InstansiRelationFilter, InstansiWhereInput>
     classRoom?: ClassRoomListRelationFilter
-    studentsIn?: StudentListRelationFilter
+    students?: StudentListRelationFilter
     calendar?: CalendarListRelationFilter
   }
 
@@ -23345,13 +24711,13 @@ export namespace Prisma {
     organizational?: OrganizationalOrderByInput
     instansi?: InstansiOrderByWithRelationInput
     classRoom?: ClassRoomOrderByRelationAggregateInput
-    studentsIn?: StudentOrderByRelationAggregateInput
+    students?: StudentOrderByRelationAggregateInput
     calendar?: CalendarOrderByRelationAggregateInput
   }
 
   export type SchoolYearWhereUniqueInput = {
     id?: string
-    instansiId_year?: SchoolYearInstansiIdYearCompoundUniqueInput
+    eSchoolYear?: SchoolYearESchoolYearCompoundUniqueInput
   }
 
   export type SchoolYearOrderByWithAggregationInput = {
@@ -23575,6 +24941,7 @@ export namespace Prisma {
     program: ProgramKeahlianCreateNestedOneWithoutKonsentrasiInput
     student?: StudentCreateNestedManyWithoutMajorInput
     instansi?: InstansiCreateNestedManyWithoutMajorsInput
+    ClassRoom?: ClassRoomCreateNestedManyWithoutMajorInput
   }
 
   export type KonsentrasiKeahlianUncheckedCreateInput = {
@@ -23588,6 +24955,7 @@ export namespace Prisma {
     instansiIds?: KonsentrasiKeahlianCreateinstansiIdsInput | Enumerable<string>
     student?: StudentUncheckedCreateNestedManyWithoutMajorInput
     instansi?: InstansiUncheckedCreateNestedManyWithoutMajorsInput
+    ClassRoom?: ClassRoomUncheckedCreateNestedManyWithoutMajorInput
   }
 
   export type KonsentrasiKeahlianUpdateInput = {
@@ -23599,6 +24967,7 @@ export namespace Prisma {
     program?: ProgramKeahlianUpdateOneRequiredWithoutKonsentrasiNestedInput
     student?: StudentUpdateManyWithoutMajorNestedInput
     instansi?: InstansiUpdateManyWithoutMajorsNestedInput
+    ClassRoom?: ClassRoomUpdateManyWithoutMajorNestedInput
   }
 
   export type KonsentrasiKeahlianUncheckedUpdateInput = {
@@ -23611,6 +24980,7 @@ export namespace Prisma {
     instansiIds?: KonsentrasiKeahlianUpdateinstansiIdsInput | Enumerable<string>
     student?: StudentUncheckedUpdateManyWithoutMajorNestedInput
     instansi?: InstansiUncheckedUpdateManyWithoutMajorsNestedInput
+    ClassRoom?: ClassRoomUncheckedUpdateManyWithoutMajorNestedInput
   }
 
   export type KonsentrasiKeahlianCreateManyInput = {
@@ -23644,6 +25014,7 @@ export namespace Prisma {
 
   export type AchievementCreateInput = {
     id?: string
+    no: number
     fase?: Fase
     description: string
     createdAt?: Date | string
@@ -23653,6 +25024,7 @@ export namespace Prisma {
 
   export type AchievementUncheckedCreateInput = {
     id?: string
+    no: number
     fase?: Fase
     description: string
     elementId: string
@@ -23661,6 +25033,7 @@ export namespace Prisma {
   }
 
   export type AchievementUpdateInput = {
+    no?: IntFieldUpdateOperationsInput | number
     fase?: EnumFaseFieldUpdateOperationsInput | Fase
     description?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -23669,6 +25042,7 @@ export namespace Prisma {
   }
 
   export type AchievementUncheckedUpdateInput = {
+    no?: IntFieldUpdateOperationsInput | number
     fase?: EnumFaseFieldUpdateOperationsInput | Fase
     description?: StringFieldUpdateOperationsInput | string
     elementId?: StringFieldUpdateOperationsInput | string
@@ -23678,6 +25052,7 @@ export namespace Prisma {
 
   export type AchievementCreateManyInput = {
     id?: string
+    no: number
     fase?: Fase
     description: string
     elementId: string
@@ -23686,6 +25061,7 @@ export namespace Prisma {
   }
 
   export type AchievementUpdateManyMutationInput = {
+    no?: IntFieldUpdateOperationsInput | number
     fase?: EnumFaseFieldUpdateOperationsInput | Fase
     description?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -23693,6 +25069,7 @@ export namespace Prisma {
   }
 
   export type AchievementUncheckedUpdateManyInput = {
+    no?: IntFieldUpdateOperationsInput | number
     fase?: EnumFaseFieldUpdateOperationsInput | Fase
     description?: StringFieldUpdateOperationsInput | string
     elementId?: StringFieldUpdateOperationsInput | string
@@ -23702,6 +25079,7 @@ export namespace Prisma {
 
   export type ElementCreateInput = {
     id?: string
+    no: number
     name: string
     description: string
     createdAt?: Date | string
@@ -23712,6 +25090,7 @@ export namespace Prisma {
 
   export type ElementUncheckedCreateInput = {
     id?: string
+    no: number
     name: string
     description: string
     mapelId: string
@@ -23721,6 +25100,7 @@ export namespace Prisma {
   }
 
   export type ElementUpdateInput = {
+    no?: IntFieldUpdateOperationsInput | number
     name?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -23730,6 +25110,7 @@ export namespace Prisma {
   }
 
   export type ElementUncheckedUpdateInput = {
+    no?: IntFieldUpdateOperationsInput | number
     name?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     mapelId?: StringFieldUpdateOperationsInput | string
@@ -23740,6 +25121,7 @@ export namespace Prisma {
 
   export type ElementCreateManyInput = {
     id?: string
+    no: number
     name: string
     description: string
     mapelId: string
@@ -23748,6 +25130,7 @@ export namespace Prisma {
   }
 
   export type ElementUpdateManyMutationInput = {
+    no?: IntFieldUpdateOperationsInput | number
     name?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -23755,6 +25138,7 @@ export namespace Prisma {
   }
 
   export type ElementUncheckedUpdateManyInput = {
+    no?: IntFieldUpdateOperationsInput | number
     name?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     mapelId?: StringFieldUpdateOperationsInput | string
@@ -24010,9 +25394,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     role?: RoleCreateNestedOneWithoutUsersInput
-    personal?: PersonalCreateNestedOneWithoutUserInput
-    student?: StudentCreateNestedOneWithoutUserInput
-    teacher?: TeacherCreateNestedOneWithoutUserInput
+    auth?: AuthCreateNestedOneWithoutUserInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -24027,9 +25409,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     roleId?: string | null
-    personal?: PersonalUncheckedCreateNestedOneWithoutUserInput
-    student?: StudentUncheckedCreateNestedOneWithoutUserInput
-    teacher?: TeacherUncheckedCreateNestedOneWithoutUserInput
+    auth?: AuthUncheckedCreateNestedOneWithoutUserInput
   }
 
   export type UserUpdateInput = {
@@ -24043,9 +25423,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     role?: RoleUpdateOneWithoutUsersNestedInput
-    personal?: PersonalUpdateOneWithoutUserNestedInput
-    student?: StudentUpdateOneWithoutUserNestedInput
-    teacher?: TeacherUpdateOneWithoutUserNestedInput
+    auth?: AuthUpdateOneWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -24059,9 +25437,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     roleId?: NullableStringFieldUpdateOperationsInput | string | null
-    personal?: PersonalUncheckedUpdateOneWithoutUserNestedInput
-    student?: StudentUncheckedUpdateOneWithoutUserNestedInput
-    teacher?: TeacherUncheckedUpdateOneWithoutUserNestedInput
+    auth?: AuthUncheckedUpdateOneWithoutUserNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -24119,11 +25495,28 @@ export namespace Prisma {
     nophone: string
     isLife?: boolean | null
     address?: XOR<AddressNullableCreateEnvelopeInput, AddressCreateInput> | null
-    user?: UserCreateNestedOneWithoutPersonalInput
+    education?: XOR<EducationListCreateEnvelopeInput, Enumerable<EducationCreateInput>>
+    training?: XOR<TrainingListCreateEnvelopeInput, Enumerable<TrainingCreateInput>>
+    employment?: XOR<EmploymentListCreateEnvelopeInput, Enumerable<EmploymentCreateInput>>
+    profession?: XOR<ProfessionListCreateEnvelopeInput, Enumerable<ProfessionCreateInput>>
+    overseas?: XOR<OverseasListCreateEnvelopeInput, Enumerable<OverseasCreateInput>>
+    scientific?: XOR<ScientificListCreateEnvelopeInput, Enumerable<ScientificCreateInput>>
+    organization?: XOR<OrganizationListCreateEnvelopeInput, Enumerable<OrganizationCreateInput>>
+    papers?: XOR<PapersListCreateEnvelopeInput, Enumerable<PapersCreateInput>>
+    innovation?: XOR<InnovationListCreateEnvelopeInput, Enumerable<InnovationCreateInput>>
+    award?: XOR<AwardListCreateEnvelopeInput, Enumerable<AwardCreateInput>>
+    sourcePerson?: XOR<SourcePersonListCreateEnvelopeInput, Enumerable<SourcePersonCreateInput>>
+    contest?: XOR<ContestListCreateEnvelopeInput, Enumerable<ContestCreateInput>>
+    documents?: XOR<DocumentsListCreateEnvelopeInput, Enumerable<DocumentsCreateInput>>
+    additional?: XOR<AdditionalListCreateEnvelopeInput, Enumerable<AdditionalCreateInput>>
+    auth?: AuthCreateNestedOneWithoutPersonalInput
     father?: FamilyTreeCreateNestedManyWithoutFatherInput
     mother?: FamilyTreeCreateNestedManyWithoutMotherInput
     wali?: FamilyTreeCreateNestedManyWithoutWaliInput
+    couple?: FamilyTreeCreateNestedManyWithoutCoupleInput
     child?: FamilyTreeChildCreateNestedOneWithoutPersonalInput
+    student?: StudentCreateNestedManyWithoutPersonalInput
+    teacher?: TeacherCreateNestedManyWithoutPersonalInput
   }
 
   export type PersonalUncheckedCreateInput = {
@@ -24131,7 +25524,6 @@ export namespace Prisma {
     nik?: string | null
     nisn?: string | null
     type: TypePersonal
-    userId?: string | null
     fullname: string
     gender: Gender
     foreign: boolean
@@ -24143,10 +25535,28 @@ export namespace Prisma {
     nophone: string
     isLife?: boolean | null
     address?: XOR<AddressNullableCreateEnvelopeInput, AddressCreateInput> | null
+    education?: XOR<EducationListCreateEnvelopeInput, Enumerable<EducationCreateInput>>
+    training?: XOR<TrainingListCreateEnvelopeInput, Enumerable<TrainingCreateInput>>
+    employment?: XOR<EmploymentListCreateEnvelopeInput, Enumerable<EmploymentCreateInput>>
+    profession?: XOR<ProfessionListCreateEnvelopeInput, Enumerable<ProfessionCreateInput>>
+    overseas?: XOR<OverseasListCreateEnvelopeInput, Enumerable<OverseasCreateInput>>
+    scientific?: XOR<ScientificListCreateEnvelopeInput, Enumerable<ScientificCreateInput>>
+    organization?: XOR<OrganizationListCreateEnvelopeInput, Enumerable<OrganizationCreateInput>>
+    papers?: XOR<PapersListCreateEnvelopeInput, Enumerable<PapersCreateInput>>
+    innovation?: XOR<InnovationListCreateEnvelopeInput, Enumerable<InnovationCreateInput>>
+    award?: XOR<AwardListCreateEnvelopeInput, Enumerable<AwardCreateInput>>
+    sourcePerson?: XOR<SourcePersonListCreateEnvelopeInput, Enumerable<SourcePersonCreateInput>>
+    contest?: XOR<ContestListCreateEnvelopeInput, Enumerable<ContestCreateInput>>
+    documents?: XOR<DocumentsListCreateEnvelopeInput, Enumerable<DocumentsCreateInput>>
+    additional?: XOR<AdditionalListCreateEnvelopeInput, Enumerable<AdditionalCreateInput>>
+    auth?: AuthUncheckedCreateNestedOneWithoutPersonalInput
     father?: FamilyTreeUncheckedCreateNestedManyWithoutFatherInput
     mother?: FamilyTreeUncheckedCreateNestedManyWithoutMotherInput
     wali?: FamilyTreeUncheckedCreateNestedManyWithoutWaliInput
+    couple?: FamilyTreeUncheckedCreateNestedManyWithoutCoupleInput
     child?: FamilyTreeChildUncheckedCreateNestedOneWithoutPersonalInput
+    student?: StudentUncheckedCreateNestedManyWithoutPersonalInput
+    teacher?: TeacherUncheckedCreateNestedManyWithoutPersonalInput
   }
 
   export type PersonalUpdateInput = {
@@ -24164,18 +25574,34 @@ export namespace Prisma {
     nophone?: StringFieldUpdateOperationsInput | string
     isLife?: NullableBoolFieldUpdateOperationsInput | boolean | null
     address?: XOR<AddressNullableUpdateEnvelopeInput, AddressCreateInput> | null
-    user?: UserUpdateOneWithoutPersonalNestedInput
+    education?: XOR<EducationListUpdateEnvelopeInput, Enumerable<EducationCreateInput>>
+    training?: XOR<TrainingListUpdateEnvelopeInput, Enumerable<TrainingCreateInput>>
+    employment?: XOR<EmploymentListUpdateEnvelopeInput, Enumerable<EmploymentCreateInput>>
+    profession?: XOR<ProfessionListUpdateEnvelopeInput, Enumerable<ProfessionCreateInput>>
+    overseas?: XOR<OverseasListUpdateEnvelopeInput, Enumerable<OverseasCreateInput>>
+    scientific?: XOR<ScientificListUpdateEnvelopeInput, Enumerable<ScientificCreateInput>>
+    organization?: XOR<OrganizationListUpdateEnvelopeInput, Enumerable<OrganizationCreateInput>>
+    papers?: XOR<PapersListUpdateEnvelopeInput, Enumerable<PapersCreateInput>>
+    innovation?: XOR<InnovationListUpdateEnvelopeInput, Enumerable<InnovationCreateInput>>
+    award?: XOR<AwardListUpdateEnvelopeInput, Enumerable<AwardCreateInput>>
+    sourcePerson?: XOR<SourcePersonListUpdateEnvelopeInput, Enumerable<SourcePersonCreateInput>>
+    contest?: XOR<ContestListUpdateEnvelopeInput, Enumerable<ContestCreateInput>>
+    documents?: XOR<DocumentsListUpdateEnvelopeInput, Enumerable<DocumentsCreateInput>>
+    additional?: XOR<AdditionalListUpdateEnvelopeInput, Enumerable<AdditionalCreateInput>>
+    auth?: AuthUpdateOneWithoutPersonalNestedInput
     father?: FamilyTreeUpdateManyWithoutFatherNestedInput
     mother?: FamilyTreeUpdateManyWithoutMotherNestedInput
     wali?: FamilyTreeUpdateManyWithoutWaliNestedInput
+    couple?: FamilyTreeUpdateManyWithoutCoupleNestedInput
     child?: FamilyTreeChildUpdateOneWithoutPersonalNestedInput
+    student?: StudentUpdateManyWithoutPersonalNestedInput
+    teacher?: TeacherUpdateManyWithoutPersonalNestedInput
   }
 
   export type PersonalUncheckedUpdateInput = {
     nik?: NullableStringFieldUpdateOperationsInput | string | null
     nisn?: NullableStringFieldUpdateOperationsInput | string | null
     type?: EnumTypePersonalFieldUpdateOperationsInput | TypePersonal
-    userId?: NullableStringFieldUpdateOperationsInput | string | null
     fullname?: StringFieldUpdateOperationsInput | string
     gender?: EnumGenderFieldUpdateOperationsInput | Gender
     foreign?: BoolFieldUpdateOperationsInput | boolean
@@ -24187,10 +25613,28 @@ export namespace Prisma {
     nophone?: StringFieldUpdateOperationsInput | string
     isLife?: NullableBoolFieldUpdateOperationsInput | boolean | null
     address?: XOR<AddressNullableUpdateEnvelopeInput, AddressCreateInput> | null
+    education?: XOR<EducationListUpdateEnvelopeInput, Enumerable<EducationCreateInput>>
+    training?: XOR<TrainingListUpdateEnvelopeInput, Enumerable<TrainingCreateInput>>
+    employment?: XOR<EmploymentListUpdateEnvelopeInput, Enumerable<EmploymentCreateInput>>
+    profession?: XOR<ProfessionListUpdateEnvelopeInput, Enumerable<ProfessionCreateInput>>
+    overseas?: XOR<OverseasListUpdateEnvelopeInput, Enumerable<OverseasCreateInput>>
+    scientific?: XOR<ScientificListUpdateEnvelopeInput, Enumerable<ScientificCreateInput>>
+    organization?: XOR<OrganizationListUpdateEnvelopeInput, Enumerable<OrganizationCreateInput>>
+    papers?: XOR<PapersListUpdateEnvelopeInput, Enumerable<PapersCreateInput>>
+    innovation?: XOR<InnovationListUpdateEnvelopeInput, Enumerable<InnovationCreateInput>>
+    award?: XOR<AwardListUpdateEnvelopeInput, Enumerable<AwardCreateInput>>
+    sourcePerson?: XOR<SourcePersonListUpdateEnvelopeInput, Enumerable<SourcePersonCreateInput>>
+    contest?: XOR<ContestListUpdateEnvelopeInput, Enumerable<ContestCreateInput>>
+    documents?: XOR<DocumentsListUpdateEnvelopeInput, Enumerable<DocumentsCreateInput>>
+    additional?: XOR<AdditionalListUpdateEnvelopeInput, Enumerable<AdditionalCreateInput>>
+    auth?: AuthUncheckedUpdateOneWithoutPersonalNestedInput
     father?: FamilyTreeUncheckedUpdateManyWithoutFatherNestedInput
     mother?: FamilyTreeUncheckedUpdateManyWithoutMotherNestedInput
     wali?: FamilyTreeUncheckedUpdateManyWithoutWaliNestedInput
+    couple?: FamilyTreeUncheckedUpdateManyWithoutCoupleNestedInput
     child?: FamilyTreeChildUncheckedUpdateOneWithoutPersonalNestedInput
+    student?: StudentUncheckedUpdateManyWithoutPersonalNestedInput
+    teacher?: TeacherUncheckedUpdateManyWithoutPersonalNestedInput
   }
 
   export type PersonalCreateManyInput = {
@@ -24198,7 +25642,6 @@ export namespace Prisma {
     nik?: string | null
     nisn?: string | null
     type: TypePersonal
-    userId?: string | null
     fullname: string
     gender: Gender
     foreign: boolean
@@ -24210,6 +25653,20 @@ export namespace Prisma {
     nophone: string
     isLife?: boolean | null
     address?: XOR<AddressNullableCreateEnvelopeInput, AddressCreateInput> | null
+    education?: XOR<EducationListCreateEnvelopeInput, Enumerable<EducationCreateInput>>
+    training?: XOR<TrainingListCreateEnvelopeInput, Enumerable<TrainingCreateInput>>
+    employment?: XOR<EmploymentListCreateEnvelopeInput, Enumerable<EmploymentCreateInput>>
+    profession?: XOR<ProfessionListCreateEnvelopeInput, Enumerable<ProfessionCreateInput>>
+    overseas?: XOR<OverseasListCreateEnvelopeInput, Enumerable<OverseasCreateInput>>
+    scientific?: XOR<ScientificListCreateEnvelopeInput, Enumerable<ScientificCreateInput>>
+    organization?: XOR<OrganizationListCreateEnvelopeInput, Enumerable<OrganizationCreateInput>>
+    papers?: XOR<PapersListCreateEnvelopeInput, Enumerable<PapersCreateInput>>
+    innovation?: XOR<InnovationListCreateEnvelopeInput, Enumerable<InnovationCreateInput>>
+    award?: XOR<AwardListCreateEnvelopeInput, Enumerable<AwardCreateInput>>
+    sourcePerson?: XOR<SourcePersonListCreateEnvelopeInput, Enumerable<SourcePersonCreateInput>>
+    contest?: XOR<ContestListCreateEnvelopeInput, Enumerable<ContestCreateInput>>
+    documents?: XOR<DocumentsListCreateEnvelopeInput, Enumerable<DocumentsCreateInput>>
+    additional?: XOR<AdditionalListCreateEnvelopeInput, Enumerable<AdditionalCreateInput>>
   }
 
   export type PersonalUpdateManyMutationInput = {
@@ -24227,13 +25684,26 @@ export namespace Prisma {
     nophone?: StringFieldUpdateOperationsInput | string
     isLife?: NullableBoolFieldUpdateOperationsInput | boolean | null
     address?: XOR<AddressNullableUpdateEnvelopeInput, AddressCreateInput> | null
+    education?: XOR<EducationListUpdateEnvelopeInput, Enumerable<EducationCreateInput>>
+    training?: XOR<TrainingListUpdateEnvelopeInput, Enumerable<TrainingCreateInput>>
+    employment?: XOR<EmploymentListUpdateEnvelopeInput, Enumerable<EmploymentCreateInput>>
+    profession?: XOR<ProfessionListUpdateEnvelopeInput, Enumerable<ProfessionCreateInput>>
+    overseas?: XOR<OverseasListUpdateEnvelopeInput, Enumerable<OverseasCreateInput>>
+    scientific?: XOR<ScientificListUpdateEnvelopeInput, Enumerable<ScientificCreateInput>>
+    organization?: XOR<OrganizationListUpdateEnvelopeInput, Enumerable<OrganizationCreateInput>>
+    papers?: XOR<PapersListUpdateEnvelopeInput, Enumerable<PapersCreateInput>>
+    innovation?: XOR<InnovationListUpdateEnvelopeInput, Enumerable<InnovationCreateInput>>
+    award?: XOR<AwardListUpdateEnvelopeInput, Enumerable<AwardCreateInput>>
+    sourcePerson?: XOR<SourcePersonListUpdateEnvelopeInput, Enumerable<SourcePersonCreateInput>>
+    contest?: XOR<ContestListUpdateEnvelopeInput, Enumerable<ContestCreateInput>>
+    documents?: XOR<DocumentsListUpdateEnvelopeInput, Enumerable<DocumentsCreateInput>>
+    additional?: XOR<AdditionalListUpdateEnvelopeInput, Enumerable<AdditionalCreateInput>>
   }
 
   export type PersonalUncheckedUpdateManyInput = {
     nik?: NullableStringFieldUpdateOperationsInput | string | null
     nisn?: NullableStringFieldUpdateOperationsInput | string | null
     type?: EnumTypePersonalFieldUpdateOperationsInput | TypePersonal
-    userId?: NullableStringFieldUpdateOperationsInput | string | null
     fullname?: StringFieldUpdateOperationsInput | string
     gender?: EnumGenderFieldUpdateOperationsInput | Gender
     foreign?: BoolFieldUpdateOperationsInput | boolean
@@ -24245,6 +25715,57 @@ export namespace Prisma {
     nophone?: StringFieldUpdateOperationsInput | string
     isLife?: NullableBoolFieldUpdateOperationsInput | boolean | null
     address?: XOR<AddressNullableUpdateEnvelopeInput, AddressCreateInput> | null
+    education?: XOR<EducationListUpdateEnvelopeInput, Enumerable<EducationCreateInput>>
+    training?: XOR<TrainingListUpdateEnvelopeInput, Enumerable<TrainingCreateInput>>
+    employment?: XOR<EmploymentListUpdateEnvelopeInput, Enumerable<EmploymentCreateInput>>
+    profession?: XOR<ProfessionListUpdateEnvelopeInput, Enumerable<ProfessionCreateInput>>
+    overseas?: XOR<OverseasListUpdateEnvelopeInput, Enumerable<OverseasCreateInput>>
+    scientific?: XOR<ScientificListUpdateEnvelopeInput, Enumerable<ScientificCreateInput>>
+    organization?: XOR<OrganizationListUpdateEnvelopeInput, Enumerable<OrganizationCreateInput>>
+    papers?: XOR<PapersListUpdateEnvelopeInput, Enumerable<PapersCreateInput>>
+    innovation?: XOR<InnovationListUpdateEnvelopeInput, Enumerable<InnovationCreateInput>>
+    award?: XOR<AwardListUpdateEnvelopeInput, Enumerable<AwardCreateInput>>
+    sourcePerson?: XOR<SourcePersonListUpdateEnvelopeInput, Enumerable<SourcePersonCreateInput>>
+    contest?: XOR<ContestListUpdateEnvelopeInput, Enumerable<ContestCreateInput>>
+    documents?: XOR<DocumentsListUpdateEnvelopeInput, Enumerable<DocumentsCreateInput>>
+    additional?: XOR<AdditionalListUpdateEnvelopeInput, Enumerable<AdditionalCreateInput>>
+  }
+
+  export type AuthCreateInput = {
+    id?: string
+    user: UserCreateNestedOneWithoutAuthInput
+    personal: PersonalCreateNestedOneWithoutAuthInput
+  }
+
+  export type AuthUncheckedCreateInput = {
+    id?: string
+    userId: string
+    personalId: string
+  }
+
+  export type AuthUpdateInput = {
+    user?: UserUpdateOneRequiredWithoutAuthNestedInput
+    personal?: PersonalUpdateOneRequiredWithoutAuthNestedInput
+  }
+
+  export type AuthUncheckedUpdateInput = {
+    userId?: StringFieldUpdateOperationsInput | string
+    personalId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type AuthCreateManyInput = {
+    id?: string
+    userId: string
+    personalId: string
+  }
+
+  export type AuthUpdateManyMutationInput = {
+
+  }
+
+  export type AuthUncheckedUpdateManyInput = {
+    userId?: StringFieldUpdateOperationsInput | string
+    personalId?: StringFieldUpdateOperationsInput | string
   }
 
   export type FamilyTreeCreateInput = {
@@ -24254,6 +25775,7 @@ export namespace Prisma {
     father?: PersonalCreateNestedOneWithoutFatherInput
     mother?: PersonalCreateNestedOneWithoutMotherInput
     wali?: PersonalCreateNestedOneWithoutWaliInput
+    couple?: PersonalCreateNestedOneWithoutCoupleInput
     childs?: FamilyTreeChildCreateNestedManyWithoutKkInput
   }
 
@@ -24263,6 +25785,7 @@ export namespace Prisma {
     fatherId?: string | null
     motherId?: string | null
     waliId?: string | null
+    coupleId?: string | null
     address: XOR<AddressCreateEnvelopeInput, AddressCreateInput>
     childs?: FamilyTreeChildUncheckedCreateNestedManyWithoutKkInput
   }
@@ -24273,6 +25796,7 @@ export namespace Prisma {
     father?: PersonalUpdateOneWithoutFatherNestedInput
     mother?: PersonalUpdateOneWithoutMotherNestedInput
     wali?: PersonalUpdateOneWithoutWaliNestedInput
+    couple?: PersonalUpdateOneWithoutCoupleNestedInput
     childs?: FamilyTreeChildUpdateManyWithoutKkNestedInput
   }
 
@@ -24281,6 +25805,7 @@ export namespace Prisma {
     fatherId?: NullableStringFieldUpdateOperationsInput | string | null
     motherId?: NullableStringFieldUpdateOperationsInput | string | null
     waliId?: NullableStringFieldUpdateOperationsInput | string | null
+    coupleId?: NullableStringFieldUpdateOperationsInput | string | null
     address?: XOR<AddressUpdateEnvelopeInput, AddressCreateInput>
     childs?: FamilyTreeChildUncheckedUpdateManyWithoutKkNestedInput
   }
@@ -24291,6 +25816,7 @@ export namespace Prisma {
     fatherId?: string | null
     motherId?: string | null
     waliId?: string | null
+    coupleId?: string | null
     address: XOR<AddressCreateEnvelopeInput, AddressCreateInput>
   }
 
@@ -24304,6 +25830,7 @@ export namespace Prisma {
     fatherId?: NullableStringFieldUpdateOperationsInput | string | null
     motherId?: NullableStringFieldUpdateOperationsInput | string | null
     waliId?: NullableStringFieldUpdateOperationsInput | string | null
+    coupleId?: NullableStringFieldUpdateOperationsInput | string | null
     address?: XOR<AddressUpdateEnvelopeInput, AddressCreateInput>
   }
 
@@ -24359,17 +25886,21 @@ export namespace Prisma {
 
   export type StudentCreateInput = {
     id?: string
-    user?: UserCreateNestedOneWithoutStudentInput
+    nis: string
+    nisn: string
+    personal: PersonalCreateNestedOneWithoutStudentInput
     major?: KonsentrasiKeahlianCreateNestedOneWithoutStudentInput
     classRoom?: ClassRoomCreateNestedManyWithoutStudentsInput
-    startYear: SchoolYearCreateNestedOneWithoutStudentsInInput
+    startYear: SchoolYearCreateNestedOneWithoutStudentsInput
     instansi: InstansiCreateNestedOneWithoutStudentInput
     event?: CalendarCreateNestedManyWithoutStudentInput
   }
 
   export type StudentUncheckedCreateInput = {
     id?: string
-    userId?: string | null
+    nis: string
+    nisn: string
+    personalId: string
     majorId?: string | null
     classRoomIds?: StudentCreateclassRoomIdsInput | Enumerable<string>
     startYearId: string
@@ -24380,16 +25911,20 @@ export namespace Prisma {
   }
 
   export type StudentUpdateInput = {
-    user?: UserUpdateOneWithoutStudentNestedInput
+    nis?: StringFieldUpdateOperationsInput | string
+    nisn?: StringFieldUpdateOperationsInput | string
+    personal?: PersonalUpdateOneRequiredWithoutStudentNestedInput
     major?: KonsentrasiKeahlianUpdateOneWithoutStudentNestedInput
     classRoom?: ClassRoomUpdateManyWithoutStudentsNestedInput
-    startYear?: SchoolYearUpdateOneRequiredWithoutStudentsInNestedInput
+    startYear?: SchoolYearUpdateOneRequiredWithoutStudentsNestedInput
     instansi?: InstansiUpdateOneRequiredWithoutStudentNestedInput
     event?: CalendarUpdateManyWithoutStudentNestedInput
   }
 
   export type StudentUncheckedUpdateInput = {
-    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    nis?: StringFieldUpdateOperationsInput | string
+    nisn?: StringFieldUpdateOperationsInput | string
+    personalId?: StringFieldUpdateOperationsInput | string
     majorId?: NullableStringFieldUpdateOperationsInput | string | null
     classRoomIds?: StudentUpdateclassRoomIdsInput | Enumerable<string>
     startYearId?: StringFieldUpdateOperationsInput | string
@@ -24401,7 +25936,9 @@ export namespace Prisma {
 
   export type StudentCreateManyInput = {
     id?: string
-    userId?: string | null
+    nis: string
+    nisn: string
+    personalId: string
     majorId?: string | null
     classRoomIds?: StudentCreateclassRoomIdsInput | Enumerable<string>
     startYearId: string
@@ -24410,11 +25947,14 @@ export namespace Prisma {
   }
 
   export type StudentUpdateManyMutationInput = {
-
+    nis?: StringFieldUpdateOperationsInput | string
+    nisn?: StringFieldUpdateOperationsInput | string
   }
 
   export type StudentUncheckedUpdateManyInput = {
-    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    nis?: StringFieldUpdateOperationsInput | string
+    nisn?: StringFieldUpdateOperationsInput | string
+    personalId?: StringFieldUpdateOperationsInput | string
     majorId?: NullableStringFieldUpdateOperationsInput | string | null
     classRoomIds?: StudentUpdateclassRoomIdsInput | Enumerable<string>
     startYearId?: StringFieldUpdateOperationsInput | string
@@ -24427,27 +25967,13 @@ export namespace Prisma {
     nip?: string | null
     nrg?: string | null
     noKarpeg?: string | null
-    tmtTugas?: string | null
-    tmtGol?: string | null
+    tmtTugas?: Date | string | null
+    tmtGol?: Date | string | null
     position?: string | null
     rank?: string | null
     period?: string | null
     certificate?: string | null
-    education?: XOR<EducationListCreateEnvelopeInput, Enumerable<EducationCreateInput>>
-    training?: XOR<TrainingListCreateEnvelopeInput, Enumerable<TrainingCreateInput>>
-    employment?: XOR<EmploymentListCreateEnvelopeInput, Enumerable<EmploymentCreateInput>>
-    profession?: XOR<ProfessionListCreateEnvelopeInput, Enumerable<ProfessionCreateInput>>
-    overseas?: XOR<OverseasListCreateEnvelopeInput, Enumerable<OverseasCreateInput>>
-    scientific?: XOR<ScientificListCreateEnvelopeInput, Enumerable<ScientificCreateInput>>
-    organization?: XOR<OrganizationListCreateEnvelopeInput, Enumerable<OrganizationCreateInput>>
-    papers?: XOR<PapersListCreateEnvelopeInput, Enumerable<PapersCreateInput>>
-    innovation?: XOR<InnovationListCreateEnvelopeInput, Enumerable<InnovationCreateInput>>
-    award?: XOR<AwardListCreateEnvelopeInput, Enumerable<AwardCreateInput>>
-    sourcePerson?: XOR<SourcePersonListCreateEnvelopeInput, Enumerable<SourcePersonCreateInput>>
-    contest?: XOR<ContestListCreateEnvelopeInput, Enumerable<ContestCreateInput>>
-    documents?: XOR<DocumentsListCreateEnvelopeInput, Enumerable<DocumentsCreateInput>>
-    additional?: XOR<AdditionalListCreateEnvelopeInput, Enumerable<AdditionalCreateInput>>
-    user?: UserCreateNestedOneWithoutTeacherInput
+    personal: PersonalCreateNestedOneWithoutTeacherInput
     classRoom?: ClassRoomCreateNestedManyWithoutWaliInput
     instansi: InstansiCreateNestedOneWithoutTeacherInput
     event?: CalendarCreateNestedManyWithoutTeacherInput
@@ -24455,32 +25981,18 @@ export namespace Prisma {
 
   export type TeacherUncheckedCreateInput = {
     id?: string
-    userId?: string | null
+    personalId: string
     instansiId: string
     eventIds?: TeacherCreateeventIdsInput | Enumerable<string>
     nip?: string | null
     nrg?: string | null
     noKarpeg?: string | null
-    tmtTugas?: string | null
-    tmtGol?: string | null
+    tmtTugas?: Date | string | null
+    tmtGol?: Date | string | null
     position?: string | null
     rank?: string | null
     period?: string | null
     certificate?: string | null
-    education?: XOR<EducationListCreateEnvelopeInput, Enumerable<EducationCreateInput>>
-    training?: XOR<TrainingListCreateEnvelopeInput, Enumerable<TrainingCreateInput>>
-    employment?: XOR<EmploymentListCreateEnvelopeInput, Enumerable<EmploymentCreateInput>>
-    profession?: XOR<ProfessionListCreateEnvelopeInput, Enumerable<ProfessionCreateInput>>
-    overseas?: XOR<OverseasListCreateEnvelopeInput, Enumerable<OverseasCreateInput>>
-    scientific?: XOR<ScientificListCreateEnvelopeInput, Enumerable<ScientificCreateInput>>
-    organization?: XOR<OrganizationListCreateEnvelopeInput, Enumerable<OrganizationCreateInput>>
-    papers?: XOR<PapersListCreateEnvelopeInput, Enumerable<PapersCreateInput>>
-    innovation?: XOR<InnovationListCreateEnvelopeInput, Enumerable<InnovationCreateInput>>
-    award?: XOR<AwardListCreateEnvelopeInput, Enumerable<AwardCreateInput>>
-    sourcePerson?: XOR<SourcePersonListCreateEnvelopeInput, Enumerable<SourcePersonCreateInput>>
-    contest?: XOR<ContestListCreateEnvelopeInput, Enumerable<ContestCreateInput>>
-    documents?: XOR<DocumentsListCreateEnvelopeInput, Enumerable<DocumentsCreateInput>>
-    additional?: XOR<AdditionalListCreateEnvelopeInput, Enumerable<AdditionalCreateInput>>
     classRoom?: ClassRoomUncheckedCreateNestedManyWithoutWaliInput
     event?: CalendarUncheckedCreateNestedManyWithoutTeacherInput
   }
@@ -24489,153 +26001,85 @@ export namespace Prisma {
     nip?: NullableStringFieldUpdateOperationsInput | string | null
     nrg?: NullableStringFieldUpdateOperationsInput | string | null
     noKarpeg?: NullableStringFieldUpdateOperationsInput | string | null
-    tmtTugas?: NullableStringFieldUpdateOperationsInput | string | null
-    tmtGol?: NullableStringFieldUpdateOperationsInput | string | null
+    tmtTugas?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    tmtGol?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     position?: NullableStringFieldUpdateOperationsInput | string | null
     rank?: NullableStringFieldUpdateOperationsInput | string | null
     period?: NullableStringFieldUpdateOperationsInput | string | null
     certificate?: NullableStringFieldUpdateOperationsInput | string | null
-    education?: XOR<EducationListUpdateEnvelopeInput, Enumerable<EducationCreateInput>>
-    training?: XOR<TrainingListUpdateEnvelopeInput, Enumerable<TrainingCreateInput>>
-    employment?: XOR<EmploymentListUpdateEnvelopeInput, Enumerable<EmploymentCreateInput>>
-    profession?: XOR<ProfessionListUpdateEnvelopeInput, Enumerable<ProfessionCreateInput>>
-    overseas?: XOR<OverseasListUpdateEnvelopeInput, Enumerable<OverseasCreateInput>>
-    scientific?: XOR<ScientificListUpdateEnvelopeInput, Enumerable<ScientificCreateInput>>
-    organization?: XOR<OrganizationListUpdateEnvelopeInput, Enumerable<OrganizationCreateInput>>
-    papers?: XOR<PapersListUpdateEnvelopeInput, Enumerable<PapersCreateInput>>
-    innovation?: XOR<InnovationListUpdateEnvelopeInput, Enumerable<InnovationCreateInput>>
-    award?: XOR<AwardListUpdateEnvelopeInput, Enumerable<AwardCreateInput>>
-    sourcePerson?: XOR<SourcePersonListUpdateEnvelopeInput, Enumerable<SourcePersonCreateInput>>
-    contest?: XOR<ContestListUpdateEnvelopeInput, Enumerable<ContestCreateInput>>
-    documents?: XOR<DocumentsListUpdateEnvelopeInput, Enumerable<DocumentsCreateInput>>
-    additional?: XOR<AdditionalListUpdateEnvelopeInput, Enumerable<AdditionalCreateInput>>
-    user?: UserUpdateOneWithoutTeacherNestedInput
+    personal?: PersonalUpdateOneRequiredWithoutTeacherNestedInput
     classRoom?: ClassRoomUpdateManyWithoutWaliNestedInput
     instansi?: InstansiUpdateOneRequiredWithoutTeacherNestedInput
     event?: CalendarUpdateManyWithoutTeacherNestedInput
   }
 
   export type TeacherUncheckedUpdateInput = {
-    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    personalId?: StringFieldUpdateOperationsInput | string
     instansiId?: StringFieldUpdateOperationsInput | string
     eventIds?: TeacherUpdateeventIdsInput | Enumerable<string>
     nip?: NullableStringFieldUpdateOperationsInput | string | null
     nrg?: NullableStringFieldUpdateOperationsInput | string | null
     noKarpeg?: NullableStringFieldUpdateOperationsInput | string | null
-    tmtTugas?: NullableStringFieldUpdateOperationsInput | string | null
-    tmtGol?: NullableStringFieldUpdateOperationsInput | string | null
+    tmtTugas?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    tmtGol?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     position?: NullableStringFieldUpdateOperationsInput | string | null
     rank?: NullableStringFieldUpdateOperationsInput | string | null
     period?: NullableStringFieldUpdateOperationsInput | string | null
     certificate?: NullableStringFieldUpdateOperationsInput | string | null
-    education?: XOR<EducationListUpdateEnvelopeInput, Enumerable<EducationCreateInput>>
-    training?: XOR<TrainingListUpdateEnvelopeInput, Enumerable<TrainingCreateInput>>
-    employment?: XOR<EmploymentListUpdateEnvelopeInput, Enumerable<EmploymentCreateInput>>
-    profession?: XOR<ProfessionListUpdateEnvelopeInput, Enumerable<ProfessionCreateInput>>
-    overseas?: XOR<OverseasListUpdateEnvelopeInput, Enumerable<OverseasCreateInput>>
-    scientific?: XOR<ScientificListUpdateEnvelopeInput, Enumerable<ScientificCreateInput>>
-    organization?: XOR<OrganizationListUpdateEnvelopeInput, Enumerable<OrganizationCreateInput>>
-    papers?: XOR<PapersListUpdateEnvelopeInput, Enumerable<PapersCreateInput>>
-    innovation?: XOR<InnovationListUpdateEnvelopeInput, Enumerable<InnovationCreateInput>>
-    award?: XOR<AwardListUpdateEnvelopeInput, Enumerable<AwardCreateInput>>
-    sourcePerson?: XOR<SourcePersonListUpdateEnvelopeInput, Enumerable<SourcePersonCreateInput>>
-    contest?: XOR<ContestListUpdateEnvelopeInput, Enumerable<ContestCreateInput>>
-    documents?: XOR<DocumentsListUpdateEnvelopeInput, Enumerable<DocumentsCreateInput>>
-    additional?: XOR<AdditionalListUpdateEnvelopeInput, Enumerable<AdditionalCreateInput>>
     classRoom?: ClassRoomUncheckedUpdateManyWithoutWaliNestedInput
     event?: CalendarUncheckedUpdateManyWithoutTeacherNestedInput
   }
 
   export type TeacherCreateManyInput = {
     id?: string
-    userId?: string | null
+    personalId: string
     instansiId: string
     eventIds?: TeacherCreateeventIdsInput | Enumerable<string>
     nip?: string | null
     nrg?: string | null
     noKarpeg?: string | null
-    tmtTugas?: string | null
-    tmtGol?: string | null
+    tmtTugas?: Date | string | null
+    tmtGol?: Date | string | null
     position?: string | null
     rank?: string | null
     period?: string | null
     certificate?: string | null
-    education?: XOR<EducationListCreateEnvelopeInput, Enumerable<EducationCreateInput>>
-    training?: XOR<TrainingListCreateEnvelopeInput, Enumerable<TrainingCreateInput>>
-    employment?: XOR<EmploymentListCreateEnvelopeInput, Enumerable<EmploymentCreateInput>>
-    profession?: XOR<ProfessionListCreateEnvelopeInput, Enumerable<ProfessionCreateInput>>
-    overseas?: XOR<OverseasListCreateEnvelopeInput, Enumerable<OverseasCreateInput>>
-    scientific?: XOR<ScientificListCreateEnvelopeInput, Enumerable<ScientificCreateInput>>
-    organization?: XOR<OrganizationListCreateEnvelopeInput, Enumerable<OrganizationCreateInput>>
-    papers?: XOR<PapersListCreateEnvelopeInput, Enumerable<PapersCreateInput>>
-    innovation?: XOR<InnovationListCreateEnvelopeInput, Enumerable<InnovationCreateInput>>
-    award?: XOR<AwardListCreateEnvelopeInput, Enumerable<AwardCreateInput>>
-    sourcePerson?: XOR<SourcePersonListCreateEnvelopeInput, Enumerable<SourcePersonCreateInput>>
-    contest?: XOR<ContestListCreateEnvelopeInput, Enumerable<ContestCreateInput>>
-    documents?: XOR<DocumentsListCreateEnvelopeInput, Enumerable<DocumentsCreateInput>>
-    additional?: XOR<AdditionalListCreateEnvelopeInput, Enumerable<AdditionalCreateInput>>
   }
 
   export type TeacherUpdateManyMutationInput = {
     nip?: NullableStringFieldUpdateOperationsInput | string | null
     nrg?: NullableStringFieldUpdateOperationsInput | string | null
     noKarpeg?: NullableStringFieldUpdateOperationsInput | string | null
-    tmtTugas?: NullableStringFieldUpdateOperationsInput | string | null
-    tmtGol?: NullableStringFieldUpdateOperationsInput | string | null
+    tmtTugas?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    tmtGol?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     position?: NullableStringFieldUpdateOperationsInput | string | null
     rank?: NullableStringFieldUpdateOperationsInput | string | null
     period?: NullableStringFieldUpdateOperationsInput | string | null
     certificate?: NullableStringFieldUpdateOperationsInput | string | null
-    education?: XOR<EducationListUpdateEnvelopeInput, Enumerable<EducationCreateInput>>
-    training?: XOR<TrainingListUpdateEnvelopeInput, Enumerable<TrainingCreateInput>>
-    employment?: XOR<EmploymentListUpdateEnvelopeInput, Enumerable<EmploymentCreateInput>>
-    profession?: XOR<ProfessionListUpdateEnvelopeInput, Enumerable<ProfessionCreateInput>>
-    overseas?: XOR<OverseasListUpdateEnvelopeInput, Enumerable<OverseasCreateInput>>
-    scientific?: XOR<ScientificListUpdateEnvelopeInput, Enumerable<ScientificCreateInput>>
-    organization?: XOR<OrganizationListUpdateEnvelopeInput, Enumerable<OrganizationCreateInput>>
-    papers?: XOR<PapersListUpdateEnvelopeInput, Enumerable<PapersCreateInput>>
-    innovation?: XOR<InnovationListUpdateEnvelopeInput, Enumerable<InnovationCreateInput>>
-    award?: XOR<AwardListUpdateEnvelopeInput, Enumerable<AwardCreateInput>>
-    sourcePerson?: XOR<SourcePersonListUpdateEnvelopeInput, Enumerable<SourcePersonCreateInput>>
-    contest?: XOR<ContestListUpdateEnvelopeInput, Enumerable<ContestCreateInput>>
-    documents?: XOR<DocumentsListUpdateEnvelopeInput, Enumerable<DocumentsCreateInput>>
-    additional?: XOR<AdditionalListUpdateEnvelopeInput, Enumerable<AdditionalCreateInput>>
   }
 
   export type TeacherUncheckedUpdateManyInput = {
-    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    personalId?: StringFieldUpdateOperationsInput | string
     instansiId?: StringFieldUpdateOperationsInput | string
     eventIds?: TeacherUpdateeventIdsInput | Enumerable<string>
     nip?: NullableStringFieldUpdateOperationsInput | string | null
     nrg?: NullableStringFieldUpdateOperationsInput | string | null
     noKarpeg?: NullableStringFieldUpdateOperationsInput | string | null
-    tmtTugas?: NullableStringFieldUpdateOperationsInput | string | null
-    tmtGol?: NullableStringFieldUpdateOperationsInput | string | null
+    tmtTugas?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    tmtGol?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     position?: NullableStringFieldUpdateOperationsInput | string | null
     rank?: NullableStringFieldUpdateOperationsInput | string | null
     period?: NullableStringFieldUpdateOperationsInput | string | null
     certificate?: NullableStringFieldUpdateOperationsInput | string | null
-    education?: XOR<EducationListUpdateEnvelopeInput, Enumerable<EducationCreateInput>>
-    training?: XOR<TrainingListUpdateEnvelopeInput, Enumerable<TrainingCreateInput>>
-    employment?: XOR<EmploymentListUpdateEnvelopeInput, Enumerable<EmploymentCreateInput>>
-    profession?: XOR<ProfessionListUpdateEnvelopeInput, Enumerable<ProfessionCreateInput>>
-    overseas?: XOR<OverseasListUpdateEnvelopeInput, Enumerable<OverseasCreateInput>>
-    scientific?: XOR<ScientificListUpdateEnvelopeInput, Enumerable<ScientificCreateInput>>
-    organization?: XOR<OrganizationListUpdateEnvelopeInput, Enumerable<OrganizationCreateInput>>
-    papers?: XOR<PapersListUpdateEnvelopeInput, Enumerable<PapersCreateInput>>
-    innovation?: XOR<InnovationListUpdateEnvelopeInput, Enumerable<InnovationCreateInput>>
-    award?: XOR<AwardListUpdateEnvelopeInput, Enumerable<AwardCreateInput>>
-    sourcePerson?: XOR<SourcePersonListUpdateEnvelopeInput, Enumerable<SourcePersonCreateInput>>
-    contest?: XOR<ContestListUpdateEnvelopeInput, Enumerable<ContestCreateInput>>
-    documents?: XOR<DocumentsListUpdateEnvelopeInput, Enumerable<DocumentsCreateInput>>
-    additional?: XOR<AdditionalListUpdateEnvelopeInput, Enumerable<AdditionalCreateInput>>
   }
 
   export type ClassRoomCreateInput = {
     id?: string
     name: string
+    level: number
     year: SchoolYearCreateNestedOneWithoutClassRoomInput
     wali: TeacherCreateNestedOneWithoutClassRoomInput
+    major?: KonsentrasiKeahlianCreateNestedOneWithoutClassRoomInput
     students?: StudentCreateNestedManyWithoutClassRoomInput
     event?: CalendarCreateNestedManyWithoutClassRoomInput
   }
@@ -24645,6 +26089,8 @@ export namespace Prisma {
     name: string
     yearId: string
     waliId: string
+    level: number
+    majorId?: string | null
     studentIds?: ClassRoomCreatestudentIdsInput | Enumerable<string>
     eventIds?: ClassRoomCreateeventIdsInput | Enumerable<string>
     students?: StudentUncheckedCreateNestedManyWithoutClassRoomInput
@@ -24653,8 +26099,10 @@ export namespace Prisma {
 
   export type ClassRoomUpdateInput = {
     name?: StringFieldUpdateOperationsInput | string
+    level?: IntFieldUpdateOperationsInput | number
     year?: SchoolYearUpdateOneRequiredWithoutClassRoomNestedInput
     wali?: TeacherUpdateOneRequiredWithoutClassRoomNestedInput
+    major?: KonsentrasiKeahlianUpdateOneWithoutClassRoomNestedInput
     students?: StudentUpdateManyWithoutClassRoomNestedInput
     event?: CalendarUpdateManyWithoutClassRoomNestedInput
   }
@@ -24663,6 +26111,8 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     yearId?: StringFieldUpdateOperationsInput | string
     waliId?: StringFieldUpdateOperationsInput | string
+    level?: IntFieldUpdateOperationsInput | number
+    majorId?: NullableStringFieldUpdateOperationsInput | string | null
     studentIds?: ClassRoomUpdatestudentIdsInput | Enumerable<string>
     eventIds?: ClassRoomUpdateeventIdsInput | Enumerable<string>
     students?: StudentUncheckedUpdateManyWithoutClassRoomNestedInput
@@ -24674,18 +26124,23 @@ export namespace Prisma {
     name: string
     yearId: string
     waliId: string
+    level: number
+    majorId?: string | null
     studentIds?: ClassRoomCreatestudentIdsInput | Enumerable<string>
     eventIds?: ClassRoomCreateeventIdsInput | Enumerable<string>
   }
 
   export type ClassRoomUpdateManyMutationInput = {
     name?: StringFieldUpdateOperationsInput | string
+    level?: IntFieldUpdateOperationsInput | number
   }
 
   export type ClassRoomUncheckedUpdateManyInput = {
     name?: StringFieldUpdateOperationsInput | string
     yearId?: StringFieldUpdateOperationsInput | string
     waliId?: StringFieldUpdateOperationsInput | string
+    level?: IntFieldUpdateOperationsInput | number
+    majorId?: NullableStringFieldUpdateOperationsInput | string | null
     studentIds?: ClassRoomUpdatestudentIdsInput | Enumerable<string>
     eventIds?: ClassRoomUpdateeventIdsInput | Enumerable<string>
   }
@@ -24696,7 +26151,7 @@ export namespace Prisma {
     organizational: XOR<OrganizationalCreateEnvelopeInput, OrganizationalCreateInput>
     instansi: InstansiCreateNestedOneWithoutSchoolYearInput
     classRoom?: ClassRoomCreateNestedManyWithoutYearInput
-    studentsIn?: StudentCreateNestedManyWithoutStartYearInput
+    students?: StudentCreateNestedManyWithoutStartYearInput
     calendar?: CalendarCreateNestedManyWithoutRefInput
   }
 
@@ -24706,7 +26161,7 @@ export namespace Prisma {
     instansiId: string
     organizational: XOR<OrganizationalCreateEnvelopeInput, OrganizationalCreateInput>
     classRoom?: ClassRoomUncheckedCreateNestedManyWithoutYearInput
-    studentsIn?: StudentUncheckedCreateNestedManyWithoutStartYearInput
+    students?: StudentUncheckedCreateNestedManyWithoutStartYearInput
     calendar?: CalendarUncheckedCreateNestedManyWithoutRefInput
   }
 
@@ -24715,7 +26170,7 @@ export namespace Prisma {
     organizational?: XOR<OrganizationalUpdateEnvelopeInput, OrganizationalCreateInput>
     instansi?: InstansiUpdateOneRequiredWithoutSchoolYearNestedInput
     classRoom?: ClassRoomUpdateManyWithoutYearNestedInput
-    studentsIn?: StudentUpdateManyWithoutStartYearNestedInput
+    students?: StudentUpdateManyWithoutStartYearNestedInput
     calendar?: CalendarUpdateManyWithoutRefNestedInput
   }
 
@@ -24724,7 +26179,7 @@ export namespace Prisma {
     instansiId?: StringFieldUpdateOperationsInput | string
     organizational?: XOR<OrganizationalUpdateEnvelopeInput, OrganizationalCreateInput>
     classRoom?: ClassRoomUncheckedUpdateManyWithoutYearNestedInput
-    studentsIn?: StudentUncheckedUpdateManyWithoutStartYearNestedInput
+    students?: StudentUncheckedUpdateManyWithoutStartYearNestedInput
     calendar?: CalendarUncheckedUpdateManyWithoutRefNestedInput
   }
 
@@ -24871,7 +26326,7 @@ export namespace Prisma {
     _count?: SortOrder
   }
 
-  export type BidangKeahlianCodeNameCompoundUniqueInput = {
+  export type BidangKeahlianNameBidangCompoundUniqueInput = {
     code: string
     name: string
   }
@@ -24947,7 +26402,7 @@ export namespace Prisma {
     _count?: SortOrder
   }
 
-  export type ProgramKeahlianCodeNameCompoundUniqueInput = {
+  export type ProgramKeahlianNameProgramCompoundUniqueInput = {
     code: string
     name: string
   }
@@ -25015,6 +26470,12 @@ export namespace Prisma {
     none?: InstansiWhereInput
   }
 
+  export type ClassRoomListRelationFilter = {
+    every?: ClassRoomWhereInput
+    some?: ClassRoomWhereInput
+    none?: ClassRoomWhereInput
+  }
+
   export type StudentOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
@@ -25023,7 +26484,11 @@ export namespace Prisma {
     _count?: SortOrder
   }
 
-  export type KonsentrasiKeahlianProgramIdNameCompoundUniqueInput = {
+  export type ClassRoomOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type KonsentrasiKeahlianNameKonsentrasiCompoundUniqueInput = {
     programId: string
     name: string
   }
@@ -25095,13 +26560,14 @@ export namespace Prisma {
     isNot?: ElementWhereInput
   }
 
-  export type AchievementElementIdFaseCompoundUniqueInput = {
+  export type AchievementNameCPCompoundUniqueInput = {
     elementId: string
     fase: Fase
   }
 
   export type AchievementCountOrderByAggregateInput = {
     id?: SortOrder
+    no?: SortOrder
     fase?: SortOrder
     description?: SortOrder
     elementId?: SortOrder
@@ -25109,8 +26575,13 @@ export namespace Prisma {
     updatedAt?: SortOrder
   }
 
+  export type AchievementAvgOrderByAggregateInput = {
+    no?: SortOrder
+  }
+
   export type AchievementMaxOrderByAggregateInput = {
     id?: SortOrder
+    no?: SortOrder
     fase?: SortOrder
     description?: SortOrder
     elementId?: SortOrder
@@ -25120,11 +26591,16 @@ export namespace Prisma {
 
   export type AchievementMinOrderByAggregateInput = {
     id?: SortOrder
+    no?: SortOrder
     fase?: SortOrder
     description?: SortOrder
     elementId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+  }
+
+  export type AchievementSumOrderByAggregateInput = {
+    no?: SortOrder
   }
 
   export type EnumFaseWithAggregatesFilter = {
@@ -25152,13 +26628,14 @@ export namespace Prisma {
     _count?: SortOrder
   }
 
-  export type ElementMapelIdNameCompoundUniqueInput = {
+  export type ElementNameElementCompoundUniqueInput = {
     mapelId: string
     name: string
   }
 
   export type ElementCountOrderByAggregateInput = {
     id?: SortOrder
+    no?: SortOrder
     name?: SortOrder
     description?: SortOrder
     mapelId?: SortOrder
@@ -25166,8 +26643,13 @@ export namespace Prisma {
     updatedAt?: SortOrder
   }
 
+  export type ElementAvgOrderByAggregateInput = {
+    no?: SortOrder
+  }
+
   export type ElementMaxOrderByAggregateInput = {
     id?: SortOrder
+    no?: SortOrder
     name?: SortOrder
     description?: SortOrder
     mapelId?: SortOrder
@@ -25177,11 +26659,16 @@ export namespace Prisma {
 
   export type ElementMinOrderByAggregateInput = {
     id?: SortOrder
+    no?: SortOrder
     name?: SortOrder
     description?: SortOrder
     mapelId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+  }
+
+  export type ElementSumOrderByAggregateInput = {
+    no?: SortOrder
   }
 
   export type EnumReligionNullableFilter = {
@@ -25207,7 +26694,7 @@ export namespace Prisma {
     _count?: SortOrder
   }
 
-  export type MataPelajaranCodeNameCompoundUniqueInput = {
+  export type MataPelajaranNameMapelCompoundUniqueInput = {
     code: string
     name: string
   }
@@ -25406,7 +26893,7 @@ export namespace Prisma {
     _count?: SortOrder
   }
 
-  export type RoleInstansiIdKeyCompoundUniqueInput = {
+  export type RoleNameRoleCompoundUniqueInput = {
     instansiId: string
     key: Roles
   }
@@ -25466,19 +26953,9 @@ export namespace Prisma {
     isNot?: RoleWhereInput | null
   }
 
-  export type PersonalRelationFilter = {
-    is?: PersonalWhereInput | null
-    isNot?: PersonalWhereInput | null
-  }
-
-  export type StudentRelationFilter = {
-    is?: StudentWhereInput | null
-    isNot?: StudentWhereInput | null
-  }
-
-  export type TeacherRelationFilter = {
-    is?: TeacherWhereInput
-    isNot?: TeacherWhereInput
+  export type AuthRelationFilter = {
+    is?: AuthWhereInput | null
+    isNot?: AuthWhereInput | null
   }
 
   export type UserCountOrderByAggregateInput = {
@@ -25571,7 +27048,7 @@ export namespace Prisma {
 
   export type BornObjectEqualityInput = {
     place: string
-    date: string
+    date: Date | string
   }
 
   export type AddressNullableCompositeFilter = {
@@ -25579,256 +27056,6 @@ export namespace Prisma {
     is?: AddressWhereInput | null
     isNot?: AddressWhereInput | null
     isSet?: boolean
-  }
-
-  export type UserRelationFilter = {
-    is?: UserWhereInput | null
-    isNot?: UserWhereInput | null
-  }
-
-  export type FamilyTreeListRelationFilter = {
-    every?: FamilyTreeWhereInput
-    some?: FamilyTreeWhereInput
-    none?: FamilyTreeWhereInput
-  }
-
-  export type FamilyTreeChildRelationFilter = {
-    is?: FamilyTreeChildWhereInput | null
-    isNot?: FamilyTreeChildWhereInput | null
-  }
-
-  export type BornOrderByInput = {
-    place?: SortOrder
-    date?: SortOrder
-  }
-
-  export type FamilyTreeOrderByRelationAggregateInput = {
-    _count?: SortOrder
-  }
-
-  export type PersonalCountOrderByAggregateInput = {
-    id?: SortOrder
-    nik?: SortOrder
-    nisn?: SortOrder
-    type?: SortOrder
-    userId?: SortOrder
-    fullname?: SortOrder
-    gender?: SortOrder
-    foreign?: SortOrder
-    country?: SortOrder
-    religion?: SortOrder
-    email?: SortOrder
-    belajarId?: SortOrder
-    nophone?: SortOrder
-    isLife?: SortOrder
-  }
-
-  export type PersonalMaxOrderByAggregateInput = {
-    id?: SortOrder
-    nik?: SortOrder
-    nisn?: SortOrder
-    type?: SortOrder
-    userId?: SortOrder
-    fullname?: SortOrder
-    gender?: SortOrder
-    foreign?: SortOrder
-    country?: SortOrder
-    religion?: SortOrder
-    email?: SortOrder
-    belajarId?: SortOrder
-    nophone?: SortOrder
-    isLife?: SortOrder
-  }
-
-  export type PersonalMinOrderByAggregateInput = {
-    id?: SortOrder
-    nik?: SortOrder
-    nisn?: SortOrder
-    type?: SortOrder
-    userId?: SortOrder
-    fullname?: SortOrder
-    gender?: SortOrder
-    foreign?: SortOrder
-    country?: SortOrder
-    religion?: SortOrder
-    email?: SortOrder
-    belajarId?: SortOrder
-    nophone?: SortOrder
-    isLife?: SortOrder
-  }
-
-  export type EnumTypePersonalWithAggregatesFilter = {
-    equals?: TypePersonal
-    in?: Enumerable<TypePersonal>
-    notIn?: Enumerable<TypePersonal>
-    not?: NestedEnumTypePersonalWithAggregatesFilter | TypePersonal
-    _count?: NestedIntFilter
-    _min?: NestedEnumTypePersonalFilter
-    _max?: NestedEnumTypePersonalFilter
-  }
-
-  export type EnumGenderWithAggregatesFilter = {
-    equals?: Gender
-    in?: Enumerable<Gender>
-    notIn?: Enumerable<Gender>
-    not?: NestedEnumGenderWithAggregatesFilter | Gender
-    _count?: NestedIntFilter
-    _min?: NestedEnumGenderFilter
-    _max?: NestedEnumGenderFilter
-  }
-
-  export type EnumReligionWithAggregatesFilter = {
-    equals?: Religion
-    in?: Enumerable<Religion>
-    notIn?: Enumerable<Religion>
-    not?: NestedEnumReligionWithAggregatesFilter | Religion
-    _count?: NestedIntFilter
-    _min?: NestedEnumReligionFilter
-    _max?: NestedEnumReligionFilter
-  }
-
-  export type FamilyTreeChildListRelationFilter = {
-    every?: FamilyTreeChildWhereInput
-    some?: FamilyTreeChildWhereInput
-    none?: FamilyTreeChildWhereInput
-  }
-
-  export type FamilyTreeChildOrderByRelationAggregateInput = {
-    _count?: SortOrder
-  }
-
-  export type FamilyTreeCountOrderByAggregateInput = {
-    id?: SortOrder
-    nokk?: SortOrder
-    fatherId?: SortOrder
-    motherId?: SortOrder
-    waliId?: SortOrder
-  }
-
-  export type FamilyTreeMaxOrderByAggregateInput = {
-    id?: SortOrder
-    nokk?: SortOrder
-    fatherId?: SortOrder
-    motherId?: SortOrder
-    waliId?: SortOrder
-  }
-
-  export type FamilyTreeMinOrderByAggregateInput = {
-    id?: SortOrder
-    nokk?: SortOrder
-    fatherId?: SortOrder
-    motherId?: SortOrder
-    waliId?: SortOrder
-  }
-
-  export type EnumChildTypeFilter = {
-    equals?: ChildType
-    in?: Enumerable<ChildType>
-    notIn?: Enumerable<ChildType>
-    not?: NestedEnumChildTypeFilter | ChildType
-  }
-
-  export type FamilyTreeRelationFilter = {
-    is?: FamilyTreeWhereInput
-    isNot?: FamilyTreeWhereInput
-  }
-
-  export type FamilyTreeChildCountOrderByAggregateInput = {
-    id?: SortOrder
-    no?: SortOrder
-    type?: SortOrder
-    kkId?: SortOrder
-    personalId?: SortOrder
-  }
-
-  export type FamilyTreeChildAvgOrderByAggregateInput = {
-    no?: SortOrder
-  }
-
-  export type FamilyTreeChildMaxOrderByAggregateInput = {
-    id?: SortOrder
-    no?: SortOrder
-    type?: SortOrder
-    kkId?: SortOrder
-    personalId?: SortOrder
-  }
-
-  export type FamilyTreeChildMinOrderByAggregateInput = {
-    id?: SortOrder
-    no?: SortOrder
-    type?: SortOrder
-    kkId?: SortOrder
-    personalId?: SortOrder
-  }
-
-  export type FamilyTreeChildSumOrderByAggregateInput = {
-    no?: SortOrder
-  }
-
-  export type EnumChildTypeWithAggregatesFilter = {
-    equals?: ChildType
-    in?: Enumerable<ChildType>
-    notIn?: Enumerable<ChildType>
-    not?: NestedEnumChildTypeWithAggregatesFilter | ChildType
-    _count?: NestedIntFilter
-    _min?: NestedEnumChildTypeFilter
-    _max?: NestedEnumChildTypeFilter
-  }
-
-  export type KonsentrasiKeahlianRelationFilter = {
-    is?: KonsentrasiKeahlianWhereInput | null
-    isNot?: KonsentrasiKeahlianWhereInput | null
-  }
-
-  export type ClassRoomListRelationFilter = {
-    every?: ClassRoomWhereInput
-    some?: ClassRoomWhereInput
-    none?: ClassRoomWhereInput
-  }
-
-  export type SchoolYearRelationFilter = {
-    is?: SchoolYearWhereInput
-    isNot?: SchoolYearWhereInput
-  }
-
-  export type CalendarListRelationFilter = {
-    every?: CalendarWhereInput
-    some?: CalendarWhereInput
-    none?: CalendarWhereInput
-  }
-
-  export type ClassRoomOrderByRelationAggregateInput = {
-    _count?: SortOrder
-  }
-
-  export type CalendarOrderByRelationAggregateInput = {
-    _count?: SortOrder
-  }
-
-  export type StudentCountOrderByAggregateInput = {
-    id?: SortOrder
-    userId?: SortOrder
-    majorId?: SortOrder
-    classRoomIds?: SortOrder
-    startYearId?: SortOrder
-    instansiId?: SortOrder
-    eventIds?: SortOrder
-  }
-
-  export type StudentMaxOrderByAggregateInput = {
-    id?: SortOrder
-    userId?: SortOrder
-    majorId?: SortOrder
-    startYearId?: SortOrder
-    instansiId?: SortOrder
-  }
-
-  export type StudentMinOrderByAggregateInput = {
-    id?: SortOrder
-    userId?: SortOrder
-    majorId?: SortOrder
-    startYearId?: SortOrder
-    instansiId?: SortOrder
   }
 
   export type EducationCompositeListFilter = {
@@ -26065,6 +27292,22 @@ export namespace Prisma {
     attachment?: string | null
   }
 
+  export type FamilyTreeListRelationFilter = {
+    every?: FamilyTreeWhereInput
+    some?: FamilyTreeWhereInput
+    none?: FamilyTreeWhereInput
+  }
+
+  export type FamilyTreeChildRelationFilter = {
+    is?: FamilyTreeChildWhereInput | null
+    isNot?: FamilyTreeChildWhereInput | null
+  }
+
+  export type BornOrderByInput = {
+    place?: SortOrder
+    date?: SortOrder
+  }
+
   export type EducationOrderByCompositeAggregateInput = {
     _count?: SortOrder
   }
@@ -26121,9 +27364,289 @@ export namespace Prisma {
     _count?: SortOrder
   }
 
-  export type TeacherCountOrderByAggregateInput = {
+  export type FamilyTreeOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type PersonalCountOrderByAggregateInput = {
+    id?: SortOrder
+    nik?: SortOrder
+    nisn?: SortOrder
+    type?: SortOrder
+    fullname?: SortOrder
+    gender?: SortOrder
+    foreign?: SortOrder
+    country?: SortOrder
+    religion?: SortOrder
+    email?: SortOrder
+    belajarId?: SortOrder
+    nophone?: SortOrder
+    isLife?: SortOrder
+  }
+
+  export type PersonalMaxOrderByAggregateInput = {
+    id?: SortOrder
+    nik?: SortOrder
+    nisn?: SortOrder
+    type?: SortOrder
+    fullname?: SortOrder
+    gender?: SortOrder
+    foreign?: SortOrder
+    country?: SortOrder
+    religion?: SortOrder
+    email?: SortOrder
+    belajarId?: SortOrder
+    nophone?: SortOrder
+    isLife?: SortOrder
+  }
+
+  export type PersonalMinOrderByAggregateInput = {
+    id?: SortOrder
+    nik?: SortOrder
+    nisn?: SortOrder
+    type?: SortOrder
+    fullname?: SortOrder
+    gender?: SortOrder
+    foreign?: SortOrder
+    country?: SortOrder
+    religion?: SortOrder
+    email?: SortOrder
+    belajarId?: SortOrder
+    nophone?: SortOrder
+    isLife?: SortOrder
+  }
+
+  export type EnumTypePersonalWithAggregatesFilter = {
+    equals?: TypePersonal
+    in?: Enumerable<TypePersonal>
+    notIn?: Enumerable<TypePersonal>
+    not?: NestedEnumTypePersonalWithAggregatesFilter | TypePersonal
+    _count?: NestedIntFilter
+    _min?: NestedEnumTypePersonalFilter
+    _max?: NestedEnumTypePersonalFilter
+  }
+
+  export type EnumGenderWithAggregatesFilter = {
+    equals?: Gender
+    in?: Enumerable<Gender>
+    notIn?: Enumerable<Gender>
+    not?: NestedEnumGenderWithAggregatesFilter | Gender
+    _count?: NestedIntFilter
+    _min?: NestedEnumGenderFilter
+    _max?: NestedEnumGenderFilter
+  }
+
+  export type EnumReligionWithAggregatesFilter = {
+    equals?: Religion
+    in?: Enumerable<Religion>
+    notIn?: Enumerable<Religion>
+    not?: NestedEnumReligionWithAggregatesFilter | Religion
+    _count?: NestedIntFilter
+    _min?: NestedEnumReligionFilter
+    _max?: NestedEnumReligionFilter
+  }
+
+  export type UserRelationFilter = {
+    is?: UserWhereInput
+    isNot?: UserWhereInput
+  }
+
+  export type PersonalRelationFilter = {
+    is?: PersonalWhereInput
+    isNot?: PersonalWhereInput
+  }
+
+  export type AuthAuthUserPersonalCompoundUniqueInput = {
+    userId: string
+    personalId: string
+  }
+
+  export type AuthCountOrderByAggregateInput = {
     id?: SortOrder
     userId?: SortOrder
+    personalId?: SortOrder
+  }
+
+  export type AuthMaxOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    personalId?: SortOrder
+  }
+
+  export type AuthMinOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    personalId?: SortOrder
+  }
+
+  export type FamilyTreeChildListRelationFilter = {
+    every?: FamilyTreeChildWhereInput
+    some?: FamilyTreeChildWhereInput
+    none?: FamilyTreeChildWhereInput
+  }
+
+  export type FamilyTreeChildOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type FamilyTreeCountOrderByAggregateInput = {
+    id?: SortOrder
+    nokk?: SortOrder
+    fatherId?: SortOrder
+    motherId?: SortOrder
+    waliId?: SortOrder
+    coupleId?: SortOrder
+  }
+
+  export type FamilyTreeMaxOrderByAggregateInput = {
+    id?: SortOrder
+    nokk?: SortOrder
+    fatherId?: SortOrder
+    motherId?: SortOrder
+    waliId?: SortOrder
+    coupleId?: SortOrder
+  }
+
+  export type FamilyTreeMinOrderByAggregateInput = {
+    id?: SortOrder
+    nokk?: SortOrder
+    fatherId?: SortOrder
+    motherId?: SortOrder
+    waliId?: SortOrder
+    coupleId?: SortOrder
+  }
+
+  export type EnumChildTypeFilter = {
+    equals?: ChildType
+    in?: Enumerable<ChildType>
+    notIn?: Enumerable<ChildType>
+    not?: NestedEnumChildTypeFilter | ChildType
+  }
+
+  export type FamilyTreeRelationFilter = {
+    is?: FamilyTreeWhereInput
+    isNot?: FamilyTreeWhereInput
+  }
+
+  export type FamilyTreeChildCountOrderByAggregateInput = {
+    id?: SortOrder
+    no?: SortOrder
+    type?: SortOrder
+    kkId?: SortOrder
+    personalId?: SortOrder
+  }
+
+  export type FamilyTreeChildAvgOrderByAggregateInput = {
+    no?: SortOrder
+  }
+
+  export type FamilyTreeChildMaxOrderByAggregateInput = {
+    id?: SortOrder
+    no?: SortOrder
+    type?: SortOrder
+    kkId?: SortOrder
+    personalId?: SortOrder
+  }
+
+  export type FamilyTreeChildMinOrderByAggregateInput = {
+    id?: SortOrder
+    no?: SortOrder
+    type?: SortOrder
+    kkId?: SortOrder
+    personalId?: SortOrder
+  }
+
+  export type FamilyTreeChildSumOrderByAggregateInput = {
+    no?: SortOrder
+  }
+
+  export type EnumChildTypeWithAggregatesFilter = {
+    equals?: ChildType
+    in?: Enumerable<ChildType>
+    notIn?: Enumerable<ChildType>
+    not?: NestedEnumChildTypeWithAggregatesFilter | ChildType
+    _count?: NestedIntFilter
+    _min?: NestedEnumChildTypeFilter
+    _max?: NestedEnumChildTypeFilter
+  }
+
+  export type KonsentrasiKeahlianRelationFilter = {
+    is?: KonsentrasiKeahlianWhereInput | null
+    isNot?: KonsentrasiKeahlianWhereInput | null
+  }
+
+  export type SchoolYearRelationFilter = {
+    is?: SchoolYearWhereInput
+    isNot?: SchoolYearWhereInput
+  }
+
+  export type CalendarListRelationFilter = {
+    every?: CalendarWhereInput
+    some?: CalendarWhereInput
+    none?: CalendarWhereInput
+  }
+
+  export type CalendarOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type StudentStudyInCompoundUniqueInput = {
+    personalId: string
+    instansiId: string
+  }
+
+  export type StudentCountOrderByAggregateInput = {
+    id?: SortOrder
+    nis?: SortOrder
+    nisn?: SortOrder
+    personalId?: SortOrder
+    majorId?: SortOrder
+    classRoomIds?: SortOrder
+    startYearId?: SortOrder
+    instansiId?: SortOrder
+    eventIds?: SortOrder
+  }
+
+  export type StudentMaxOrderByAggregateInput = {
+    id?: SortOrder
+    nis?: SortOrder
+    nisn?: SortOrder
+    personalId?: SortOrder
+    majorId?: SortOrder
+    startYearId?: SortOrder
+    instansiId?: SortOrder
+  }
+
+  export type StudentMinOrderByAggregateInput = {
+    id?: SortOrder
+    nis?: SortOrder
+    nisn?: SortOrder
+    personalId?: SortOrder
+    majorId?: SortOrder
+    startYearId?: SortOrder
+    instansiId?: SortOrder
+  }
+
+  export type DateTimeNullableFilter = {
+    equals?: Date | string | null
+    in?: Enumerable<Date> | Enumerable<string> | null
+    notIn?: Enumerable<Date> | Enumerable<string> | null
+    lt?: Date | string
+    lte?: Date | string
+    gt?: Date | string
+    gte?: Date | string
+    not?: NestedDateTimeNullableFilter | Date | string | null
+    isSet?: boolean
+  }
+
+  export type TeacherTeachInCompoundUniqueInput = {
+    personalId: string
+    instansiId: string
+  }
+
+  export type TeacherCountOrderByAggregateInput = {
+    id?: SortOrder
+    personalId?: SortOrder
     instansiId?: SortOrder
     eventIds?: SortOrder
     nip?: SortOrder
@@ -26139,7 +27662,7 @@ export namespace Prisma {
 
   export type TeacherMaxOrderByAggregateInput = {
     id?: SortOrder
-    userId?: SortOrder
+    personalId?: SortOrder
     instansiId?: SortOrder
     nip?: SortOrder
     nrg?: SortOrder
@@ -26154,7 +27677,7 @@ export namespace Prisma {
 
   export type TeacherMinOrderByAggregateInput = {
     id?: SortOrder
-    userId?: SortOrder
+    personalId?: SortOrder
     instansiId?: SortOrder
     nip?: SortOrder
     nrg?: SortOrder
@@ -26167,7 +27690,27 @@ export namespace Prisma {
     certificate?: SortOrder
   }
 
-  export type ClassRoomYearIdNameCompoundUniqueInput = {
+  export type DateTimeNullableWithAggregatesFilter = {
+    equals?: Date | string | null
+    in?: Enumerable<Date> | Enumerable<string> | null
+    notIn?: Enumerable<Date> | Enumerable<string> | null
+    lt?: Date | string
+    lte?: Date | string
+    gt?: Date | string
+    gte?: Date | string
+    not?: NestedDateTimeNullableWithAggregatesFilter | Date | string | null
+    _count?: NestedIntNullableFilter
+    _min?: NestedDateTimeNullableFilter
+    _max?: NestedDateTimeNullableFilter
+    isSet?: boolean
+  }
+
+  export type TeacherRelationFilter = {
+    is?: TeacherWhereInput
+    isNot?: TeacherWhereInput
+  }
+
+  export type ClassRoomNameClassRoomCompoundUniqueInput = {
     yearId: string
     name: string
   }
@@ -26177,8 +27720,14 @@ export namespace Prisma {
     name?: SortOrder
     yearId?: SortOrder
     waliId?: SortOrder
+    level?: SortOrder
+    majorId?: SortOrder
     studentIds?: SortOrder
     eventIds?: SortOrder
+  }
+
+  export type ClassRoomAvgOrderByAggregateInput = {
+    level?: SortOrder
   }
 
   export type ClassRoomMaxOrderByAggregateInput = {
@@ -26186,6 +27735,8 @@ export namespace Prisma {
     name?: SortOrder
     yearId?: SortOrder
     waliId?: SortOrder
+    level?: SortOrder
+    majorId?: SortOrder
   }
 
   export type ClassRoomMinOrderByAggregateInput = {
@@ -26193,6 +27744,12 @@ export namespace Prisma {
     name?: SortOrder
     yearId?: SortOrder
     waliId?: SortOrder
+    level?: SortOrder
+    majorId?: SortOrder
+  }
+
+  export type ClassRoomSumOrderByAggregateInput = {
+    level?: SortOrder
   }
 
   export type OrganizationalCompositeFilter = {
@@ -26219,7 +27776,7 @@ export namespace Prisma {
     wakahum?: SortOrder
   }
 
-  export type SchoolYearInstansiIdYearCompoundUniqueInput = {
+  export type SchoolYearESchoolYearCompoundUniqueInput = {
     instansiId: string
     year: number
   }
@@ -26248,18 +27805,6 @@ export namespace Prisma {
 
   export type SchoolYearSumOrderByAggregateInput = {
     year?: SortOrder
-  }
-
-  export type DateTimeNullableFilter = {
-    equals?: Date | string | null
-    in?: Enumerable<Date> | Enumerable<string> | null
-    notIn?: Enumerable<Date> | Enumerable<string> | null
-    lt?: Date | string
-    lte?: Date | string
-    gt?: Date | string
-    gte?: Date | string
-    not?: NestedDateTimeNullableFilter | Date | string | null
-    isSet?: boolean
   }
 
   export type CalendarCountOrderByAggregateInput = {
@@ -26293,21 +27838,6 @@ export namespace Prisma {
     start?: SortOrder
     end?: SortOrder
     color?: SortOrder
-  }
-
-  export type DateTimeNullableWithAggregatesFilter = {
-    equals?: Date | string | null
-    in?: Enumerable<Date> | Enumerable<string> | null
-    notIn?: Enumerable<Date> | Enumerable<string> | null
-    lt?: Date | string
-    lte?: Date | string
-    gt?: Date | string
-    gte?: Date | string
-    not?: NestedDateTimeNullableWithAggregatesFilter | Date | string | null
-    _count?: NestedIntNullableFilter
-    _min?: NestedDateTimeNullableFilter
-    _max?: NestedDateTimeNullableFilter
-    isSet?: boolean
   }
 
   export type ProgramKeahlianCreateNestedManyWithoutBidangInput = {
@@ -26435,6 +27965,13 @@ export namespace Prisma {
     connect?: Enumerable<InstansiWhereUniqueInput>
   }
 
+  export type ClassRoomCreateNestedManyWithoutMajorInput = {
+    create?: XOR<Enumerable<ClassRoomCreateWithoutMajorInput>, Enumerable<ClassRoomUncheckedCreateWithoutMajorInput>>
+    connectOrCreate?: Enumerable<ClassRoomCreateOrConnectWithoutMajorInput>
+    createMany?: ClassRoomCreateManyMajorInputEnvelope
+    connect?: Enumerable<ClassRoomWhereUniqueInput>
+  }
+
   export type KonsentrasiKeahlianCreateinstansiIdsInput = {
     set: Enumerable<string>
   }
@@ -26450,6 +27987,13 @@ export namespace Prisma {
     create?: XOR<Enumerable<InstansiCreateWithoutMajorsInput>, Enumerable<InstansiUncheckedCreateWithoutMajorsInput>>
     connectOrCreate?: Enumerable<InstansiCreateOrConnectWithoutMajorsInput>
     connect?: Enumerable<InstansiWhereUniqueInput>
+  }
+
+  export type ClassRoomUncheckedCreateNestedManyWithoutMajorInput = {
+    create?: XOR<Enumerable<ClassRoomCreateWithoutMajorInput>, Enumerable<ClassRoomUncheckedCreateWithoutMajorInput>>
+    connectOrCreate?: Enumerable<ClassRoomCreateOrConnectWithoutMajorInput>
+    createMany?: ClassRoomCreateManyMajorInputEnvelope
+    connect?: Enumerable<ClassRoomWhereUniqueInput>
   }
 
   export type IntFieldUpdateOperationsInput = {
@@ -26495,6 +28039,20 @@ export namespace Prisma {
     deleteMany?: Enumerable<InstansiScalarWhereInput>
   }
 
+  export type ClassRoomUpdateManyWithoutMajorNestedInput = {
+    create?: XOR<Enumerable<ClassRoomCreateWithoutMajorInput>, Enumerable<ClassRoomUncheckedCreateWithoutMajorInput>>
+    connectOrCreate?: Enumerable<ClassRoomCreateOrConnectWithoutMajorInput>
+    upsert?: Enumerable<ClassRoomUpsertWithWhereUniqueWithoutMajorInput>
+    createMany?: ClassRoomCreateManyMajorInputEnvelope
+    set?: Enumerable<ClassRoomWhereUniqueInput>
+    disconnect?: Enumerable<ClassRoomWhereUniqueInput>
+    delete?: Enumerable<ClassRoomWhereUniqueInput>
+    connect?: Enumerable<ClassRoomWhereUniqueInput>
+    update?: Enumerable<ClassRoomUpdateWithWhereUniqueWithoutMajorInput>
+    updateMany?: Enumerable<ClassRoomUpdateManyWithWhereWithoutMajorInput>
+    deleteMany?: Enumerable<ClassRoomScalarWhereInput>
+  }
+
   export type KonsentrasiKeahlianUpdateinstansiIdsInput = {
     set?: Enumerable<string>
     push?: string | Enumerable<string>
@@ -26525,6 +28083,20 @@ export namespace Prisma {
     update?: Enumerable<InstansiUpdateWithWhereUniqueWithoutMajorsInput>
     updateMany?: Enumerable<InstansiUpdateManyWithWhereWithoutMajorsInput>
     deleteMany?: Enumerable<InstansiScalarWhereInput>
+  }
+
+  export type ClassRoomUncheckedUpdateManyWithoutMajorNestedInput = {
+    create?: XOR<Enumerable<ClassRoomCreateWithoutMajorInput>, Enumerable<ClassRoomUncheckedCreateWithoutMajorInput>>
+    connectOrCreate?: Enumerable<ClassRoomCreateOrConnectWithoutMajorInput>
+    upsert?: Enumerable<ClassRoomUpsertWithWhereUniqueWithoutMajorInput>
+    createMany?: ClassRoomCreateManyMajorInputEnvelope
+    set?: Enumerable<ClassRoomWhereUniqueInput>
+    disconnect?: Enumerable<ClassRoomWhereUniqueInput>
+    delete?: Enumerable<ClassRoomWhereUniqueInput>
+    connect?: Enumerable<ClassRoomWhereUniqueInput>
+    update?: Enumerable<ClassRoomUpdateWithWhereUniqueWithoutMajorInput>
+    updateMany?: Enumerable<ClassRoomUpdateManyWithWhereWithoutMajorInput>
+    deleteMany?: Enumerable<ClassRoomScalarWhereInput>
   }
 
   export type ElementCreateNestedOneWithoutAchievementInput = {
@@ -26960,40 +28532,16 @@ export namespace Prisma {
     connect?: RoleWhereUniqueInput
   }
 
-  export type PersonalCreateNestedOneWithoutUserInput = {
-    create?: XOR<PersonalCreateWithoutUserInput, PersonalUncheckedCreateWithoutUserInput>
-    connectOrCreate?: PersonalCreateOrConnectWithoutUserInput
-    connect?: PersonalWhereUniqueInput
+  export type AuthCreateNestedOneWithoutUserInput = {
+    create?: XOR<AuthCreateWithoutUserInput, AuthUncheckedCreateWithoutUserInput>
+    connectOrCreate?: AuthCreateOrConnectWithoutUserInput
+    connect?: AuthWhereUniqueInput
   }
 
-  export type StudentCreateNestedOneWithoutUserInput = {
-    create?: XOR<StudentCreateWithoutUserInput, StudentUncheckedCreateWithoutUserInput>
-    connectOrCreate?: StudentCreateOrConnectWithoutUserInput
-    connect?: StudentWhereUniqueInput
-  }
-
-  export type TeacherCreateNestedOneWithoutUserInput = {
-    create?: XOR<TeacherCreateWithoutUserInput, TeacherUncheckedCreateWithoutUserInput>
-    connectOrCreate?: TeacherCreateOrConnectWithoutUserInput
-    connect?: TeacherWhereUniqueInput
-  }
-
-  export type PersonalUncheckedCreateNestedOneWithoutUserInput = {
-    create?: XOR<PersonalCreateWithoutUserInput, PersonalUncheckedCreateWithoutUserInput>
-    connectOrCreate?: PersonalCreateOrConnectWithoutUserInput
-    connect?: PersonalWhereUniqueInput
-  }
-
-  export type StudentUncheckedCreateNestedOneWithoutUserInput = {
-    create?: XOR<StudentCreateWithoutUserInput, StudentUncheckedCreateWithoutUserInput>
-    connectOrCreate?: StudentCreateOrConnectWithoutUserInput
-    connect?: StudentWhereUniqueInput
-  }
-
-  export type TeacherUncheckedCreateNestedOneWithoutUserInput = {
-    create?: XOR<TeacherCreateWithoutUserInput, TeacherUncheckedCreateWithoutUserInput>
-    connectOrCreate?: TeacherCreateOrConnectWithoutUserInput
-    connect?: TeacherWhereUniqueInput
+  export type AuthUncheckedCreateNestedOneWithoutUserInput = {
+    create?: XOR<AuthCreateWithoutUserInput, AuthUncheckedCreateWithoutUserInput>
+    connectOrCreate?: AuthCreateOrConnectWithoutUserInput
+    connect?: AuthWhereUniqueInput
   }
 
   export type NullableStringFieldUpdateOperationsInput = {
@@ -27011,64 +28559,24 @@ export namespace Prisma {
     update?: XOR<RoleUpdateWithoutUsersInput, RoleUncheckedUpdateWithoutUsersInput>
   }
 
-  export type PersonalUpdateOneWithoutUserNestedInput = {
-    create?: XOR<PersonalCreateWithoutUserInput, PersonalUncheckedCreateWithoutUserInput>
-    connectOrCreate?: PersonalCreateOrConnectWithoutUserInput
-    upsert?: PersonalUpsertWithoutUserInput
+  export type AuthUpdateOneWithoutUserNestedInput = {
+    create?: XOR<AuthCreateWithoutUserInput, AuthUncheckedCreateWithoutUserInput>
+    connectOrCreate?: AuthCreateOrConnectWithoutUserInput
+    upsert?: AuthUpsertWithoutUserInput
     disconnect?: boolean
     delete?: boolean
-    connect?: PersonalWhereUniqueInput
-    update?: XOR<PersonalUpdateWithoutUserInput, PersonalUncheckedUpdateWithoutUserInput>
+    connect?: AuthWhereUniqueInput
+    update?: XOR<AuthUpdateWithoutUserInput, AuthUncheckedUpdateWithoutUserInput>
   }
 
-  export type StudentUpdateOneWithoutUserNestedInput = {
-    create?: XOR<StudentCreateWithoutUserInput, StudentUncheckedCreateWithoutUserInput>
-    connectOrCreate?: StudentCreateOrConnectWithoutUserInput
-    upsert?: StudentUpsertWithoutUserInput
+  export type AuthUncheckedUpdateOneWithoutUserNestedInput = {
+    create?: XOR<AuthCreateWithoutUserInput, AuthUncheckedCreateWithoutUserInput>
+    connectOrCreate?: AuthCreateOrConnectWithoutUserInput
+    upsert?: AuthUpsertWithoutUserInput
     disconnect?: boolean
     delete?: boolean
-    connect?: StudentWhereUniqueInput
-    update?: XOR<StudentUpdateWithoutUserInput, StudentUncheckedUpdateWithoutUserInput>
-  }
-
-  export type TeacherUpdateOneWithoutUserNestedInput = {
-    create?: XOR<TeacherCreateWithoutUserInput, TeacherUncheckedCreateWithoutUserInput>
-    connectOrCreate?: TeacherCreateOrConnectWithoutUserInput
-    upsert?: TeacherUpsertWithoutUserInput
-    disconnect?: boolean
-    delete?: boolean
-    connect?: TeacherWhereUniqueInput
-    update?: XOR<TeacherUpdateWithoutUserInput, TeacherUncheckedUpdateWithoutUserInput>
-  }
-
-  export type PersonalUncheckedUpdateOneWithoutUserNestedInput = {
-    create?: XOR<PersonalCreateWithoutUserInput, PersonalUncheckedCreateWithoutUserInput>
-    connectOrCreate?: PersonalCreateOrConnectWithoutUserInput
-    upsert?: PersonalUpsertWithoutUserInput
-    disconnect?: boolean
-    delete?: boolean
-    connect?: PersonalWhereUniqueInput
-    update?: XOR<PersonalUpdateWithoutUserInput, PersonalUncheckedUpdateWithoutUserInput>
-  }
-
-  export type StudentUncheckedUpdateOneWithoutUserNestedInput = {
-    create?: XOR<StudentCreateWithoutUserInput, StudentUncheckedCreateWithoutUserInput>
-    connectOrCreate?: StudentCreateOrConnectWithoutUserInput
-    upsert?: StudentUpsertWithoutUserInput
-    disconnect?: boolean
-    delete?: boolean
-    connect?: StudentWhereUniqueInput
-    update?: XOR<StudentUpdateWithoutUserInput, StudentUncheckedUpdateWithoutUserInput>
-  }
-
-  export type TeacherUncheckedUpdateOneWithoutUserNestedInput = {
-    create?: XOR<TeacherCreateWithoutUserInput, TeacherUncheckedCreateWithoutUserInput>
-    connectOrCreate?: TeacherCreateOrConnectWithoutUserInput
-    upsert?: TeacherUpsertWithoutUserInput
-    disconnect?: boolean
-    delete?: boolean
-    connect?: TeacherWhereUniqueInput
-    update?: XOR<TeacherUpdateWithoutUserInput, TeacherUncheckedUpdateWithoutUserInput>
+    connect?: AuthWhereUniqueInput
+    update?: XOR<AuthUpdateWithoutUserInput, AuthUncheckedUpdateWithoutUserInput>
   }
 
   export type BornCreateEnvelopeInput = {
@@ -27077,484 +28585,11 @@ export namespace Prisma {
 
   export type BornCreateInput = {
     place: string
-    date: string
+    date: Date | string
   }
 
   export type AddressNullableCreateEnvelopeInput = {
     set?: AddressCreateInput | null
-  }
-
-  export type UserCreateNestedOneWithoutPersonalInput = {
-    create?: XOR<UserCreateWithoutPersonalInput, UserUncheckedCreateWithoutPersonalInput>
-    connectOrCreate?: UserCreateOrConnectWithoutPersonalInput
-    connect?: UserWhereUniqueInput
-  }
-
-  export type FamilyTreeCreateNestedManyWithoutFatherInput = {
-    create?: XOR<Enumerable<FamilyTreeCreateWithoutFatherInput>, Enumerable<FamilyTreeUncheckedCreateWithoutFatherInput>>
-    connectOrCreate?: Enumerable<FamilyTreeCreateOrConnectWithoutFatherInput>
-    createMany?: FamilyTreeCreateManyFatherInputEnvelope
-    connect?: Enumerable<FamilyTreeWhereUniqueInput>
-  }
-
-  export type FamilyTreeCreateNestedManyWithoutMotherInput = {
-    create?: XOR<Enumerable<FamilyTreeCreateWithoutMotherInput>, Enumerable<FamilyTreeUncheckedCreateWithoutMotherInput>>
-    connectOrCreate?: Enumerable<FamilyTreeCreateOrConnectWithoutMotherInput>
-    createMany?: FamilyTreeCreateManyMotherInputEnvelope
-    connect?: Enumerable<FamilyTreeWhereUniqueInput>
-  }
-
-  export type FamilyTreeCreateNestedManyWithoutWaliInput = {
-    create?: XOR<Enumerable<FamilyTreeCreateWithoutWaliInput>, Enumerable<FamilyTreeUncheckedCreateWithoutWaliInput>>
-    connectOrCreate?: Enumerable<FamilyTreeCreateOrConnectWithoutWaliInput>
-    createMany?: FamilyTreeCreateManyWaliInputEnvelope
-    connect?: Enumerable<FamilyTreeWhereUniqueInput>
-  }
-
-  export type FamilyTreeChildCreateNestedOneWithoutPersonalInput = {
-    create?: XOR<FamilyTreeChildCreateWithoutPersonalInput, FamilyTreeChildUncheckedCreateWithoutPersonalInput>
-    connectOrCreate?: FamilyTreeChildCreateOrConnectWithoutPersonalInput
-    connect?: FamilyTreeChildWhereUniqueInput
-  }
-
-  export type FamilyTreeUncheckedCreateNestedManyWithoutFatherInput = {
-    create?: XOR<Enumerable<FamilyTreeCreateWithoutFatherInput>, Enumerable<FamilyTreeUncheckedCreateWithoutFatherInput>>
-    connectOrCreate?: Enumerable<FamilyTreeCreateOrConnectWithoutFatherInput>
-    createMany?: FamilyTreeCreateManyFatherInputEnvelope
-    connect?: Enumerable<FamilyTreeWhereUniqueInput>
-  }
-
-  export type FamilyTreeUncheckedCreateNestedManyWithoutMotherInput = {
-    create?: XOR<Enumerable<FamilyTreeCreateWithoutMotherInput>, Enumerable<FamilyTreeUncheckedCreateWithoutMotherInput>>
-    connectOrCreate?: Enumerable<FamilyTreeCreateOrConnectWithoutMotherInput>
-    createMany?: FamilyTreeCreateManyMotherInputEnvelope
-    connect?: Enumerable<FamilyTreeWhereUniqueInput>
-  }
-
-  export type FamilyTreeUncheckedCreateNestedManyWithoutWaliInput = {
-    create?: XOR<Enumerable<FamilyTreeCreateWithoutWaliInput>, Enumerable<FamilyTreeUncheckedCreateWithoutWaliInput>>
-    connectOrCreate?: Enumerable<FamilyTreeCreateOrConnectWithoutWaliInput>
-    createMany?: FamilyTreeCreateManyWaliInputEnvelope
-    connect?: Enumerable<FamilyTreeWhereUniqueInput>
-  }
-
-  export type FamilyTreeChildUncheckedCreateNestedOneWithoutPersonalInput = {
-    create?: XOR<FamilyTreeChildCreateWithoutPersonalInput, FamilyTreeChildUncheckedCreateWithoutPersonalInput>
-    connectOrCreate?: FamilyTreeChildCreateOrConnectWithoutPersonalInput
-    connect?: FamilyTreeChildWhereUniqueInput
-  }
-
-  export type EnumTypePersonalFieldUpdateOperationsInput = {
-    set?: TypePersonal
-  }
-
-  export type EnumGenderFieldUpdateOperationsInput = {
-    set?: Gender
-  }
-
-  export type EnumReligionFieldUpdateOperationsInput = {
-    set?: Religion
-  }
-
-  export type BornUpdateEnvelopeInput = {
-    set?: BornCreateInput
-    update?: BornUpdateInput
-  }
-
-  export type AddressNullableUpdateEnvelopeInput = {
-    set?: AddressCreateInput | null
-    upsert?: AddressUpsertInput
-    unset?: boolean
-  }
-
-  export type UserUpdateOneWithoutPersonalNestedInput = {
-    create?: XOR<UserCreateWithoutPersonalInput, UserUncheckedCreateWithoutPersonalInput>
-    connectOrCreate?: UserCreateOrConnectWithoutPersonalInput
-    upsert?: UserUpsertWithoutPersonalInput
-    disconnect?: boolean
-    delete?: boolean
-    connect?: UserWhereUniqueInput
-    update?: XOR<UserUpdateWithoutPersonalInput, UserUncheckedUpdateWithoutPersonalInput>
-  }
-
-  export type FamilyTreeUpdateManyWithoutFatherNestedInput = {
-    create?: XOR<Enumerable<FamilyTreeCreateWithoutFatherInput>, Enumerable<FamilyTreeUncheckedCreateWithoutFatherInput>>
-    connectOrCreate?: Enumerable<FamilyTreeCreateOrConnectWithoutFatherInput>
-    upsert?: Enumerable<FamilyTreeUpsertWithWhereUniqueWithoutFatherInput>
-    createMany?: FamilyTreeCreateManyFatherInputEnvelope
-    set?: Enumerable<FamilyTreeWhereUniqueInput>
-    disconnect?: Enumerable<FamilyTreeWhereUniqueInput>
-    delete?: Enumerable<FamilyTreeWhereUniqueInput>
-    connect?: Enumerable<FamilyTreeWhereUniqueInput>
-    update?: Enumerable<FamilyTreeUpdateWithWhereUniqueWithoutFatherInput>
-    updateMany?: Enumerable<FamilyTreeUpdateManyWithWhereWithoutFatherInput>
-    deleteMany?: Enumerable<FamilyTreeScalarWhereInput>
-  }
-
-  export type FamilyTreeUpdateManyWithoutMotherNestedInput = {
-    create?: XOR<Enumerable<FamilyTreeCreateWithoutMotherInput>, Enumerable<FamilyTreeUncheckedCreateWithoutMotherInput>>
-    connectOrCreate?: Enumerable<FamilyTreeCreateOrConnectWithoutMotherInput>
-    upsert?: Enumerable<FamilyTreeUpsertWithWhereUniqueWithoutMotherInput>
-    createMany?: FamilyTreeCreateManyMotherInputEnvelope
-    set?: Enumerable<FamilyTreeWhereUniqueInput>
-    disconnect?: Enumerable<FamilyTreeWhereUniqueInput>
-    delete?: Enumerable<FamilyTreeWhereUniqueInput>
-    connect?: Enumerable<FamilyTreeWhereUniqueInput>
-    update?: Enumerable<FamilyTreeUpdateWithWhereUniqueWithoutMotherInput>
-    updateMany?: Enumerable<FamilyTreeUpdateManyWithWhereWithoutMotherInput>
-    deleteMany?: Enumerable<FamilyTreeScalarWhereInput>
-  }
-
-  export type FamilyTreeUpdateManyWithoutWaliNestedInput = {
-    create?: XOR<Enumerable<FamilyTreeCreateWithoutWaliInput>, Enumerable<FamilyTreeUncheckedCreateWithoutWaliInput>>
-    connectOrCreate?: Enumerable<FamilyTreeCreateOrConnectWithoutWaliInput>
-    upsert?: Enumerable<FamilyTreeUpsertWithWhereUniqueWithoutWaliInput>
-    createMany?: FamilyTreeCreateManyWaliInputEnvelope
-    set?: Enumerable<FamilyTreeWhereUniqueInput>
-    disconnect?: Enumerable<FamilyTreeWhereUniqueInput>
-    delete?: Enumerable<FamilyTreeWhereUniqueInput>
-    connect?: Enumerable<FamilyTreeWhereUniqueInput>
-    update?: Enumerable<FamilyTreeUpdateWithWhereUniqueWithoutWaliInput>
-    updateMany?: Enumerable<FamilyTreeUpdateManyWithWhereWithoutWaliInput>
-    deleteMany?: Enumerable<FamilyTreeScalarWhereInput>
-  }
-
-  export type FamilyTreeChildUpdateOneWithoutPersonalNestedInput = {
-    create?: XOR<FamilyTreeChildCreateWithoutPersonalInput, FamilyTreeChildUncheckedCreateWithoutPersonalInput>
-    connectOrCreate?: FamilyTreeChildCreateOrConnectWithoutPersonalInput
-    upsert?: FamilyTreeChildUpsertWithoutPersonalInput
-    disconnect?: boolean
-    delete?: boolean
-    connect?: FamilyTreeChildWhereUniqueInput
-    update?: XOR<FamilyTreeChildUpdateWithoutPersonalInput, FamilyTreeChildUncheckedUpdateWithoutPersonalInput>
-  }
-
-  export type FamilyTreeUncheckedUpdateManyWithoutFatherNestedInput = {
-    create?: XOR<Enumerable<FamilyTreeCreateWithoutFatherInput>, Enumerable<FamilyTreeUncheckedCreateWithoutFatherInput>>
-    connectOrCreate?: Enumerable<FamilyTreeCreateOrConnectWithoutFatherInput>
-    upsert?: Enumerable<FamilyTreeUpsertWithWhereUniqueWithoutFatherInput>
-    createMany?: FamilyTreeCreateManyFatherInputEnvelope
-    set?: Enumerable<FamilyTreeWhereUniqueInput>
-    disconnect?: Enumerable<FamilyTreeWhereUniqueInput>
-    delete?: Enumerable<FamilyTreeWhereUniqueInput>
-    connect?: Enumerable<FamilyTreeWhereUniqueInput>
-    update?: Enumerable<FamilyTreeUpdateWithWhereUniqueWithoutFatherInput>
-    updateMany?: Enumerable<FamilyTreeUpdateManyWithWhereWithoutFatherInput>
-    deleteMany?: Enumerable<FamilyTreeScalarWhereInput>
-  }
-
-  export type FamilyTreeUncheckedUpdateManyWithoutMotherNestedInput = {
-    create?: XOR<Enumerable<FamilyTreeCreateWithoutMotherInput>, Enumerable<FamilyTreeUncheckedCreateWithoutMotherInput>>
-    connectOrCreate?: Enumerable<FamilyTreeCreateOrConnectWithoutMotherInput>
-    upsert?: Enumerable<FamilyTreeUpsertWithWhereUniqueWithoutMotherInput>
-    createMany?: FamilyTreeCreateManyMotherInputEnvelope
-    set?: Enumerable<FamilyTreeWhereUniqueInput>
-    disconnect?: Enumerable<FamilyTreeWhereUniqueInput>
-    delete?: Enumerable<FamilyTreeWhereUniqueInput>
-    connect?: Enumerable<FamilyTreeWhereUniqueInput>
-    update?: Enumerable<FamilyTreeUpdateWithWhereUniqueWithoutMotherInput>
-    updateMany?: Enumerable<FamilyTreeUpdateManyWithWhereWithoutMotherInput>
-    deleteMany?: Enumerable<FamilyTreeScalarWhereInput>
-  }
-
-  export type FamilyTreeUncheckedUpdateManyWithoutWaliNestedInput = {
-    create?: XOR<Enumerable<FamilyTreeCreateWithoutWaliInput>, Enumerable<FamilyTreeUncheckedCreateWithoutWaliInput>>
-    connectOrCreate?: Enumerable<FamilyTreeCreateOrConnectWithoutWaliInput>
-    upsert?: Enumerable<FamilyTreeUpsertWithWhereUniqueWithoutWaliInput>
-    createMany?: FamilyTreeCreateManyWaliInputEnvelope
-    set?: Enumerable<FamilyTreeWhereUniqueInput>
-    disconnect?: Enumerable<FamilyTreeWhereUniqueInput>
-    delete?: Enumerable<FamilyTreeWhereUniqueInput>
-    connect?: Enumerable<FamilyTreeWhereUniqueInput>
-    update?: Enumerable<FamilyTreeUpdateWithWhereUniqueWithoutWaliInput>
-    updateMany?: Enumerable<FamilyTreeUpdateManyWithWhereWithoutWaliInput>
-    deleteMany?: Enumerable<FamilyTreeScalarWhereInput>
-  }
-
-  export type FamilyTreeChildUncheckedUpdateOneWithoutPersonalNestedInput = {
-    create?: XOR<FamilyTreeChildCreateWithoutPersonalInput, FamilyTreeChildUncheckedCreateWithoutPersonalInput>
-    connectOrCreate?: FamilyTreeChildCreateOrConnectWithoutPersonalInput
-    upsert?: FamilyTreeChildUpsertWithoutPersonalInput
-    disconnect?: boolean
-    delete?: boolean
-    connect?: FamilyTreeChildWhereUniqueInput
-    update?: XOR<FamilyTreeChildUpdateWithoutPersonalInput, FamilyTreeChildUncheckedUpdateWithoutPersonalInput>
-  }
-
-  export type PersonalCreateNestedOneWithoutFatherInput = {
-    create?: XOR<PersonalCreateWithoutFatherInput, PersonalUncheckedCreateWithoutFatherInput>
-    connectOrCreate?: PersonalCreateOrConnectWithoutFatherInput
-    connect?: PersonalWhereUniqueInput
-  }
-
-  export type PersonalCreateNestedOneWithoutMotherInput = {
-    create?: XOR<PersonalCreateWithoutMotherInput, PersonalUncheckedCreateWithoutMotherInput>
-    connectOrCreate?: PersonalCreateOrConnectWithoutMotherInput
-    connect?: PersonalWhereUniqueInput
-  }
-
-  export type PersonalCreateNestedOneWithoutWaliInput = {
-    create?: XOR<PersonalCreateWithoutWaliInput, PersonalUncheckedCreateWithoutWaliInput>
-    connectOrCreate?: PersonalCreateOrConnectWithoutWaliInput
-    connect?: PersonalWhereUniqueInput
-  }
-
-  export type FamilyTreeChildCreateNestedManyWithoutKkInput = {
-    create?: XOR<Enumerable<FamilyTreeChildCreateWithoutKkInput>, Enumerable<FamilyTreeChildUncheckedCreateWithoutKkInput>>
-    connectOrCreate?: Enumerable<FamilyTreeChildCreateOrConnectWithoutKkInput>
-    createMany?: FamilyTreeChildCreateManyKkInputEnvelope
-    connect?: Enumerable<FamilyTreeChildWhereUniqueInput>
-  }
-
-  export type FamilyTreeChildUncheckedCreateNestedManyWithoutKkInput = {
-    create?: XOR<Enumerable<FamilyTreeChildCreateWithoutKkInput>, Enumerable<FamilyTreeChildUncheckedCreateWithoutKkInput>>
-    connectOrCreate?: Enumerable<FamilyTreeChildCreateOrConnectWithoutKkInput>
-    createMany?: FamilyTreeChildCreateManyKkInputEnvelope
-    connect?: Enumerable<FamilyTreeChildWhereUniqueInput>
-  }
-
-  export type PersonalUpdateOneWithoutFatherNestedInput = {
-    create?: XOR<PersonalCreateWithoutFatherInput, PersonalUncheckedCreateWithoutFatherInput>
-    connectOrCreate?: PersonalCreateOrConnectWithoutFatherInput
-    upsert?: PersonalUpsertWithoutFatherInput
-    disconnect?: boolean
-    delete?: boolean
-    connect?: PersonalWhereUniqueInput
-    update?: XOR<PersonalUpdateWithoutFatherInput, PersonalUncheckedUpdateWithoutFatherInput>
-  }
-
-  export type PersonalUpdateOneWithoutMotherNestedInput = {
-    create?: XOR<PersonalCreateWithoutMotherInput, PersonalUncheckedCreateWithoutMotherInput>
-    connectOrCreate?: PersonalCreateOrConnectWithoutMotherInput
-    upsert?: PersonalUpsertWithoutMotherInput
-    disconnect?: boolean
-    delete?: boolean
-    connect?: PersonalWhereUniqueInput
-    update?: XOR<PersonalUpdateWithoutMotherInput, PersonalUncheckedUpdateWithoutMotherInput>
-  }
-
-  export type PersonalUpdateOneWithoutWaliNestedInput = {
-    create?: XOR<PersonalCreateWithoutWaliInput, PersonalUncheckedCreateWithoutWaliInput>
-    connectOrCreate?: PersonalCreateOrConnectWithoutWaliInput
-    upsert?: PersonalUpsertWithoutWaliInput
-    disconnect?: boolean
-    delete?: boolean
-    connect?: PersonalWhereUniqueInput
-    update?: XOR<PersonalUpdateWithoutWaliInput, PersonalUncheckedUpdateWithoutWaliInput>
-  }
-
-  export type FamilyTreeChildUpdateManyWithoutKkNestedInput = {
-    create?: XOR<Enumerable<FamilyTreeChildCreateWithoutKkInput>, Enumerable<FamilyTreeChildUncheckedCreateWithoutKkInput>>
-    connectOrCreate?: Enumerable<FamilyTreeChildCreateOrConnectWithoutKkInput>
-    upsert?: Enumerable<FamilyTreeChildUpsertWithWhereUniqueWithoutKkInput>
-    createMany?: FamilyTreeChildCreateManyKkInputEnvelope
-    set?: Enumerable<FamilyTreeChildWhereUniqueInput>
-    disconnect?: Enumerable<FamilyTreeChildWhereUniqueInput>
-    delete?: Enumerable<FamilyTreeChildWhereUniqueInput>
-    connect?: Enumerable<FamilyTreeChildWhereUniqueInput>
-    update?: Enumerable<FamilyTreeChildUpdateWithWhereUniqueWithoutKkInput>
-    updateMany?: Enumerable<FamilyTreeChildUpdateManyWithWhereWithoutKkInput>
-    deleteMany?: Enumerable<FamilyTreeChildScalarWhereInput>
-  }
-
-  export type FamilyTreeChildUncheckedUpdateManyWithoutKkNestedInput = {
-    create?: XOR<Enumerable<FamilyTreeChildCreateWithoutKkInput>, Enumerable<FamilyTreeChildUncheckedCreateWithoutKkInput>>
-    connectOrCreate?: Enumerable<FamilyTreeChildCreateOrConnectWithoutKkInput>
-    upsert?: Enumerable<FamilyTreeChildUpsertWithWhereUniqueWithoutKkInput>
-    createMany?: FamilyTreeChildCreateManyKkInputEnvelope
-    set?: Enumerable<FamilyTreeChildWhereUniqueInput>
-    disconnect?: Enumerable<FamilyTreeChildWhereUniqueInput>
-    delete?: Enumerable<FamilyTreeChildWhereUniqueInput>
-    connect?: Enumerable<FamilyTreeChildWhereUniqueInput>
-    update?: Enumerable<FamilyTreeChildUpdateWithWhereUniqueWithoutKkInput>
-    updateMany?: Enumerable<FamilyTreeChildUpdateManyWithWhereWithoutKkInput>
-    deleteMany?: Enumerable<FamilyTreeChildScalarWhereInput>
-  }
-
-  export type FamilyTreeCreateNestedOneWithoutChildsInput = {
-    create?: XOR<FamilyTreeCreateWithoutChildsInput, FamilyTreeUncheckedCreateWithoutChildsInput>
-    connectOrCreate?: FamilyTreeCreateOrConnectWithoutChildsInput
-    connect?: FamilyTreeWhereUniqueInput
-  }
-
-  export type PersonalCreateNestedOneWithoutChildInput = {
-    create?: XOR<PersonalCreateWithoutChildInput, PersonalUncheckedCreateWithoutChildInput>
-    connectOrCreate?: PersonalCreateOrConnectWithoutChildInput
-    connect?: PersonalWhereUniqueInput
-  }
-
-  export type EnumChildTypeFieldUpdateOperationsInput = {
-    set?: ChildType
-  }
-
-  export type FamilyTreeUpdateOneRequiredWithoutChildsNestedInput = {
-    create?: XOR<FamilyTreeCreateWithoutChildsInput, FamilyTreeUncheckedCreateWithoutChildsInput>
-    connectOrCreate?: FamilyTreeCreateOrConnectWithoutChildsInput
-    upsert?: FamilyTreeUpsertWithoutChildsInput
-    connect?: FamilyTreeWhereUniqueInput
-    update?: XOR<FamilyTreeUpdateWithoutChildsInput, FamilyTreeUncheckedUpdateWithoutChildsInput>
-  }
-
-  export type PersonalUpdateOneRequiredWithoutChildNestedInput = {
-    create?: XOR<PersonalCreateWithoutChildInput, PersonalUncheckedCreateWithoutChildInput>
-    connectOrCreate?: PersonalCreateOrConnectWithoutChildInput
-    upsert?: PersonalUpsertWithoutChildInput
-    connect?: PersonalWhereUniqueInput
-    update?: XOR<PersonalUpdateWithoutChildInput, PersonalUncheckedUpdateWithoutChildInput>
-  }
-
-  export type UserCreateNestedOneWithoutStudentInput = {
-    create?: XOR<UserCreateWithoutStudentInput, UserUncheckedCreateWithoutStudentInput>
-    connectOrCreate?: UserCreateOrConnectWithoutStudentInput
-    connect?: UserWhereUniqueInput
-  }
-
-  export type KonsentrasiKeahlianCreateNestedOneWithoutStudentInput = {
-    create?: XOR<KonsentrasiKeahlianCreateWithoutStudentInput, KonsentrasiKeahlianUncheckedCreateWithoutStudentInput>
-    connectOrCreate?: KonsentrasiKeahlianCreateOrConnectWithoutStudentInput
-    connect?: KonsentrasiKeahlianWhereUniqueInput
-  }
-
-  export type ClassRoomCreateNestedManyWithoutStudentsInput = {
-    create?: XOR<Enumerable<ClassRoomCreateWithoutStudentsInput>, Enumerable<ClassRoomUncheckedCreateWithoutStudentsInput>>
-    connectOrCreate?: Enumerable<ClassRoomCreateOrConnectWithoutStudentsInput>
-    connect?: Enumerable<ClassRoomWhereUniqueInput>
-  }
-
-  export type SchoolYearCreateNestedOneWithoutStudentsInInput = {
-    create?: XOR<SchoolYearCreateWithoutStudentsInInput, SchoolYearUncheckedCreateWithoutStudentsInInput>
-    connectOrCreate?: SchoolYearCreateOrConnectWithoutStudentsInInput
-    connect?: SchoolYearWhereUniqueInput
-  }
-
-  export type InstansiCreateNestedOneWithoutStudentInput = {
-    create?: XOR<InstansiCreateWithoutStudentInput, InstansiUncheckedCreateWithoutStudentInput>
-    connectOrCreate?: InstansiCreateOrConnectWithoutStudentInput
-    connect?: InstansiWhereUniqueInput
-  }
-
-  export type CalendarCreateNestedManyWithoutStudentInput = {
-    create?: XOR<Enumerable<CalendarCreateWithoutStudentInput>, Enumerable<CalendarUncheckedCreateWithoutStudentInput>>
-    connectOrCreate?: Enumerable<CalendarCreateOrConnectWithoutStudentInput>
-    connect?: Enumerable<CalendarWhereUniqueInput>
-  }
-
-  export type StudentCreateclassRoomIdsInput = {
-    set: Enumerable<string>
-  }
-
-  export type StudentCreateeventIdsInput = {
-    set: Enumerable<string>
-  }
-
-  export type ClassRoomUncheckedCreateNestedManyWithoutStudentsInput = {
-    create?: XOR<Enumerable<ClassRoomCreateWithoutStudentsInput>, Enumerable<ClassRoomUncheckedCreateWithoutStudentsInput>>
-    connectOrCreate?: Enumerable<ClassRoomCreateOrConnectWithoutStudentsInput>
-    connect?: Enumerable<ClassRoomWhereUniqueInput>
-  }
-
-  export type CalendarUncheckedCreateNestedManyWithoutStudentInput = {
-    create?: XOR<Enumerable<CalendarCreateWithoutStudentInput>, Enumerable<CalendarUncheckedCreateWithoutStudentInput>>
-    connectOrCreate?: Enumerable<CalendarCreateOrConnectWithoutStudentInput>
-    connect?: Enumerable<CalendarWhereUniqueInput>
-  }
-
-  export type UserUpdateOneWithoutStudentNestedInput = {
-    create?: XOR<UserCreateWithoutStudentInput, UserUncheckedCreateWithoutStudentInput>
-    connectOrCreate?: UserCreateOrConnectWithoutStudentInput
-    upsert?: UserUpsertWithoutStudentInput
-    disconnect?: boolean
-    delete?: boolean
-    connect?: UserWhereUniqueInput
-    update?: XOR<UserUpdateWithoutStudentInput, UserUncheckedUpdateWithoutStudentInput>
-  }
-
-  export type KonsentrasiKeahlianUpdateOneWithoutStudentNestedInput = {
-    create?: XOR<KonsentrasiKeahlianCreateWithoutStudentInput, KonsentrasiKeahlianUncheckedCreateWithoutStudentInput>
-    connectOrCreate?: KonsentrasiKeahlianCreateOrConnectWithoutStudentInput
-    upsert?: KonsentrasiKeahlianUpsertWithoutStudentInput
-    disconnect?: boolean
-    delete?: boolean
-    connect?: KonsentrasiKeahlianWhereUniqueInput
-    update?: XOR<KonsentrasiKeahlianUpdateWithoutStudentInput, KonsentrasiKeahlianUncheckedUpdateWithoutStudentInput>
-  }
-
-  export type ClassRoomUpdateManyWithoutStudentsNestedInput = {
-    create?: XOR<Enumerable<ClassRoomCreateWithoutStudentsInput>, Enumerable<ClassRoomUncheckedCreateWithoutStudentsInput>>
-    connectOrCreate?: Enumerable<ClassRoomCreateOrConnectWithoutStudentsInput>
-    upsert?: Enumerable<ClassRoomUpsertWithWhereUniqueWithoutStudentsInput>
-    set?: Enumerable<ClassRoomWhereUniqueInput>
-    disconnect?: Enumerable<ClassRoomWhereUniqueInput>
-    delete?: Enumerable<ClassRoomWhereUniqueInput>
-    connect?: Enumerable<ClassRoomWhereUniqueInput>
-    update?: Enumerable<ClassRoomUpdateWithWhereUniqueWithoutStudentsInput>
-    updateMany?: Enumerable<ClassRoomUpdateManyWithWhereWithoutStudentsInput>
-    deleteMany?: Enumerable<ClassRoomScalarWhereInput>
-  }
-
-  export type SchoolYearUpdateOneRequiredWithoutStudentsInNestedInput = {
-    create?: XOR<SchoolYearCreateWithoutStudentsInInput, SchoolYearUncheckedCreateWithoutStudentsInInput>
-    connectOrCreate?: SchoolYearCreateOrConnectWithoutStudentsInInput
-    upsert?: SchoolYearUpsertWithoutStudentsInInput
-    connect?: SchoolYearWhereUniqueInput
-    update?: XOR<SchoolYearUpdateWithoutStudentsInInput, SchoolYearUncheckedUpdateWithoutStudentsInInput>
-  }
-
-  export type InstansiUpdateOneRequiredWithoutStudentNestedInput = {
-    create?: XOR<InstansiCreateWithoutStudentInput, InstansiUncheckedCreateWithoutStudentInput>
-    connectOrCreate?: InstansiCreateOrConnectWithoutStudentInput
-    upsert?: InstansiUpsertWithoutStudentInput
-    connect?: InstansiWhereUniqueInput
-    update?: XOR<InstansiUpdateWithoutStudentInput, InstansiUncheckedUpdateWithoutStudentInput>
-  }
-
-  export type CalendarUpdateManyWithoutStudentNestedInput = {
-    create?: XOR<Enumerable<CalendarCreateWithoutStudentInput>, Enumerable<CalendarUncheckedCreateWithoutStudentInput>>
-    connectOrCreate?: Enumerable<CalendarCreateOrConnectWithoutStudentInput>
-    upsert?: Enumerable<CalendarUpsertWithWhereUniqueWithoutStudentInput>
-    set?: Enumerable<CalendarWhereUniqueInput>
-    disconnect?: Enumerable<CalendarWhereUniqueInput>
-    delete?: Enumerable<CalendarWhereUniqueInput>
-    connect?: Enumerable<CalendarWhereUniqueInput>
-    update?: Enumerable<CalendarUpdateWithWhereUniqueWithoutStudentInput>
-    updateMany?: Enumerable<CalendarUpdateManyWithWhereWithoutStudentInput>
-    deleteMany?: Enumerable<CalendarScalarWhereInput>
-  }
-
-  export type StudentUpdateclassRoomIdsInput = {
-    set?: Enumerable<string>
-    push?: string | Enumerable<string>
-  }
-
-  export type StudentUpdateeventIdsInput = {
-    set?: Enumerable<string>
-    push?: string | Enumerable<string>
-  }
-
-  export type ClassRoomUncheckedUpdateManyWithoutStudentsNestedInput = {
-    create?: XOR<Enumerable<ClassRoomCreateWithoutStudentsInput>, Enumerable<ClassRoomUncheckedCreateWithoutStudentsInput>>
-    connectOrCreate?: Enumerable<ClassRoomCreateOrConnectWithoutStudentsInput>
-    upsert?: Enumerable<ClassRoomUpsertWithWhereUniqueWithoutStudentsInput>
-    set?: Enumerable<ClassRoomWhereUniqueInput>
-    disconnect?: Enumerable<ClassRoomWhereUniqueInput>
-    delete?: Enumerable<ClassRoomWhereUniqueInput>
-    connect?: Enumerable<ClassRoomWhereUniqueInput>
-    update?: Enumerable<ClassRoomUpdateWithWhereUniqueWithoutStudentsInput>
-    updateMany?: Enumerable<ClassRoomUpdateManyWithWhereWithoutStudentsInput>
-    deleteMany?: Enumerable<ClassRoomScalarWhereInput>
-  }
-
-  export type CalendarUncheckedUpdateManyWithoutStudentNestedInput = {
-    create?: XOR<Enumerable<CalendarCreateWithoutStudentInput>, Enumerable<CalendarUncheckedCreateWithoutStudentInput>>
-    connectOrCreate?: Enumerable<CalendarCreateOrConnectWithoutStudentInput>
-    upsert?: Enumerable<CalendarUpsertWithWhereUniqueWithoutStudentInput>
-    set?: Enumerable<CalendarWhereUniqueInput>
-    disconnect?: Enumerable<CalendarWhereUniqueInput>
-    delete?: Enumerable<CalendarWhereUniqueInput>
-    connect?: Enumerable<CalendarWhereUniqueInput>
-    update?: Enumerable<CalendarUpdateWithWhereUniqueWithoutStudentInput>
-    updateMany?: Enumerable<CalendarUpdateManyWithWhereWithoutStudentInput>
-    deleteMany?: Enumerable<CalendarScalarWhereInput>
   }
 
   export type EducationListCreateEnvelopeInput = {
@@ -27721,46 +28756,135 @@ export namespace Prisma {
     attachment?: string | null
   }
 
-  export type UserCreateNestedOneWithoutTeacherInput = {
-    create?: XOR<UserCreateWithoutTeacherInput, UserUncheckedCreateWithoutTeacherInput>
-    connectOrCreate?: UserCreateOrConnectWithoutTeacherInput
-    connect?: UserWhereUniqueInput
+  export type AuthCreateNestedOneWithoutPersonalInput = {
+    create?: XOR<AuthCreateWithoutPersonalInput, AuthUncheckedCreateWithoutPersonalInput>
+    connectOrCreate?: AuthCreateOrConnectWithoutPersonalInput
+    connect?: AuthWhereUniqueInput
   }
 
-  export type ClassRoomCreateNestedManyWithoutWaliInput = {
-    create?: XOR<Enumerable<ClassRoomCreateWithoutWaliInput>, Enumerable<ClassRoomUncheckedCreateWithoutWaliInput>>
-    connectOrCreate?: Enumerable<ClassRoomCreateOrConnectWithoutWaliInput>
-    createMany?: ClassRoomCreateManyWaliInputEnvelope
-    connect?: Enumerable<ClassRoomWhereUniqueInput>
+  export type FamilyTreeCreateNestedManyWithoutFatherInput = {
+    create?: XOR<Enumerable<FamilyTreeCreateWithoutFatherInput>, Enumerable<FamilyTreeUncheckedCreateWithoutFatherInput>>
+    connectOrCreate?: Enumerable<FamilyTreeCreateOrConnectWithoutFatherInput>
+    createMany?: FamilyTreeCreateManyFatherInputEnvelope
+    connect?: Enumerable<FamilyTreeWhereUniqueInput>
   }
 
-  export type InstansiCreateNestedOneWithoutTeacherInput = {
-    create?: XOR<InstansiCreateWithoutTeacherInput, InstansiUncheckedCreateWithoutTeacherInput>
-    connectOrCreate?: InstansiCreateOrConnectWithoutTeacherInput
-    connect?: InstansiWhereUniqueInput
+  export type FamilyTreeCreateNestedManyWithoutMotherInput = {
+    create?: XOR<Enumerable<FamilyTreeCreateWithoutMotherInput>, Enumerable<FamilyTreeUncheckedCreateWithoutMotherInput>>
+    connectOrCreate?: Enumerable<FamilyTreeCreateOrConnectWithoutMotherInput>
+    createMany?: FamilyTreeCreateManyMotherInputEnvelope
+    connect?: Enumerable<FamilyTreeWhereUniqueInput>
   }
 
-  export type CalendarCreateNestedManyWithoutTeacherInput = {
-    create?: XOR<Enumerable<CalendarCreateWithoutTeacherInput>, Enumerable<CalendarUncheckedCreateWithoutTeacherInput>>
-    connectOrCreate?: Enumerable<CalendarCreateOrConnectWithoutTeacherInput>
-    connect?: Enumerable<CalendarWhereUniqueInput>
+  export type FamilyTreeCreateNestedManyWithoutWaliInput = {
+    create?: XOR<Enumerable<FamilyTreeCreateWithoutWaliInput>, Enumerable<FamilyTreeUncheckedCreateWithoutWaliInput>>
+    connectOrCreate?: Enumerable<FamilyTreeCreateOrConnectWithoutWaliInput>
+    createMany?: FamilyTreeCreateManyWaliInputEnvelope
+    connect?: Enumerable<FamilyTreeWhereUniqueInput>
   }
 
-  export type TeacherCreateeventIdsInput = {
-    set: Enumerable<string>
+  export type FamilyTreeCreateNestedManyWithoutCoupleInput = {
+    create?: XOR<Enumerable<FamilyTreeCreateWithoutCoupleInput>, Enumerable<FamilyTreeUncheckedCreateWithoutCoupleInput>>
+    connectOrCreate?: Enumerable<FamilyTreeCreateOrConnectWithoutCoupleInput>
+    createMany?: FamilyTreeCreateManyCoupleInputEnvelope
+    connect?: Enumerable<FamilyTreeWhereUniqueInput>
   }
 
-  export type ClassRoomUncheckedCreateNestedManyWithoutWaliInput = {
-    create?: XOR<Enumerable<ClassRoomCreateWithoutWaliInput>, Enumerable<ClassRoomUncheckedCreateWithoutWaliInput>>
-    connectOrCreate?: Enumerable<ClassRoomCreateOrConnectWithoutWaliInput>
-    createMany?: ClassRoomCreateManyWaliInputEnvelope
-    connect?: Enumerable<ClassRoomWhereUniqueInput>
+  export type FamilyTreeChildCreateNestedOneWithoutPersonalInput = {
+    create?: XOR<FamilyTreeChildCreateWithoutPersonalInput, FamilyTreeChildUncheckedCreateWithoutPersonalInput>
+    connectOrCreate?: FamilyTreeChildCreateOrConnectWithoutPersonalInput
+    connect?: FamilyTreeChildWhereUniqueInput
   }
 
-  export type CalendarUncheckedCreateNestedManyWithoutTeacherInput = {
-    create?: XOR<Enumerable<CalendarCreateWithoutTeacherInput>, Enumerable<CalendarUncheckedCreateWithoutTeacherInput>>
-    connectOrCreate?: Enumerable<CalendarCreateOrConnectWithoutTeacherInput>
-    connect?: Enumerable<CalendarWhereUniqueInput>
+  export type StudentCreateNestedManyWithoutPersonalInput = {
+    create?: XOR<Enumerable<StudentCreateWithoutPersonalInput>, Enumerable<StudentUncheckedCreateWithoutPersonalInput>>
+    connectOrCreate?: Enumerable<StudentCreateOrConnectWithoutPersonalInput>
+    createMany?: StudentCreateManyPersonalInputEnvelope
+    connect?: Enumerable<StudentWhereUniqueInput>
+  }
+
+  export type TeacherCreateNestedManyWithoutPersonalInput = {
+    create?: XOR<Enumerable<TeacherCreateWithoutPersonalInput>, Enumerable<TeacherUncheckedCreateWithoutPersonalInput>>
+    connectOrCreate?: Enumerable<TeacherCreateOrConnectWithoutPersonalInput>
+    createMany?: TeacherCreateManyPersonalInputEnvelope
+    connect?: Enumerable<TeacherWhereUniqueInput>
+  }
+
+  export type AuthUncheckedCreateNestedOneWithoutPersonalInput = {
+    create?: XOR<AuthCreateWithoutPersonalInput, AuthUncheckedCreateWithoutPersonalInput>
+    connectOrCreate?: AuthCreateOrConnectWithoutPersonalInput
+    connect?: AuthWhereUniqueInput
+  }
+
+  export type FamilyTreeUncheckedCreateNestedManyWithoutFatherInput = {
+    create?: XOR<Enumerable<FamilyTreeCreateWithoutFatherInput>, Enumerable<FamilyTreeUncheckedCreateWithoutFatherInput>>
+    connectOrCreate?: Enumerable<FamilyTreeCreateOrConnectWithoutFatherInput>
+    createMany?: FamilyTreeCreateManyFatherInputEnvelope
+    connect?: Enumerable<FamilyTreeWhereUniqueInput>
+  }
+
+  export type FamilyTreeUncheckedCreateNestedManyWithoutMotherInput = {
+    create?: XOR<Enumerable<FamilyTreeCreateWithoutMotherInput>, Enumerable<FamilyTreeUncheckedCreateWithoutMotherInput>>
+    connectOrCreate?: Enumerable<FamilyTreeCreateOrConnectWithoutMotherInput>
+    createMany?: FamilyTreeCreateManyMotherInputEnvelope
+    connect?: Enumerable<FamilyTreeWhereUniqueInput>
+  }
+
+  export type FamilyTreeUncheckedCreateNestedManyWithoutWaliInput = {
+    create?: XOR<Enumerable<FamilyTreeCreateWithoutWaliInput>, Enumerable<FamilyTreeUncheckedCreateWithoutWaliInput>>
+    connectOrCreate?: Enumerable<FamilyTreeCreateOrConnectWithoutWaliInput>
+    createMany?: FamilyTreeCreateManyWaliInputEnvelope
+    connect?: Enumerable<FamilyTreeWhereUniqueInput>
+  }
+
+  export type FamilyTreeUncheckedCreateNestedManyWithoutCoupleInput = {
+    create?: XOR<Enumerable<FamilyTreeCreateWithoutCoupleInput>, Enumerable<FamilyTreeUncheckedCreateWithoutCoupleInput>>
+    connectOrCreate?: Enumerable<FamilyTreeCreateOrConnectWithoutCoupleInput>
+    createMany?: FamilyTreeCreateManyCoupleInputEnvelope
+    connect?: Enumerable<FamilyTreeWhereUniqueInput>
+  }
+
+  export type FamilyTreeChildUncheckedCreateNestedOneWithoutPersonalInput = {
+    create?: XOR<FamilyTreeChildCreateWithoutPersonalInput, FamilyTreeChildUncheckedCreateWithoutPersonalInput>
+    connectOrCreate?: FamilyTreeChildCreateOrConnectWithoutPersonalInput
+    connect?: FamilyTreeChildWhereUniqueInput
+  }
+
+  export type StudentUncheckedCreateNestedManyWithoutPersonalInput = {
+    create?: XOR<Enumerable<StudentCreateWithoutPersonalInput>, Enumerable<StudentUncheckedCreateWithoutPersonalInput>>
+    connectOrCreate?: Enumerable<StudentCreateOrConnectWithoutPersonalInput>
+    createMany?: StudentCreateManyPersonalInputEnvelope
+    connect?: Enumerable<StudentWhereUniqueInput>
+  }
+
+  export type TeacherUncheckedCreateNestedManyWithoutPersonalInput = {
+    create?: XOR<Enumerable<TeacherCreateWithoutPersonalInput>, Enumerable<TeacherUncheckedCreateWithoutPersonalInput>>
+    connectOrCreate?: Enumerable<TeacherCreateOrConnectWithoutPersonalInput>
+    createMany?: TeacherCreateManyPersonalInputEnvelope
+    connect?: Enumerable<TeacherWhereUniqueInput>
+  }
+
+  export type EnumTypePersonalFieldUpdateOperationsInput = {
+    set?: TypePersonal
+  }
+
+  export type EnumGenderFieldUpdateOperationsInput = {
+    set?: Gender
+  }
+
+  export type EnumReligionFieldUpdateOperationsInput = {
+    set?: Religion
+  }
+
+  export type BornUpdateEnvelopeInput = {
+    set?: BornCreateInput
+    update?: BornUpdateInput
+  }
+
+  export type AddressNullableUpdateEnvelopeInput = {
+    set?: AddressCreateInput | null
+    upsert?: AddressUpsertInput
+    unset?: boolean
   }
 
   export type EducationListUpdateEnvelopeInput = {
@@ -27861,14 +28985,585 @@ export namespace Prisma {
     deleteMany?: AdditionalDeleteManyInput
   }
 
-  export type UserUpdateOneWithoutTeacherNestedInput = {
-    create?: XOR<UserCreateWithoutTeacherInput, UserUncheckedCreateWithoutTeacherInput>
-    connectOrCreate?: UserCreateOrConnectWithoutTeacherInput
-    upsert?: UserUpsertWithoutTeacherInput
+  export type AuthUpdateOneWithoutPersonalNestedInput = {
+    create?: XOR<AuthCreateWithoutPersonalInput, AuthUncheckedCreateWithoutPersonalInput>
+    connectOrCreate?: AuthCreateOrConnectWithoutPersonalInput
+    upsert?: AuthUpsertWithoutPersonalInput
     disconnect?: boolean
     delete?: boolean
+    connect?: AuthWhereUniqueInput
+    update?: XOR<AuthUpdateWithoutPersonalInput, AuthUncheckedUpdateWithoutPersonalInput>
+  }
+
+  export type FamilyTreeUpdateManyWithoutFatherNestedInput = {
+    create?: XOR<Enumerable<FamilyTreeCreateWithoutFatherInput>, Enumerable<FamilyTreeUncheckedCreateWithoutFatherInput>>
+    connectOrCreate?: Enumerable<FamilyTreeCreateOrConnectWithoutFatherInput>
+    upsert?: Enumerable<FamilyTreeUpsertWithWhereUniqueWithoutFatherInput>
+    createMany?: FamilyTreeCreateManyFatherInputEnvelope
+    set?: Enumerable<FamilyTreeWhereUniqueInput>
+    disconnect?: Enumerable<FamilyTreeWhereUniqueInput>
+    delete?: Enumerable<FamilyTreeWhereUniqueInput>
+    connect?: Enumerable<FamilyTreeWhereUniqueInput>
+    update?: Enumerable<FamilyTreeUpdateWithWhereUniqueWithoutFatherInput>
+    updateMany?: Enumerable<FamilyTreeUpdateManyWithWhereWithoutFatherInput>
+    deleteMany?: Enumerable<FamilyTreeScalarWhereInput>
+  }
+
+  export type FamilyTreeUpdateManyWithoutMotherNestedInput = {
+    create?: XOR<Enumerable<FamilyTreeCreateWithoutMotherInput>, Enumerable<FamilyTreeUncheckedCreateWithoutMotherInput>>
+    connectOrCreate?: Enumerable<FamilyTreeCreateOrConnectWithoutMotherInput>
+    upsert?: Enumerable<FamilyTreeUpsertWithWhereUniqueWithoutMotherInput>
+    createMany?: FamilyTreeCreateManyMotherInputEnvelope
+    set?: Enumerable<FamilyTreeWhereUniqueInput>
+    disconnect?: Enumerable<FamilyTreeWhereUniqueInput>
+    delete?: Enumerable<FamilyTreeWhereUniqueInput>
+    connect?: Enumerable<FamilyTreeWhereUniqueInput>
+    update?: Enumerable<FamilyTreeUpdateWithWhereUniqueWithoutMotherInput>
+    updateMany?: Enumerable<FamilyTreeUpdateManyWithWhereWithoutMotherInput>
+    deleteMany?: Enumerable<FamilyTreeScalarWhereInput>
+  }
+
+  export type FamilyTreeUpdateManyWithoutWaliNestedInput = {
+    create?: XOR<Enumerable<FamilyTreeCreateWithoutWaliInput>, Enumerable<FamilyTreeUncheckedCreateWithoutWaliInput>>
+    connectOrCreate?: Enumerable<FamilyTreeCreateOrConnectWithoutWaliInput>
+    upsert?: Enumerable<FamilyTreeUpsertWithWhereUniqueWithoutWaliInput>
+    createMany?: FamilyTreeCreateManyWaliInputEnvelope
+    set?: Enumerable<FamilyTreeWhereUniqueInput>
+    disconnect?: Enumerable<FamilyTreeWhereUniqueInput>
+    delete?: Enumerable<FamilyTreeWhereUniqueInput>
+    connect?: Enumerable<FamilyTreeWhereUniqueInput>
+    update?: Enumerable<FamilyTreeUpdateWithWhereUniqueWithoutWaliInput>
+    updateMany?: Enumerable<FamilyTreeUpdateManyWithWhereWithoutWaliInput>
+    deleteMany?: Enumerable<FamilyTreeScalarWhereInput>
+  }
+
+  export type FamilyTreeUpdateManyWithoutCoupleNestedInput = {
+    create?: XOR<Enumerable<FamilyTreeCreateWithoutCoupleInput>, Enumerable<FamilyTreeUncheckedCreateWithoutCoupleInput>>
+    connectOrCreate?: Enumerable<FamilyTreeCreateOrConnectWithoutCoupleInput>
+    upsert?: Enumerable<FamilyTreeUpsertWithWhereUniqueWithoutCoupleInput>
+    createMany?: FamilyTreeCreateManyCoupleInputEnvelope
+    set?: Enumerable<FamilyTreeWhereUniqueInput>
+    disconnect?: Enumerable<FamilyTreeWhereUniqueInput>
+    delete?: Enumerable<FamilyTreeWhereUniqueInput>
+    connect?: Enumerable<FamilyTreeWhereUniqueInput>
+    update?: Enumerable<FamilyTreeUpdateWithWhereUniqueWithoutCoupleInput>
+    updateMany?: Enumerable<FamilyTreeUpdateManyWithWhereWithoutCoupleInput>
+    deleteMany?: Enumerable<FamilyTreeScalarWhereInput>
+  }
+
+  export type FamilyTreeChildUpdateOneWithoutPersonalNestedInput = {
+    create?: XOR<FamilyTreeChildCreateWithoutPersonalInput, FamilyTreeChildUncheckedCreateWithoutPersonalInput>
+    connectOrCreate?: FamilyTreeChildCreateOrConnectWithoutPersonalInput
+    upsert?: FamilyTreeChildUpsertWithoutPersonalInput
+    disconnect?: boolean
+    delete?: boolean
+    connect?: FamilyTreeChildWhereUniqueInput
+    update?: XOR<FamilyTreeChildUpdateWithoutPersonalInput, FamilyTreeChildUncheckedUpdateWithoutPersonalInput>
+  }
+
+  export type StudentUpdateManyWithoutPersonalNestedInput = {
+    create?: XOR<Enumerable<StudentCreateWithoutPersonalInput>, Enumerable<StudentUncheckedCreateWithoutPersonalInput>>
+    connectOrCreate?: Enumerable<StudentCreateOrConnectWithoutPersonalInput>
+    upsert?: Enumerable<StudentUpsertWithWhereUniqueWithoutPersonalInput>
+    createMany?: StudentCreateManyPersonalInputEnvelope
+    set?: Enumerable<StudentWhereUniqueInput>
+    disconnect?: Enumerable<StudentWhereUniqueInput>
+    delete?: Enumerable<StudentWhereUniqueInput>
+    connect?: Enumerable<StudentWhereUniqueInput>
+    update?: Enumerable<StudentUpdateWithWhereUniqueWithoutPersonalInput>
+    updateMany?: Enumerable<StudentUpdateManyWithWhereWithoutPersonalInput>
+    deleteMany?: Enumerable<StudentScalarWhereInput>
+  }
+
+  export type TeacherUpdateManyWithoutPersonalNestedInput = {
+    create?: XOR<Enumerable<TeacherCreateWithoutPersonalInput>, Enumerable<TeacherUncheckedCreateWithoutPersonalInput>>
+    connectOrCreate?: Enumerable<TeacherCreateOrConnectWithoutPersonalInput>
+    upsert?: Enumerable<TeacherUpsertWithWhereUniqueWithoutPersonalInput>
+    createMany?: TeacherCreateManyPersonalInputEnvelope
+    set?: Enumerable<TeacherWhereUniqueInput>
+    disconnect?: Enumerable<TeacherWhereUniqueInput>
+    delete?: Enumerable<TeacherWhereUniqueInput>
+    connect?: Enumerable<TeacherWhereUniqueInput>
+    update?: Enumerable<TeacherUpdateWithWhereUniqueWithoutPersonalInput>
+    updateMany?: Enumerable<TeacherUpdateManyWithWhereWithoutPersonalInput>
+    deleteMany?: Enumerable<TeacherScalarWhereInput>
+  }
+
+  export type AuthUncheckedUpdateOneWithoutPersonalNestedInput = {
+    create?: XOR<AuthCreateWithoutPersonalInput, AuthUncheckedCreateWithoutPersonalInput>
+    connectOrCreate?: AuthCreateOrConnectWithoutPersonalInput
+    upsert?: AuthUpsertWithoutPersonalInput
+    disconnect?: boolean
+    delete?: boolean
+    connect?: AuthWhereUniqueInput
+    update?: XOR<AuthUpdateWithoutPersonalInput, AuthUncheckedUpdateWithoutPersonalInput>
+  }
+
+  export type FamilyTreeUncheckedUpdateManyWithoutFatherNestedInput = {
+    create?: XOR<Enumerable<FamilyTreeCreateWithoutFatherInput>, Enumerable<FamilyTreeUncheckedCreateWithoutFatherInput>>
+    connectOrCreate?: Enumerable<FamilyTreeCreateOrConnectWithoutFatherInput>
+    upsert?: Enumerable<FamilyTreeUpsertWithWhereUniqueWithoutFatherInput>
+    createMany?: FamilyTreeCreateManyFatherInputEnvelope
+    set?: Enumerable<FamilyTreeWhereUniqueInput>
+    disconnect?: Enumerable<FamilyTreeWhereUniqueInput>
+    delete?: Enumerable<FamilyTreeWhereUniqueInput>
+    connect?: Enumerable<FamilyTreeWhereUniqueInput>
+    update?: Enumerable<FamilyTreeUpdateWithWhereUniqueWithoutFatherInput>
+    updateMany?: Enumerable<FamilyTreeUpdateManyWithWhereWithoutFatherInput>
+    deleteMany?: Enumerable<FamilyTreeScalarWhereInput>
+  }
+
+  export type FamilyTreeUncheckedUpdateManyWithoutMotherNestedInput = {
+    create?: XOR<Enumerable<FamilyTreeCreateWithoutMotherInput>, Enumerable<FamilyTreeUncheckedCreateWithoutMotherInput>>
+    connectOrCreate?: Enumerable<FamilyTreeCreateOrConnectWithoutMotherInput>
+    upsert?: Enumerable<FamilyTreeUpsertWithWhereUniqueWithoutMotherInput>
+    createMany?: FamilyTreeCreateManyMotherInputEnvelope
+    set?: Enumerable<FamilyTreeWhereUniqueInput>
+    disconnect?: Enumerable<FamilyTreeWhereUniqueInput>
+    delete?: Enumerable<FamilyTreeWhereUniqueInput>
+    connect?: Enumerable<FamilyTreeWhereUniqueInput>
+    update?: Enumerable<FamilyTreeUpdateWithWhereUniqueWithoutMotherInput>
+    updateMany?: Enumerable<FamilyTreeUpdateManyWithWhereWithoutMotherInput>
+    deleteMany?: Enumerable<FamilyTreeScalarWhereInput>
+  }
+
+  export type FamilyTreeUncheckedUpdateManyWithoutWaliNestedInput = {
+    create?: XOR<Enumerable<FamilyTreeCreateWithoutWaliInput>, Enumerable<FamilyTreeUncheckedCreateWithoutWaliInput>>
+    connectOrCreate?: Enumerable<FamilyTreeCreateOrConnectWithoutWaliInput>
+    upsert?: Enumerable<FamilyTreeUpsertWithWhereUniqueWithoutWaliInput>
+    createMany?: FamilyTreeCreateManyWaliInputEnvelope
+    set?: Enumerable<FamilyTreeWhereUniqueInput>
+    disconnect?: Enumerable<FamilyTreeWhereUniqueInput>
+    delete?: Enumerable<FamilyTreeWhereUniqueInput>
+    connect?: Enumerable<FamilyTreeWhereUniqueInput>
+    update?: Enumerable<FamilyTreeUpdateWithWhereUniqueWithoutWaliInput>
+    updateMany?: Enumerable<FamilyTreeUpdateManyWithWhereWithoutWaliInput>
+    deleteMany?: Enumerable<FamilyTreeScalarWhereInput>
+  }
+
+  export type FamilyTreeUncheckedUpdateManyWithoutCoupleNestedInput = {
+    create?: XOR<Enumerable<FamilyTreeCreateWithoutCoupleInput>, Enumerable<FamilyTreeUncheckedCreateWithoutCoupleInput>>
+    connectOrCreate?: Enumerable<FamilyTreeCreateOrConnectWithoutCoupleInput>
+    upsert?: Enumerable<FamilyTreeUpsertWithWhereUniqueWithoutCoupleInput>
+    createMany?: FamilyTreeCreateManyCoupleInputEnvelope
+    set?: Enumerable<FamilyTreeWhereUniqueInput>
+    disconnect?: Enumerable<FamilyTreeWhereUniqueInput>
+    delete?: Enumerable<FamilyTreeWhereUniqueInput>
+    connect?: Enumerable<FamilyTreeWhereUniqueInput>
+    update?: Enumerable<FamilyTreeUpdateWithWhereUniqueWithoutCoupleInput>
+    updateMany?: Enumerable<FamilyTreeUpdateManyWithWhereWithoutCoupleInput>
+    deleteMany?: Enumerable<FamilyTreeScalarWhereInput>
+  }
+
+  export type FamilyTreeChildUncheckedUpdateOneWithoutPersonalNestedInput = {
+    create?: XOR<FamilyTreeChildCreateWithoutPersonalInput, FamilyTreeChildUncheckedCreateWithoutPersonalInput>
+    connectOrCreate?: FamilyTreeChildCreateOrConnectWithoutPersonalInput
+    upsert?: FamilyTreeChildUpsertWithoutPersonalInput
+    disconnect?: boolean
+    delete?: boolean
+    connect?: FamilyTreeChildWhereUniqueInput
+    update?: XOR<FamilyTreeChildUpdateWithoutPersonalInput, FamilyTreeChildUncheckedUpdateWithoutPersonalInput>
+  }
+
+  export type StudentUncheckedUpdateManyWithoutPersonalNestedInput = {
+    create?: XOR<Enumerable<StudentCreateWithoutPersonalInput>, Enumerable<StudentUncheckedCreateWithoutPersonalInput>>
+    connectOrCreate?: Enumerable<StudentCreateOrConnectWithoutPersonalInput>
+    upsert?: Enumerable<StudentUpsertWithWhereUniqueWithoutPersonalInput>
+    createMany?: StudentCreateManyPersonalInputEnvelope
+    set?: Enumerable<StudentWhereUniqueInput>
+    disconnect?: Enumerable<StudentWhereUniqueInput>
+    delete?: Enumerable<StudentWhereUniqueInput>
+    connect?: Enumerable<StudentWhereUniqueInput>
+    update?: Enumerable<StudentUpdateWithWhereUniqueWithoutPersonalInput>
+    updateMany?: Enumerable<StudentUpdateManyWithWhereWithoutPersonalInput>
+    deleteMany?: Enumerable<StudentScalarWhereInput>
+  }
+
+  export type TeacherUncheckedUpdateManyWithoutPersonalNestedInput = {
+    create?: XOR<Enumerable<TeacherCreateWithoutPersonalInput>, Enumerable<TeacherUncheckedCreateWithoutPersonalInput>>
+    connectOrCreate?: Enumerable<TeacherCreateOrConnectWithoutPersonalInput>
+    upsert?: Enumerable<TeacherUpsertWithWhereUniqueWithoutPersonalInput>
+    createMany?: TeacherCreateManyPersonalInputEnvelope
+    set?: Enumerable<TeacherWhereUniqueInput>
+    disconnect?: Enumerable<TeacherWhereUniqueInput>
+    delete?: Enumerable<TeacherWhereUniqueInput>
+    connect?: Enumerable<TeacherWhereUniqueInput>
+    update?: Enumerable<TeacherUpdateWithWhereUniqueWithoutPersonalInput>
+    updateMany?: Enumerable<TeacherUpdateManyWithWhereWithoutPersonalInput>
+    deleteMany?: Enumerable<TeacherScalarWhereInput>
+  }
+
+  export type UserCreateNestedOneWithoutAuthInput = {
+    create?: XOR<UserCreateWithoutAuthInput, UserUncheckedCreateWithoutAuthInput>
+    connectOrCreate?: UserCreateOrConnectWithoutAuthInput
     connect?: UserWhereUniqueInput
-    update?: XOR<UserUpdateWithoutTeacherInput, UserUncheckedUpdateWithoutTeacherInput>
+  }
+
+  export type PersonalCreateNestedOneWithoutAuthInput = {
+    create?: XOR<PersonalCreateWithoutAuthInput, PersonalUncheckedCreateWithoutAuthInput>
+    connectOrCreate?: PersonalCreateOrConnectWithoutAuthInput
+    connect?: PersonalWhereUniqueInput
+  }
+
+  export type UserUpdateOneRequiredWithoutAuthNestedInput = {
+    create?: XOR<UserCreateWithoutAuthInput, UserUncheckedCreateWithoutAuthInput>
+    connectOrCreate?: UserCreateOrConnectWithoutAuthInput
+    upsert?: UserUpsertWithoutAuthInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<UserUpdateWithoutAuthInput, UserUncheckedUpdateWithoutAuthInput>
+  }
+
+  export type PersonalUpdateOneRequiredWithoutAuthNestedInput = {
+    create?: XOR<PersonalCreateWithoutAuthInput, PersonalUncheckedCreateWithoutAuthInput>
+    connectOrCreate?: PersonalCreateOrConnectWithoutAuthInput
+    upsert?: PersonalUpsertWithoutAuthInput
+    connect?: PersonalWhereUniqueInput
+    update?: XOR<PersonalUpdateWithoutAuthInput, PersonalUncheckedUpdateWithoutAuthInput>
+  }
+
+  export type PersonalCreateNestedOneWithoutFatherInput = {
+    create?: XOR<PersonalCreateWithoutFatherInput, PersonalUncheckedCreateWithoutFatherInput>
+    connectOrCreate?: PersonalCreateOrConnectWithoutFatherInput
+    connect?: PersonalWhereUniqueInput
+  }
+
+  export type PersonalCreateNestedOneWithoutMotherInput = {
+    create?: XOR<PersonalCreateWithoutMotherInput, PersonalUncheckedCreateWithoutMotherInput>
+    connectOrCreate?: PersonalCreateOrConnectWithoutMotherInput
+    connect?: PersonalWhereUniqueInput
+  }
+
+  export type PersonalCreateNestedOneWithoutWaliInput = {
+    create?: XOR<PersonalCreateWithoutWaliInput, PersonalUncheckedCreateWithoutWaliInput>
+    connectOrCreate?: PersonalCreateOrConnectWithoutWaliInput
+    connect?: PersonalWhereUniqueInput
+  }
+
+  export type PersonalCreateNestedOneWithoutCoupleInput = {
+    create?: XOR<PersonalCreateWithoutCoupleInput, PersonalUncheckedCreateWithoutCoupleInput>
+    connectOrCreate?: PersonalCreateOrConnectWithoutCoupleInput
+    connect?: PersonalWhereUniqueInput
+  }
+
+  export type FamilyTreeChildCreateNestedManyWithoutKkInput = {
+    create?: XOR<Enumerable<FamilyTreeChildCreateWithoutKkInput>, Enumerable<FamilyTreeChildUncheckedCreateWithoutKkInput>>
+    connectOrCreate?: Enumerable<FamilyTreeChildCreateOrConnectWithoutKkInput>
+    createMany?: FamilyTreeChildCreateManyKkInputEnvelope
+    connect?: Enumerable<FamilyTreeChildWhereUniqueInput>
+  }
+
+  export type FamilyTreeChildUncheckedCreateNestedManyWithoutKkInput = {
+    create?: XOR<Enumerable<FamilyTreeChildCreateWithoutKkInput>, Enumerable<FamilyTreeChildUncheckedCreateWithoutKkInput>>
+    connectOrCreate?: Enumerable<FamilyTreeChildCreateOrConnectWithoutKkInput>
+    createMany?: FamilyTreeChildCreateManyKkInputEnvelope
+    connect?: Enumerable<FamilyTreeChildWhereUniqueInput>
+  }
+
+  export type PersonalUpdateOneWithoutFatherNestedInput = {
+    create?: XOR<PersonalCreateWithoutFatherInput, PersonalUncheckedCreateWithoutFatherInput>
+    connectOrCreate?: PersonalCreateOrConnectWithoutFatherInput
+    upsert?: PersonalUpsertWithoutFatherInput
+    disconnect?: boolean
+    delete?: boolean
+    connect?: PersonalWhereUniqueInput
+    update?: XOR<PersonalUpdateWithoutFatherInput, PersonalUncheckedUpdateWithoutFatherInput>
+  }
+
+  export type PersonalUpdateOneWithoutMotherNestedInput = {
+    create?: XOR<PersonalCreateWithoutMotherInput, PersonalUncheckedCreateWithoutMotherInput>
+    connectOrCreate?: PersonalCreateOrConnectWithoutMotherInput
+    upsert?: PersonalUpsertWithoutMotherInput
+    disconnect?: boolean
+    delete?: boolean
+    connect?: PersonalWhereUniqueInput
+    update?: XOR<PersonalUpdateWithoutMotherInput, PersonalUncheckedUpdateWithoutMotherInput>
+  }
+
+  export type PersonalUpdateOneWithoutWaliNestedInput = {
+    create?: XOR<PersonalCreateWithoutWaliInput, PersonalUncheckedCreateWithoutWaliInput>
+    connectOrCreate?: PersonalCreateOrConnectWithoutWaliInput
+    upsert?: PersonalUpsertWithoutWaliInput
+    disconnect?: boolean
+    delete?: boolean
+    connect?: PersonalWhereUniqueInput
+    update?: XOR<PersonalUpdateWithoutWaliInput, PersonalUncheckedUpdateWithoutWaliInput>
+  }
+
+  export type PersonalUpdateOneWithoutCoupleNestedInput = {
+    create?: XOR<PersonalCreateWithoutCoupleInput, PersonalUncheckedCreateWithoutCoupleInput>
+    connectOrCreate?: PersonalCreateOrConnectWithoutCoupleInput
+    upsert?: PersonalUpsertWithoutCoupleInput
+    disconnect?: boolean
+    delete?: boolean
+    connect?: PersonalWhereUniqueInput
+    update?: XOR<PersonalUpdateWithoutCoupleInput, PersonalUncheckedUpdateWithoutCoupleInput>
+  }
+
+  export type FamilyTreeChildUpdateManyWithoutKkNestedInput = {
+    create?: XOR<Enumerable<FamilyTreeChildCreateWithoutKkInput>, Enumerable<FamilyTreeChildUncheckedCreateWithoutKkInput>>
+    connectOrCreate?: Enumerable<FamilyTreeChildCreateOrConnectWithoutKkInput>
+    upsert?: Enumerable<FamilyTreeChildUpsertWithWhereUniqueWithoutKkInput>
+    createMany?: FamilyTreeChildCreateManyKkInputEnvelope
+    set?: Enumerable<FamilyTreeChildWhereUniqueInput>
+    disconnect?: Enumerable<FamilyTreeChildWhereUniqueInput>
+    delete?: Enumerable<FamilyTreeChildWhereUniqueInput>
+    connect?: Enumerable<FamilyTreeChildWhereUniqueInput>
+    update?: Enumerable<FamilyTreeChildUpdateWithWhereUniqueWithoutKkInput>
+    updateMany?: Enumerable<FamilyTreeChildUpdateManyWithWhereWithoutKkInput>
+    deleteMany?: Enumerable<FamilyTreeChildScalarWhereInput>
+  }
+
+  export type FamilyTreeChildUncheckedUpdateManyWithoutKkNestedInput = {
+    create?: XOR<Enumerable<FamilyTreeChildCreateWithoutKkInput>, Enumerable<FamilyTreeChildUncheckedCreateWithoutKkInput>>
+    connectOrCreate?: Enumerable<FamilyTreeChildCreateOrConnectWithoutKkInput>
+    upsert?: Enumerable<FamilyTreeChildUpsertWithWhereUniqueWithoutKkInput>
+    createMany?: FamilyTreeChildCreateManyKkInputEnvelope
+    set?: Enumerable<FamilyTreeChildWhereUniqueInput>
+    disconnect?: Enumerable<FamilyTreeChildWhereUniqueInput>
+    delete?: Enumerable<FamilyTreeChildWhereUniqueInput>
+    connect?: Enumerable<FamilyTreeChildWhereUniqueInput>
+    update?: Enumerable<FamilyTreeChildUpdateWithWhereUniqueWithoutKkInput>
+    updateMany?: Enumerable<FamilyTreeChildUpdateManyWithWhereWithoutKkInput>
+    deleteMany?: Enumerable<FamilyTreeChildScalarWhereInput>
+  }
+
+  export type FamilyTreeCreateNestedOneWithoutChildsInput = {
+    create?: XOR<FamilyTreeCreateWithoutChildsInput, FamilyTreeUncheckedCreateWithoutChildsInput>
+    connectOrCreate?: FamilyTreeCreateOrConnectWithoutChildsInput
+    connect?: FamilyTreeWhereUniqueInput
+  }
+
+  export type PersonalCreateNestedOneWithoutChildInput = {
+    create?: XOR<PersonalCreateWithoutChildInput, PersonalUncheckedCreateWithoutChildInput>
+    connectOrCreate?: PersonalCreateOrConnectWithoutChildInput
+    connect?: PersonalWhereUniqueInput
+  }
+
+  export type EnumChildTypeFieldUpdateOperationsInput = {
+    set?: ChildType
+  }
+
+  export type FamilyTreeUpdateOneRequiredWithoutChildsNestedInput = {
+    create?: XOR<FamilyTreeCreateWithoutChildsInput, FamilyTreeUncheckedCreateWithoutChildsInput>
+    connectOrCreate?: FamilyTreeCreateOrConnectWithoutChildsInput
+    upsert?: FamilyTreeUpsertWithoutChildsInput
+    connect?: FamilyTreeWhereUniqueInput
+    update?: XOR<FamilyTreeUpdateWithoutChildsInput, FamilyTreeUncheckedUpdateWithoutChildsInput>
+  }
+
+  export type PersonalUpdateOneRequiredWithoutChildNestedInput = {
+    create?: XOR<PersonalCreateWithoutChildInput, PersonalUncheckedCreateWithoutChildInput>
+    connectOrCreate?: PersonalCreateOrConnectWithoutChildInput
+    upsert?: PersonalUpsertWithoutChildInput
+    connect?: PersonalWhereUniqueInput
+    update?: XOR<PersonalUpdateWithoutChildInput, PersonalUncheckedUpdateWithoutChildInput>
+  }
+
+  export type PersonalCreateNestedOneWithoutStudentInput = {
+    create?: XOR<PersonalCreateWithoutStudentInput, PersonalUncheckedCreateWithoutStudentInput>
+    connectOrCreate?: PersonalCreateOrConnectWithoutStudentInput
+    connect?: PersonalWhereUniqueInput
+  }
+
+  export type KonsentrasiKeahlianCreateNestedOneWithoutStudentInput = {
+    create?: XOR<KonsentrasiKeahlianCreateWithoutStudentInput, KonsentrasiKeahlianUncheckedCreateWithoutStudentInput>
+    connectOrCreate?: KonsentrasiKeahlianCreateOrConnectWithoutStudentInput
+    connect?: KonsentrasiKeahlianWhereUniqueInput
+  }
+
+  export type ClassRoomCreateNestedManyWithoutStudentsInput = {
+    create?: XOR<Enumerable<ClassRoomCreateWithoutStudentsInput>, Enumerable<ClassRoomUncheckedCreateWithoutStudentsInput>>
+    connectOrCreate?: Enumerable<ClassRoomCreateOrConnectWithoutStudentsInput>
+    connect?: Enumerable<ClassRoomWhereUniqueInput>
+  }
+
+  export type SchoolYearCreateNestedOneWithoutStudentsInput = {
+    create?: XOR<SchoolYearCreateWithoutStudentsInput, SchoolYearUncheckedCreateWithoutStudentsInput>
+    connectOrCreate?: SchoolYearCreateOrConnectWithoutStudentsInput
+    connect?: SchoolYearWhereUniqueInput
+  }
+
+  export type InstansiCreateNestedOneWithoutStudentInput = {
+    create?: XOR<InstansiCreateWithoutStudentInput, InstansiUncheckedCreateWithoutStudentInput>
+    connectOrCreate?: InstansiCreateOrConnectWithoutStudentInput
+    connect?: InstansiWhereUniqueInput
+  }
+
+  export type CalendarCreateNestedManyWithoutStudentInput = {
+    create?: XOR<Enumerable<CalendarCreateWithoutStudentInput>, Enumerable<CalendarUncheckedCreateWithoutStudentInput>>
+    connectOrCreate?: Enumerable<CalendarCreateOrConnectWithoutStudentInput>
+    connect?: Enumerable<CalendarWhereUniqueInput>
+  }
+
+  export type StudentCreateclassRoomIdsInput = {
+    set: Enumerable<string>
+  }
+
+  export type StudentCreateeventIdsInput = {
+    set: Enumerable<string>
+  }
+
+  export type ClassRoomUncheckedCreateNestedManyWithoutStudentsInput = {
+    create?: XOR<Enumerable<ClassRoomCreateWithoutStudentsInput>, Enumerable<ClassRoomUncheckedCreateWithoutStudentsInput>>
+    connectOrCreate?: Enumerable<ClassRoomCreateOrConnectWithoutStudentsInput>
+    connect?: Enumerable<ClassRoomWhereUniqueInput>
+  }
+
+  export type CalendarUncheckedCreateNestedManyWithoutStudentInput = {
+    create?: XOR<Enumerable<CalendarCreateWithoutStudentInput>, Enumerable<CalendarUncheckedCreateWithoutStudentInput>>
+    connectOrCreate?: Enumerable<CalendarCreateOrConnectWithoutStudentInput>
+    connect?: Enumerable<CalendarWhereUniqueInput>
+  }
+
+  export type PersonalUpdateOneRequiredWithoutStudentNestedInput = {
+    create?: XOR<PersonalCreateWithoutStudentInput, PersonalUncheckedCreateWithoutStudentInput>
+    connectOrCreate?: PersonalCreateOrConnectWithoutStudentInput
+    upsert?: PersonalUpsertWithoutStudentInput
+    connect?: PersonalWhereUniqueInput
+    update?: XOR<PersonalUpdateWithoutStudentInput, PersonalUncheckedUpdateWithoutStudentInput>
+  }
+
+  export type KonsentrasiKeahlianUpdateOneWithoutStudentNestedInput = {
+    create?: XOR<KonsentrasiKeahlianCreateWithoutStudentInput, KonsentrasiKeahlianUncheckedCreateWithoutStudentInput>
+    connectOrCreate?: KonsentrasiKeahlianCreateOrConnectWithoutStudentInput
+    upsert?: KonsentrasiKeahlianUpsertWithoutStudentInput
+    disconnect?: boolean
+    delete?: boolean
+    connect?: KonsentrasiKeahlianWhereUniqueInput
+    update?: XOR<KonsentrasiKeahlianUpdateWithoutStudentInput, KonsentrasiKeahlianUncheckedUpdateWithoutStudentInput>
+  }
+
+  export type ClassRoomUpdateManyWithoutStudentsNestedInput = {
+    create?: XOR<Enumerable<ClassRoomCreateWithoutStudentsInput>, Enumerable<ClassRoomUncheckedCreateWithoutStudentsInput>>
+    connectOrCreate?: Enumerable<ClassRoomCreateOrConnectWithoutStudentsInput>
+    upsert?: Enumerable<ClassRoomUpsertWithWhereUniqueWithoutStudentsInput>
+    set?: Enumerable<ClassRoomWhereUniqueInput>
+    disconnect?: Enumerable<ClassRoomWhereUniqueInput>
+    delete?: Enumerable<ClassRoomWhereUniqueInput>
+    connect?: Enumerable<ClassRoomWhereUniqueInput>
+    update?: Enumerable<ClassRoomUpdateWithWhereUniqueWithoutStudentsInput>
+    updateMany?: Enumerable<ClassRoomUpdateManyWithWhereWithoutStudentsInput>
+    deleteMany?: Enumerable<ClassRoomScalarWhereInput>
+  }
+
+  export type SchoolYearUpdateOneRequiredWithoutStudentsNestedInput = {
+    create?: XOR<SchoolYearCreateWithoutStudentsInput, SchoolYearUncheckedCreateWithoutStudentsInput>
+    connectOrCreate?: SchoolYearCreateOrConnectWithoutStudentsInput
+    upsert?: SchoolYearUpsertWithoutStudentsInput
+    connect?: SchoolYearWhereUniqueInput
+    update?: XOR<SchoolYearUpdateWithoutStudentsInput, SchoolYearUncheckedUpdateWithoutStudentsInput>
+  }
+
+  export type InstansiUpdateOneRequiredWithoutStudentNestedInput = {
+    create?: XOR<InstansiCreateWithoutStudentInput, InstansiUncheckedCreateWithoutStudentInput>
+    connectOrCreate?: InstansiCreateOrConnectWithoutStudentInput
+    upsert?: InstansiUpsertWithoutStudentInput
+    connect?: InstansiWhereUniqueInput
+    update?: XOR<InstansiUpdateWithoutStudentInput, InstansiUncheckedUpdateWithoutStudentInput>
+  }
+
+  export type CalendarUpdateManyWithoutStudentNestedInput = {
+    create?: XOR<Enumerable<CalendarCreateWithoutStudentInput>, Enumerable<CalendarUncheckedCreateWithoutStudentInput>>
+    connectOrCreate?: Enumerable<CalendarCreateOrConnectWithoutStudentInput>
+    upsert?: Enumerable<CalendarUpsertWithWhereUniqueWithoutStudentInput>
+    set?: Enumerable<CalendarWhereUniqueInput>
+    disconnect?: Enumerable<CalendarWhereUniqueInput>
+    delete?: Enumerable<CalendarWhereUniqueInput>
+    connect?: Enumerable<CalendarWhereUniqueInput>
+    update?: Enumerable<CalendarUpdateWithWhereUniqueWithoutStudentInput>
+    updateMany?: Enumerable<CalendarUpdateManyWithWhereWithoutStudentInput>
+    deleteMany?: Enumerable<CalendarScalarWhereInput>
+  }
+
+  export type StudentUpdateclassRoomIdsInput = {
+    set?: Enumerable<string>
+    push?: string | Enumerable<string>
+  }
+
+  export type StudentUpdateeventIdsInput = {
+    set?: Enumerable<string>
+    push?: string | Enumerable<string>
+  }
+
+  export type ClassRoomUncheckedUpdateManyWithoutStudentsNestedInput = {
+    create?: XOR<Enumerable<ClassRoomCreateWithoutStudentsInput>, Enumerable<ClassRoomUncheckedCreateWithoutStudentsInput>>
+    connectOrCreate?: Enumerable<ClassRoomCreateOrConnectWithoutStudentsInput>
+    upsert?: Enumerable<ClassRoomUpsertWithWhereUniqueWithoutStudentsInput>
+    set?: Enumerable<ClassRoomWhereUniqueInput>
+    disconnect?: Enumerable<ClassRoomWhereUniqueInput>
+    delete?: Enumerable<ClassRoomWhereUniqueInput>
+    connect?: Enumerable<ClassRoomWhereUniqueInput>
+    update?: Enumerable<ClassRoomUpdateWithWhereUniqueWithoutStudentsInput>
+    updateMany?: Enumerable<ClassRoomUpdateManyWithWhereWithoutStudentsInput>
+    deleteMany?: Enumerable<ClassRoomScalarWhereInput>
+  }
+
+  export type CalendarUncheckedUpdateManyWithoutStudentNestedInput = {
+    create?: XOR<Enumerable<CalendarCreateWithoutStudentInput>, Enumerable<CalendarUncheckedCreateWithoutStudentInput>>
+    connectOrCreate?: Enumerable<CalendarCreateOrConnectWithoutStudentInput>
+    upsert?: Enumerable<CalendarUpsertWithWhereUniqueWithoutStudentInput>
+    set?: Enumerable<CalendarWhereUniqueInput>
+    disconnect?: Enumerable<CalendarWhereUniqueInput>
+    delete?: Enumerable<CalendarWhereUniqueInput>
+    connect?: Enumerable<CalendarWhereUniqueInput>
+    update?: Enumerable<CalendarUpdateWithWhereUniqueWithoutStudentInput>
+    updateMany?: Enumerable<CalendarUpdateManyWithWhereWithoutStudentInput>
+    deleteMany?: Enumerable<CalendarScalarWhereInput>
+  }
+
+  export type PersonalCreateNestedOneWithoutTeacherInput = {
+    create?: XOR<PersonalCreateWithoutTeacherInput, PersonalUncheckedCreateWithoutTeacherInput>
+    connectOrCreate?: PersonalCreateOrConnectWithoutTeacherInput
+    connect?: PersonalWhereUniqueInput
+  }
+
+  export type ClassRoomCreateNestedManyWithoutWaliInput = {
+    create?: XOR<Enumerable<ClassRoomCreateWithoutWaliInput>, Enumerable<ClassRoomUncheckedCreateWithoutWaliInput>>
+    connectOrCreate?: Enumerable<ClassRoomCreateOrConnectWithoutWaliInput>
+    createMany?: ClassRoomCreateManyWaliInputEnvelope
+    connect?: Enumerable<ClassRoomWhereUniqueInput>
+  }
+
+  export type InstansiCreateNestedOneWithoutTeacherInput = {
+    create?: XOR<InstansiCreateWithoutTeacherInput, InstansiUncheckedCreateWithoutTeacherInput>
+    connectOrCreate?: InstansiCreateOrConnectWithoutTeacherInput
+    connect?: InstansiWhereUniqueInput
+  }
+
+  export type CalendarCreateNestedManyWithoutTeacherInput = {
+    create?: XOR<Enumerable<CalendarCreateWithoutTeacherInput>, Enumerable<CalendarUncheckedCreateWithoutTeacherInput>>
+    connectOrCreate?: Enumerable<CalendarCreateOrConnectWithoutTeacherInput>
+    connect?: Enumerable<CalendarWhereUniqueInput>
+  }
+
+  export type TeacherCreateeventIdsInput = {
+    set: Enumerable<string>
+  }
+
+  export type ClassRoomUncheckedCreateNestedManyWithoutWaliInput = {
+    create?: XOR<Enumerable<ClassRoomCreateWithoutWaliInput>, Enumerable<ClassRoomUncheckedCreateWithoutWaliInput>>
+    connectOrCreate?: Enumerable<ClassRoomCreateOrConnectWithoutWaliInput>
+    createMany?: ClassRoomCreateManyWaliInputEnvelope
+    connect?: Enumerable<ClassRoomWhereUniqueInput>
+  }
+
+  export type CalendarUncheckedCreateNestedManyWithoutTeacherInput = {
+    create?: XOR<Enumerable<CalendarCreateWithoutTeacherInput>, Enumerable<CalendarUncheckedCreateWithoutTeacherInput>>
+    connectOrCreate?: Enumerable<CalendarCreateOrConnectWithoutTeacherInput>
+    connect?: Enumerable<CalendarWhereUniqueInput>
+  }
+
+  export type NullableDateTimeFieldUpdateOperationsInput = {
+    set?: Date | string | null
+    unset?: boolean
+  }
+
+  export type PersonalUpdateOneRequiredWithoutTeacherNestedInput = {
+    create?: XOR<PersonalCreateWithoutTeacherInput, PersonalUncheckedCreateWithoutTeacherInput>
+    connectOrCreate?: PersonalCreateOrConnectWithoutTeacherInput
+    upsert?: PersonalUpsertWithoutTeacherInput
+    connect?: PersonalWhereUniqueInput
+    update?: XOR<PersonalUpdateWithoutTeacherInput, PersonalUncheckedUpdateWithoutTeacherInput>
   }
 
   export type ClassRoomUpdateManyWithoutWaliNestedInput = {
@@ -27950,6 +29645,12 @@ export namespace Prisma {
     connect?: TeacherWhereUniqueInput
   }
 
+  export type KonsentrasiKeahlianCreateNestedOneWithoutClassRoomInput = {
+    create?: XOR<KonsentrasiKeahlianCreateWithoutClassRoomInput, KonsentrasiKeahlianUncheckedCreateWithoutClassRoomInput>
+    connectOrCreate?: KonsentrasiKeahlianCreateOrConnectWithoutClassRoomInput
+    connect?: KonsentrasiKeahlianWhereUniqueInput
+  }
+
   export type StudentCreateNestedManyWithoutClassRoomInput = {
     create?: XOR<Enumerable<StudentCreateWithoutClassRoomInput>, Enumerable<StudentUncheckedCreateWithoutClassRoomInput>>
     connectOrCreate?: Enumerable<StudentCreateOrConnectWithoutClassRoomInput>
@@ -27996,6 +29697,16 @@ export namespace Prisma {
     upsert?: TeacherUpsertWithoutClassRoomInput
     connect?: TeacherWhereUniqueInput
     update?: XOR<TeacherUpdateWithoutClassRoomInput, TeacherUncheckedUpdateWithoutClassRoomInput>
+  }
+
+  export type KonsentrasiKeahlianUpdateOneWithoutClassRoomNestedInput = {
+    create?: XOR<KonsentrasiKeahlianCreateWithoutClassRoomInput, KonsentrasiKeahlianUncheckedCreateWithoutClassRoomInput>
+    connectOrCreate?: KonsentrasiKeahlianCreateOrConnectWithoutClassRoomInput
+    upsert?: KonsentrasiKeahlianUpsertWithoutClassRoomInput
+    disconnect?: boolean
+    delete?: boolean
+    connect?: KonsentrasiKeahlianWhereUniqueInput
+    update?: XOR<KonsentrasiKeahlianUpdateWithoutClassRoomInput, KonsentrasiKeahlianUncheckedUpdateWithoutClassRoomInput>
   }
 
   export type StudentUpdateManyWithoutClassRoomNestedInput = {
@@ -28270,11 +29981,6 @@ export namespace Prisma {
     create?: XOR<Enumerable<TeacherCreateWithoutEventInput>, Enumerable<TeacherUncheckedCreateWithoutEventInput>>
     connectOrCreate?: Enumerable<TeacherCreateOrConnectWithoutEventInput>
     connect?: Enumerable<TeacherWhereUniqueInput>
-  }
-
-  export type NullableDateTimeFieldUpdateOperationsInput = {
-    set?: Date | string | null
-    unset?: boolean
   }
 
   export type SchoolYearUpdateOneRequiredWithoutCalendarNestedInput = {
@@ -28663,54 +30369,7 @@ export namespace Prisma {
     OR?: Enumerable<BornWhereInput>
     NOT?: Enumerable<BornWhereInput>
     place?: StringFilter | string
-    date?: StringFilter | string
-  }
-
-  export type NestedEnumTypePersonalWithAggregatesFilter = {
-    equals?: TypePersonal
-    in?: Enumerable<TypePersonal>
-    notIn?: Enumerable<TypePersonal>
-    not?: NestedEnumTypePersonalWithAggregatesFilter | TypePersonal
-    _count?: NestedIntFilter
-    _min?: NestedEnumTypePersonalFilter
-    _max?: NestedEnumTypePersonalFilter
-  }
-
-  export type NestedEnumGenderWithAggregatesFilter = {
-    equals?: Gender
-    in?: Enumerable<Gender>
-    notIn?: Enumerable<Gender>
-    not?: NestedEnumGenderWithAggregatesFilter | Gender
-    _count?: NestedIntFilter
-    _min?: NestedEnumGenderFilter
-    _max?: NestedEnumGenderFilter
-  }
-
-  export type NestedEnumReligionWithAggregatesFilter = {
-    equals?: Religion
-    in?: Enumerable<Religion>
-    notIn?: Enumerable<Religion>
-    not?: NestedEnumReligionWithAggregatesFilter | Religion
-    _count?: NestedIntFilter
-    _min?: NestedEnumReligionFilter
-    _max?: NestedEnumReligionFilter
-  }
-
-  export type NestedEnumChildTypeFilter = {
-    equals?: ChildType
-    in?: Enumerable<ChildType>
-    notIn?: Enumerable<ChildType>
-    not?: NestedEnumChildTypeFilter | ChildType
-  }
-
-  export type NestedEnumChildTypeWithAggregatesFilter = {
-    equals?: ChildType
-    in?: Enumerable<ChildType>
-    notIn?: Enumerable<ChildType>
-    not?: NestedEnumChildTypeWithAggregatesFilter | ChildType
-    _count?: NestedIntFilter
-    _min?: NestedEnumChildTypeFilter
-    _max?: NestedEnumChildTypeFilter
+    date?: DateTimeFilter | Date | string
   }
 
   export type EducationWhereInput = {
@@ -28863,16 +30522,51 @@ export namespace Prisma {
     attachment?: StringNullableFilter | string | null
   }
 
-  export type OrganizationalWhereInput = {
-    AND?: Enumerable<OrganizationalWhereInput>
-    OR?: Enumerable<OrganizationalWhereInput>
-    NOT?: Enumerable<OrganizationalWhereInput>
-    kepsek?: StringFilter | string
-    wakasek?: StringFilter | string
-    wakakur?: StringFilter | string
-    wakasiw?: StringFilter | string
-    wakapra?: StringFilter | string
-    wakahum?: StringNullableFilter | string | null
+  export type NestedEnumTypePersonalWithAggregatesFilter = {
+    equals?: TypePersonal
+    in?: Enumerable<TypePersonal>
+    notIn?: Enumerable<TypePersonal>
+    not?: NestedEnumTypePersonalWithAggregatesFilter | TypePersonal
+    _count?: NestedIntFilter
+    _min?: NestedEnumTypePersonalFilter
+    _max?: NestedEnumTypePersonalFilter
+  }
+
+  export type NestedEnumGenderWithAggregatesFilter = {
+    equals?: Gender
+    in?: Enumerable<Gender>
+    notIn?: Enumerable<Gender>
+    not?: NestedEnumGenderWithAggregatesFilter | Gender
+    _count?: NestedIntFilter
+    _min?: NestedEnumGenderFilter
+    _max?: NestedEnumGenderFilter
+  }
+
+  export type NestedEnumReligionWithAggregatesFilter = {
+    equals?: Religion
+    in?: Enumerable<Religion>
+    notIn?: Enumerable<Religion>
+    not?: NestedEnumReligionWithAggregatesFilter | Religion
+    _count?: NestedIntFilter
+    _min?: NestedEnumReligionFilter
+    _max?: NestedEnumReligionFilter
+  }
+
+  export type NestedEnumChildTypeFilter = {
+    equals?: ChildType
+    in?: Enumerable<ChildType>
+    notIn?: Enumerable<ChildType>
+    not?: NestedEnumChildTypeFilter | ChildType
+  }
+
+  export type NestedEnumChildTypeWithAggregatesFilter = {
+    equals?: ChildType
+    in?: Enumerable<ChildType>
+    notIn?: Enumerable<ChildType>
+    not?: NestedEnumChildTypeWithAggregatesFilter | ChildType
+    _count?: NestedIntFilter
+    _min?: NestedEnumChildTypeFilter
+    _max?: NestedEnumChildTypeFilter
   }
 
   export type NestedDateTimeNullableFilter = {
@@ -28900,6 +30594,18 @@ export namespace Prisma {
     _min?: NestedDateTimeNullableFilter
     _max?: NestedDateTimeNullableFilter
     isSet?: boolean
+  }
+
+  export type OrganizationalWhereInput = {
+    AND?: Enumerable<OrganizationalWhereInput>
+    OR?: Enumerable<OrganizationalWhereInput>
+    NOT?: Enumerable<OrganizationalWhereInput>
+    kepsek?: StringFilter | string
+    wakasek?: StringFilter | string
+    wakakur?: StringFilter | string
+    wakasiw?: StringFilter | string
+    wakapra?: StringFilter | string
+    wakahum?: StringNullableFilter | string | null
   }
 
   export type ProgramKeahlianCreateWithoutBidangInput = {
@@ -28987,6 +30693,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     student?: StudentCreateNestedManyWithoutMajorInput
     instansi?: InstansiCreateNestedManyWithoutMajorsInput
+    ClassRoom?: ClassRoomCreateNestedManyWithoutMajorInput
   }
 
   export type KonsentrasiKeahlianUncheckedCreateWithoutProgramInput = {
@@ -28999,6 +30706,7 @@ export namespace Prisma {
     instansiIds?: KonsentrasiKeahlianCreateinstansiIdsInput | Enumerable<string>
     student?: StudentUncheckedCreateNestedManyWithoutMajorInput
     instansi?: InstansiUncheckedCreateNestedManyWithoutMajorsInput
+    ClassRoom?: ClassRoomUncheckedCreateNestedManyWithoutMajorInput
   }
 
   export type KonsentrasiKeahlianCreateOrConnectWithoutProgramInput = {
@@ -29084,16 +30792,20 @@ export namespace Prisma {
 
   export type StudentCreateWithoutMajorInput = {
     id?: string
-    user?: UserCreateNestedOneWithoutStudentInput
+    nis: string
+    nisn: string
+    personal: PersonalCreateNestedOneWithoutStudentInput
     classRoom?: ClassRoomCreateNestedManyWithoutStudentsInput
-    startYear: SchoolYearCreateNestedOneWithoutStudentsInInput
+    startYear: SchoolYearCreateNestedOneWithoutStudentsInput
     instansi: InstansiCreateNestedOneWithoutStudentInput
     event?: CalendarCreateNestedManyWithoutStudentInput
   }
 
   export type StudentUncheckedCreateWithoutMajorInput = {
     id?: string
-    userId?: string | null
+    nis: string
+    nisn: string
+    personalId: string
     classRoomIds?: StudentCreateclassRoomIdsInput | Enumerable<string>
     startYearId: string
     instansiId: string
@@ -29151,6 +30863,37 @@ export namespace Prisma {
     create: XOR<InstansiCreateWithoutMajorsInput, InstansiUncheckedCreateWithoutMajorsInput>
   }
 
+  export type ClassRoomCreateWithoutMajorInput = {
+    id?: string
+    name: string
+    level: number
+    year: SchoolYearCreateNestedOneWithoutClassRoomInput
+    wali: TeacherCreateNestedOneWithoutClassRoomInput
+    students?: StudentCreateNestedManyWithoutClassRoomInput
+    event?: CalendarCreateNestedManyWithoutClassRoomInput
+  }
+
+  export type ClassRoomUncheckedCreateWithoutMajorInput = {
+    id?: string
+    name: string
+    yearId: string
+    waliId: string
+    level: number
+    studentIds?: ClassRoomCreatestudentIdsInput | Enumerable<string>
+    eventIds?: ClassRoomCreateeventIdsInput | Enumerable<string>
+    students?: StudentUncheckedCreateNestedManyWithoutClassRoomInput
+    event?: CalendarUncheckedCreateNestedManyWithoutClassRoomInput
+  }
+
+  export type ClassRoomCreateOrConnectWithoutMajorInput = {
+    where: ClassRoomWhereUniqueInput
+    create: XOR<ClassRoomCreateWithoutMajorInput, ClassRoomUncheckedCreateWithoutMajorInput>
+  }
+
+  export type ClassRoomCreateManyMajorInputEnvelope = {
+    data: Enumerable<ClassRoomCreateManyMajorInput>
+  }
+
   export type ProgramKeahlianUpsertWithoutKonsentrasiInput = {
     update: XOR<ProgramKeahlianUpdateWithoutKonsentrasiInput, ProgramKeahlianUncheckedUpdateWithoutKonsentrasiInput>
     create: XOR<ProgramKeahlianCreateWithoutKonsentrasiInput, ProgramKeahlianUncheckedCreateWithoutKonsentrasiInput>
@@ -29193,7 +30936,9 @@ export namespace Prisma {
     OR?: Enumerable<StudentScalarWhereInput>
     NOT?: Enumerable<StudentScalarWhereInput>
     id?: StringFilter | string
-    userId?: StringNullableFilter | string | null
+    nis?: StringFilter | string
+    nisn?: StringFilter | string
+    personalId?: StringFilter | string
     majorId?: StringNullableFilter | string | null
     classRoomIds?: StringNullableListFilter
     startYearId?: StringFilter | string
@@ -29233,8 +30978,39 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter | Date | string
   }
 
+  export type ClassRoomUpsertWithWhereUniqueWithoutMajorInput = {
+    where: ClassRoomWhereUniqueInput
+    update: XOR<ClassRoomUpdateWithoutMajorInput, ClassRoomUncheckedUpdateWithoutMajorInput>
+    create: XOR<ClassRoomCreateWithoutMajorInput, ClassRoomUncheckedCreateWithoutMajorInput>
+  }
+
+  export type ClassRoomUpdateWithWhereUniqueWithoutMajorInput = {
+    where: ClassRoomWhereUniqueInput
+    data: XOR<ClassRoomUpdateWithoutMajorInput, ClassRoomUncheckedUpdateWithoutMajorInput>
+  }
+
+  export type ClassRoomUpdateManyWithWhereWithoutMajorInput = {
+    where: ClassRoomScalarWhereInput
+    data: XOR<ClassRoomUpdateManyMutationInput, ClassRoomUncheckedUpdateManyWithoutClassRoomInput>
+  }
+
+  export type ClassRoomScalarWhereInput = {
+    AND?: Enumerable<ClassRoomScalarWhereInput>
+    OR?: Enumerable<ClassRoomScalarWhereInput>
+    NOT?: Enumerable<ClassRoomScalarWhereInput>
+    id?: StringFilter | string
+    name?: StringFilter | string
+    yearId?: StringFilter | string
+    waliId?: StringFilter | string
+    level?: IntFilter | number
+    majorId?: StringNullableFilter | string | null
+    studentIds?: StringNullableListFilter
+    eventIds?: StringNullableListFilter
+  }
+
   export type ElementCreateWithoutAchievementInput = {
     id?: string
+    no: number
     name: string
     description: string
     createdAt?: Date | string
@@ -29244,6 +31020,7 @@ export namespace Prisma {
 
   export type ElementUncheckedCreateWithoutAchievementInput = {
     id?: string
+    no: number
     name: string
     description: string
     mapelId: string
@@ -29262,6 +31039,7 @@ export namespace Prisma {
   }
 
   export type ElementUpdateWithoutAchievementInput = {
+    no?: IntFieldUpdateOperationsInput | number
     name?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -29270,6 +31048,7 @@ export namespace Prisma {
   }
 
   export type ElementUncheckedUpdateWithoutAchievementInput = {
+    no?: IntFieldUpdateOperationsInput | number
     name?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     mapelId?: StringFieldUpdateOperationsInput | string
@@ -29279,6 +31058,7 @@ export namespace Prisma {
 
   export type AchievementCreateWithoutElementInput = {
     id?: string
+    no: number
     fase?: Fase
     description: string
     createdAt?: Date | string
@@ -29287,6 +31067,7 @@ export namespace Prisma {
 
   export type AchievementUncheckedCreateWithoutElementInput = {
     id?: string
+    no: number
     fase?: Fase
     description: string
     createdAt?: Date | string
@@ -29348,6 +31129,7 @@ export namespace Prisma {
     OR?: Enumerable<AchievementScalarWhereInput>
     NOT?: Enumerable<AchievementScalarWhereInput>
     id?: StringFilter | string
+    no?: IntFilter | number
     fase?: EnumFaseFilter | Fase
     description?: StringFilter | string
     elementId?: StringFilter | string
@@ -29380,6 +31162,7 @@ export namespace Prisma {
 
   export type ElementCreateWithoutMapelInput = {
     id?: string
+    no: number
     name: string
     description: string
     createdAt?: Date | string
@@ -29389,6 +31172,7 @@ export namespace Prisma {
 
   export type ElementUncheckedCreateWithoutMapelInput = {
     id?: string
+    no: number
     name: string
     description: string
     createdAt?: Date | string
@@ -29426,6 +31210,7 @@ export namespace Prisma {
     OR?: Enumerable<ElementScalarWhereInput>
     NOT?: Enumerable<ElementScalarWhereInput>
     id?: StringFilter | string
+    no?: IntFilter | number
     name?: StringFilter | string
     description?: StringFilter | string
     mapelId?: StringFilter | string
@@ -29447,6 +31232,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     program: ProgramKeahlianCreateNestedOneWithoutKonsentrasiInput
     student?: StudentCreateNestedManyWithoutMajorInput
+    ClassRoom?: ClassRoomCreateNestedManyWithoutMajorInput
   }
 
   export type KonsentrasiKeahlianUncheckedCreateWithoutInstansiInput = {
@@ -29459,6 +31245,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     instansiIds?: KonsentrasiKeahlianCreateinstansiIdsInput | Enumerable<string>
     student?: StudentUncheckedCreateNestedManyWithoutMajorInput
+    ClassRoom?: ClassRoomUncheckedCreateNestedManyWithoutMajorInput
   }
 
   export type KonsentrasiKeahlianCreateOrConnectWithoutInstansiInput = {
@@ -29496,7 +31283,7 @@ export namespace Prisma {
     year: number
     organizational: XOR<OrganizationalCreateEnvelopeInput, OrganizationalCreateInput>
     classRoom?: ClassRoomCreateNestedManyWithoutYearInput
-    studentsIn?: StudentCreateNestedManyWithoutStartYearInput
+    students?: StudentCreateNestedManyWithoutStartYearInput
     calendar?: CalendarCreateNestedManyWithoutRefInput
   }
 
@@ -29505,7 +31292,7 @@ export namespace Prisma {
     year: number
     organizational: XOR<OrganizationalCreateEnvelopeInput, OrganizationalCreateInput>
     classRoom?: ClassRoomUncheckedCreateNestedManyWithoutYearInput
-    studentsIn?: StudentUncheckedCreateNestedManyWithoutStartYearInput
+    students?: StudentUncheckedCreateNestedManyWithoutStartYearInput
     calendar?: CalendarUncheckedCreateNestedManyWithoutRefInput
   }
 
@@ -29523,58 +31310,30 @@ export namespace Prisma {
     nip?: string | null
     nrg?: string | null
     noKarpeg?: string | null
-    tmtTugas?: string | null
-    tmtGol?: string | null
+    tmtTugas?: Date | string | null
+    tmtGol?: Date | string | null
     position?: string | null
     rank?: string | null
     period?: string | null
     certificate?: string | null
-    education?: XOR<EducationListCreateEnvelopeInput, Enumerable<EducationCreateInput>>
-    training?: XOR<TrainingListCreateEnvelopeInput, Enumerable<TrainingCreateInput>>
-    employment?: XOR<EmploymentListCreateEnvelopeInput, Enumerable<EmploymentCreateInput>>
-    profession?: XOR<ProfessionListCreateEnvelopeInput, Enumerable<ProfessionCreateInput>>
-    overseas?: XOR<OverseasListCreateEnvelopeInput, Enumerable<OverseasCreateInput>>
-    scientific?: XOR<ScientificListCreateEnvelopeInput, Enumerable<ScientificCreateInput>>
-    organization?: XOR<OrganizationListCreateEnvelopeInput, Enumerable<OrganizationCreateInput>>
-    papers?: XOR<PapersListCreateEnvelopeInput, Enumerable<PapersCreateInput>>
-    innovation?: XOR<InnovationListCreateEnvelopeInput, Enumerable<InnovationCreateInput>>
-    award?: XOR<AwardListCreateEnvelopeInput, Enumerable<AwardCreateInput>>
-    sourcePerson?: XOR<SourcePersonListCreateEnvelopeInput, Enumerable<SourcePersonCreateInput>>
-    contest?: XOR<ContestListCreateEnvelopeInput, Enumerable<ContestCreateInput>>
-    documents?: XOR<DocumentsListCreateEnvelopeInput, Enumerable<DocumentsCreateInput>>
-    additional?: XOR<AdditionalListCreateEnvelopeInput, Enumerable<AdditionalCreateInput>>
-    user?: UserCreateNestedOneWithoutTeacherInput
+    personal: PersonalCreateNestedOneWithoutTeacherInput
     classRoom?: ClassRoomCreateNestedManyWithoutWaliInput
     event?: CalendarCreateNestedManyWithoutTeacherInput
   }
 
   export type TeacherUncheckedCreateWithoutInstansiInput = {
     id?: string
-    userId?: string | null
+    personalId: string
     eventIds?: TeacherCreateeventIdsInput | Enumerable<string>
     nip?: string | null
     nrg?: string | null
     noKarpeg?: string | null
-    tmtTugas?: string | null
-    tmtGol?: string | null
+    tmtTugas?: Date | string | null
+    tmtGol?: Date | string | null
     position?: string | null
     rank?: string | null
     period?: string | null
     certificate?: string | null
-    education?: XOR<EducationListCreateEnvelopeInput, Enumerable<EducationCreateInput>>
-    training?: XOR<TrainingListCreateEnvelopeInput, Enumerable<TrainingCreateInput>>
-    employment?: XOR<EmploymentListCreateEnvelopeInput, Enumerable<EmploymentCreateInput>>
-    profession?: XOR<ProfessionListCreateEnvelopeInput, Enumerable<ProfessionCreateInput>>
-    overseas?: XOR<OverseasListCreateEnvelopeInput, Enumerable<OverseasCreateInput>>
-    scientific?: XOR<ScientificListCreateEnvelopeInput, Enumerable<ScientificCreateInput>>
-    organization?: XOR<OrganizationListCreateEnvelopeInput, Enumerable<OrganizationCreateInput>>
-    papers?: XOR<PapersListCreateEnvelopeInput, Enumerable<PapersCreateInput>>
-    innovation?: XOR<InnovationListCreateEnvelopeInput, Enumerable<InnovationCreateInput>>
-    award?: XOR<AwardListCreateEnvelopeInput, Enumerable<AwardCreateInput>>
-    sourcePerson?: XOR<SourcePersonListCreateEnvelopeInput, Enumerable<SourcePersonCreateInput>>
-    contest?: XOR<ContestListCreateEnvelopeInput, Enumerable<ContestCreateInput>>
-    documents?: XOR<DocumentsListCreateEnvelopeInput, Enumerable<DocumentsCreateInput>>
-    additional?: XOR<AdditionalListCreateEnvelopeInput, Enumerable<AdditionalCreateInput>>
     classRoom?: ClassRoomUncheckedCreateNestedManyWithoutWaliInput
     event?: CalendarUncheckedCreateNestedManyWithoutTeacherInput
   }
@@ -29590,16 +31349,20 @@ export namespace Prisma {
 
   export type StudentCreateWithoutInstansiInput = {
     id?: string
-    user?: UserCreateNestedOneWithoutStudentInput
+    nis: string
+    nisn: string
+    personal: PersonalCreateNestedOneWithoutStudentInput
     major?: KonsentrasiKeahlianCreateNestedOneWithoutStudentInput
     classRoom?: ClassRoomCreateNestedManyWithoutStudentsInput
-    startYear: SchoolYearCreateNestedOneWithoutStudentsInInput
+    startYear: SchoolYearCreateNestedOneWithoutStudentsInput
     event?: CalendarCreateNestedManyWithoutStudentInput
   }
 
   export type StudentUncheckedCreateWithoutInstansiInput = {
     id?: string
-    userId?: string | null
+    nis: string
+    nisn: string
+    personalId: string
     majorId?: string | null
     classRoomIds?: StudentCreateclassRoomIdsInput | Enumerable<string>
     startYearId: string
@@ -29715,14 +31478,14 @@ export namespace Prisma {
     OR?: Enumerable<TeacherScalarWhereInput>
     NOT?: Enumerable<TeacherScalarWhereInput>
     id?: StringFilter | string
-    userId?: StringNullableFilter | string | null
+    personalId?: StringFilter | string
     instansiId?: StringFilter | string
     eventIds?: StringNullableListFilter
     nip?: StringNullableFilter | string | null
     nrg?: StringNullableFilter | string | null
     noKarpeg?: StringNullableFilter | string | null
-    tmtTugas?: StringNullableFilter | string | null
-    tmtGol?: StringNullableFilter | string | null
+    tmtTugas?: DateTimeNullableFilter | Date | string | null
+    tmtGol?: DateTimeNullableFilter | Date | string | null
     position?: StringNullableFilter | string | null
     rank?: StringNullableFilter | string | null
     period?: StringNullableFilter | string | null
@@ -29796,9 +31559,7 @@ export namespace Prisma {
     passhash: string
     createdAt?: Date | string
     updatedAt?: Date | string
-    personal?: PersonalCreateNestedOneWithoutUserInput
-    student?: StudentCreateNestedOneWithoutUserInput
-    teacher?: TeacherCreateNestedOneWithoutUserInput
+    auth?: AuthCreateNestedOneWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutRoleInput = {
@@ -29812,9 +31573,7 @@ export namespace Prisma {
     passhash: string
     createdAt?: Date | string
     updatedAt?: Date | string
-    personal?: PersonalUncheckedCreateNestedOneWithoutUserInput
-    student?: StudentUncheckedCreateNestedOneWithoutUserInput
-    teacher?: TeacherUncheckedCreateNestedOneWithoutUserInput
+    auth?: AuthUncheckedCreateNestedOneWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutRoleInput = {
@@ -29918,144 +31677,19 @@ export namespace Prisma {
     create: XOR<RoleCreateWithoutUsersInput, RoleUncheckedCreateWithoutUsersInput>
   }
 
-  export type PersonalCreateWithoutUserInput = {
+  export type AuthCreateWithoutUserInput = {
     id?: string
-    nik?: string | null
-    nisn?: string | null
-    type: TypePersonal
-    fullname: string
-    gender: Gender
-    foreign: boolean
-    country?: string | null
-    religion: Religion
-    born: XOR<BornCreateEnvelopeInput, BornCreateInput>
-    email: string
-    belajarId?: string | null
-    nophone: string
-    isLife?: boolean | null
-    address?: XOR<AddressNullableCreateEnvelopeInput, AddressCreateInput> | null
-    father?: FamilyTreeCreateNestedManyWithoutFatherInput
-    mother?: FamilyTreeCreateNestedManyWithoutMotherInput
-    wali?: FamilyTreeCreateNestedManyWithoutWaliInput
-    child?: FamilyTreeChildCreateNestedOneWithoutPersonalInput
+    personal: PersonalCreateNestedOneWithoutAuthInput
   }
 
-  export type PersonalUncheckedCreateWithoutUserInput = {
+  export type AuthUncheckedCreateWithoutUserInput = {
     id?: string
-    nik?: string | null
-    nisn?: string | null
-    type: TypePersonal
-    fullname: string
-    gender: Gender
-    foreign: boolean
-    country?: string | null
-    religion: Religion
-    born: XOR<BornCreateEnvelopeInput, BornCreateInput>
-    email: string
-    belajarId?: string | null
-    nophone: string
-    isLife?: boolean | null
-    address?: XOR<AddressNullableCreateEnvelopeInput, AddressCreateInput> | null
-    father?: FamilyTreeUncheckedCreateNestedManyWithoutFatherInput
-    mother?: FamilyTreeUncheckedCreateNestedManyWithoutMotherInput
-    wali?: FamilyTreeUncheckedCreateNestedManyWithoutWaliInput
-    child?: FamilyTreeChildUncheckedCreateNestedOneWithoutPersonalInput
+    personalId: string
   }
 
-  export type PersonalCreateOrConnectWithoutUserInput = {
-    where: PersonalWhereUniqueInput
-    create: XOR<PersonalCreateWithoutUserInput, PersonalUncheckedCreateWithoutUserInput>
-  }
-
-  export type StudentCreateWithoutUserInput = {
-    id?: string
-    major?: KonsentrasiKeahlianCreateNestedOneWithoutStudentInput
-    classRoom?: ClassRoomCreateNestedManyWithoutStudentsInput
-    startYear: SchoolYearCreateNestedOneWithoutStudentsInInput
-    instansi: InstansiCreateNestedOneWithoutStudentInput
-    event?: CalendarCreateNestedManyWithoutStudentInput
-  }
-
-  export type StudentUncheckedCreateWithoutUserInput = {
-    id?: string
-    majorId?: string | null
-    classRoomIds?: StudentCreateclassRoomIdsInput | Enumerable<string>
-    startYearId: string
-    instansiId: string
-    eventIds?: StudentCreateeventIdsInput | Enumerable<string>
-    classRoom?: ClassRoomUncheckedCreateNestedManyWithoutStudentsInput
-    event?: CalendarUncheckedCreateNestedManyWithoutStudentInput
-  }
-
-  export type StudentCreateOrConnectWithoutUserInput = {
-    where: StudentWhereUniqueInput
-    create: XOR<StudentCreateWithoutUserInput, StudentUncheckedCreateWithoutUserInput>
-  }
-
-  export type TeacherCreateWithoutUserInput = {
-    id?: string
-    nip?: string | null
-    nrg?: string | null
-    noKarpeg?: string | null
-    tmtTugas?: string | null
-    tmtGol?: string | null
-    position?: string | null
-    rank?: string | null
-    period?: string | null
-    certificate?: string | null
-    education?: XOR<EducationListCreateEnvelopeInput, Enumerable<EducationCreateInput>>
-    training?: XOR<TrainingListCreateEnvelopeInput, Enumerable<TrainingCreateInput>>
-    employment?: XOR<EmploymentListCreateEnvelopeInput, Enumerable<EmploymentCreateInput>>
-    profession?: XOR<ProfessionListCreateEnvelopeInput, Enumerable<ProfessionCreateInput>>
-    overseas?: XOR<OverseasListCreateEnvelopeInput, Enumerable<OverseasCreateInput>>
-    scientific?: XOR<ScientificListCreateEnvelopeInput, Enumerable<ScientificCreateInput>>
-    organization?: XOR<OrganizationListCreateEnvelopeInput, Enumerable<OrganizationCreateInput>>
-    papers?: XOR<PapersListCreateEnvelopeInput, Enumerable<PapersCreateInput>>
-    innovation?: XOR<InnovationListCreateEnvelopeInput, Enumerable<InnovationCreateInput>>
-    award?: XOR<AwardListCreateEnvelopeInput, Enumerable<AwardCreateInput>>
-    sourcePerson?: XOR<SourcePersonListCreateEnvelopeInput, Enumerable<SourcePersonCreateInput>>
-    contest?: XOR<ContestListCreateEnvelopeInput, Enumerable<ContestCreateInput>>
-    documents?: XOR<DocumentsListCreateEnvelopeInput, Enumerable<DocumentsCreateInput>>
-    additional?: XOR<AdditionalListCreateEnvelopeInput, Enumerable<AdditionalCreateInput>>
-    classRoom?: ClassRoomCreateNestedManyWithoutWaliInput
-    instansi: InstansiCreateNestedOneWithoutTeacherInput
-    event?: CalendarCreateNestedManyWithoutTeacherInput
-  }
-
-  export type TeacherUncheckedCreateWithoutUserInput = {
-    id?: string
-    instansiId: string
-    eventIds?: TeacherCreateeventIdsInput | Enumerable<string>
-    nip?: string | null
-    nrg?: string | null
-    noKarpeg?: string | null
-    tmtTugas?: string | null
-    tmtGol?: string | null
-    position?: string | null
-    rank?: string | null
-    period?: string | null
-    certificate?: string | null
-    education?: XOR<EducationListCreateEnvelopeInput, Enumerable<EducationCreateInput>>
-    training?: XOR<TrainingListCreateEnvelopeInput, Enumerable<TrainingCreateInput>>
-    employment?: XOR<EmploymentListCreateEnvelopeInput, Enumerable<EmploymentCreateInput>>
-    profession?: XOR<ProfessionListCreateEnvelopeInput, Enumerable<ProfessionCreateInput>>
-    overseas?: XOR<OverseasListCreateEnvelopeInput, Enumerable<OverseasCreateInput>>
-    scientific?: XOR<ScientificListCreateEnvelopeInput, Enumerable<ScientificCreateInput>>
-    organization?: XOR<OrganizationListCreateEnvelopeInput, Enumerable<OrganizationCreateInput>>
-    papers?: XOR<PapersListCreateEnvelopeInput, Enumerable<PapersCreateInput>>
-    innovation?: XOR<InnovationListCreateEnvelopeInput, Enumerable<InnovationCreateInput>>
-    award?: XOR<AwardListCreateEnvelopeInput, Enumerable<AwardCreateInput>>
-    sourcePerson?: XOR<SourcePersonListCreateEnvelopeInput, Enumerable<SourcePersonCreateInput>>
-    contest?: XOR<ContestListCreateEnvelopeInput, Enumerable<ContestCreateInput>>
-    documents?: XOR<DocumentsListCreateEnvelopeInput, Enumerable<DocumentsCreateInput>>
-    additional?: XOR<AdditionalListCreateEnvelopeInput, Enumerable<AdditionalCreateInput>>
-    classRoom?: ClassRoomUncheckedCreateNestedManyWithoutWaliInput
-    event?: CalendarUncheckedCreateNestedManyWithoutTeacherInput
-  }
-
-  export type TeacherCreateOrConnectWithoutUserInput = {
-    where: TeacherWhereUniqueInput
-    create: XOR<TeacherCreateWithoutUserInput, TeacherUncheckedCreateWithoutUserInput>
+  export type AuthCreateOrConnectWithoutUserInput = {
+    where: AuthWhereUniqueInput
+    create: XOR<AuthCreateWithoutUserInput, AuthUncheckedCreateWithoutUserInput>
   }
 
   export type RoleUpsertWithoutUsersInput = {
@@ -30077,175 +31711,32 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type PersonalUpsertWithoutUserInput = {
-    update: XOR<PersonalUpdateWithoutUserInput, PersonalUncheckedUpdateWithoutUserInput>
-    create: XOR<PersonalCreateWithoutUserInput, PersonalUncheckedCreateWithoutUserInput>
+  export type AuthUpsertWithoutUserInput = {
+    update: XOR<AuthUpdateWithoutUserInput, AuthUncheckedUpdateWithoutUserInput>
+    create: XOR<AuthCreateWithoutUserInput, AuthUncheckedCreateWithoutUserInput>
   }
 
-  export type PersonalUpdateWithoutUserInput = {
-    nik?: NullableStringFieldUpdateOperationsInput | string | null
-    nisn?: NullableStringFieldUpdateOperationsInput | string | null
-    type?: EnumTypePersonalFieldUpdateOperationsInput | TypePersonal
-    fullname?: StringFieldUpdateOperationsInput | string
-    gender?: EnumGenderFieldUpdateOperationsInput | Gender
-    foreign?: BoolFieldUpdateOperationsInput | boolean
-    country?: NullableStringFieldUpdateOperationsInput | string | null
-    religion?: EnumReligionFieldUpdateOperationsInput | Religion
-    born?: XOR<BornUpdateEnvelopeInput, BornCreateInput>
-    email?: StringFieldUpdateOperationsInput | string
-    belajarId?: NullableStringFieldUpdateOperationsInput | string | null
-    nophone?: StringFieldUpdateOperationsInput | string
-    isLife?: NullableBoolFieldUpdateOperationsInput | boolean | null
-    address?: XOR<AddressNullableUpdateEnvelopeInput, AddressCreateInput> | null
-    father?: FamilyTreeUpdateManyWithoutFatherNestedInput
-    mother?: FamilyTreeUpdateManyWithoutMotherNestedInput
-    wali?: FamilyTreeUpdateManyWithoutWaliNestedInput
-    child?: FamilyTreeChildUpdateOneWithoutPersonalNestedInput
+  export type AuthUpdateWithoutUserInput = {
+    personal?: PersonalUpdateOneRequiredWithoutAuthNestedInput
   }
 
-  export type PersonalUncheckedUpdateWithoutUserInput = {
-    nik?: NullableStringFieldUpdateOperationsInput | string | null
-    nisn?: NullableStringFieldUpdateOperationsInput | string | null
-    type?: EnumTypePersonalFieldUpdateOperationsInput | TypePersonal
-    fullname?: StringFieldUpdateOperationsInput | string
-    gender?: EnumGenderFieldUpdateOperationsInput | Gender
-    foreign?: BoolFieldUpdateOperationsInput | boolean
-    country?: NullableStringFieldUpdateOperationsInput | string | null
-    religion?: EnumReligionFieldUpdateOperationsInput | Religion
-    born?: XOR<BornUpdateEnvelopeInput, BornCreateInput>
-    email?: StringFieldUpdateOperationsInput | string
-    belajarId?: NullableStringFieldUpdateOperationsInput | string | null
-    nophone?: StringFieldUpdateOperationsInput | string
-    isLife?: NullableBoolFieldUpdateOperationsInput | boolean | null
-    address?: XOR<AddressNullableUpdateEnvelopeInput, AddressCreateInput> | null
-    father?: FamilyTreeUncheckedUpdateManyWithoutFatherNestedInput
-    mother?: FamilyTreeUncheckedUpdateManyWithoutMotherNestedInput
-    wali?: FamilyTreeUncheckedUpdateManyWithoutWaliNestedInput
-    child?: FamilyTreeChildUncheckedUpdateOneWithoutPersonalNestedInput
+  export type AuthUncheckedUpdateWithoutUserInput = {
+    personalId?: StringFieldUpdateOperationsInput | string
   }
 
-  export type StudentUpsertWithoutUserInput = {
-    update: XOR<StudentUpdateWithoutUserInput, StudentUncheckedUpdateWithoutUserInput>
-    create: XOR<StudentCreateWithoutUserInput, StudentUncheckedCreateWithoutUserInput>
-  }
-
-  export type StudentUpdateWithoutUserInput = {
-    major?: KonsentrasiKeahlianUpdateOneWithoutStudentNestedInput
-    classRoom?: ClassRoomUpdateManyWithoutStudentsNestedInput
-    startYear?: SchoolYearUpdateOneRequiredWithoutStudentsInNestedInput
-    instansi?: InstansiUpdateOneRequiredWithoutStudentNestedInput
-    event?: CalendarUpdateManyWithoutStudentNestedInput
-  }
-
-  export type StudentUncheckedUpdateWithoutUserInput = {
-    majorId?: NullableStringFieldUpdateOperationsInput | string | null
-    classRoomIds?: StudentUpdateclassRoomIdsInput | Enumerable<string>
-    startYearId?: StringFieldUpdateOperationsInput | string
-    instansiId?: StringFieldUpdateOperationsInput | string
-    eventIds?: StudentUpdateeventIdsInput | Enumerable<string>
-    classRoom?: ClassRoomUncheckedUpdateManyWithoutStudentsNestedInput
-    event?: CalendarUncheckedUpdateManyWithoutStudentNestedInput
-  }
-
-  export type TeacherUpsertWithoutUserInput = {
-    update: XOR<TeacherUpdateWithoutUserInput, TeacherUncheckedUpdateWithoutUserInput>
-    create: XOR<TeacherCreateWithoutUserInput, TeacherUncheckedCreateWithoutUserInput>
-  }
-
-  export type TeacherUpdateWithoutUserInput = {
-    nip?: NullableStringFieldUpdateOperationsInput | string | null
-    nrg?: NullableStringFieldUpdateOperationsInput | string | null
-    noKarpeg?: NullableStringFieldUpdateOperationsInput | string | null
-    tmtTugas?: NullableStringFieldUpdateOperationsInput | string | null
-    tmtGol?: NullableStringFieldUpdateOperationsInput | string | null
-    position?: NullableStringFieldUpdateOperationsInput | string | null
-    rank?: NullableStringFieldUpdateOperationsInput | string | null
-    period?: NullableStringFieldUpdateOperationsInput | string | null
-    certificate?: NullableStringFieldUpdateOperationsInput | string | null
-    education?: XOR<EducationListUpdateEnvelopeInput, Enumerable<EducationCreateInput>>
-    training?: XOR<TrainingListUpdateEnvelopeInput, Enumerable<TrainingCreateInput>>
-    employment?: XOR<EmploymentListUpdateEnvelopeInput, Enumerable<EmploymentCreateInput>>
-    profession?: XOR<ProfessionListUpdateEnvelopeInput, Enumerable<ProfessionCreateInput>>
-    overseas?: XOR<OverseasListUpdateEnvelopeInput, Enumerable<OverseasCreateInput>>
-    scientific?: XOR<ScientificListUpdateEnvelopeInput, Enumerable<ScientificCreateInput>>
-    organization?: XOR<OrganizationListUpdateEnvelopeInput, Enumerable<OrganizationCreateInput>>
-    papers?: XOR<PapersListUpdateEnvelopeInput, Enumerable<PapersCreateInput>>
-    innovation?: XOR<InnovationListUpdateEnvelopeInput, Enumerable<InnovationCreateInput>>
-    award?: XOR<AwardListUpdateEnvelopeInput, Enumerable<AwardCreateInput>>
-    sourcePerson?: XOR<SourcePersonListUpdateEnvelopeInput, Enumerable<SourcePersonCreateInput>>
-    contest?: XOR<ContestListUpdateEnvelopeInput, Enumerable<ContestCreateInput>>
-    documents?: XOR<DocumentsListUpdateEnvelopeInput, Enumerable<DocumentsCreateInput>>
-    additional?: XOR<AdditionalListUpdateEnvelopeInput, Enumerable<AdditionalCreateInput>>
-    classRoom?: ClassRoomUpdateManyWithoutWaliNestedInput
-    instansi?: InstansiUpdateOneRequiredWithoutTeacherNestedInput
-    event?: CalendarUpdateManyWithoutTeacherNestedInput
-  }
-
-  export type TeacherUncheckedUpdateWithoutUserInput = {
-    instansiId?: StringFieldUpdateOperationsInput | string
-    eventIds?: TeacherUpdateeventIdsInput | Enumerable<string>
-    nip?: NullableStringFieldUpdateOperationsInput | string | null
-    nrg?: NullableStringFieldUpdateOperationsInput | string | null
-    noKarpeg?: NullableStringFieldUpdateOperationsInput | string | null
-    tmtTugas?: NullableStringFieldUpdateOperationsInput | string | null
-    tmtGol?: NullableStringFieldUpdateOperationsInput | string | null
-    position?: NullableStringFieldUpdateOperationsInput | string | null
-    rank?: NullableStringFieldUpdateOperationsInput | string | null
-    period?: NullableStringFieldUpdateOperationsInput | string | null
-    certificate?: NullableStringFieldUpdateOperationsInput | string | null
-    education?: XOR<EducationListUpdateEnvelopeInput, Enumerable<EducationCreateInput>>
-    training?: XOR<TrainingListUpdateEnvelopeInput, Enumerable<TrainingCreateInput>>
-    employment?: XOR<EmploymentListUpdateEnvelopeInput, Enumerable<EmploymentCreateInput>>
-    profession?: XOR<ProfessionListUpdateEnvelopeInput, Enumerable<ProfessionCreateInput>>
-    overseas?: XOR<OverseasListUpdateEnvelopeInput, Enumerable<OverseasCreateInput>>
-    scientific?: XOR<ScientificListUpdateEnvelopeInput, Enumerable<ScientificCreateInput>>
-    organization?: XOR<OrganizationListUpdateEnvelopeInput, Enumerable<OrganizationCreateInput>>
-    papers?: XOR<PapersListUpdateEnvelopeInput, Enumerable<PapersCreateInput>>
-    innovation?: XOR<InnovationListUpdateEnvelopeInput, Enumerable<InnovationCreateInput>>
-    award?: XOR<AwardListUpdateEnvelopeInput, Enumerable<AwardCreateInput>>
-    sourcePerson?: XOR<SourcePersonListUpdateEnvelopeInput, Enumerable<SourcePersonCreateInput>>
-    contest?: XOR<ContestListUpdateEnvelopeInput, Enumerable<ContestCreateInput>>
-    documents?: XOR<DocumentsListUpdateEnvelopeInput, Enumerable<DocumentsCreateInput>>
-    additional?: XOR<AdditionalListUpdateEnvelopeInput, Enumerable<AdditionalCreateInput>>
-    classRoom?: ClassRoomUncheckedUpdateManyWithoutWaliNestedInput
-    event?: CalendarUncheckedUpdateManyWithoutTeacherNestedInput
-  }
-
-  export type UserCreateWithoutPersonalInput = {
+  export type AuthCreateWithoutPersonalInput = {
     id?: string
-    name: string
-    picture?: string | null
-    username: string
-    active: boolean
-    verify?: boolean
-    password: string
-    passhash: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    role?: RoleCreateNestedOneWithoutUsersInput
-    student?: StudentCreateNestedOneWithoutUserInput
-    teacher?: TeacherCreateNestedOneWithoutUserInput
+    user: UserCreateNestedOneWithoutAuthInput
   }
 
-  export type UserUncheckedCreateWithoutPersonalInput = {
+  export type AuthUncheckedCreateWithoutPersonalInput = {
     id?: string
-    name: string
-    picture?: string | null
-    username: string
-    active: boolean
-    verify?: boolean
-    password: string
-    passhash: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    roleId?: string | null
-    student?: StudentUncheckedCreateNestedOneWithoutUserInput
-    teacher?: TeacherUncheckedCreateNestedOneWithoutUserInput
+    userId: string
   }
 
-  export type UserCreateOrConnectWithoutPersonalInput = {
-    where: UserWhereUniqueInput
-    create: XOR<UserCreateWithoutPersonalInput, UserUncheckedCreateWithoutPersonalInput>
+  export type AuthCreateOrConnectWithoutPersonalInput = {
+    where: AuthWhereUniqueInput
+    create: XOR<AuthCreateWithoutPersonalInput, AuthUncheckedCreateWithoutPersonalInput>
   }
 
   export type FamilyTreeCreateWithoutFatherInput = {
@@ -30254,6 +31745,7 @@ export namespace Prisma {
     address: XOR<AddressCreateEnvelopeInput, AddressCreateInput>
     mother?: PersonalCreateNestedOneWithoutMotherInput
     wali?: PersonalCreateNestedOneWithoutWaliInput
+    couple?: PersonalCreateNestedOneWithoutCoupleInput
     childs?: FamilyTreeChildCreateNestedManyWithoutKkInput
   }
 
@@ -30262,6 +31754,7 @@ export namespace Prisma {
     nokk: string
     motherId?: string | null
     waliId?: string | null
+    coupleId?: string | null
     address: XOR<AddressCreateEnvelopeInput, AddressCreateInput>
     childs?: FamilyTreeChildUncheckedCreateNestedManyWithoutKkInput
   }
@@ -30281,6 +31774,7 @@ export namespace Prisma {
     address: XOR<AddressCreateEnvelopeInput, AddressCreateInput>
     father?: PersonalCreateNestedOneWithoutFatherInput
     wali?: PersonalCreateNestedOneWithoutWaliInput
+    couple?: PersonalCreateNestedOneWithoutCoupleInput
     childs?: FamilyTreeChildCreateNestedManyWithoutKkInput
   }
 
@@ -30289,6 +31783,7 @@ export namespace Prisma {
     nokk: string
     fatherId?: string | null
     waliId?: string | null
+    coupleId?: string | null
     address: XOR<AddressCreateEnvelopeInput, AddressCreateInput>
     childs?: FamilyTreeChildUncheckedCreateNestedManyWithoutKkInput
   }
@@ -30308,6 +31803,7 @@ export namespace Prisma {
     address: XOR<AddressCreateEnvelopeInput, AddressCreateInput>
     father?: PersonalCreateNestedOneWithoutFatherInput
     mother?: PersonalCreateNestedOneWithoutMotherInput
+    couple?: PersonalCreateNestedOneWithoutCoupleInput
     childs?: FamilyTreeChildCreateNestedManyWithoutKkInput
   }
 
@@ -30316,6 +31812,7 @@ export namespace Prisma {
     nokk: string
     fatherId?: string | null
     motherId?: string | null
+    coupleId?: string | null
     address: XOR<AddressCreateEnvelopeInput, AddressCreateInput>
     childs?: FamilyTreeChildUncheckedCreateNestedManyWithoutKkInput
   }
@@ -30327,6 +31824,35 @@ export namespace Prisma {
 
   export type FamilyTreeCreateManyWaliInputEnvelope = {
     data: Enumerable<FamilyTreeCreateManyWaliInput>
+  }
+
+  export type FamilyTreeCreateWithoutCoupleInput = {
+    id?: string
+    nokk: string
+    address: XOR<AddressCreateEnvelopeInput, AddressCreateInput>
+    father?: PersonalCreateNestedOneWithoutFatherInput
+    mother?: PersonalCreateNestedOneWithoutMotherInput
+    wali?: PersonalCreateNestedOneWithoutWaliInput
+    childs?: FamilyTreeChildCreateNestedManyWithoutKkInput
+  }
+
+  export type FamilyTreeUncheckedCreateWithoutCoupleInput = {
+    id?: string
+    nokk: string
+    fatherId?: string | null
+    motherId?: string | null
+    waliId?: string | null
+    address: XOR<AddressCreateEnvelopeInput, AddressCreateInput>
+    childs?: FamilyTreeChildUncheckedCreateNestedManyWithoutKkInput
+  }
+
+  export type FamilyTreeCreateOrConnectWithoutCoupleInput = {
+    where: FamilyTreeWhereUniqueInput
+    create: XOR<FamilyTreeCreateWithoutCoupleInput, FamilyTreeUncheckedCreateWithoutCoupleInput>
+  }
+
+  export type FamilyTreeCreateManyCoupleInputEnvelope = {
+    data: Enumerable<FamilyTreeCreateManyCoupleInput>
   }
 
   export type FamilyTreeChildCreateWithoutPersonalInput = {
@@ -30348,1102 +31874,89 @@ export namespace Prisma {
     create: XOR<FamilyTreeChildCreateWithoutPersonalInput, FamilyTreeChildUncheckedCreateWithoutPersonalInput>
   }
 
+  export type StudentCreateWithoutPersonalInput = {
+    id?: string
+    nis: string
+    nisn: string
+    major?: KonsentrasiKeahlianCreateNestedOneWithoutStudentInput
+    classRoom?: ClassRoomCreateNestedManyWithoutStudentsInput
+    startYear: SchoolYearCreateNestedOneWithoutStudentsInput
+    instansi: InstansiCreateNestedOneWithoutStudentInput
+    event?: CalendarCreateNestedManyWithoutStudentInput
+  }
+
+  export type StudentUncheckedCreateWithoutPersonalInput = {
+    id?: string
+    nis: string
+    nisn: string
+    majorId?: string | null
+    classRoomIds?: StudentCreateclassRoomIdsInput | Enumerable<string>
+    startYearId: string
+    instansiId: string
+    eventIds?: StudentCreateeventIdsInput | Enumerable<string>
+    classRoom?: ClassRoomUncheckedCreateNestedManyWithoutStudentsInput
+    event?: CalendarUncheckedCreateNestedManyWithoutStudentInput
+  }
+
+  export type StudentCreateOrConnectWithoutPersonalInput = {
+    where: StudentWhereUniqueInput
+    create: XOR<StudentCreateWithoutPersonalInput, StudentUncheckedCreateWithoutPersonalInput>
+  }
+
+  export type StudentCreateManyPersonalInputEnvelope = {
+    data: Enumerable<StudentCreateManyPersonalInput>
+  }
+
+  export type TeacherCreateWithoutPersonalInput = {
+    id?: string
+    nip?: string | null
+    nrg?: string | null
+    noKarpeg?: string | null
+    tmtTugas?: Date | string | null
+    tmtGol?: Date | string | null
+    position?: string | null
+    rank?: string | null
+    period?: string | null
+    certificate?: string | null
+    classRoom?: ClassRoomCreateNestedManyWithoutWaliInput
+    instansi: InstansiCreateNestedOneWithoutTeacherInput
+    event?: CalendarCreateNestedManyWithoutTeacherInput
+  }
+
+  export type TeacherUncheckedCreateWithoutPersonalInput = {
+    id?: string
+    instansiId: string
+    eventIds?: TeacherCreateeventIdsInput | Enumerable<string>
+    nip?: string | null
+    nrg?: string | null
+    noKarpeg?: string | null
+    tmtTugas?: Date | string | null
+    tmtGol?: Date | string | null
+    position?: string | null
+    rank?: string | null
+    period?: string | null
+    certificate?: string | null
+    classRoom?: ClassRoomUncheckedCreateNestedManyWithoutWaliInput
+    event?: CalendarUncheckedCreateNestedManyWithoutTeacherInput
+  }
+
+  export type TeacherCreateOrConnectWithoutPersonalInput = {
+    where: TeacherWhereUniqueInput
+    create: XOR<TeacherCreateWithoutPersonalInput, TeacherUncheckedCreateWithoutPersonalInput>
+  }
+
+  export type TeacherCreateManyPersonalInputEnvelope = {
+    data: Enumerable<TeacherCreateManyPersonalInput>
+  }
+
   export type BornUpdateInput = {
     place?: StringFieldUpdateOperationsInput | string
-    date?: StringFieldUpdateOperationsInput | string
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type AddressUpsertInput = {
     set: AddressCreateInput | null
     update: AddressUpdateInput
-  }
-
-  export type UserUpsertWithoutPersonalInput = {
-    update: XOR<UserUpdateWithoutPersonalInput, UserUncheckedUpdateWithoutPersonalInput>
-    create: XOR<UserCreateWithoutPersonalInput, UserUncheckedCreateWithoutPersonalInput>
-  }
-
-  export type UserUpdateWithoutPersonalInput = {
-    name?: StringFieldUpdateOperationsInput | string
-    picture?: NullableStringFieldUpdateOperationsInput | string | null
-    username?: StringFieldUpdateOperationsInput | string
-    active?: BoolFieldUpdateOperationsInput | boolean
-    verify?: BoolFieldUpdateOperationsInput | boolean
-    password?: StringFieldUpdateOperationsInput | string
-    passhash?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    role?: RoleUpdateOneWithoutUsersNestedInput
-    student?: StudentUpdateOneWithoutUserNestedInput
-    teacher?: TeacherUpdateOneWithoutUserNestedInput
-  }
-
-  export type UserUncheckedUpdateWithoutPersonalInput = {
-    name?: StringFieldUpdateOperationsInput | string
-    picture?: NullableStringFieldUpdateOperationsInput | string | null
-    username?: StringFieldUpdateOperationsInput | string
-    active?: BoolFieldUpdateOperationsInput | boolean
-    verify?: BoolFieldUpdateOperationsInput | boolean
-    password?: StringFieldUpdateOperationsInput | string
-    passhash?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    roleId?: NullableStringFieldUpdateOperationsInput | string | null
-    student?: StudentUncheckedUpdateOneWithoutUserNestedInput
-    teacher?: TeacherUncheckedUpdateOneWithoutUserNestedInput
-  }
-
-  export type FamilyTreeUpsertWithWhereUniqueWithoutFatherInput = {
-    where: FamilyTreeWhereUniqueInput
-    update: XOR<FamilyTreeUpdateWithoutFatherInput, FamilyTreeUncheckedUpdateWithoutFatherInput>
-    create: XOR<FamilyTreeCreateWithoutFatherInput, FamilyTreeUncheckedCreateWithoutFatherInput>
-  }
-
-  export type FamilyTreeUpdateWithWhereUniqueWithoutFatherInput = {
-    where: FamilyTreeWhereUniqueInput
-    data: XOR<FamilyTreeUpdateWithoutFatherInput, FamilyTreeUncheckedUpdateWithoutFatherInput>
-  }
-
-  export type FamilyTreeUpdateManyWithWhereWithoutFatherInput = {
-    where: FamilyTreeScalarWhereInput
-    data: XOR<FamilyTreeUpdateManyMutationInput, FamilyTreeUncheckedUpdateManyWithoutFatherInput>
-  }
-
-  export type FamilyTreeScalarWhereInput = {
-    AND?: Enumerable<FamilyTreeScalarWhereInput>
-    OR?: Enumerable<FamilyTreeScalarWhereInput>
-    NOT?: Enumerable<FamilyTreeScalarWhereInput>
-    id?: StringFilter | string
-    nokk?: StringFilter | string
-    fatherId?: StringNullableFilter | string | null
-    motherId?: StringNullableFilter | string | null
-    waliId?: StringNullableFilter | string | null
-  }
-
-  export type FamilyTreeUpsertWithWhereUniqueWithoutMotherInput = {
-    where: FamilyTreeWhereUniqueInput
-    update: XOR<FamilyTreeUpdateWithoutMotherInput, FamilyTreeUncheckedUpdateWithoutMotherInput>
-    create: XOR<FamilyTreeCreateWithoutMotherInput, FamilyTreeUncheckedCreateWithoutMotherInput>
-  }
-
-  export type FamilyTreeUpdateWithWhereUniqueWithoutMotherInput = {
-    where: FamilyTreeWhereUniqueInput
-    data: XOR<FamilyTreeUpdateWithoutMotherInput, FamilyTreeUncheckedUpdateWithoutMotherInput>
-  }
-
-  export type FamilyTreeUpdateManyWithWhereWithoutMotherInput = {
-    where: FamilyTreeScalarWhereInput
-    data: XOR<FamilyTreeUpdateManyMutationInput, FamilyTreeUncheckedUpdateManyWithoutMotherInput>
-  }
-
-  export type FamilyTreeUpsertWithWhereUniqueWithoutWaliInput = {
-    where: FamilyTreeWhereUniqueInput
-    update: XOR<FamilyTreeUpdateWithoutWaliInput, FamilyTreeUncheckedUpdateWithoutWaliInput>
-    create: XOR<FamilyTreeCreateWithoutWaliInput, FamilyTreeUncheckedCreateWithoutWaliInput>
-  }
-
-  export type FamilyTreeUpdateWithWhereUniqueWithoutWaliInput = {
-    where: FamilyTreeWhereUniqueInput
-    data: XOR<FamilyTreeUpdateWithoutWaliInput, FamilyTreeUncheckedUpdateWithoutWaliInput>
-  }
-
-  export type FamilyTreeUpdateManyWithWhereWithoutWaliInput = {
-    where: FamilyTreeScalarWhereInput
-    data: XOR<FamilyTreeUpdateManyMutationInput, FamilyTreeUncheckedUpdateManyWithoutWaliInput>
-  }
-
-  export type FamilyTreeChildUpsertWithoutPersonalInput = {
-    update: XOR<FamilyTreeChildUpdateWithoutPersonalInput, FamilyTreeChildUncheckedUpdateWithoutPersonalInput>
-    create: XOR<FamilyTreeChildCreateWithoutPersonalInput, FamilyTreeChildUncheckedCreateWithoutPersonalInput>
-  }
-
-  export type FamilyTreeChildUpdateWithoutPersonalInput = {
-    no?: IntFieldUpdateOperationsInput | number
-    type?: EnumChildTypeFieldUpdateOperationsInput | ChildType
-    kk?: FamilyTreeUpdateOneRequiredWithoutChildsNestedInput
-  }
-
-  export type FamilyTreeChildUncheckedUpdateWithoutPersonalInput = {
-    no?: IntFieldUpdateOperationsInput | number
-    type?: EnumChildTypeFieldUpdateOperationsInput | ChildType
-    kkId?: StringFieldUpdateOperationsInput | string
-  }
-
-  export type PersonalCreateWithoutFatherInput = {
-    id?: string
-    nik?: string | null
-    nisn?: string | null
-    type: TypePersonal
-    fullname: string
-    gender: Gender
-    foreign: boolean
-    country?: string | null
-    religion: Religion
-    born: XOR<BornCreateEnvelopeInput, BornCreateInput>
-    email: string
-    belajarId?: string | null
-    nophone: string
-    isLife?: boolean | null
-    address?: XOR<AddressNullableCreateEnvelopeInput, AddressCreateInput> | null
-    user?: UserCreateNestedOneWithoutPersonalInput
-    mother?: FamilyTreeCreateNestedManyWithoutMotherInput
-    wali?: FamilyTreeCreateNestedManyWithoutWaliInput
-    child?: FamilyTreeChildCreateNestedOneWithoutPersonalInput
-  }
-
-  export type PersonalUncheckedCreateWithoutFatherInput = {
-    id?: string
-    nik?: string | null
-    nisn?: string | null
-    type: TypePersonal
-    userId?: string | null
-    fullname: string
-    gender: Gender
-    foreign: boolean
-    country?: string | null
-    religion: Religion
-    born: XOR<BornCreateEnvelopeInput, BornCreateInput>
-    email: string
-    belajarId?: string | null
-    nophone: string
-    isLife?: boolean | null
-    address?: XOR<AddressNullableCreateEnvelopeInput, AddressCreateInput> | null
-    mother?: FamilyTreeUncheckedCreateNestedManyWithoutMotherInput
-    wali?: FamilyTreeUncheckedCreateNestedManyWithoutWaliInput
-    child?: FamilyTreeChildUncheckedCreateNestedOneWithoutPersonalInput
-  }
-
-  export type PersonalCreateOrConnectWithoutFatherInput = {
-    where: PersonalWhereUniqueInput
-    create: XOR<PersonalCreateWithoutFatherInput, PersonalUncheckedCreateWithoutFatherInput>
-  }
-
-  export type PersonalCreateWithoutMotherInput = {
-    id?: string
-    nik?: string | null
-    nisn?: string | null
-    type: TypePersonal
-    fullname: string
-    gender: Gender
-    foreign: boolean
-    country?: string | null
-    religion: Religion
-    born: XOR<BornCreateEnvelopeInput, BornCreateInput>
-    email: string
-    belajarId?: string | null
-    nophone: string
-    isLife?: boolean | null
-    address?: XOR<AddressNullableCreateEnvelopeInput, AddressCreateInput> | null
-    user?: UserCreateNestedOneWithoutPersonalInput
-    father?: FamilyTreeCreateNestedManyWithoutFatherInput
-    wali?: FamilyTreeCreateNestedManyWithoutWaliInput
-    child?: FamilyTreeChildCreateNestedOneWithoutPersonalInput
-  }
-
-  export type PersonalUncheckedCreateWithoutMotherInput = {
-    id?: string
-    nik?: string | null
-    nisn?: string | null
-    type: TypePersonal
-    userId?: string | null
-    fullname: string
-    gender: Gender
-    foreign: boolean
-    country?: string | null
-    religion: Religion
-    born: XOR<BornCreateEnvelopeInput, BornCreateInput>
-    email: string
-    belajarId?: string | null
-    nophone: string
-    isLife?: boolean | null
-    address?: XOR<AddressNullableCreateEnvelopeInput, AddressCreateInput> | null
-    father?: FamilyTreeUncheckedCreateNestedManyWithoutFatherInput
-    wali?: FamilyTreeUncheckedCreateNestedManyWithoutWaliInput
-    child?: FamilyTreeChildUncheckedCreateNestedOneWithoutPersonalInput
-  }
-
-  export type PersonalCreateOrConnectWithoutMotherInput = {
-    where: PersonalWhereUniqueInput
-    create: XOR<PersonalCreateWithoutMotherInput, PersonalUncheckedCreateWithoutMotherInput>
-  }
-
-  export type PersonalCreateWithoutWaliInput = {
-    id?: string
-    nik?: string | null
-    nisn?: string | null
-    type: TypePersonal
-    fullname: string
-    gender: Gender
-    foreign: boolean
-    country?: string | null
-    religion: Religion
-    born: XOR<BornCreateEnvelopeInput, BornCreateInput>
-    email: string
-    belajarId?: string | null
-    nophone: string
-    isLife?: boolean | null
-    address?: XOR<AddressNullableCreateEnvelopeInput, AddressCreateInput> | null
-    user?: UserCreateNestedOneWithoutPersonalInput
-    father?: FamilyTreeCreateNestedManyWithoutFatherInput
-    mother?: FamilyTreeCreateNestedManyWithoutMotherInput
-    child?: FamilyTreeChildCreateNestedOneWithoutPersonalInput
-  }
-
-  export type PersonalUncheckedCreateWithoutWaliInput = {
-    id?: string
-    nik?: string | null
-    nisn?: string | null
-    type: TypePersonal
-    userId?: string | null
-    fullname: string
-    gender: Gender
-    foreign: boolean
-    country?: string | null
-    religion: Religion
-    born: XOR<BornCreateEnvelopeInput, BornCreateInput>
-    email: string
-    belajarId?: string | null
-    nophone: string
-    isLife?: boolean | null
-    address?: XOR<AddressNullableCreateEnvelopeInput, AddressCreateInput> | null
-    father?: FamilyTreeUncheckedCreateNestedManyWithoutFatherInput
-    mother?: FamilyTreeUncheckedCreateNestedManyWithoutMotherInput
-    child?: FamilyTreeChildUncheckedCreateNestedOneWithoutPersonalInput
-  }
-
-  export type PersonalCreateOrConnectWithoutWaliInput = {
-    where: PersonalWhereUniqueInput
-    create: XOR<PersonalCreateWithoutWaliInput, PersonalUncheckedCreateWithoutWaliInput>
-  }
-
-  export type FamilyTreeChildCreateWithoutKkInput = {
-    id?: string
-    no: number
-    type: ChildType
-    personal: PersonalCreateNestedOneWithoutChildInput
-  }
-
-  export type FamilyTreeChildUncheckedCreateWithoutKkInput = {
-    id?: string
-    no: number
-    type: ChildType
-    personalId: string
-  }
-
-  export type FamilyTreeChildCreateOrConnectWithoutKkInput = {
-    where: FamilyTreeChildWhereUniqueInput
-    create: XOR<FamilyTreeChildCreateWithoutKkInput, FamilyTreeChildUncheckedCreateWithoutKkInput>
-  }
-
-  export type FamilyTreeChildCreateManyKkInputEnvelope = {
-    data: Enumerable<FamilyTreeChildCreateManyKkInput>
-  }
-
-  export type PersonalUpsertWithoutFatherInput = {
-    update: XOR<PersonalUpdateWithoutFatherInput, PersonalUncheckedUpdateWithoutFatherInput>
-    create: XOR<PersonalCreateWithoutFatherInput, PersonalUncheckedCreateWithoutFatherInput>
-  }
-
-  export type PersonalUpdateWithoutFatherInput = {
-    nik?: NullableStringFieldUpdateOperationsInput | string | null
-    nisn?: NullableStringFieldUpdateOperationsInput | string | null
-    type?: EnumTypePersonalFieldUpdateOperationsInput | TypePersonal
-    fullname?: StringFieldUpdateOperationsInput | string
-    gender?: EnumGenderFieldUpdateOperationsInput | Gender
-    foreign?: BoolFieldUpdateOperationsInput | boolean
-    country?: NullableStringFieldUpdateOperationsInput | string | null
-    religion?: EnumReligionFieldUpdateOperationsInput | Religion
-    born?: XOR<BornUpdateEnvelopeInput, BornCreateInput>
-    email?: StringFieldUpdateOperationsInput | string
-    belajarId?: NullableStringFieldUpdateOperationsInput | string | null
-    nophone?: StringFieldUpdateOperationsInput | string
-    isLife?: NullableBoolFieldUpdateOperationsInput | boolean | null
-    address?: XOR<AddressNullableUpdateEnvelopeInput, AddressCreateInput> | null
-    user?: UserUpdateOneWithoutPersonalNestedInput
-    mother?: FamilyTreeUpdateManyWithoutMotherNestedInput
-    wali?: FamilyTreeUpdateManyWithoutWaliNestedInput
-    child?: FamilyTreeChildUpdateOneWithoutPersonalNestedInput
-  }
-
-  export type PersonalUncheckedUpdateWithoutFatherInput = {
-    nik?: NullableStringFieldUpdateOperationsInput | string | null
-    nisn?: NullableStringFieldUpdateOperationsInput | string | null
-    type?: EnumTypePersonalFieldUpdateOperationsInput | TypePersonal
-    userId?: NullableStringFieldUpdateOperationsInput | string | null
-    fullname?: StringFieldUpdateOperationsInput | string
-    gender?: EnumGenderFieldUpdateOperationsInput | Gender
-    foreign?: BoolFieldUpdateOperationsInput | boolean
-    country?: NullableStringFieldUpdateOperationsInput | string | null
-    religion?: EnumReligionFieldUpdateOperationsInput | Religion
-    born?: XOR<BornUpdateEnvelopeInput, BornCreateInput>
-    email?: StringFieldUpdateOperationsInput | string
-    belajarId?: NullableStringFieldUpdateOperationsInput | string | null
-    nophone?: StringFieldUpdateOperationsInput | string
-    isLife?: NullableBoolFieldUpdateOperationsInput | boolean | null
-    address?: XOR<AddressNullableUpdateEnvelopeInput, AddressCreateInput> | null
-    mother?: FamilyTreeUncheckedUpdateManyWithoutMotherNestedInput
-    wali?: FamilyTreeUncheckedUpdateManyWithoutWaliNestedInput
-    child?: FamilyTreeChildUncheckedUpdateOneWithoutPersonalNestedInput
-  }
-
-  export type PersonalUpsertWithoutMotherInput = {
-    update: XOR<PersonalUpdateWithoutMotherInput, PersonalUncheckedUpdateWithoutMotherInput>
-    create: XOR<PersonalCreateWithoutMotherInput, PersonalUncheckedCreateWithoutMotherInput>
-  }
-
-  export type PersonalUpdateWithoutMotherInput = {
-    nik?: NullableStringFieldUpdateOperationsInput | string | null
-    nisn?: NullableStringFieldUpdateOperationsInput | string | null
-    type?: EnumTypePersonalFieldUpdateOperationsInput | TypePersonal
-    fullname?: StringFieldUpdateOperationsInput | string
-    gender?: EnumGenderFieldUpdateOperationsInput | Gender
-    foreign?: BoolFieldUpdateOperationsInput | boolean
-    country?: NullableStringFieldUpdateOperationsInput | string | null
-    religion?: EnumReligionFieldUpdateOperationsInput | Religion
-    born?: XOR<BornUpdateEnvelopeInput, BornCreateInput>
-    email?: StringFieldUpdateOperationsInput | string
-    belajarId?: NullableStringFieldUpdateOperationsInput | string | null
-    nophone?: StringFieldUpdateOperationsInput | string
-    isLife?: NullableBoolFieldUpdateOperationsInput | boolean | null
-    address?: XOR<AddressNullableUpdateEnvelopeInput, AddressCreateInput> | null
-    user?: UserUpdateOneWithoutPersonalNestedInput
-    father?: FamilyTreeUpdateManyWithoutFatherNestedInput
-    wali?: FamilyTreeUpdateManyWithoutWaliNestedInput
-    child?: FamilyTreeChildUpdateOneWithoutPersonalNestedInput
-  }
-
-  export type PersonalUncheckedUpdateWithoutMotherInput = {
-    nik?: NullableStringFieldUpdateOperationsInput | string | null
-    nisn?: NullableStringFieldUpdateOperationsInput | string | null
-    type?: EnumTypePersonalFieldUpdateOperationsInput | TypePersonal
-    userId?: NullableStringFieldUpdateOperationsInput | string | null
-    fullname?: StringFieldUpdateOperationsInput | string
-    gender?: EnumGenderFieldUpdateOperationsInput | Gender
-    foreign?: BoolFieldUpdateOperationsInput | boolean
-    country?: NullableStringFieldUpdateOperationsInput | string | null
-    religion?: EnumReligionFieldUpdateOperationsInput | Religion
-    born?: XOR<BornUpdateEnvelopeInput, BornCreateInput>
-    email?: StringFieldUpdateOperationsInput | string
-    belajarId?: NullableStringFieldUpdateOperationsInput | string | null
-    nophone?: StringFieldUpdateOperationsInput | string
-    isLife?: NullableBoolFieldUpdateOperationsInput | boolean | null
-    address?: XOR<AddressNullableUpdateEnvelopeInput, AddressCreateInput> | null
-    father?: FamilyTreeUncheckedUpdateManyWithoutFatherNestedInput
-    wali?: FamilyTreeUncheckedUpdateManyWithoutWaliNestedInput
-    child?: FamilyTreeChildUncheckedUpdateOneWithoutPersonalNestedInput
-  }
-
-  export type PersonalUpsertWithoutWaliInput = {
-    update: XOR<PersonalUpdateWithoutWaliInput, PersonalUncheckedUpdateWithoutWaliInput>
-    create: XOR<PersonalCreateWithoutWaliInput, PersonalUncheckedCreateWithoutWaliInput>
-  }
-
-  export type PersonalUpdateWithoutWaliInput = {
-    nik?: NullableStringFieldUpdateOperationsInput | string | null
-    nisn?: NullableStringFieldUpdateOperationsInput | string | null
-    type?: EnumTypePersonalFieldUpdateOperationsInput | TypePersonal
-    fullname?: StringFieldUpdateOperationsInput | string
-    gender?: EnumGenderFieldUpdateOperationsInput | Gender
-    foreign?: BoolFieldUpdateOperationsInput | boolean
-    country?: NullableStringFieldUpdateOperationsInput | string | null
-    religion?: EnumReligionFieldUpdateOperationsInput | Religion
-    born?: XOR<BornUpdateEnvelopeInput, BornCreateInput>
-    email?: StringFieldUpdateOperationsInput | string
-    belajarId?: NullableStringFieldUpdateOperationsInput | string | null
-    nophone?: StringFieldUpdateOperationsInput | string
-    isLife?: NullableBoolFieldUpdateOperationsInput | boolean | null
-    address?: XOR<AddressNullableUpdateEnvelopeInput, AddressCreateInput> | null
-    user?: UserUpdateOneWithoutPersonalNestedInput
-    father?: FamilyTreeUpdateManyWithoutFatherNestedInput
-    mother?: FamilyTreeUpdateManyWithoutMotherNestedInput
-    child?: FamilyTreeChildUpdateOneWithoutPersonalNestedInput
-  }
-
-  export type PersonalUncheckedUpdateWithoutWaliInput = {
-    nik?: NullableStringFieldUpdateOperationsInput | string | null
-    nisn?: NullableStringFieldUpdateOperationsInput | string | null
-    type?: EnumTypePersonalFieldUpdateOperationsInput | TypePersonal
-    userId?: NullableStringFieldUpdateOperationsInput | string | null
-    fullname?: StringFieldUpdateOperationsInput | string
-    gender?: EnumGenderFieldUpdateOperationsInput | Gender
-    foreign?: BoolFieldUpdateOperationsInput | boolean
-    country?: NullableStringFieldUpdateOperationsInput | string | null
-    religion?: EnumReligionFieldUpdateOperationsInput | Religion
-    born?: XOR<BornUpdateEnvelopeInput, BornCreateInput>
-    email?: StringFieldUpdateOperationsInput | string
-    belajarId?: NullableStringFieldUpdateOperationsInput | string | null
-    nophone?: StringFieldUpdateOperationsInput | string
-    isLife?: NullableBoolFieldUpdateOperationsInput | boolean | null
-    address?: XOR<AddressNullableUpdateEnvelopeInput, AddressCreateInput> | null
-    father?: FamilyTreeUncheckedUpdateManyWithoutFatherNestedInput
-    mother?: FamilyTreeUncheckedUpdateManyWithoutMotherNestedInput
-    child?: FamilyTreeChildUncheckedUpdateOneWithoutPersonalNestedInput
-  }
-
-  export type FamilyTreeChildUpsertWithWhereUniqueWithoutKkInput = {
-    where: FamilyTreeChildWhereUniqueInput
-    update: XOR<FamilyTreeChildUpdateWithoutKkInput, FamilyTreeChildUncheckedUpdateWithoutKkInput>
-    create: XOR<FamilyTreeChildCreateWithoutKkInput, FamilyTreeChildUncheckedCreateWithoutKkInput>
-  }
-
-  export type FamilyTreeChildUpdateWithWhereUniqueWithoutKkInput = {
-    where: FamilyTreeChildWhereUniqueInput
-    data: XOR<FamilyTreeChildUpdateWithoutKkInput, FamilyTreeChildUncheckedUpdateWithoutKkInput>
-  }
-
-  export type FamilyTreeChildUpdateManyWithWhereWithoutKkInput = {
-    where: FamilyTreeChildScalarWhereInput
-    data: XOR<FamilyTreeChildUpdateManyMutationInput, FamilyTreeChildUncheckedUpdateManyWithoutChildsInput>
-  }
-
-  export type FamilyTreeChildScalarWhereInput = {
-    AND?: Enumerable<FamilyTreeChildScalarWhereInput>
-    OR?: Enumerable<FamilyTreeChildScalarWhereInput>
-    NOT?: Enumerable<FamilyTreeChildScalarWhereInput>
-    id?: StringFilter | string
-    no?: IntFilter | number
-    type?: EnumChildTypeFilter | ChildType
-    kkId?: StringFilter | string
-    personalId?: StringFilter | string
-  }
-
-  export type FamilyTreeCreateWithoutChildsInput = {
-    id?: string
-    nokk: string
-    address: XOR<AddressCreateEnvelopeInput, AddressCreateInput>
-    father?: PersonalCreateNestedOneWithoutFatherInput
-    mother?: PersonalCreateNestedOneWithoutMotherInput
-    wali?: PersonalCreateNestedOneWithoutWaliInput
-  }
-
-  export type FamilyTreeUncheckedCreateWithoutChildsInput = {
-    id?: string
-    nokk: string
-    fatherId?: string | null
-    motherId?: string | null
-    waliId?: string | null
-    address: XOR<AddressCreateEnvelopeInput, AddressCreateInput>
-  }
-
-  export type FamilyTreeCreateOrConnectWithoutChildsInput = {
-    where: FamilyTreeWhereUniqueInput
-    create: XOR<FamilyTreeCreateWithoutChildsInput, FamilyTreeUncheckedCreateWithoutChildsInput>
-  }
-
-  export type PersonalCreateWithoutChildInput = {
-    id?: string
-    nik?: string | null
-    nisn?: string | null
-    type: TypePersonal
-    fullname: string
-    gender: Gender
-    foreign: boolean
-    country?: string | null
-    religion: Religion
-    born: XOR<BornCreateEnvelopeInput, BornCreateInput>
-    email: string
-    belajarId?: string | null
-    nophone: string
-    isLife?: boolean | null
-    address?: XOR<AddressNullableCreateEnvelopeInput, AddressCreateInput> | null
-    user?: UserCreateNestedOneWithoutPersonalInput
-    father?: FamilyTreeCreateNestedManyWithoutFatherInput
-    mother?: FamilyTreeCreateNestedManyWithoutMotherInput
-    wali?: FamilyTreeCreateNestedManyWithoutWaliInput
-  }
-
-  export type PersonalUncheckedCreateWithoutChildInput = {
-    id?: string
-    nik?: string | null
-    nisn?: string | null
-    type: TypePersonal
-    userId?: string | null
-    fullname: string
-    gender: Gender
-    foreign: boolean
-    country?: string | null
-    religion: Religion
-    born: XOR<BornCreateEnvelopeInput, BornCreateInput>
-    email: string
-    belajarId?: string | null
-    nophone: string
-    isLife?: boolean | null
-    address?: XOR<AddressNullableCreateEnvelopeInput, AddressCreateInput> | null
-    father?: FamilyTreeUncheckedCreateNestedManyWithoutFatherInput
-    mother?: FamilyTreeUncheckedCreateNestedManyWithoutMotherInput
-    wali?: FamilyTreeUncheckedCreateNestedManyWithoutWaliInput
-  }
-
-  export type PersonalCreateOrConnectWithoutChildInput = {
-    where: PersonalWhereUniqueInput
-    create: XOR<PersonalCreateWithoutChildInput, PersonalUncheckedCreateWithoutChildInput>
-  }
-
-  export type FamilyTreeUpsertWithoutChildsInput = {
-    update: XOR<FamilyTreeUpdateWithoutChildsInput, FamilyTreeUncheckedUpdateWithoutChildsInput>
-    create: XOR<FamilyTreeCreateWithoutChildsInput, FamilyTreeUncheckedCreateWithoutChildsInput>
-  }
-
-  export type FamilyTreeUpdateWithoutChildsInput = {
-    nokk?: StringFieldUpdateOperationsInput | string
-    address?: XOR<AddressUpdateEnvelopeInput, AddressCreateInput>
-    father?: PersonalUpdateOneWithoutFatherNestedInput
-    mother?: PersonalUpdateOneWithoutMotherNestedInput
-    wali?: PersonalUpdateOneWithoutWaliNestedInput
-  }
-
-  export type FamilyTreeUncheckedUpdateWithoutChildsInput = {
-    nokk?: StringFieldUpdateOperationsInput | string
-    fatherId?: NullableStringFieldUpdateOperationsInput | string | null
-    motherId?: NullableStringFieldUpdateOperationsInput | string | null
-    waliId?: NullableStringFieldUpdateOperationsInput | string | null
-    address?: XOR<AddressUpdateEnvelopeInput, AddressCreateInput>
-  }
-
-  export type PersonalUpsertWithoutChildInput = {
-    update: XOR<PersonalUpdateWithoutChildInput, PersonalUncheckedUpdateWithoutChildInput>
-    create: XOR<PersonalCreateWithoutChildInput, PersonalUncheckedCreateWithoutChildInput>
-  }
-
-  export type PersonalUpdateWithoutChildInput = {
-    nik?: NullableStringFieldUpdateOperationsInput | string | null
-    nisn?: NullableStringFieldUpdateOperationsInput | string | null
-    type?: EnumTypePersonalFieldUpdateOperationsInput | TypePersonal
-    fullname?: StringFieldUpdateOperationsInput | string
-    gender?: EnumGenderFieldUpdateOperationsInput | Gender
-    foreign?: BoolFieldUpdateOperationsInput | boolean
-    country?: NullableStringFieldUpdateOperationsInput | string | null
-    religion?: EnumReligionFieldUpdateOperationsInput | Religion
-    born?: XOR<BornUpdateEnvelopeInput, BornCreateInput>
-    email?: StringFieldUpdateOperationsInput | string
-    belajarId?: NullableStringFieldUpdateOperationsInput | string | null
-    nophone?: StringFieldUpdateOperationsInput | string
-    isLife?: NullableBoolFieldUpdateOperationsInput | boolean | null
-    address?: XOR<AddressNullableUpdateEnvelopeInput, AddressCreateInput> | null
-    user?: UserUpdateOneWithoutPersonalNestedInput
-    father?: FamilyTreeUpdateManyWithoutFatherNestedInput
-    mother?: FamilyTreeUpdateManyWithoutMotherNestedInput
-    wali?: FamilyTreeUpdateManyWithoutWaliNestedInput
-  }
-
-  export type PersonalUncheckedUpdateWithoutChildInput = {
-    nik?: NullableStringFieldUpdateOperationsInput | string | null
-    nisn?: NullableStringFieldUpdateOperationsInput | string | null
-    type?: EnumTypePersonalFieldUpdateOperationsInput | TypePersonal
-    userId?: NullableStringFieldUpdateOperationsInput | string | null
-    fullname?: StringFieldUpdateOperationsInput | string
-    gender?: EnumGenderFieldUpdateOperationsInput | Gender
-    foreign?: BoolFieldUpdateOperationsInput | boolean
-    country?: NullableStringFieldUpdateOperationsInput | string | null
-    religion?: EnumReligionFieldUpdateOperationsInput | Religion
-    born?: XOR<BornUpdateEnvelopeInput, BornCreateInput>
-    email?: StringFieldUpdateOperationsInput | string
-    belajarId?: NullableStringFieldUpdateOperationsInput | string | null
-    nophone?: StringFieldUpdateOperationsInput | string
-    isLife?: NullableBoolFieldUpdateOperationsInput | boolean | null
-    address?: XOR<AddressNullableUpdateEnvelopeInput, AddressCreateInput> | null
-    father?: FamilyTreeUncheckedUpdateManyWithoutFatherNestedInput
-    mother?: FamilyTreeUncheckedUpdateManyWithoutMotherNestedInput
-    wali?: FamilyTreeUncheckedUpdateManyWithoutWaliNestedInput
-  }
-
-  export type UserCreateWithoutStudentInput = {
-    id?: string
-    name: string
-    picture?: string | null
-    username: string
-    active: boolean
-    verify?: boolean
-    password: string
-    passhash: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    role?: RoleCreateNestedOneWithoutUsersInput
-    personal?: PersonalCreateNestedOneWithoutUserInput
-    teacher?: TeacherCreateNestedOneWithoutUserInput
-  }
-
-  export type UserUncheckedCreateWithoutStudentInput = {
-    id?: string
-    name: string
-    picture?: string | null
-    username: string
-    active: boolean
-    verify?: boolean
-    password: string
-    passhash: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    roleId?: string | null
-    personal?: PersonalUncheckedCreateNestedOneWithoutUserInput
-    teacher?: TeacherUncheckedCreateNestedOneWithoutUserInput
-  }
-
-  export type UserCreateOrConnectWithoutStudentInput = {
-    where: UserWhereUniqueInput
-    create: XOR<UserCreateWithoutStudentInput, UserUncheckedCreateWithoutStudentInput>
-  }
-
-  export type KonsentrasiKeahlianCreateWithoutStudentInput = {
-    id?: string
-    code: string
-    name: string
-    tahun: number
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    program: ProgramKeahlianCreateNestedOneWithoutKonsentrasiInput
-    instansi?: InstansiCreateNestedManyWithoutMajorsInput
-  }
-
-  export type KonsentrasiKeahlianUncheckedCreateWithoutStudentInput = {
-    id?: string
-    code: string
-    name: string
-    programId: string
-    tahun: number
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    instansiIds?: KonsentrasiKeahlianCreateinstansiIdsInput | Enumerable<string>
-    instansi?: InstansiUncheckedCreateNestedManyWithoutMajorsInput
-  }
-
-  export type KonsentrasiKeahlianCreateOrConnectWithoutStudentInput = {
-    where: KonsentrasiKeahlianWhereUniqueInput
-    create: XOR<KonsentrasiKeahlianCreateWithoutStudentInput, KonsentrasiKeahlianUncheckedCreateWithoutStudentInput>
-  }
-
-  export type ClassRoomCreateWithoutStudentsInput = {
-    id?: string
-    name: string
-    year: SchoolYearCreateNestedOneWithoutClassRoomInput
-    wali: TeacherCreateNestedOneWithoutClassRoomInput
-    event?: CalendarCreateNestedManyWithoutClassRoomInput
-  }
-
-  export type ClassRoomUncheckedCreateWithoutStudentsInput = {
-    id?: string
-    name: string
-    yearId: string
-    waliId: string
-    studentIds?: ClassRoomCreatestudentIdsInput | Enumerable<string>
-    eventIds?: ClassRoomCreateeventIdsInput | Enumerable<string>
-    event?: CalendarUncheckedCreateNestedManyWithoutClassRoomInput
-  }
-
-  export type ClassRoomCreateOrConnectWithoutStudentsInput = {
-    where: ClassRoomWhereUniqueInput
-    create: XOR<ClassRoomCreateWithoutStudentsInput, ClassRoomUncheckedCreateWithoutStudentsInput>
-  }
-
-  export type SchoolYearCreateWithoutStudentsInInput = {
-    id?: string
-    year: number
-    organizational: XOR<OrganizationalCreateEnvelopeInput, OrganizationalCreateInput>
-    instansi: InstansiCreateNestedOneWithoutSchoolYearInput
-    classRoom?: ClassRoomCreateNestedManyWithoutYearInput
-    calendar?: CalendarCreateNestedManyWithoutRefInput
-  }
-
-  export type SchoolYearUncheckedCreateWithoutStudentsInInput = {
-    id?: string
-    year: number
-    instansiId: string
-    organizational: XOR<OrganizationalCreateEnvelopeInput, OrganizationalCreateInput>
-    classRoom?: ClassRoomUncheckedCreateNestedManyWithoutYearInput
-    calendar?: CalendarUncheckedCreateNestedManyWithoutRefInput
-  }
-
-  export type SchoolYearCreateOrConnectWithoutStudentsInInput = {
-    where: SchoolYearWhereUniqueInput
-    create: XOR<SchoolYearCreateWithoutStudentsInInput, SchoolYearUncheckedCreateWithoutStudentsInInput>
-  }
-
-  export type InstansiCreateWithoutStudentInput = {
-    id?: string
-    npsn: string
-    name: string
-    isPrivate: boolean
-    address: XOR<AddressCreateEnvelopeInput, AddressCreateInput>
-    level: Level
-    religion?: Religion | null
-    major?: boolean | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    majors?: KonsentrasiKeahlianCreateNestedManyWithoutInstansiInput
-    role?: RoleCreateNestedManyWithoutInstansiInput
-    schoolYear?: SchoolYearCreateNestedManyWithoutInstansiInput
-    teacher?: TeacherCreateNestedManyWithoutInstansiInput
-  }
-
-  export type InstansiUncheckedCreateWithoutStudentInput = {
-    id?: string
-    npsn: string
-    name: string
-    isPrivate: boolean
-    address: XOR<AddressCreateEnvelopeInput, AddressCreateInput>
-    level: Level
-    religion?: Religion | null
-    major?: boolean | null
-    majorIds?: InstansiCreatemajorIdsInput | Enumerable<string>
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    majors?: KonsentrasiKeahlianUncheckedCreateNestedManyWithoutInstansiInput
-    role?: RoleUncheckedCreateNestedManyWithoutInstansiInput
-    schoolYear?: SchoolYearUncheckedCreateNestedManyWithoutInstansiInput
-    teacher?: TeacherUncheckedCreateNestedManyWithoutInstansiInput
-  }
-
-  export type InstansiCreateOrConnectWithoutStudentInput = {
-    where: InstansiWhereUniqueInput
-    create: XOR<InstansiCreateWithoutStudentInput, InstansiUncheckedCreateWithoutStudentInput>
-  }
-
-  export type CalendarCreateWithoutStudentInput = {
-    id?: string
-    name: string
-    description?: string | null
-    start: Date | string
-    end?: Date | string | null
-    color: string
-    ref: SchoolYearCreateNestedOneWithoutCalendarInput
-    classRoom?: ClassRoomCreateNestedManyWithoutEventInput
-    teacher?: TeacherCreateNestedManyWithoutEventInput
-  }
-
-  export type CalendarUncheckedCreateWithoutStudentInput = {
-    id?: string
-    refId: string
-    name: string
-    description?: string | null
-    start: Date | string
-    end?: Date | string | null
-    color: string
-    classRoomIds?: CalendarCreateclassRoomIdsInput | Enumerable<string>
-    studentIds?: CalendarCreatestudentIdsInput | Enumerable<string>
-    teacherIds?: CalendarCreateteacherIdsInput | Enumerable<string>
-    classRoom?: ClassRoomUncheckedCreateNestedManyWithoutEventInput
-    teacher?: TeacherUncheckedCreateNestedManyWithoutEventInput
-  }
-
-  export type CalendarCreateOrConnectWithoutStudentInput = {
-    where: CalendarWhereUniqueInput
-    create: XOR<CalendarCreateWithoutStudentInput, CalendarUncheckedCreateWithoutStudentInput>
-  }
-
-  export type UserUpsertWithoutStudentInput = {
-    update: XOR<UserUpdateWithoutStudentInput, UserUncheckedUpdateWithoutStudentInput>
-    create: XOR<UserCreateWithoutStudentInput, UserUncheckedCreateWithoutStudentInput>
-  }
-
-  export type UserUpdateWithoutStudentInput = {
-    name?: StringFieldUpdateOperationsInput | string
-    picture?: NullableStringFieldUpdateOperationsInput | string | null
-    username?: StringFieldUpdateOperationsInput | string
-    active?: BoolFieldUpdateOperationsInput | boolean
-    verify?: BoolFieldUpdateOperationsInput | boolean
-    password?: StringFieldUpdateOperationsInput | string
-    passhash?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    role?: RoleUpdateOneWithoutUsersNestedInput
-    personal?: PersonalUpdateOneWithoutUserNestedInput
-    teacher?: TeacherUpdateOneWithoutUserNestedInput
-  }
-
-  export type UserUncheckedUpdateWithoutStudentInput = {
-    name?: StringFieldUpdateOperationsInput | string
-    picture?: NullableStringFieldUpdateOperationsInput | string | null
-    username?: StringFieldUpdateOperationsInput | string
-    active?: BoolFieldUpdateOperationsInput | boolean
-    verify?: BoolFieldUpdateOperationsInput | boolean
-    password?: StringFieldUpdateOperationsInput | string
-    passhash?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    roleId?: NullableStringFieldUpdateOperationsInput | string | null
-    personal?: PersonalUncheckedUpdateOneWithoutUserNestedInput
-    teacher?: TeacherUncheckedUpdateOneWithoutUserNestedInput
-  }
-
-  export type KonsentrasiKeahlianUpsertWithoutStudentInput = {
-    update: XOR<KonsentrasiKeahlianUpdateWithoutStudentInput, KonsentrasiKeahlianUncheckedUpdateWithoutStudentInput>
-    create: XOR<KonsentrasiKeahlianCreateWithoutStudentInput, KonsentrasiKeahlianUncheckedCreateWithoutStudentInput>
-  }
-
-  export type KonsentrasiKeahlianUpdateWithoutStudentInput = {
-    code?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    tahun?: IntFieldUpdateOperationsInput | number
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    program?: ProgramKeahlianUpdateOneRequiredWithoutKonsentrasiNestedInput
-    instansi?: InstansiUpdateManyWithoutMajorsNestedInput
-  }
-
-  export type KonsentrasiKeahlianUncheckedUpdateWithoutStudentInput = {
-    code?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    programId?: StringFieldUpdateOperationsInput | string
-    tahun?: IntFieldUpdateOperationsInput | number
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    instansiIds?: KonsentrasiKeahlianUpdateinstansiIdsInput | Enumerable<string>
-    instansi?: InstansiUncheckedUpdateManyWithoutMajorsNestedInput
-  }
-
-  export type ClassRoomUpsertWithWhereUniqueWithoutStudentsInput = {
-    where: ClassRoomWhereUniqueInput
-    update: XOR<ClassRoomUpdateWithoutStudentsInput, ClassRoomUncheckedUpdateWithoutStudentsInput>
-    create: XOR<ClassRoomCreateWithoutStudentsInput, ClassRoomUncheckedCreateWithoutStudentsInput>
-  }
-
-  export type ClassRoomUpdateWithWhereUniqueWithoutStudentsInput = {
-    where: ClassRoomWhereUniqueInput
-    data: XOR<ClassRoomUpdateWithoutStudentsInput, ClassRoomUncheckedUpdateWithoutStudentsInput>
-  }
-
-  export type ClassRoomUpdateManyWithWhereWithoutStudentsInput = {
-    where: ClassRoomScalarWhereInput
-    data: XOR<ClassRoomUpdateManyMutationInput, ClassRoomUncheckedUpdateManyWithoutClassRoomInput>
-  }
-
-  export type ClassRoomScalarWhereInput = {
-    AND?: Enumerable<ClassRoomScalarWhereInput>
-    OR?: Enumerable<ClassRoomScalarWhereInput>
-    NOT?: Enumerable<ClassRoomScalarWhereInput>
-    id?: StringFilter | string
-    name?: StringFilter | string
-    yearId?: StringFilter | string
-    waliId?: StringFilter | string
-    studentIds?: StringNullableListFilter
-    eventIds?: StringNullableListFilter
-  }
-
-  export type SchoolYearUpsertWithoutStudentsInInput = {
-    update: XOR<SchoolYearUpdateWithoutStudentsInInput, SchoolYearUncheckedUpdateWithoutStudentsInInput>
-    create: XOR<SchoolYearCreateWithoutStudentsInInput, SchoolYearUncheckedCreateWithoutStudentsInInput>
-  }
-
-  export type SchoolYearUpdateWithoutStudentsInInput = {
-    year?: IntFieldUpdateOperationsInput | number
-    organizational?: XOR<OrganizationalUpdateEnvelopeInput, OrganizationalCreateInput>
-    instansi?: InstansiUpdateOneRequiredWithoutSchoolYearNestedInput
-    classRoom?: ClassRoomUpdateManyWithoutYearNestedInput
-    calendar?: CalendarUpdateManyWithoutRefNestedInput
-  }
-
-  export type SchoolYearUncheckedUpdateWithoutStudentsInInput = {
-    year?: IntFieldUpdateOperationsInput | number
-    instansiId?: StringFieldUpdateOperationsInput | string
-    organizational?: XOR<OrganizationalUpdateEnvelopeInput, OrganizationalCreateInput>
-    classRoom?: ClassRoomUncheckedUpdateManyWithoutYearNestedInput
-    calendar?: CalendarUncheckedUpdateManyWithoutRefNestedInput
-  }
-
-  export type InstansiUpsertWithoutStudentInput = {
-    update: XOR<InstansiUpdateWithoutStudentInput, InstansiUncheckedUpdateWithoutStudentInput>
-    create: XOR<InstansiCreateWithoutStudentInput, InstansiUncheckedCreateWithoutStudentInput>
-  }
-
-  export type InstansiUpdateWithoutStudentInput = {
-    npsn?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    isPrivate?: BoolFieldUpdateOperationsInput | boolean
-    address?: XOR<AddressUpdateEnvelopeInput, AddressCreateInput>
-    level?: EnumLevelFieldUpdateOperationsInput | Level
-    religion?: NullableEnumReligionFieldUpdateOperationsInput | Religion | null
-    major?: NullableBoolFieldUpdateOperationsInput | boolean | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    majors?: KonsentrasiKeahlianUpdateManyWithoutInstansiNestedInput
-    role?: RoleUpdateManyWithoutInstansiNestedInput
-    schoolYear?: SchoolYearUpdateManyWithoutInstansiNestedInput
-    teacher?: TeacherUpdateManyWithoutInstansiNestedInput
-  }
-
-  export type InstansiUncheckedUpdateWithoutStudentInput = {
-    npsn?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    isPrivate?: BoolFieldUpdateOperationsInput | boolean
-    address?: XOR<AddressUpdateEnvelopeInput, AddressCreateInput>
-    level?: EnumLevelFieldUpdateOperationsInput | Level
-    religion?: NullableEnumReligionFieldUpdateOperationsInput | Religion | null
-    major?: NullableBoolFieldUpdateOperationsInput | boolean | null
-    majorIds?: InstansiUpdatemajorIdsInput | Enumerable<string>
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    majors?: KonsentrasiKeahlianUncheckedUpdateManyWithoutInstansiNestedInput
-    role?: RoleUncheckedUpdateManyWithoutInstansiNestedInput
-    schoolYear?: SchoolYearUncheckedUpdateManyWithoutInstansiNestedInput
-    teacher?: TeacherUncheckedUpdateManyWithoutInstansiNestedInput
-  }
-
-  export type CalendarUpsertWithWhereUniqueWithoutStudentInput = {
-    where: CalendarWhereUniqueInput
-    update: XOR<CalendarUpdateWithoutStudentInput, CalendarUncheckedUpdateWithoutStudentInput>
-    create: XOR<CalendarCreateWithoutStudentInput, CalendarUncheckedCreateWithoutStudentInput>
-  }
-
-  export type CalendarUpdateWithWhereUniqueWithoutStudentInput = {
-    where: CalendarWhereUniqueInput
-    data: XOR<CalendarUpdateWithoutStudentInput, CalendarUncheckedUpdateWithoutStudentInput>
-  }
-
-  export type CalendarUpdateManyWithWhereWithoutStudentInput = {
-    where: CalendarScalarWhereInput
-    data: XOR<CalendarUpdateManyMutationInput, CalendarUncheckedUpdateManyWithoutEventInput>
-  }
-
-  export type CalendarScalarWhereInput = {
-    AND?: Enumerable<CalendarScalarWhereInput>
-    OR?: Enumerable<CalendarScalarWhereInput>
-    NOT?: Enumerable<CalendarScalarWhereInput>
-    id?: StringFilter | string
-    refId?: StringFilter | string
-    name?: StringFilter | string
-    description?: StringNullableFilter | string | null
-    start?: DateTimeFilter | Date | string
-    end?: DateTimeNullableFilter | Date | string | null
-    color?: StringFilter | string
-    classRoomIds?: StringNullableListFilter
-    studentIds?: StringNullableListFilter
-    teacherIds?: StringNullableListFilter
-  }
-
-  export type UserCreateWithoutTeacherInput = {
-    id?: string
-    name: string
-    picture?: string | null
-    username: string
-    active: boolean
-    verify?: boolean
-    password: string
-    passhash: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    role?: RoleCreateNestedOneWithoutUsersInput
-    personal?: PersonalCreateNestedOneWithoutUserInput
-    student?: StudentCreateNestedOneWithoutUserInput
-  }
-
-  export type UserUncheckedCreateWithoutTeacherInput = {
-    id?: string
-    name: string
-    picture?: string | null
-    username: string
-    active: boolean
-    verify?: boolean
-    password: string
-    passhash: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    roleId?: string | null
-    personal?: PersonalUncheckedCreateNestedOneWithoutUserInput
-    student?: StudentUncheckedCreateNestedOneWithoutUserInput
-  }
-
-  export type UserCreateOrConnectWithoutTeacherInput = {
-    where: UserWhereUniqueInput
-    create: XOR<UserCreateWithoutTeacherInput, UserUncheckedCreateWithoutTeacherInput>
-  }
-
-  export type ClassRoomCreateWithoutWaliInput = {
-    id?: string
-    name: string
-    year: SchoolYearCreateNestedOneWithoutClassRoomInput
-    students?: StudentCreateNestedManyWithoutClassRoomInput
-    event?: CalendarCreateNestedManyWithoutClassRoomInput
-  }
-
-  export type ClassRoomUncheckedCreateWithoutWaliInput = {
-    id?: string
-    name: string
-    yearId: string
-    studentIds?: ClassRoomCreatestudentIdsInput | Enumerable<string>
-    eventIds?: ClassRoomCreateeventIdsInput | Enumerable<string>
-    students?: StudentUncheckedCreateNestedManyWithoutClassRoomInput
-    event?: CalendarUncheckedCreateNestedManyWithoutClassRoomInput
-  }
-
-  export type ClassRoomCreateOrConnectWithoutWaliInput = {
-    where: ClassRoomWhereUniqueInput
-    create: XOR<ClassRoomCreateWithoutWaliInput, ClassRoomUncheckedCreateWithoutWaliInput>
-  }
-
-  export type ClassRoomCreateManyWaliInputEnvelope = {
-    data: Enumerable<ClassRoomCreateManyWaliInput>
-  }
-
-  export type InstansiCreateWithoutTeacherInput = {
-    id?: string
-    npsn: string
-    name: string
-    isPrivate: boolean
-    address: XOR<AddressCreateEnvelopeInput, AddressCreateInput>
-    level: Level
-    religion?: Religion | null
-    major?: boolean | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    majors?: KonsentrasiKeahlianCreateNestedManyWithoutInstansiInput
-    role?: RoleCreateNestedManyWithoutInstansiInput
-    schoolYear?: SchoolYearCreateNestedManyWithoutInstansiInput
-    student?: StudentCreateNestedManyWithoutInstansiInput
-  }
-
-  export type InstansiUncheckedCreateWithoutTeacherInput = {
-    id?: string
-    npsn: string
-    name: string
-    isPrivate: boolean
-    address: XOR<AddressCreateEnvelopeInput, AddressCreateInput>
-    level: Level
-    religion?: Religion | null
-    major?: boolean | null
-    majorIds?: InstansiCreatemajorIdsInput | Enumerable<string>
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    majors?: KonsentrasiKeahlianUncheckedCreateNestedManyWithoutInstansiInput
-    role?: RoleUncheckedCreateNestedManyWithoutInstansiInput
-    schoolYear?: SchoolYearUncheckedCreateNestedManyWithoutInstansiInput
-    student?: StudentUncheckedCreateNestedManyWithoutInstansiInput
-  }
-
-  export type InstansiCreateOrConnectWithoutTeacherInput = {
-    where: InstansiWhereUniqueInput
-    create: XOR<InstansiCreateWithoutTeacherInput, InstansiUncheckedCreateWithoutTeacherInput>
-  }
-
-  export type CalendarCreateWithoutTeacherInput = {
-    id?: string
-    name: string
-    description?: string | null
-    start: Date | string
-    end?: Date | string | null
-    color: string
-    ref: SchoolYearCreateNestedOneWithoutCalendarInput
-    classRoom?: ClassRoomCreateNestedManyWithoutEventInput
-    student?: StudentCreateNestedManyWithoutEventInput
-  }
-
-  export type CalendarUncheckedCreateWithoutTeacherInput = {
-    id?: string
-    refId: string
-    name: string
-    description?: string | null
-    start: Date | string
-    end?: Date | string | null
-    color: string
-    classRoomIds?: CalendarCreateclassRoomIdsInput | Enumerable<string>
-    studentIds?: CalendarCreatestudentIdsInput | Enumerable<string>
-    teacherIds?: CalendarCreateteacherIdsInput | Enumerable<string>
-    classRoom?: ClassRoomUncheckedCreateNestedManyWithoutEventInput
-    student?: StudentUncheckedCreateNestedManyWithoutEventInput
-  }
-
-  export type CalendarCreateOrConnectWithoutTeacherInput = {
-    where: CalendarWhereUniqueInput
-    create: XOR<CalendarCreateWithoutTeacherInput, CalendarUncheckedCreateWithoutTeacherInput>
   }
 
   export type EducationUpdateManyInput = {
@@ -31572,12 +32085,266 @@ export namespace Prisma {
     where: AdditionalWhereInput
   }
 
-  export type UserUpsertWithoutTeacherInput = {
-    update: XOR<UserUpdateWithoutTeacherInput, UserUncheckedUpdateWithoutTeacherInput>
-    create: XOR<UserCreateWithoutTeacherInput, UserUncheckedCreateWithoutTeacherInput>
+  export type AuthUpsertWithoutPersonalInput = {
+    update: XOR<AuthUpdateWithoutPersonalInput, AuthUncheckedUpdateWithoutPersonalInput>
+    create: XOR<AuthCreateWithoutPersonalInput, AuthUncheckedCreateWithoutPersonalInput>
   }
 
-  export type UserUpdateWithoutTeacherInput = {
+  export type AuthUpdateWithoutPersonalInput = {
+    user?: UserUpdateOneRequiredWithoutAuthNestedInput
+  }
+
+  export type AuthUncheckedUpdateWithoutPersonalInput = {
+    userId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type FamilyTreeUpsertWithWhereUniqueWithoutFatherInput = {
+    where: FamilyTreeWhereUniqueInput
+    update: XOR<FamilyTreeUpdateWithoutFatherInput, FamilyTreeUncheckedUpdateWithoutFatherInput>
+    create: XOR<FamilyTreeCreateWithoutFatherInput, FamilyTreeUncheckedCreateWithoutFatherInput>
+  }
+
+  export type FamilyTreeUpdateWithWhereUniqueWithoutFatherInput = {
+    where: FamilyTreeWhereUniqueInput
+    data: XOR<FamilyTreeUpdateWithoutFatherInput, FamilyTreeUncheckedUpdateWithoutFatherInput>
+  }
+
+  export type FamilyTreeUpdateManyWithWhereWithoutFatherInput = {
+    where: FamilyTreeScalarWhereInput
+    data: XOR<FamilyTreeUpdateManyMutationInput, FamilyTreeUncheckedUpdateManyWithoutFatherInput>
+  }
+
+  export type FamilyTreeScalarWhereInput = {
+    AND?: Enumerable<FamilyTreeScalarWhereInput>
+    OR?: Enumerable<FamilyTreeScalarWhereInput>
+    NOT?: Enumerable<FamilyTreeScalarWhereInput>
+    id?: StringFilter | string
+    nokk?: StringFilter | string
+    fatherId?: StringNullableFilter | string | null
+    motherId?: StringNullableFilter | string | null
+    waliId?: StringNullableFilter | string | null
+    coupleId?: StringNullableFilter | string | null
+  }
+
+  export type FamilyTreeUpsertWithWhereUniqueWithoutMotherInput = {
+    where: FamilyTreeWhereUniqueInput
+    update: XOR<FamilyTreeUpdateWithoutMotherInput, FamilyTreeUncheckedUpdateWithoutMotherInput>
+    create: XOR<FamilyTreeCreateWithoutMotherInput, FamilyTreeUncheckedCreateWithoutMotherInput>
+  }
+
+  export type FamilyTreeUpdateWithWhereUniqueWithoutMotherInput = {
+    where: FamilyTreeWhereUniqueInput
+    data: XOR<FamilyTreeUpdateWithoutMotherInput, FamilyTreeUncheckedUpdateWithoutMotherInput>
+  }
+
+  export type FamilyTreeUpdateManyWithWhereWithoutMotherInput = {
+    where: FamilyTreeScalarWhereInput
+    data: XOR<FamilyTreeUpdateManyMutationInput, FamilyTreeUncheckedUpdateManyWithoutMotherInput>
+  }
+
+  export type FamilyTreeUpsertWithWhereUniqueWithoutWaliInput = {
+    where: FamilyTreeWhereUniqueInput
+    update: XOR<FamilyTreeUpdateWithoutWaliInput, FamilyTreeUncheckedUpdateWithoutWaliInput>
+    create: XOR<FamilyTreeCreateWithoutWaliInput, FamilyTreeUncheckedCreateWithoutWaliInput>
+  }
+
+  export type FamilyTreeUpdateWithWhereUniqueWithoutWaliInput = {
+    where: FamilyTreeWhereUniqueInput
+    data: XOR<FamilyTreeUpdateWithoutWaliInput, FamilyTreeUncheckedUpdateWithoutWaliInput>
+  }
+
+  export type FamilyTreeUpdateManyWithWhereWithoutWaliInput = {
+    where: FamilyTreeScalarWhereInput
+    data: XOR<FamilyTreeUpdateManyMutationInput, FamilyTreeUncheckedUpdateManyWithoutWaliInput>
+  }
+
+  export type FamilyTreeUpsertWithWhereUniqueWithoutCoupleInput = {
+    where: FamilyTreeWhereUniqueInput
+    update: XOR<FamilyTreeUpdateWithoutCoupleInput, FamilyTreeUncheckedUpdateWithoutCoupleInput>
+    create: XOR<FamilyTreeCreateWithoutCoupleInput, FamilyTreeUncheckedCreateWithoutCoupleInput>
+  }
+
+  export type FamilyTreeUpdateWithWhereUniqueWithoutCoupleInput = {
+    where: FamilyTreeWhereUniqueInput
+    data: XOR<FamilyTreeUpdateWithoutCoupleInput, FamilyTreeUncheckedUpdateWithoutCoupleInput>
+  }
+
+  export type FamilyTreeUpdateManyWithWhereWithoutCoupleInput = {
+    where: FamilyTreeScalarWhereInput
+    data: XOR<FamilyTreeUpdateManyMutationInput, FamilyTreeUncheckedUpdateManyWithoutCoupleInput>
+  }
+
+  export type FamilyTreeChildUpsertWithoutPersonalInput = {
+    update: XOR<FamilyTreeChildUpdateWithoutPersonalInput, FamilyTreeChildUncheckedUpdateWithoutPersonalInput>
+    create: XOR<FamilyTreeChildCreateWithoutPersonalInput, FamilyTreeChildUncheckedCreateWithoutPersonalInput>
+  }
+
+  export type FamilyTreeChildUpdateWithoutPersonalInput = {
+    no?: IntFieldUpdateOperationsInput | number
+    type?: EnumChildTypeFieldUpdateOperationsInput | ChildType
+    kk?: FamilyTreeUpdateOneRequiredWithoutChildsNestedInput
+  }
+
+  export type FamilyTreeChildUncheckedUpdateWithoutPersonalInput = {
+    no?: IntFieldUpdateOperationsInput | number
+    type?: EnumChildTypeFieldUpdateOperationsInput | ChildType
+    kkId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type StudentUpsertWithWhereUniqueWithoutPersonalInput = {
+    where: StudentWhereUniqueInput
+    update: XOR<StudentUpdateWithoutPersonalInput, StudentUncheckedUpdateWithoutPersonalInput>
+    create: XOR<StudentCreateWithoutPersonalInput, StudentUncheckedCreateWithoutPersonalInput>
+  }
+
+  export type StudentUpdateWithWhereUniqueWithoutPersonalInput = {
+    where: StudentWhereUniqueInput
+    data: XOR<StudentUpdateWithoutPersonalInput, StudentUncheckedUpdateWithoutPersonalInput>
+  }
+
+  export type StudentUpdateManyWithWhereWithoutPersonalInput = {
+    where: StudentScalarWhereInput
+    data: XOR<StudentUpdateManyMutationInput, StudentUncheckedUpdateManyWithoutStudentInput>
+  }
+
+  export type TeacherUpsertWithWhereUniqueWithoutPersonalInput = {
+    where: TeacherWhereUniqueInput
+    update: XOR<TeacherUpdateWithoutPersonalInput, TeacherUncheckedUpdateWithoutPersonalInput>
+    create: XOR<TeacherCreateWithoutPersonalInput, TeacherUncheckedCreateWithoutPersonalInput>
+  }
+
+  export type TeacherUpdateWithWhereUniqueWithoutPersonalInput = {
+    where: TeacherWhereUniqueInput
+    data: XOR<TeacherUpdateWithoutPersonalInput, TeacherUncheckedUpdateWithoutPersonalInput>
+  }
+
+  export type TeacherUpdateManyWithWhereWithoutPersonalInput = {
+    where: TeacherScalarWhereInput
+    data: XOR<TeacherUpdateManyMutationInput, TeacherUncheckedUpdateManyWithoutTeacherInput>
+  }
+
+  export type UserCreateWithoutAuthInput = {
+    id?: string
+    name: string
+    picture?: string | null
+    username: string
+    active: boolean
+    verify?: boolean
+    password: string
+    passhash: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    role?: RoleCreateNestedOneWithoutUsersInput
+  }
+
+  export type UserUncheckedCreateWithoutAuthInput = {
+    id?: string
+    name: string
+    picture?: string | null
+    username: string
+    active: boolean
+    verify?: boolean
+    password: string
+    passhash: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    roleId?: string | null
+  }
+
+  export type UserCreateOrConnectWithoutAuthInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutAuthInput, UserUncheckedCreateWithoutAuthInput>
+  }
+
+  export type PersonalCreateWithoutAuthInput = {
+    id?: string
+    nik?: string | null
+    nisn?: string | null
+    type: TypePersonal
+    fullname: string
+    gender: Gender
+    foreign: boolean
+    country?: string | null
+    religion: Religion
+    born: XOR<BornCreateEnvelopeInput, BornCreateInput>
+    email: string
+    belajarId?: string | null
+    nophone: string
+    isLife?: boolean | null
+    address?: XOR<AddressNullableCreateEnvelopeInput, AddressCreateInput> | null
+    education?: XOR<EducationListCreateEnvelopeInput, Enumerable<EducationCreateInput>>
+    training?: XOR<TrainingListCreateEnvelopeInput, Enumerable<TrainingCreateInput>>
+    employment?: XOR<EmploymentListCreateEnvelopeInput, Enumerable<EmploymentCreateInput>>
+    profession?: XOR<ProfessionListCreateEnvelopeInput, Enumerable<ProfessionCreateInput>>
+    overseas?: XOR<OverseasListCreateEnvelopeInput, Enumerable<OverseasCreateInput>>
+    scientific?: XOR<ScientificListCreateEnvelopeInput, Enumerable<ScientificCreateInput>>
+    organization?: XOR<OrganizationListCreateEnvelopeInput, Enumerable<OrganizationCreateInput>>
+    papers?: XOR<PapersListCreateEnvelopeInput, Enumerable<PapersCreateInput>>
+    innovation?: XOR<InnovationListCreateEnvelopeInput, Enumerable<InnovationCreateInput>>
+    award?: XOR<AwardListCreateEnvelopeInput, Enumerable<AwardCreateInput>>
+    sourcePerson?: XOR<SourcePersonListCreateEnvelopeInput, Enumerable<SourcePersonCreateInput>>
+    contest?: XOR<ContestListCreateEnvelopeInput, Enumerable<ContestCreateInput>>
+    documents?: XOR<DocumentsListCreateEnvelopeInput, Enumerable<DocumentsCreateInput>>
+    additional?: XOR<AdditionalListCreateEnvelopeInput, Enumerable<AdditionalCreateInput>>
+    father?: FamilyTreeCreateNestedManyWithoutFatherInput
+    mother?: FamilyTreeCreateNestedManyWithoutMotherInput
+    wali?: FamilyTreeCreateNestedManyWithoutWaliInput
+    couple?: FamilyTreeCreateNestedManyWithoutCoupleInput
+    child?: FamilyTreeChildCreateNestedOneWithoutPersonalInput
+    student?: StudentCreateNestedManyWithoutPersonalInput
+    teacher?: TeacherCreateNestedManyWithoutPersonalInput
+  }
+
+  export type PersonalUncheckedCreateWithoutAuthInput = {
+    id?: string
+    nik?: string | null
+    nisn?: string | null
+    type: TypePersonal
+    fullname: string
+    gender: Gender
+    foreign: boolean
+    country?: string | null
+    religion: Religion
+    born: XOR<BornCreateEnvelopeInput, BornCreateInput>
+    email: string
+    belajarId?: string | null
+    nophone: string
+    isLife?: boolean | null
+    address?: XOR<AddressNullableCreateEnvelopeInput, AddressCreateInput> | null
+    education?: XOR<EducationListCreateEnvelopeInput, Enumerable<EducationCreateInput>>
+    training?: XOR<TrainingListCreateEnvelopeInput, Enumerable<TrainingCreateInput>>
+    employment?: XOR<EmploymentListCreateEnvelopeInput, Enumerable<EmploymentCreateInput>>
+    profession?: XOR<ProfessionListCreateEnvelopeInput, Enumerable<ProfessionCreateInput>>
+    overseas?: XOR<OverseasListCreateEnvelopeInput, Enumerable<OverseasCreateInput>>
+    scientific?: XOR<ScientificListCreateEnvelopeInput, Enumerable<ScientificCreateInput>>
+    organization?: XOR<OrganizationListCreateEnvelopeInput, Enumerable<OrganizationCreateInput>>
+    papers?: XOR<PapersListCreateEnvelopeInput, Enumerable<PapersCreateInput>>
+    innovation?: XOR<InnovationListCreateEnvelopeInput, Enumerable<InnovationCreateInput>>
+    award?: XOR<AwardListCreateEnvelopeInput, Enumerable<AwardCreateInput>>
+    sourcePerson?: XOR<SourcePersonListCreateEnvelopeInput, Enumerable<SourcePersonCreateInput>>
+    contest?: XOR<ContestListCreateEnvelopeInput, Enumerable<ContestCreateInput>>
+    documents?: XOR<DocumentsListCreateEnvelopeInput, Enumerable<DocumentsCreateInput>>
+    additional?: XOR<AdditionalListCreateEnvelopeInput, Enumerable<AdditionalCreateInput>>
+    father?: FamilyTreeUncheckedCreateNestedManyWithoutFatherInput
+    mother?: FamilyTreeUncheckedCreateNestedManyWithoutMotherInput
+    wali?: FamilyTreeUncheckedCreateNestedManyWithoutWaliInput
+    couple?: FamilyTreeUncheckedCreateNestedManyWithoutCoupleInput
+    child?: FamilyTreeChildUncheckedCreateNestedOneWithoutPersonalInput
+    student?: StudentUncheckedCreateNestedManyWithoutPersonalInput
+    teacher?: TeacherUncheckedCreateNestedManyWithoutPersonalInput
+  }
+
+  export type PersonalCreateOrConnectWithoutAuthInput = {
+    where: PersonalWhereUniqueInput
+    create: XOR<PersonalCreateWithoutAuthInput, PersonalUncheckedCreateWithoutAuthInput>
+  }
+
+  export type UserUpsertWithoutAuthInput = {
+    update: XOR<UserUpdateWithoutAuthInput, UserUncheckedUpdateWithoutAuthInput>
+    create: XOR<UserCreateWithoutAuthInput, UserUncheckedCreateWithoutAuthInput>
+  }
+
+  export type UserUpdateWithoutAuthInput = {
     name?: StringFieldUpdateOperationsInput | string
     picture?: NullableStringFieldUpdateOperationsInput | string | null
     username?: StringFieldUpdateOperationsInput | string
@@ -31588,11 +32355,9 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     role?: RoleUpdateOneWithoutUsersNestedInput
-    personal?: PersonalUpdateOneWithoutUserNestedInput
-    student?: StudentUpdateOneWithoutUserNestedInput
   }
 
-  export type UserUncheckedUpdateWithoutTeacherInput = {
+  export type UserUncheckedUpdateWithoutAuthInput = {
     name?: StringFieldUpdateOperationsInput | string
     picture?: NullableStringFieldUpdateOperationsInput | string | null
     username?: StringFieldUpdateOperationsInput | string
@@ -31603,8 +32368,1723 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     roleId?: NullableStringFieldUpdateOperationsInput | string | null
-    personal?: PersonalUncheckedUpdateOneWithoutUserNestedInput
-    student?: StudentUncheckedUpdateOneWithoutUserNestedInput
+  }
+
+  export type PersonalUpsertWithoutAuthInput = {
+    update: XOR<PersonalUpdateWithoutAuthInput, PersonalUncheckedUpdateWithoutAuthInput>
+    create: XOR<PersonalCreateWithoutAuthInput, PersonalUncheckedCreateWithoutAuthInput>
+  }
+
+  export type PersonalUpdateWithoutAuthInput = {
+    nik?: NullableStringFieldUpdateOperationsInput | string | null
+    nisn?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: EnumTypePersonalFieldUpdateOperationsInput | TypePersonal
+    fullname?: StringFieldUpdateOperationsInput | string
+    gender?: EnumGenderFieldUpdateOperationsInput | Gender
+    foreign?: BoolFieldUpdateOperationsInput | boolean
+    country?: NullableStringFieldUpdateOperationsInput | string | null
+    religion?: EnumReligionFieldUpdateOperationsInput | Religion
+    born?: XOR<BornUpdateEnvelopeInput, BornCreateInput>
+    email?: StringFieldUpdateOperationsInput | string
+    belajarId?: NullableStringFieldUpdateOperationsInput | string | null
+    nophone?: StringFieldUpdateOperationsInput | string
+    isLife?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    address?: XOR<AddressNullableUpdateEnvelopeInput, AddressCreateInput> | null
+    education?: XOR<EducationListUpdateEnvelopeInput, Enumerable<EducationCreateInput>>
+    training?: XOR<TrainingListUpdateEnvelopeInput, Enumerable<TrainingCreateInput>>
+    employment?: XOR<EmploymentListUpdateEnvelopeInput, Enumerable<EmploymentCreateInput>>
+    profession?: XOR<ProfessionListUpdateEnvelopeInput, Enumerable<ProfessionCreateInput>>
+    overseas?: XOR<OverseasListUpdateEnvelopeInput, Enumerable<OverseasCreateInput>>
+    scientific?: XOR<ScientificListUpdateEnvelopeInput, Enumerable<ScientificCreateInput>>
+    organization?: XOR<OrganizationListUpdateEnvelopeInput, Enumerable<OrganizationCreateInput>>
+    papers?: XOR<PapersListUpdateEnvelopeInput, Enumerable<PapersCreateInput>>
+    innovation?: XOR<InnovationListUpdateEnvelopeInput, Enumerable<InnovationCreateInput>>
+    award?: XOR<AwardListUpdateEnvelopeInput, Enumerable<AwardCreateInput>>
+    sourcePerson?: XOR<SourcePersonListUpdateEnvelopeInput, Enumerable<SourcePersonCreateInput>>
+    contest?: XOR<ContestListUpdateEnvelopeInput, Enumerable<ContestCreateInput>>
+    documents?: XOR<DocumentsListUpdateEnvelopeInput, Enumerable<DocumentsCreateInput>>
+    additional?: XOR<AdditionalListUpdateEnvelopeInput, Enumerable<AdditionalCreateInput>>
+    father?: FamilyTreeUpdateManyWithoutFatherNestedInput
+    mother?: FamilyTreeUpdateManyWithoutMotherNestedInput
+    wali?: FamilyTreeUpdateManyWithoutWaliNestedInput
+    couple?: FamilyTreeUpdateManyWithoutCoupleNestedInput
+    child?: FamilyTreeChildUpdateOneWithoutPersonalNestedInput
+    student?: StudentUpdateManyWithoutPersonalNestedInput
+    teacher?: TeacherUpdateManyWithoutPersonalNestedInput
+  }
+
+  export type PersonalUncheckedUpdateWithoutAuthInput = {
+    nik?: NullableStringFieldUpdateOperationsInput | string | null
+    nisn?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: EnumTypePersonalFieldUpdateOperationsInput | TypePersonal
+    fullname?: StringFieldUpdateOperationsInput | string
+    gender?: EnumGenderFieldUpdateOperationsInput | Gender
+    foreign?: BoolFieldUpdateOperationsInput | boolean
+    country?: NullableStringFieldUpdateOperationsInput | string | null
+    religion?: EnumReligionFieldUpdateOperationsInput | Religion
+    born?: XOR<BornUpdateEnvelopeInput, BornCreateInput>
+    email?: StringFieldUpdateOperationsInput | string
+    belajarId?: NullableStringFieldUpdateOperationsInput | string | null
+    nophone?: StringFieldUpdateOperationsInput | string
+    isLife?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    address?: XOR<AddressNullableUpdateEnvelopeInput, AddressCreateInput> | null
+    education?: XOR<EducationListUpdateEnvelopeInput, Enumerable<EducationCreateInput>>
+    training?: XOR<TrainingListUpdateEnvelopeInput, Enumerable<TrainingCreateInput>>
+    employment?: XOR<EmploymentListUpdateEnvelopeInput, Enumerable<EmploymentCreateInput>>
+    profession?: XOR<ProfessionListUpdateEnvelopeInput, Enumerable<ProfessionCreateInput>>
+    overseas?: XOR<OverseasListUpdateEnvelopeInput, Enumerable<OverseasCreateInput>>
+    scientific?: XOR<ScientificListUpdateEnvelopeInput, Enumerable<ScientificCreateInput>>
+    organization?: XOR<OrganizationListUpdateEnvelopeInput, Enumerable<OrganizationCreateInput>>
+    papers?: XOR<PapersListUpdateEnvelopeInput, Enumerable<PapersCreateInput>>
+    innovation?: XOR<InnovationListUpdateEnvelopeInput, Enumerable<InnovationCreateInput>>
+    award?: XOR<AwardListUpdateEnvelopeInput, Enumerable<AwardCreateInput>>
+    sourcePerson?: XOR<SourcePersonListUpdateEnvelopeInput, Enumerable<SourcePersonCreateInput>>
+    contest?: XOR<ContestListUpdateEnvelopeInput, Enumerable<ContestCreateInput>>
+    documents?: XOR<DocumentsListUpdateEnvelopeInput, Enumerable<DocumentsCreateInput>>
+    additional?: XOR<AdditionalListUpdateEnvelopeInput, Enumerable<AdditionalCreateInput>>
+    father?: FamilyTreeUncheckedUpdateManyWithoutFatherNestedInput
+    mother?: FamilyTreeUncheckedUpdateManyWithoutMotherNestedInput
+    wali?: FamilyTreeUncheckedUpdateManyWithoutWaliNestedInput
+    couple?: FamilyTreeUncheckedUpdateManyWithoutCoupleNestedInput
+    child?: FamilyTreeChildUncheckedUpdateOneWithoutPersonalNestedInput
+    student?: StudentUncheckedUpdateManyWithoutPersonalNestedInput
+    teacher?: TeacherUncheckedUpdateManyWithoutPersonalNestedInput
+  }
+
+  export type PersonalCreateWithoutFatherInput = {
+    id?: string
+    nik?: string | null
+    nisn?: string | null
+    type: TypePersonal
+    fullname: string
+    gender: Gender
+    foreign: boolean
+    country?: string | null
+    religion: Religion
+    born: XOR<BornCreateEnvelopeInput, BornCreateInput>
+    email: string
+    belajarId?: string | null
+    nophone: string
+    isLife?: boolean | null
+    address?: XOR<AddressNullableCreateEnvelopeInput, AddressCreateInput> | null
+    education?: XOR<EducationListCreateEnvelopeInput, Enumerable<EducationCreateInput>>
+    training?: XOR<TrainingListCreateEnvelopeInput, Enumerable<TrainingCreateInput>>
+    employment?: XOR<EmploymentListCreateEnvelopeInput, Enumerable<EmploymentCreateInput>>
+    profession?: XOR<ProfessionListCreateEnvelopeInput, Enumerable<ProfessionCreateInput>>
+    overseas?: XOR<OverseasListCreateEnvelopeInput, Enumerable<OverseasCreateInput>>
+    scientific?: XOR<ScientificListCreateEnvelopeInput, Enumerable<ScientificCreateInput>>
+    organization?: XOR<OrganizationListCreateEnvelopeInput, Enumerable<OrganizationCreateInput>>
+    papers?: XOR<PapersListCreateEnvelopeInput, Enumerable<PapersCreateInput>>
+    innovation?: XOR<InnovationListCreateEnvelopeInput, Enumerable<InnovationCreateInput>>
+    award?: XOR<AwardListCreateEnvelopeInput, Enumerable<AwardCreateInput>>
+    sourcePerson?: XOR<SourcePersonListCreateEnvelopeInput, Enumerable<SourcePersonCreateInput>>
+    contest?: XOR<ContestListCreateEnvelopeInput, Enumerable<ContestCreateInput>>
+    documents?: XOR<DocumentsListCreateEnvelopeInput, Enumerable<DocumentsCreateInput>>
+    additional?: XOR<AdditionalListCreateEnvelopeInput, Enumerable<AdditionalCreateInput>>
+    auth?: AuthCreateNestedOneWithoutPersonalInput
+    mother?: FamilyTreeCreateNestedManyWithoutMotherInput
+    wali?: FamilyTreeCreateNestedManyWithoutWaliInput
+    couple?: FamilyTreeCreateNestedManyWithoutCoupleInput
+    child?: FamilyTreeChildCreateNestedOneWithoutPersonalInput
+    student?: StudentCreateNestedManyWithoutPersonalInput
+    teacher?: TeacherCreateNestedManyWithoutPersonalInput
+  }
+
+  export type PersonalUncheckedCreateWithoutFatherInput = {
+    id?: string
+    nik?: string | null
+    nisn?: string | null
+    type: TypePersonal
+    fullname: string
+    gender: Gender
+    foreign: boolean
+    country?: string | null
+    religion: Religion
+    born: XOR<BornCreateEnvelopeInput, BornCreateInput>
+    email: string
+    belajarId?: string | null
+    nophone: string
+    isLife?: boolean | null
+    address?: XOR<AddressNullableCreateEnvelopeInput, AddressCreateInput> | null
+    education?: XOR<EducationListCreateEnvelopeInput, Enumerable<EducationCreateInput>>
+    training?: XOR<TrainingListCreateEnvelopeInput, Enumerable<TrainingCreateInput>>
+    employment?: XOR<EmploymentListCreateEnvelopeInput, Enumerable<EmploymentCreateInput>>
+    profession?: XOR<ProfessionListCreateEnvelopeInput, Enumerable<ProfessionCreateInput>>
+    overseas?: XOR<OverseasListCreateEnvelopeInput, Enumerable<OverseasCreateInput>>
+    scientific?: XOR<ScientificListCreateEnvelopeInput, Enumerable<ScientificCreateInput>>
+    organization?: XOR<OrganizationListCreateEnvelopeInput, Enumerable<OrganizationCreateInput>>
+    papers?: XOR<PapersListCreateEnvelopeInput, Enumerable<PapersCreateInput>>
+    innovation?: XOR<InnovationListCreateEnvelopeInput, Enumerable<InnovationCreateInput>>
+    award?: XOR<AwardListCreateEnvelopeInput, Enumerable<AwardCreateInput>>
+    sourcePerson?: XOR<SourcePersonListCreateEnvelopeInput, Enumerable<SourcePersonCreateInput>>
+    contest?: XOR<ContestListCreateEnvelopeInput, Enumerable<ContestCreateInput>>
+    documents?: XOR<DocumentsListCreateEnvelopeInput, Enumerable<DocumentsCreateInput>>
+    additional?: XOR<AdditionalListCreateEnvelopeInput, Enumerable<AdditionalCreateInput>>
+    auth?: AuthUncheckedCreateNestedOneWithoutPersonalInput
+    mother?: FamilyTreeUncheckedCreateNestedManyWithoutMotherInput
+    wali?: FamilyTreeUncheckedCreateNestedManyWithoutWaliInput
+    couple?: FamilyTreeUncheckedCreateNestedManyWithoutCoupleInput
+    child?: FamilyTreeChildUncheckedCreateNestedOneWithoutPersonalInput
+    student?: StudentUncheckedCreateNestedManyWithoutPersonalInput
+    teacher?: TeacherUncheckedCreateNestedManyWithoutPersonalInput
+  }
+
+  export type PersonalCreateOrConnectWithoutFatherInput = {
+    where: PersonalWhereUniqueInput
+    create: XOR<PersonalCreateWithoutFatherInput, PersonalUncheckedCreateWithoutFatherInput>
+  }
+
+  export type PersonalCreateWithoutMotherInput = {
+    id?: string
+    nik?: string | null
+    nisn?: string | null
+    type: TypePersonal
+    fullname: string
+    gender: Gender
+    foreign: boolean
+    country?: string | null
+    religion: Religion
+    born: XOR<BornCreateEnvelopeInput, BornCreateInput>
+    email: string
+    belajarId?: string | null
+    nophone: string
+    isLife?: boolean | null
+    address?: XOR<AddressNullableCreateEnvelopeInput, AddressCreateInput> | null
+    education?: XOR<EducationListCreateEnvelopeInput, Enumerable<EducationCreateInput>>
+    training?: XOR<TrainingListCreateEnvelopeInput, Enumerable<TrainingCreateInput>>
+    employment?: XOR<EmploymentListCreateEnvelopeInput, Enumerable<EmploymentCreateInput>>
+    profession?: XOR<ProfessionListCreateEnvelopeInput, Enumerable<ProfessionCreateInput>>
+    overseas?: XOR<OverseasListCreateEnvelopeInput, Enumerable<OverseasCreateInput>>
+    scientific?: XOR<ScientificListCreateEnvelopeInput, Enumerable<ScientificCreateInput>>
+    organization?: XOR<OrganizationListCreateEnvelopeInput, Enumerable<OrganizationCreateInput>>
+    papers?: XOR<PapersListCreateEnvelopeInput, Enumerable<PapersCreateInput>>
+    innovation?: XOR<InnovationListCreateEnvelopeInput, Enumerable<InnovationCreateInput>>
+    award?: XOR<AwardListCreateEnvelopeInput, Enumerable<AwardCreateInput>>
+    sourcePerson?: XOR<SourcePersonListCreateEnvelopeInput, Enumerable<SourcePersonCreateInput>>
+    contest?: XOR<ContestListCreateEnvelopeInput, Enumerable<ContestCreateInput>>
+    documents?: XOR<DocumentsListCreateEnvelopeInput, Enumerable<DocumentsCreateInput>>
+    additional?: XOR<AdditionalListCreateEnvelopeInput, Enumerable<AdditionalCreateInput>>
+    auth?: AuthCreateNestedOneWithoutPersonalInput
+    father?: FamilyTreeCreateNestedManyWithoutFatherInput
+    wali?: FamilyTreeCreateNestedManyWithoutWaliInput
+    couple?: FamilyTreeCreateNestedManyWithoutCoupleInput
+    child?: FamilyTreeChildCreateNestedOneWithoutPersonalInput
+    student?: StudentCreateNestedManyWithoutPersonalInput
+    teacher?: TeacherCreateNestedManyWithoutPersonalInput
+  }
+
+  export type PersonalUncheckedCreateWithoutMotherInput = {
+    id?: string
+    nik?: string | null
+    nisn?: string | null
+    type: TypePersonal
+    fullname: string
+    gender: Gender
+    foreign: boolean
+    country?: string | null
+    religion: Religion
+    born: XOR<BornCreateEnvelopeInput, BornCreateInput>
+    email: string
+    belajarId?: string | null
+    nophone: string
+    isLife?: boolean | null
+    address?: XOR<AddressNullableCreateEnvelopeInput, AddressCreateInput> | null
+    education?: XOR<EducationListCreateEnvelopeInput, Enumerable<EducationCreateInput>>
+    training?: XOR<TrainingListCreateEnvelopeInput, Enumerable<TrainingCreateInput>>
+    employment?: XOR<EmploymentListCreateEnvelopeInput, Enumerable<EmploymentCreateInput>>
+    profession?: XOR<ProfessionListCreateEnvelopeInput, Enumerable<ProfessionCreateInput>>
+    overseas?: XOR<OverseasListCreateEnvelopeInput, Enumerable<OverseasCreateInput>>
+    scientific?: XOR<ScientificListCreateEnvelopeInput, Enumerable<ScientificCreateInput>>
+    organization?: XOR<OrganizationListCreateEnvelopeInput, Enumerable<OrganizationCreateInput>>
+    papers?: XOR<PapersListCreateEnvelopeInput, Enumerable<PapersCreateInput>>
+    innovation?: XOR<InnovationListCreateEnvelopeInput, Enumerable<InnovationCreateInput>>
+    award?: XOR<AwardListCreateEnvelopeInput, Enumerable<AwardCreateInput>>
+    sourcePerson?: XOR<SourcePersonListCreateEnvelopeInput, Enumerable<SourcePersonCreateInput>>
+    contest?: XOR<ContestListCreateEnvelopeInput, Enumerable<ContestCreateInput>>
+    documents?: XOR<DocumentsListCreateEnvelopeInput, Enumerable<DocumentsCreateInput>>
+    additional?: XOR<AdditionalListCreateEnvelopeInput, Enumerable<AdditionalCreateInput>>
+    auth?: AuthUncheckedCreateNestedOneWithoutPersonalInput
+    father?: FamilyTreeUncheckedCreateNestedManyWithoutFatherInput
+    wali?: FamilyTreeUncheckedCreateNestedManyWithoutWaliInput
+    couple?: FamilyTreeUncheckedCreateNestedManyWithoutCoupleInput
+    child?: FamilyTreeChildUncheckedCreateNestedOneWithoutPersonalInput
+    student?: StudentUncheckedCreateNestedManyWithoutPersonalInput
+    teacher?: TeacherUncheckedCreateNestedManyWithoutPersonalInput
+  }
+
+  export type PersonalCreateOrConnectWithoutMotherInput = {
+    where: PersonalWhereUniqueInput
+    create: XOR<PersonalCreateWithoutMotherInput, PersonalUncheckedCreateWithoutMotherInput>
+  }
+
+  export type PersonalCreateWithoutWaliInput = {
+    id?: string
+    nik?: string | null
+    nisn?: string | null
+    type: TypePersonal
+    fullname: string
+    gender: Gender
+    foreign: boolean
+    country?: string | null
+    religion: Religion
+    born: XOR<BornCreateEnvelopeInput, BornCreateInput>
+    email: string
+    belajarId?: string | null
+    nophone: string
+    isLife?: boolean | null
+    address?: XOR<AddressNullableCreateEnvelopeInput, AddressCreateInput> | null
+    education?: XOR<EducationListCreateEnvelopeInput, Enumerable<EducationCreateInput>>
+    training?: XOR<TrainingListCreateEnvelopeInput, Enumerable<TrainingCreateInput>>
+    employment?: XOR<EmploymentListCreateEnvelopeInput, Enumerable<EmploymentCreateInput>>
+    profession?: XOR<ProfessionListCreateEnvelopeInput, Enumerable<ProfessionCreateInput>>
+    overseas?: XOR<OverseasListCreateEnvelopeInput, Enumerable<OverseasCreateInput>>
+    scientific?: XOR<ScientificListCreateEnvelopeInput, Enumerable<ScientificCreateInput>>
+    organization?: XOR<OrganizationListCreateEnvelopeInput, Enumerable<OrganizationCreateInput>>
+    papers?: XOR<PapersListCreateEnvelopeInput, Enumerable<PapersCreateInput>>
+    innovation?: XOR<InnovationListCreateEnvelopeInput, Enumerable<InnovationCreateInput>>
+    award?: XOR<AwardListCreateEnvelopeInput, Enumerable<AwardCreateInput>>
+    sourcePerson?: XOR<SourcePersonListCreateEnvelopeInput, Enumerable<SourcePersonCreateInput>>
+    contest?: XOR<ContestListCreateEnvelopeInput, Enumerable<ContestCreateInput>>
+    documents?: XOR<DocumentsListCreateEnvelopeInput, Enumerable<DocumentsCreateInput>>
+    additional?: XOR<AdditionalListCreateEnvelopeInput, Enumerable<AdditionalCreateInput>>
+    auth?: AuthCreateNestedOneWithoutPersonalInput
+    father?: FamilyTreeCreateNestedManyWithoutFatherInput
+    mother?: FamilyTreeCreateNestedManyWithoutMotherInput
+    couple?: FamilyTreeCreateNestedManyWithoutCoupleInput
+    child?: FamilyTreeChildCreateNestedOneWithoutPersonalInput
+    student?: StudentCreateNestedManyWithoutPersonalInput
+    teacher?: TeacherCreateNestedManyWithoutPersonalInput
+  }
+
+  export type PersonalUncheckedCreateWithoutWaliInput = {
+    id?: string
+    nik?: string | null
+    nisn?: string | null
+    type: TypePersonal
+    fullname: string
+    gender: Gender
+    foreign: boolean
+    country?: string | null
+    religion: Religion
+    born: XOR<BornCreateEnvelopeInput, BornCreateInput>
+    email: string
+    belajarId?: string | null
+    nophone: string
+    isLife?: boolean | null
+    address?: XOR<AddressNullableCreateEnvelopeInput, AddressCreateInput> | null
+    education?: XOR<EducationListCreateEnvelopeInput, Enumerable<EducationCreateInput>>
+    training?: XOR<TrainingListCreateEnvelopeInput, Enumerable<TrainingCreateInput>>
+    employment?: XOR<EmploymentListCreateEnvelopeInput, Enumerable<EmploymentCreateInput>>
+    profession?: XOR<ProfessionListCreateEnvelopeInput, Enumerable<ProfessionCreateInput>>
+    overseas?: XOR<OverseasListCreateEnvelopeInput, Enumerable<OverseasCreateInput>>
+    scientific?: XOR<ScientificListCreateEnvelopeInput, Enumerable<ScientificCreateInput>>
+    organization?: XOR<OrganizationListCreateEnvelopeInput, Enumerable<OrganizationCreateInput>>
+    papers?: XOR<PapersListCreateEnvelopeInput, Enumerable<PapersCreateInput>>
+    innovation?: XOR<InnovationListCreateEnvelopeInput, Enumerable<InnovationCreateInput>>
+    award?: XOR<AwardListCreateEnvelopeInput, Enumerable<AwardCreateInput>>
+    sourcePerson?: XOR<SourcePersonListCreateEnvelopeInput, Enumerable<SourcePersonCreateInput>>
+    contest?: XOR<ContestListCreateEnvelopeInput, Enumerable<ContestCreateInput>>
+    documents?: XOR<DocumentsListCreateEnvelopeInput, Enumerable<DocumentsCreateInput>>
+    additional?: XOR<AdditionalListCreateEnvelopeInput, Enumerable<AdditionalCreateInput>>
+    auth?: AuthUncheckedCreateNestedOneWithoutPersonalInput
+    father?: FamilyTreeUncheckedCreateNestedManyWithoutFatherInput
+    mother?: FamilyTreeUncheckedCreateNestedManyWithoutMotherInput
+    couple?: FamilyTreeUncheckedCreateNestedManyWithoutCoupleInput
+    child?: FamilyTreeChildUncheckedCreateNestedOneWithoutPersonalInput
+    student?: StudentUncheckedCreateNestedManyWithoutPersonalInput
+    teacher?: TeacherUncheckedCreateNestedManyWithoutPersonalInput
+  }
+
+  export type PersonalCreateOrConnectWithoutWaliInput = {
+    where: PersonalWhereUniqueInput
+    create: XOR<PersonalCreateWithoutWaliInput, PersonalUncheckedCreateWithoutWaliInput>
+  }
+
+  export type PersonalCreateWithoutCoupleInput = {
+    id?: string
+    nik?: string | null
+    nisn?: string | null
+    type: TypePersonal
+    fullname: string
+    gender: Gender
+    foreign: boolean
+    country?: string | null
+    religion: Religion
+    born: XOR<BornCreateEnvelopeInput, BornCreateInput>
+    email: string
+    belajarId?: string | null
+    nophone: string
+    isLife?: boolean | null
+    address?: XOR<AddressNullableCreateEnvelopeInput, AddressCreateInput> | null
+    education?: XOR<EducationListCreateEnvelopeInput, Enumerable<EducationCreateInput>>
+    training?: XOR<TrainingListCreateEnvelopeInput, Enumerable<TrainingCreateInput>>
+    employment?: XOR<EmploymentListCreateEnvelopeInput, Enumerable<EmploymentCreateInput>>
+    profession?: XOR<ProfessionListCreateEnvelopeInput, Enumerable<ProfessionCreateInput>>
+    overseas?: XOR<OverseasListCreateEnvelopeInput, Enumerable<OverseasCreateInput>>
+    scientific?: XOR<ScientificListCreateEnvelopeInput, Enumerable<ScientificCreateInput>>
+    organization?: XOR<OrganizationListCreateEnvelopeInput, Enumerable<OrganizationCreateInput>>
+    papers?: XOR<PapersListCreateEnvelopeInput, Enumerable<PapersCreateInput>>
+    innovation?: XOR<InnovationListCreateEnvelopeInput, Enumerable<InnovationCreateInput>>
+    award?: XOR<AwardListCreateEnvelopeInput, Enumerable<AwardCreateInput>>
+    sourcePerson?: XOR<SourcePersonListCreateEnvelopeInput, Enumerable<SourcePersonCreateInput>>
+    contest?: XOR<ContestListCreateEnvelopeInput, Enumerable<ContestCreateInput>>
+    documents?: XOR<DocumentsListCreateEnvelopeInput, Enumerable<DocumentsCreateInput>>
+    additional?: XOR<AdditionalListCreateEnvelopeInput, Enumerable<AdditionalCreateInput>>
+    auth?: AuthCreateNestedOneWithoutPersonalInput
+    father?: FamilyTreeCreateNestedManyWithoutFatherInput
+    mother?: FamilyTreeCreateNestedManyWithoutMotherInput
+    wali?: FamilyTreeCreateNestedManyWithoutWaliInput
+    child?: FamilyTreeChildCreateNestedOneWithoutPersonalInput
+    student?: StudentCreateNestedManyWithoutPersonalInput
+    teacher?: TeacherCreateNestedManyWithoutPersonalInput
+  }
+
+  export type PersonalUncheckedCreateWithoutCoupleInput = {
+    id?: string
+    nik?: string | null
+    nisn?: string | null
+    type: TypePersonal
+    fullname: string
+    gender: Gender
+    foreign: boolean
+    country?: string | null
+    religion: Religion
+    born: XOR<BornCreateEnvelopeInput, BornCreateInput>
+    email: string
+    belajarId?: string | null
+    nophone: string
+    isLife?: boolean | null
+    address?: XOR<AddressNullableCreateEnvelopeInput, AddressCreateInput> | null
+    education?: XOR<EducationListCreateEnvelopeInput, Enumerable<EducationCreateInput>>
+    training?: XOR<TrainingListCreateEnvelopeInput, Enumerable<TrainingCreateInput>>
+    employment?: XOR<EmploymentListCreateEnvelopeInput, Enumerable<EmploymentCreateInput>>
+    profession?: XOR<ProfessionListCreateEnvelopeInput, Enumerable<ProfessionCreateInput>>
+    overseas?: XOR<OverseasListCreateEnvelopeInput, Enumerable<OverseasCreateInput>>
+    scientific?: XOR<ScientificListCreateEnvelopeInput, Enumerable<ScientificCreateInput>>
+    organization?: XOR<OrganizationListCreateEnvelopeInput, Enumerable<OrganizationCreateInput>>
+    papers?: XOR<PapersListCreateEnvelopeInput, Enumerable<PapersCreateInput>>
+    innovation?: XOR<InnovationListCreateEnvelopeInput, Enumerable<InnovationCreateInput>>
+    award?: XOR<AwardListCreateEnvelopeInput, Enumerable<AwardCreateInput>>
+    sourcePerson?: XOR<SourcePersonListCreateEnvelopeInput, Enumerable<SourcePersonCreateInput>>
+    contest?: XOR<ContestListCreateEnvelopeInput, Enumerable<ContestCreateInput>>
+    documents?: XOR<DocumentsListCreateEnvelopeInput, Enumerable<DocumentsCreateInput>>
+    additional?: XOR<AdditionalListCreateEnvelopeInput, Enumerable<AdditionalCreateInput>>
+    auth?: AuthUncheckedCreateNestedOneWithoutPersonalInput
+    father?: FamilyTreeUncheckedCreateNestedManyWithoutFatherInput
+    mother?: FamilyTreeUncheckedCreateNestedManyWithoutMotherInput
+    wali?: FamilyTreeUncheckedCreateNestedManyWithoutWaliInput
+    child?: FamilyTreeChildUncheckedCreateNestedOneWithoutPersonalInput
+    student?: StudentUncheckedCreateNestedManyWithoutPersonalInput
+    teacher?: TeacherUncheckedCreateNestedManyWithoutPersonalInput
+  }
+
+  export type PersonalCreateOrConnectWithoutCoupleInput = {
+    where: PersonalWhereUniqueInput
+    create: XOR<PersonalCreateWithoutCoupleInput, PersonalUncheckedCreateWithoutCoupleInput>
+  }
+
+  export type FamilyTreeChildCreateWithoutKkInput = {
+    id?: string
+    no: number
+    type: ChildType
+    personal: PersonalCreateNestedOneWithoutChildInput
+  }
+
+  export type FamilyTreeChildUncheckedCreateWithoutKkInput = {
+    id?: string
+    no: number
+    type: ChildType
+    personalId: string
+  }
+
+  export type FamilyTreeChildCreateOrConnectWithoutKkInput = {
+    where: FamilyTreeChildWhereUniqueInput
+    create: XOR<FamilyTreeChildCreateWithoutKkInput, FamilyTreeChildUncheckedCreateWithoutKkInput>
+  }
+
+  export type FamilyTreeChildCreateManyKkInputEnvelope = {
+    data: Enumerable<FamilyTreeChildCreateManyKkInput>
+  }
+
+  export type PersonalUpsertWithoutFatherInput = {
+    update: XOR<PersonalUpdateWithoutFatherInput, PersonalUncheckedUpdateWithoutFatherInput>
+    create: XOR<PersonalCreateWithoutFatherInput, PersonalUncheckedCreateWithoutFatherInput>
+  }
+
+  export type PersonalUpdateWithoutFatherInput = {
+    nik?: NullableStringFieldUpdateOperationsInput | string | null
+    nisn?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: EnumTypePersonalFieldUpdateOperationsInput | TypePersonal
+    fullname?: StringFieldUpdateOperationsInput | string
+    gender?: EnumGenderFieldUpdateOperationsInput | Gender
+    foreign?: BoolFieldUpdateOperationsInput | boolean
+    country?: NullableStringFieldUpdateOperationsInput | string | null
+    religion?: EnumReligionFieldUpdateOperationsInput | Religion
+    born?: XOR<BornUpdateEnvelopeInput, BornCreateInput>
+    email?: StringFieldUpdateOperationsInput | string
+    belajarId?: NullableStringFieldUpdateOperationsInput | string | null
+    nophone?: StringFieldUpdateOperationsInput | string
+    isLife?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    address?: XOR<AddressNullableUpdateEnvelopeInput, AddressCreateInput> | null
+    education?: XOR<EducationListUpdateEnvelopeInput, Enumerable<EducationCreateInput>>
+    training?: XOR<TrainingListUpdateEnvelopeInput, Enumerable<TrainingCreateInput>>
+    employment?: XOR<EmploymentListUpdateEnvelopeInput, Enumerable<EmploymentCreateInput>>
+    profession?: XOR<ProfessionListUpdateEnvelopeInput, Enumerable<ProfessionCreateInput>>
+    overseas?: XOR<OverseasListUpdateEnvelopeInput, Enumerable<OverseasCreateInput>>
+    scientific?: XOR<ScientificListUpdateEnvelopeInput, Enumerable<ScientificCreateInput>>
+    organization?: XOR<OrganizationListUpdateEnvelopeInput, Enumerable<OrganizationCreateInput>>
+    papers?: XOR<PapersListUpdateEnvelopeInput, Enumerable<PapersCreateInput>>
+    innovation?: XOR<InnovationListUpdateEnvelopeInput, Enumerable<InnovationCreateInput>>
+    award?: XOR<AwardListUpdateEnvelopeInput, Enumerable<AwardCreateInput>>
+    sourcePerson?: XOR<SourcePersonListUpdateEnvelopeInput, Enumerable<SourcePersonCreateInput>>
+    contest?: XOR<ContestListUpdateEnvelopeInput, Enumerable<ContestCreateInput>>
+    documents?: XOR<DocumentsListUpdateEnvelopeInput, Enumerable<DocumentsCreateInput>>
+    additional?: XOR<AdditionalListUpdateEnvelopeInput, Enumerable<AdditionalCreateInput>>
+    auth?: AuthUpdateOneWithoutPersonalNestedInput
+    mother?: FamilyTreeUpdateManyWithoutMotherNestedInput
+    wali?: FamilyTreeUpdateManyWithoutWaliNestedInput
+    couple?: FamilyTreeUpdateManyWithoutCoupleNestedInput
+    child?: FamilyTreeChildUpdateOneWithoutPersonalNestedInput
+    student?: StudentUpdateManyWithoutPersonalNestedInput
+    teacher?: TeacherUpdateManyWithoutPersonalNestedInput
+  }
+
+  export type PersonalUncheckedUpdateWithoutFatherInput = {
+    nik?: NullableStringFieldUpdateOperationsInput | string | null
+    nisn?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: EnumTypePersonalFieldUpdateOperationsInput | TypePersonal
+    fullname?: StringFieldUpdateOperationsInput | string
+    gender?: EnumGenderFieldUpdateOperationsInput | Gender
+    foreign?: BoolFieldUpdateOperationsInput | boolean
+    country?: NullableStringFieldUpdateOperationsInput | string | null
+    religion?: EnumReligionFieldUpdateOperationsInput | Religion
+    born?: XOR<BornUpdateEnvelopeInput, BornCreateInput>
+    email?: StringFieldUpdateOperationsInput | string
+    belajarId?: NullableStringFieldUpdateOperationsInput | string | null
+    nophone?: StringFieldUpdateOperationsInput | string
+    isLife?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    address?: XOR<AddressNullableUpdateEnvelopeInput, AddressCreateInput> | null
+    education?: XOR<EducationListUpdateEnvelopeInput, Enumerable<EducationCreateInput>>
+    training?: XOR<TrainingListUpdateEnvelopeInput, Enumerable<TrainingCreateInput>>
+    employment?: XOR<EmploymentListUpdateEnvelopeInput, Enumerable<EmploymentCreateInput>>
+    profession?: XOR<ProfessionListUpdateEnvelopeInput, Enumerable<ProfessionCreateInput>>
+    overseas?: XOR<OverseasListUpdateEnvelopeInput, Enumerable<OverseasCreateInput>>
+    scientific?: XOR<ScientificListUpdateEnvelopeInput, Enumerable<ScientificCreateInput>>
+    organization?: XOR<OrganizationListUpdateEnvelopeInput, Enumerable<OrganizationCreateInput>>
+    papers?: XOR<PapersListUpdateEnvelopeInput, Enumerable<PapersCreateInput>>
+    innovation?: XOR<InnovationListUpdateEnvelopeInput, Enumerable<InnovationCreateInput>>
+    award?: XOR<AwardListUpdateEnvelopeInput, Enumerable<AwardCreateInput>>
+    sourcePerson?: XOR<SourcePersonListUpdateEnvelopeInput, Enumerable<SourcePersonCreateInput>>
+    contest?: XOR<ContestListUpdateEnvelopeInput, Enumerable<ContestCreateInput>>
+    documents?: XOR<DocumentsListUpdateEnvelopeInput, Enumerable<DocumentsCreateInput>>
+    additional?: XOR<AdditionalListUpdateEnvelopeInput, Enumerable<AdditionalCreateInput>>
+    auth?: AuthUncheckedUpdateOneWithoutPersonalNestedInput
+    mother?: FamilyTreeUncheckedUpdateManyWithoutMotherNestedInput
+    wali?: FamilyTreeUncheckedUpdateManyWithoutWaliNestedInput
+    couple?: FamilyTreeUncheckedUpdateManyWithoutCoupleNestedInput
+    child?: FamilyTreeChildUncheckedUpdateOneWithoutPersonalNestedInput
+    student?: StudentUncheckedUpdateManyWithoutPersonalNestedInput
+    teacher?: TeacherUncheckedUpdateManyWithoutPersonalNestedInput
+  }
+
+  export type PersonalUpsertWithoutMotherInput = {
+    update: XOR<PersonalUpdateWithoutMotherInput, PersonalUncheckedUpdateWithoutMotherInput>
+    create: XOR<PersonalCreateWithoutMotherInput, PersonalUncheckedCreateWithoutMotherInput>
+  }
+
+  export type PersonalUpdateWithoutMotherInput = {
+    nik?: NullableStringFieldUpdateOperationsInput | string | null
+    nisn?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: EnumTypePersonalFieldUpdateOperationsInput | TypePersonal
+    fullname?: StringFieldUpdateOperationsInput | string
+    gender?: EnumGenderFieldUpdateOperationsInput | Gender
+    foreign?: BoolFieldUpdateOperationsInput | boolean
+    country?: NullableStringFieldUpdateOperationsInput | string | null
+    religion?: EnumReligionFieldUpdateOperationsInput | Religion
+    born?: XOR<BornUpdateEnvelopeInput, BornCreateInput>
+    email?: StringFieldUpdateOperationsInput | string
+    belajarId?: NullableStringFieldUpdateOperationsInput | string | null
+    nophone?: StringFieldUpdateOperationsInput | string
+    isLife?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    address?: XOR<AddressNullableUpdateEnvelopeInput, AddressCreateInput> | null
+    education?: XOR<EducationListUpdateEnvelopeInput, Enumerable<EducationCreateInput>>
+    training?: XOR<TrainingListUpdateEnvelopeInput, Enumerable<TrainingCreateInput>>
+    employment?: XOR<EmploymentListUpdateEnvelopeInput, Enumerable<EmploymentCreateInput>>
+    profession?: XOR<ProfessionListUpdateEnvelopeInput, Enumerable<ProfessionCreateInput>>
+    overseas?: XOR<OverseasListUpdateEnvelopeInput, Enumerable<OverseasCreateInput>>
+    scientific?: XOR<ScientificListUpdateEnvelopeInput, Enumerable<ScientificCreateInput>>
+    organization?: XOR<OrganizationListUpdateEnvelopeInput, Enumerable<OrganizationCreateInput>>
+    papers?: XOR<PapersListUpdateEnvelopeInput, Enumerable<PapersCreateInput>>
+    innovation?: XOR<InnovationListUpdateEnvelopeInput, Enumerable<InnovationCreateInput>>
+    award?: XOR<AwardListUpdateEnvelopeInput, Enumerable<AwardCreateInput>>
+    sourcePerson?: XOR<SourcePersonListUpdateEnvelopeInput, Enumerable<SourcePersonCreateInput>>
+    contest?: XOR<ContestListUpdateEnvelopeInput, Enumerable<ContestCreateInput>>
+    documents?: XOR<DocumentsListUpdateEnvelopeInput, Enumerable<DocumentsCreateInput>>
+    additional?: XOR<AdditionalListUpdateEnvelopeInput, Enumerable<AdditionalCreateInput>>
+    auth?: AuthUpdateOneWithoutPersonalNestedInput
+    father?: FamilyTreeUpdateManyWithoutFatherNestedInput
+    wali?: FamilyTreeUpdateManyWithoutWaliNestedInput
+    couple?: FamilyTreeUpdateManyWithoutCoupleNestedInput
+    child?: FamilyTreeChildUpdateOneWithoutPersonalNestedInput
+    student?: StudentUpdateManyWithoutPersonalNestedInput
+    teacher?: TeacherUpdateManyWithoutPersonalNestedInput
+  }
+
+  export type PersonalUncheckedUpdateWithoutMotherInput = {
+    nik?: NullableStringFieldUpdateOperationsInput | string | null
+    nisn?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: EnumTypePersonalFieldUpdateOperationsInput | TypePersonal
+    fullname?: StringFieldUpdateOperationsInput | string
+    gender?: EnumGenderFieldUpdateOperationsInput | Gender
+    foreign?: BoolFieldUpdateOperationsInput | boolean
+    country?: NullableStringFieldUpdateOperationsInput | string | null
+    religion?: EnumReligionFieldUpdateOperationsInput | Religion
+    born?: XOR<BornUpdateEnvelopeInput, BornCreateInput>
+    email?: StringFieldUpdateOperationsInput | string
+    belajarId?: NullableStringFieldUpdateOperationsInput | string | null
+    nophone?: StringFieldUpdateOperationsInput | string
+    isLife?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    address?: XOR<AddressNullableUpdateEnvelopeInput, AddressCreateInput> | null
+    education?: XOR<EducationListUpdateEnvelopeInput, Enumerable<EducationCreateInput>>
+    training?: XOR<TrainingListUpdateEnvelopeInput, Enumerable<TrainingCreateInput>>
+    employment?: XOR<EmploymentListUpdateEnvelopeInput, Enumerable<EmploymentCreateInput>>
+    profession?: XOR<ProfessionListUpdateEnvelopeInput, Enumerable<ProfessionCreateInput>>
+    overseas?: XOR<OverseasListUpdateEnvelopeInput, Enumerable<OverseasCreateInput>>
+    scientific?: XOR<ScientificListUpdateEnvelopeInput, Enumerable<ScientificCreateInput>>
+    organization?: XOR<OrganizationListUpdateEnvelopeInput, Enumerable<OrganizationCreateInput>>
+    papers?: XOR<PapersListUpdateEnvelopeInput, Enumerable<PapersCreateInput>>
+    innovation?: XOR<InnovationListUpdateEnvelopeInput, Enumerable<InnovationCreateInput>>
+    award?: XOR<AwardListUpdateEnvelopeInput, Enumerable<AwardCreateInput>>
+    sourcePerson?: XOR<SourcePersonListUpdateEnvelopeInput, Enumerable<SourcePersonCreateInput>>
+    contest?: XOR<ContestListUpdateEnvelopeInput, Enumerable<ContestCreateInput>>
+    documents?: XOR<DocumentsListUpdateEnvelopeInput, Enumerable<DocumentsCreateInput>>
+    additional?: XOR<AdditionalListUpdateEnvelopeInput, Enumerable<AdditionalCreateInput>>
+    auth?: AuthUncheckedUpdateOneWithoutPersonalNestedInput
+    father?: FamilyTreeUncheckedUpdateManyWithoutFatherNestedInput
+    wali?: FamilyTreeUncheckedUpdateManyWithoutWaliNestedInput
+    couple?: FamilyTreeUncheckedUpdateManyWithoutCoupleNestedInput
+    child?: FamilyTreeChildUncheckedUpdateOneWithoutPersonalNestedInput
+    student?: StudentUncheckedUpdateManyWithoutPersonalNestedInput
+    teacher?: TeacherUncheckedUpdateManyWithoutPersonalNestedInput
+  }
+
+  export type PersonalUpsertWithoutWaliInput = {
+    update: XOR<PersonalUpdateWithoutWaliInput, PersonalUncheckedUpdateWithoutWaliInput>
+    create: XOR<PersonalCreateWithoutWaliInput, PersonalUncheckedCreateWithoutWaliInput>
+  }
+
+  export type PersonalUpdateWithoutWaliInput = {
+    nik?: NullableStringFieldUpdateOperationsInput | string | null
+    nisn?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: EnumTypePersonalFieldUpdateOperationsInput | TypePersonal
+    fullname?: StringFieldUpdateOperationsInput | string
+    gender?: EnumGenderFieldUpdateOperationsInput | Gender
+    foreign?: BoolFieldUpdateOperationsInput | boolean
+    country?: NullableStringFieldUpdateOperationsInput | string | null
+    religion?: EnumReligionFieldUpdateOperationsInput | Religion
+    born?: XOR<BornUpdateEnvelopeInput, BornCreateInput>
+    email?: StringFieldUpdateOperationsInput | string
+    belajarId?: NullableStringFieldUpdateOperationsInput | string | null
+    nophone?: StringFieldUpdateOperationsInput | string
+    isLife?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    address?: XOR<AddressNullableUpdateEnvelopeInput, AddressCreateInput> | null
+    education?: XOR<EducationListUpdateEnvelopeInput, Enumerable<EducationCreateInput>>
+    training?: XOR<TrainingListUpdateEnvelopeInput, Enumerable<TrainingCreateInput>>
+    employment?: XOR<EmploymentListUpdateEnvelopeInput, Enumerable<EmploymentCreateInput>>
+    profession?: XOR<ProfessionListUpdateEnvelopeInput, Enumerable<ProfessionCreateInput>>
+    overseas?: XOR<OverseasListUpdateEnvelopeInput, Enumerable<OverseasCreateInput>>
+    scientific?: XOR<ScientificListUpdateEnvelopeInput, Enumerable<ScientificCreateInput>>
+    organization?: XOR<OrganizationListUpdateEnvelopeInput, Enumerable<OrganizationCreateInput>>
+    papers?: XOR<PapersListUpdateEnvelopeInput, Enumerable<PapersCreateInput>>
+    innovation?: XOR<InnovationListUpdateEnvelopeInput, Enumerable<InnovationCreateInput>>
+    award?: XOR<AwardListUpdateEnvelopeInput, Enumerable<AwardCreateInput>>
+    sourcePerson?: XOR<SourcePersonListUpdateEnvelopeInput, Enumerable<SourcePersonCreateInput>>
+    contest?: XOR<ContestListUpdateEnvelopeInput, Enumerable<ContestCreateInput>>
+    documents?: XOR<DocumentsListUpdateEnvelopeInput, Enumerable<DocumentsCreateInput>>
+    additional?: XOR<AdditionalListUpdateEnvelopeInput, Enumerable<AdditionalCreateInput>>
+    auth?: AuthUpdateOneWithoutPersonalNestedInput
+    father?: FamilyTreeUpdateManyWithoutFatherNestedInput
+    mother?: FamilyTreeUpdateManyWithoutMotherNestedInput
+    couple?: FamilyTreeUpdateManyWithoutCoupleNestedInput
+    child?: FamilyTreeChildUpdateOneWithoutPersonalNestedInput
+    student?: StudentUpdateManyWithoutPersonalNestedInput
+    teacher?: TeacherUpdateManyWithoutPersonalNestedInput
+  }
+
+  export type PersonalUncheckedUpdateWithoutWaliInput = {
+    nik?: NullableStringFieldUpdateOperationsInput | string | null
+    nisn?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: EnumTypePersonalFieldUpdateOperationsInput | TypePersonal
+    fullname?: StringFieldUpdateOperationsInput | string
+    gender?: EnumGenderFieldUpdateOperationsInput | Gender
+    foreign?: BoolFieldUpdateOperationsInput | boolean
+    country?: NullableStringFieldUpdateOperationsInput | string | null
+    religion?: EnumReligionFieldUpdateOperationsInput | Religion
+    born?: XOR<BornUpdateEnvelopeInput, BornCreateInput>
+    email?: StringFieldUpdateOperationsInput | string
+    belajarId?: NullableStringFieldUpdateOperationsInput | string | null
+    nophone?: StringFieldUpdateOperationsInput | string
+    isLife?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    address?: XOR<AddressNullableUpdateEnvelopeInput, AddressCreateInput> | null
+    education?: XOR<EducationListUpdateEnvelopeInput, Enumerable<EducationCreateInput>>
+    training?: XOR<TrainingListUpdateEnvelopeInput, Enumerable<TrainingCreateInput>>
+    employment?: XOR<EmploymentListUpdateEnvelopeInput, Enumerable<EmploymentCreateInput>>
+    profession?: XOR<ProfessionListUpdateEnvelopeInput, Enumerable<ProfessionCreateInput>>
+    overseas?: XOR<OverseasListUpdateEnvelopeInput, Enumerable<OverseasCreateInput>>
+    scientific?: XOR<ScientificListUpdateEnvelopeInput, Enumerable<ScientificCreateInput>>
+    organization?: XOR<OrganizationListUpdateEnvelopeInput, Enumerable<OrganizationCreateInput>>
+    papers?: XOR<PapersListUpdateEnvelopeInput, Enumerable<PapersCreateInput>>
+    innovation?: XOR<InnovationListUpdateEnvelopeInput, Enumerable<InnovationCreateInput>>
+    award?: XOR<AwardListUpdateEnvelopeInput, Enumerable<AwardCreateInput>>
+    sourcePerson?: XOR<SourcePersonListUpdateEnvelopeInput, Enumerable<SourcePersonCreateInput>>
+    contest?: XOR<ContestListUpdateEnvelopeInput, Enumerable<ContestCreateInput>>
+    documents?: XOR<DocumentsListUpdateEnvelopeInput, Enumerable<DocumentsCreateInput>>
+    additional?: XOR<AdditionalListUpdateEnvelopeInput, Enumerable<AdditionalCreateInput>>
+    auth?: AuthUncheckedUpdateOneWithoutPersonalNestedInput
+    father?: FamilyTreeUncheckedUpdateManyWithoutFatherNestedInput
+    mother?: FamilyTreeUncheckedUpdateManyWithoutMotherNestedInput
+    couple?: FamilyTreeUncheckedUpdateManyWithoutCoupleNestedInput
+    child?: FamilyTreeChildUncheckedUpdateOneWithoutPersonalNestedInput
+    student?: StudentUncheckedUpdateManyWithoutPersonalNestedInput
+    teacher?: TeacherUncheckedUpdateManyWithoutPersonalNestedInput
+  }
+
+  export type PersonalUpsertWithoutCoupleInput = {
+    update: XOR<PersonalUpdateWithoutCoupleInput, PersonalUncheckedUpdateWithoutCoupleInput>
+    create: XOR<PersonalCreateWithoutCoupleInput, PersonalUncheckedCreateWithoutCoupleInput>
+  }
+
+  export type PersonalUpdateWithoutCoupleInput = {
+    nik?: NullableStringFieldUpdateOperationsInput | string | null
+    nisn?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: EnumTypePersonalFieldUpdateOperationsInput | TypePersonal
+    fullname?: StringFieldUpdateOperationsInput | string
+    gender?: EnumGenderFieldUpdateOperationsInput | Gender
+    foreign?: BoolFieldUpdateOperationsInput | boolean
+    country?: NullableStringFieldUpdateOperationsInput | string | null
+    religion?: EnumReligionFieldUpdateOperationsInput | Religion
+    born?: XOR<BornUpdateEnvelopeInput, BornCreateInput>
+    email?: StringFieldUpdateOperationsInput | string
+    belajarId?: NullableStringFieldUpdateOperationsInput | string | null
+    nophone?: StringFieldUpdateOperationsInput | string
+    isLife?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    address?: XOR<AddressNullableUpdateEnvelopeInput, AddressCreateInput> | null
+    education?: XOR<EducationListUpdateEnvelopeInput, Enumerable<EducationCreateInput>>
+    training?: XOR<TrainingListUpdateEnvelopeInput, Enumerable<TrainingCreateInput>>
+    employment?: XOR<EmploymentListUpdateEnvelopeInput, Enumerable<EmploymentCreateInput>>
+    profession?: XOR<ProfessionListUpdateEnvelopeInput, Enumerable<ProfessionCreateInput>>
+    overseas?: XOR<OverseasListUpdateEnvelopeInput, Enumerable<OverseasCreateInput>>
+    scientific?: XOR<ScientificListUpdateEnvelopeInput, Enumerable<ScientificCreateInput>>
+    organization?: XOR<OrganizationListUpdateEnvelopeInput, Enumerable<OrganizationCreateInput>>
+    papers?: XOR<PapersListUpdateEnvelopeInput, Enumerable<PapersCreateInput>>
+    innovation?: XOR<InnovationListUpdateEnvelopeInput, Enumerable<InnovationCreateInput>>
+    award?: XOR<AwardListUpdateEnvelopeInput, Enumerable<AwardCreateInput>>
+    sourcePerson?: XOR<SourcePersonListUpdateEnvelopeInput, Enumerable<SourcePersonCreateInput>>
+    contest?: XOR<ContestListUpdateEnvelopeInput, Enumerable<ContestCreateInput>>
+    documents?: XOR<DocumentsListUpdateEnvelopeInput, Enumerable<DocumentsCreateInput>>
+    additional?: XOR<AdditionalListUpdateEnvelopeInput, Enumerable<AdditionalCreateInput>>
+    auth?: AuthUpdateOneWithoutPersonalNestedInput
+    father?: FamilyTreeUpdateManyWithoutFatherNestedInput
+    mother?: FamilyTreeUpdateManyWithoutMotherNestedInput
+    wali?: FamilyTreeUpdateManyWithoutWaliNestedInput
+    child?: FamilyTreeChildUpdateOneWithoutPersonalNestedInput
+    student?: StudentUpdateManyWithoutPersonalNestedInput
+    teacher?: TeacherUpdateManyWithoutPersonalNestedInput
+  }
+
+  export type PersonalUncheckedUpdateWithoutCoupleInput = {
+    nik?: NullableStringFieldUpdateOperationsInput | string | null
+    nisn?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: EnumTypePersonalFieldUpdateOperationsInput | TypePersonal
+    fullname?: StringFieldUpdateOperationsInput | string
+    gender?: EnumGenderFieldUpdateOperationsInput | Gender
+    foreign?: BoolFieldUpdateOperationsInput | boolean
+    country?: NullableStringFieldUpdateOperationsInput | string | null
+    religion?: EnumReligionFieldUpdateOperationsInput | Religion
+    born?: XOR<BornUpdateEnvelopeInput, BornCreateInput>
+    email?: StringFieldUpdateOperationsInput | string
+    belajarId?: NullableStringFieldUpdateOperationsInput | string | null
+    nophone?: StringFieldUpdateOperationsInput | string
+    isLife?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    address?: XOR<AddressNullableUpdateEnvelopeInput, AddressCreateInput> | null
+    education?: XOR<EducationListUpdateEnvelopeInput, Enumerable<EducationCreateInput>>
+    training?: XOR<TrainingListUpdateEnvelopeInput, Enumerable<TrainingCreateInput>>
+    employment?: XOR<EmploymentListUpdateEnvelopeInput, Enumerable<EmploymentCreateInput>>
+    profession?: XOR<ProfessionListUpdateEnvelopeInput, Enumerable<ProfessionCreateInput>>
+    overseas?: XOR<OverseasListUpdateEnvelopeInput, Enumerable<OverseasCreateInput>>
+    scientific?: XOR<ScientificListUpdateEnvelopeInput, Enumerable<ScientificCreateInput>>
+    organization?: XOR<OrganizationListUpdateEnvelopeInput, Enumerable<OrganizationCreateInput>>
+    papers?: XOR<PapersListUpdateEnvelopeInput, Enumerable<PapersCreateInput>>
+    innovation?: XOR<InnovationListUpdateEnvelopeInput, Enumerable<InnovationCreateInput>>
+    award?: XOR<AwardListUpdateEnvelopeInput, Enumerable<AwardCreateInput>>
+    sourcePerson?: XOR<SourcePersonListUpdateEnvelopeInput, Enumerable<SourcePersonCreateInput>>
+    contest?: XOR<ContestListUpdateEnvelopeInput, Enumerable<ContestCreateInput>>
+    documents?: XOR<DocumentsListUpdateEnvelopeInput, Enumerable<DocumentsCreateInput>>
+    additional?: XOR<AdditionalListUpdateEnvelopeInput, Enumerable<AdditionalCreateInput>>
+    auth?: AuthUncheckedUpdateOneWithoutPersonalNestedInput
+    father?: FamilyTreeUncheckedUpdateManyWithoutFatherNestedInput
+    mother?: FamilyTreeUncheckedUpdateManyWithoutMotherNestedInput
+    wali?: FamilyTreeUncheckedUpdateManyWithoutWaliNestedInput
+    child?: FamilyTreeChildUncheckedUpdateOneWithoutPersonalNestedInput
+    student?: StudentUncheckedUpdateManyWithoutPersonalNestedInput
+    teacher?: TeacherUncheckedUpdateManyWithoutPersonalNestedInput
+  }
+
+  export type FamilyTreeChildUpsertWithWhereUniqueWithoutKkInput = {
+    where: FamilyTreeChildWhereUniqueInput
+    update: XOR<FamilyTreeChildUpdateWithoutKkInput, FamilyTreeChildUncheckedUpdateWithoutKkInput>
+    create: XOR<FamilyTreeChildCreateWithoutKkInput, FamilyTreeChildUncheckedCreateWithoutKkInput>
+  }
+
+  export type FamilyTreeChildUpdateWithWhereUniqueWithoutKkInput = {
+    where: FamilyTreeChildWhereUniqueInput
+    data: XOR<FamilyTreeChildUpdateWithoutKkInput, FamilyTreeChildUncheckedUpdateWithoutKkInput>
+  }
+
+  export type FamilyTreeChildUpdateManyWithWhereWithoutKkInput = {
+    where: FamilyTreeChildScalarWhereInput
+    data: XOR<FamilyTreeChildUpdateManyMutationInput, FamilyTreeChildUncheckedUpdateManyWithoutChildsInput>
+  }
+
+  export type FamilyTreeChildScalarWhereInput = {
+    AND?: Enumerable<FamilyTreeChildScalarWhereInput>
+    OR?: Enumerable<FamilyTreeChildScalarWhereInput>
+    NOT?: Enumerable<FamilyTreeChildScalarWhereInput>
+    id?: StringFilter | string
+    no?: IntFilter | number
+    type?: EnumChildTypeFilter | ChildType
+    kkId?: StringFilter | string
+    personalId?: StringFilter | string
+  }
+
+  export type FamilyTreeCreateWithoutChildsInput = {
+    id?: string
+    nokk: string
+    address: XOR<AddressCreateEnvelopeInput, AddressCreateInput>
+    father?: PersonalCreateNestedOneWithoutFatherInput
+    mother?: PersonalCreateNestedOneWithoutMotherInput
+    wali?: PersonalCreateNestedOneWithoutWaliInput
+    couple?: PersonalCreateNestedOneWithoutCoupleInput
+  }
+
+  export type FamilyTreeUncheckedCreateWithoutChildsInput = {
+    id?: string
+    nokk: string
+    fatherId?: string | null
+    motherId?: string | null
+    waliId?: string | null
+    coupleId?: string | null
+    address: XOR<AddressCreateEnvelopeInput, AddressCreateInput>
+  }
+
+  export type FamilyTreeCreateOrConnectWithoutChildsInput = {
+    where: FamilyTreeWhereUniqueInput
+    create: XOR<FamilyTreeCreateWithoutChildsInput, FamilyTreeUncheckedCreateWithoutChildsInput>
+  }
+
+  export type PersonalCreateWithoutChildInput = {
+    id?: string
+    nik?: string | null
+    nisn?: string | null
+    type: TypePersonal
+    fullname: string
+    gender: Gender
+    foreign: boolean
+    country?: string | null
+    religion: Religion
+    born: XOR<BornCreateEnvelopeInput, BornCreateInput>
+    email: string
+    belajarId?: string | null
+    nophone: string
+    isLife?: boolean | null
+    address?: XOR<AddressNullableCreateEnvelopeInput, AddressCreateInput> | null
+    education?: XOR<EducationListCreateEnvelopeInput, Enumerable<EducationCreateInput>>
+    training?: XOR<TrainingListCreateEnvelopeInput, Enumerable<TrainingCreateInput>>
+    employment?: XOR<EmploymentListCreateEnvelopeInput, Enumerable<EmploymentCreateInput>>
+    profession?: XOR<ProfessionListCreateEnvelopeInput, Enumerable<ProfessionCreateInput>>
+    overseas?: XOR<OverseasListCreateEnvelopeInput, Enumerable<OverseasCreateInput>>
+    scientific?: XOR<ScientificListCreateEnvelopeInput, Enumerable<ScientificCreateInput>>
+    organization?: XOR<OrganizationListCreateEnvelopeInput, Enumerable<OrganizationCreateInput>>
+    papers?: XOR<PapersListCreateEnvelopeInput, Enumerable<PapersCreateInput>>
+    innovation?: XOR<InnovationListCreateEnvelopeInput, Enumerable<InnovationCreateInput>>
+    award?: XOR<AwardListCreateEnvelopeInput, Enumerable<AwardCreateInput>>
+    sourcePerson?: XOR<SourcePersonListCreateEnvelopeInput, Enumerable<SourcePersonCreateInput>>
+    contest?: XOR<ContestListCreateEnvelopeInput, Enumerable<ContestCreateInput>>
+    documents?: XOR<DocumentsListCreateEnvelopeInput, Enumerable<DocumentsCreateInput>>
+    additional?: XOR<AdditionalListCreateEnvelopeInput, Enumerable<AdditionalCreateInput>>
+    auth?: AuthCreateNestedOneWithoutPersonalInput
+    father?: FamilyTreeCreateNestedManyWithoutFatherInput
+    mother?: FamilyTreeCreateNestedManyWithoutMotherInput
+    wali?: FamilyTreeCreateNestedManyWithoutWaliInput
+    couple?: FamilyTreeCreateNestedManyWithoutCoupleInput
+    student?: StudentCreateNestedManyWithoutPersonalInput
+    teacher?: TeacherCreateNestedManyWithoutPersonalInput
+  }
+
+  export type PersonalUncheckedCreateWithoutChildInput = {
+    id?: string
+    nik?: string | null
+    nisn?: string | null
+    type: TypePersonal
+    fullname: string
+    gender: Gender
+    foreign: boolean
+    country?: string | null
+    religion: Religion
+    born: XOR<BornCreateEnvelopeInput, BornCreateInput>
+    email: string
+    belajarId?: string | null
+    nophone: string
+    isLife?: boolean | null
+    address?: XOR<AddressNullableCreateEnvelopeInput, AddressCreateInput> | null
+    education?: XOR<EducationListCreateEnvelopeInput, Enumerable<EducationCreateInput>>
+    training?: XOR<TrainingListCreateEnvelopeInput, Enumerable<TrainingCreateInput>>
+    employment?: XOR<EmploymentListCreateEnvelopeInput, Enumerable<EmploymentCreateInput>>
+    profession?: XOR<ProfessionListCreateEnvelopeInput, Enumerable<ProfessionCreateInput>>
+    overseas?: XOR<OverseasListCreateEnvelopeInput, Enumerable<OverseasCreateInput>>
+    scientific?: XOR<ScientificListCreateEnvelopeInput, Enumerable<ScientificCreateInput>>
+    organization?: XOR<OrganizationListCreateEnvelopeInput, Enumerable<OrganizationCreateInput>>
+    papers?: XOR<PapersListCreateEnvelopeInput, Enumerable<PapersCreateInput>>
+    innovation?: XOR<InnovationListCreateEnvelopeInput, Enumerable<InnovationCreateInput>>
+    award?: XOR<AwardListCreateEnvelopeInput, Enumerable<AwardCreateInput>>
+    sourcePerson?: XOR<SourcePersonListCreateEnvelopeInput, Enumerable<SourcePersonCreateInput>>
+    contest?: XOR<ContestListCreateEnvelopeInput, Enumerable<ContestCreateInput>>
+    documents?: XOR<DocumentsListCreateEnvelopeInput, Enumerable<DocumentsCreateInput>>
+    additional?: XOR<AdditionalListCreateEnvelopeInput, Enumerable<AdditionalCreateInput>>
+    auth?: AuthUncheckedCreateNestedOneWithoutPersonalInput
+    father?: FamilyTreeUncheckedCreateNestedManyWithoutFatherInput
+    mother?: FamilyTreeUncheckedCreateNestedManyWithoutMotherInput
+    wali?: FamilyTreeUncheckedCreateNestedManyWithoutWaliInput
+    couple?: FamilyTreeUncheckedCreateNestedManyWithoutCoupleInput
+    student?: StudentUncheckedCreateNestedManyWithoutPersonalInput
+    teacher?: TeacherUncheckedCreateNestedManyWithoutPersonalInput
+  }
+
+  export type PersonalCreateOrConnectWithoutChildInput = {
+    where: PersonalWhereUniqueInput
+    create: XOR<PersonalCreateWithoutChildInput, PersonalUncheckedCreateWithoutChildInput>
+  }
+
+  export type FamilyTreeUpsertWithoutChildsInput = {
+    update: XOR<FamilyTreeUpdateWithoutChildsInput, FamilyTreeUncheckedUpdateWithoutChildsInput>
+    create: XOR<FamilyTreeCreateWithoutChildsInput, FamilyTreeUncheckedCreateWithoutChildsInput>
+  }
+
+  export type FamilyTreeUpdateWithoutChildsInput = {
+    nokk?: StringFieldUpdateOperationsInput | string
+    address?: XOR<AddressUpdateEnvelopeInput, AddressCreateInput>
+    father?: PersonalUpdateOneWithoutFatherNestedInput
+    mother?: PersonalUpdateOneWithoutMotherNestedInput
+    wali?: PersonalUpdateOneWithoutWaliNestedInput
+    couple?: PersonalUpdateOneWithoutCoupleNestedInput
+  }
+
+  export type FamilyTreeUncheckedUpdateWithoutChildsInput = {
+    nokk?: StringFieldUpdateOperationsInput | string
+    fatherId?: NullableStringFieldUpdateOperationsInput | string | null
+    motherId?: NullableStringFieldUpdateOperationsInput | string | null
+    waliId?: NullableStringFieldUpdateOperationsInput | string | null
+    coupleId?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: XOR<AddressUpdateEnvelopeInput, AddressCreateInput>
+  }
+
+  export type PersonalUpsertWithoutChildInput = {
+    update: XOR<PersonalUpdateWithoutChildInput, PersonalUncheckedUpdateWithoutChildInput>
+    create: XOR<PersonalCreateWithoutChildInput, PersonalUncheckedCreateWithoutChildInput>
+  }
+
+  export type PersonalUpdateWithoutChildInput = {
+    nik?: NullableStringFieldUpdateOperationsInput | string | null
+    nisn?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: EnumTypePersonalFieldUpdateOperationsInput | TypePersonal
+    fullname?: StringFieldUpdateOperationsInput | string
+    gender?: EnumGenderFieldUpdateOperationsInput | Gender
+    foreign?: BoolFieldUpdateOperationsInput | boolean
+    country?: NullableStringFieldUpdateOperationsInput | string | null
+    religion?: EnumReligionFieldUpdateOperationsInput | Religion
+    born?: XOR<BornUpdateEnvelopeInput, BornCreateInput>
+    email?: StringFieldUpdateOperationsInput | string
+    belajarId?: NullableStringFieldUpdateOperationsInput | string | null
+    nophone?: StringFieldUpdateOperationsInput | string
+    isLife?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    address?: XOR<AddressNullableUpdateEnvelopeInput, AddressCreateInput> | null
+    education?: XOR<EducationListUpdateEnvelopeInput, Enumerable<EducationCreateInput>>
+    training?: XOR<TrainingListUpdateEnvelopeInput, Enumerable<TrainingCreateInput>>
+    employment?: XOR<EmploymentListUpdateEnvelopeInput, Enumerable<EmploymentCreateInput>>
+    profession?: XOR<ProfessionListUpdateEnvelopeInput, Enumerable<ProfessionCreateInput>>
+    overseas?: XOR<OverseasListUpdateEnvelopeInput, Enumerable<OverseasCreateInput>>
+    scientific?: XOR<ScientificListUpdateEnvelopeInput, Enumerable<ScientificCreateInput>>
+    organization?: XOR<OrganizationListUpdateEnvelopeInput, Enumerable<OrganizationCreateInput>>
+    papers?: XOR<PapersListUpdateEnvelopeInput, Enumerable<PapersCreateInput>>
+    innovation?: XOR<InnovationListUpdateEnvelopeInput, Enumerable<InnovationCreateInput>>
+    award?: XOR<AwardListUpdateEnvelopeInput, Enumerable<AwardCreateInput>>
+    sourcePerson?: XOR<SourcePersonListUpdateEnvelopeInput, Enumerable<SourcePersonCreateInput>>
+    contest?: XOR<ContestListUpdateEnvelopeInput, Enumerable<ContestCreateInput>>
+    documents?: XOR<DocumentsListUpdateEnvelopeInput, Enumerable<DocumentsCreateInput>>
+    additional?: XOR<AdditionalListUpdateEnvelopeInput, Enumerable<AdditionalCreateInput>>
+    auth?: AuthUpdateOneWithoutPersonalNestedInput
+    father?: FamilyTreeUpdateManyWithoutFatherNestedInput
+    mother?: FamilyTreeUpdateManyWithoutMotherNestedInput
+    wali?: FamilyTreeUpdateManyWithoutWaliNestedInput
+    couple?: FamilyTreeUpdateManyWithoutCoupleNestedInput
+    student?: StudentUpdateManyWithoutPersonalNestedInput
+    teacher?: TeacherUpdateManyWithoutPersonalNestedInput
+  }
+
+  export type PersonalUncheckedUpdateWithoutChildInput = {
+    nik?: NullableStringFieldUpdateOperationsInput | string | null
+    nisn?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: EnumTypePersonalFieldUpdateOperationsInput | TypePersonal
+    fullname?: StringFieldUpdateOperationsInput | string
+    gender?: EnumGenderFieldUpdateOperationsInput | Gender
+    foreign?: BoolFieldUpdateOperationsInput | boolean
+    country?: NullableStringFieldUpdateOperationsInput | string | null
+    religion?: EnumReligionFieldUpdateOperationsInput | Religion
+    born?: XOR<BornUpdateEnvelopeInput, BornCreateInput>
+    email?: StringFieldUpdateOperationsInput | string
+    belajarId?: NullableStringFieldUpdateOperationsInput | string | null
+    nophone?: StringFieldUpdateOperationsInput | string
+    isLife?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    address?: XOR<AddressNullableUpdateEnvelopeInput, AddressCreateInput> | null
+    education?: XOR<EducationListUpdateEnvelopeInput, Enumerable<EducationCreateInput>>
+    training?: XOR<TrainingListUpdateEnvelopeInput, Enumerable<TrainingCreateInput>>
+    employment?: XOR<EmploymentListUpdateEnvelopeInput, Enumerable<EmploymentCreateInput>>
+    profession?: XOR<ProfessionListUpdateEnvelopeInput, Enumerable<ProfessionCreateInput>>
+    overseas?: XOR<OverseasListUpdateEnvelopeInput, Enumerable<OverseasCreateInput>>
+    scientific?: XOR<ScientificListUpdateEnvelopeInput, Enumerable<ScientificCreateInput>>
+    organization?: XOR<OrganizationListUpdateEnvelopeInput, Enumerable<OrganizationCreateInput>>
+    papers?: XOR<PapersListUpdateEnvelopeInput, Enumerable<PapersCreateInput>>
+    innovation?: XOR<InnovationListUpdateEnvelopeInput, Enumerable<InnovationCreateInput>>
+    award?: XOR<AwardListUpdateEnvelopeInput, Enumerable<AwardCreateInput>>
+    sourcePerson?: XOR<SourcePersonListUpdateEnvelopeInput, Enumerable<SourcePersonCreateInput>>
+    contest?: XOR<ContestListUpdateEnvelopeInput, Enumerable<ContestCreateInput>>
+    documents?: XOR<DocumentsListUpdateEnvelopeInput, Enumerable<DocumentsCreateInput>>
+    additional?: XOR<AdditionalListUpdateEnvelopeInput, Enumerable<AdditionalCreateInput>>
+    auth?: AuthUncheckedUpdateOneWithoutPersonalNestedInput
+    father?: FamilyTreeUncheckedUpdateManyWithoutFatherNestedInput
+    mother?: FamilyTreeUncheckedUpdateManyWithoutMotherNestedInput
+    wali?: FamilyTreeUncheckedUpdateManyWithoutWaliNestedInput
+    couple?: FamilyTreeUncheckedUpdateManyWithoutCoupleNestedInput
+    student?: StudentUncheckedUpdateManyWithoutPersonalNestedInput
+    teacher?: TeacherUncheckedUpdateManyWithoutPersonalNestedInput
+  }
+
+  export type PersonalCreateWithoutStudentInput = {
+    id?: string
+    nik?: string | null
+    nisn?: string | null
+    type: TypePersonal
+    fullname: string
+    gender: Gender
+    foreign: boolean
+    country?: string | null
+    religion: Religion
+    born: XOR<BornCreateEnvelopeInput, BornCreateInput>
+    email: string
+    belajarId?: string | null
+    nophone: string
+    isLife?: boolean | null
+    address?: XOR<AddressNullableCreateEnvelopeInput, AddressCreateInput> | null
+    education?: XOR<EducationListCreateEnvelopeInput, Enumerable<EducationCreateInput>>
+    training?: XOR<TrainingListCreateEnvelopeInput, Enumerable<TrainingCreateInput>>
+    employment?: XOR<EmploymentListCreateEnvelopeInput, Enumerable<EmploymentCreateInput>>
+    profession?: XOR<ProfessionListCreateEnvelopeInput, Enumerable<ProfessionCreateInput>>
+    overseas?: XOR<OverseasListCreateEnvelopeInput, Enumerable<OverseasCreateInput>>
+    scientific?: XOR<ScientificListCreateEnvelopeInput, Enumerable<ScientificCreateInput>>
+    organization?: XOR<OrganizationListCreateEnvelopeInput, Enumerable<OrganizationCreateInput>>
+    papers?: XOR<PapersListCreateEnvelopeInput, Enumerable<PapersCreateInput>>
+    innovation?: XOR<InnovationListCreateEnvelopeInput, Enumerable<InnovationCreateInput>>
+    award?: XOR<AwardListCreateEnvelopeInput, Enumerable<AwardCreateInput>>
+    sourcePerson?: XOR<SourcePersonListCreateEnvelopeInput, Enumerable<SourcePersonCreateInput>>
+    contest?: XOR<ContestListCreateEnvelopeInput, Enumerable<ContestCreateInput>>
+    documents?: XOR<DocumentsListCreateEnvelopeInput, Enumerable<DocumentsCreateInput>>
+    additional?: XOR<AdditionalListCreateEnvelopeInput, Enumerable<AdditionalCreateInput>>
+    auth?: AuthCreateNestedOneWithoutPersonalInput
+    father?: FamilyTreeCreateNestedManyWithoutFatherInput
+    mother?: FamilyTreeCreateNestedManyWithoutMotherInput
+    wali?: FamilyTreeCreateNestedManyWithoutWaliInput
+    couple?: FamilyTreeCreateNestedManyWithoutCoupleInput
+    child?: FamilyTreeChildCreateNestedOneWithoutPersonalInput
+    teacher?: TeacherCreateNestedManyWithoutPersonalInput
+  }
+
+  export type PersonalUncheckedCreateWithoutStudentInput = {
+    id?: string
+    nik?: string | null
+    nisn?: string | null
+    type: TypePersonal
+    fullname: string
+    gender: Gender
+    foreign: boolean
+    country?: string | null
+    religion: Religion
+    born: XOR<BornCreateEnvelopeInput, BornCreateInput>
+    email: string
+    belajarId?: string | null
+    nophone: string
+    isLife?: boolean | null
+    address?: XOR<AddressNullableCreateEnvelopeInput, AddressCreateInput> | null
+    education?: XOR<EducationListCreateEnvelopeInput, Enumerable<EducationCreateInput>>
+    training?: XOR<TrainingListCreateEnvelopeInput, Enumerable<TrainingCreateInput>>
+    employment?: XOR<EmploymentListCreateEnvelopeInput, Enumerable<EmploymentCreateInput>>
+    profession?: XOR<ProfessionListCreateEnvelopeInput, Enumerable<ProfessionCreateInput>>
+    overseas?: XOR<OverseasListCreateEnvelopeInput, Enumerable<OverseasCreateInput>>
+    scientific?: XOR<ScientificListCreateEnvelopeInput, Enumerable<ScientificCreateInput>>
+    organization?: XOR<OrganizationListCreateEnvelopeInput, Enumerable<OrganizationCreateInput>>
+    papers?: XOR<PapersListCreateEnvelopeInput, Enumerable<PapersCreateInput>>
+    innovation?: XOR<InnovationListCreateEnvelopeInput, Enumerable<InnovationCreateInput>>
+    award?: XOR<AwardListCreateEnvelopeInput, Enumerable<AwardCreateInput>>
+    sourcePerson?: XOR<SourcePersonListCreateEnvelopeInput, Enumerable<SourcePersonCreateInput>>
+    contest?: XOR<ContestListCreateEnvelopeInput, Enumerable<ContestCreateInput>>
+    documents?: XOR<DocumentsListCreateEnvelopeInput, Enumerable<DocumentsCreateInput>>
+    additional?: XOR<AdditionalListCreateEnvelopeInput, Enumerable<AdditionalCreateInput>>
+    auth?: AuthUncheckedCreateNestedOneWithoutPersonalInput
+    father?: FamilyTreeUncheckedCreateNestedManyWithoutFatherInput
+    mother?: FamilyTreeUncheckedCreateNestedManyWithoutMotherInput
+    wali?: FamilyTreeUncheckedCreateNestedManyWithoutWaliInput
+    couple?: FamilyTreeUncheckedCreateNestedManyWithoutCoupleInput
+    child?: FamilyTreeChildUncheckedCreateNestedOneWithoutPersonalInput
+    teacher?: TeacherUncheckedCreateNestedManyWithoutPersonalInput
+  }
+
+  export type PersonalCreateOrConnectWithoutStudentInput = {
+    where: PersonalWhereUniqueInput
+    create: XOR<PersonalCreateWithoutStudentInput, PersonalUncheckedCreateWithoutStudentInput>
+  }
+
+  export type KonsentrasiKeahlianCreateWithoutStudentInput = {
+    id?: string
+    code: string
+    name: string
+    tahun: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    program: ProgramKeahlianCreateNestedOneWithoutKonsentrasiInput
+    instansi?: InstansiCreateNestedManyWithoutMajorsInput
+    ClassRoom?: ClassRoomCreateNestedManyWithoutMajorInput
+  }
+
+  export type KonsentrasiKeahlianUncheckedCreateWithoutStudentInput = {
+    id?: string
+    code: string
+    name: string
+    programId: string
+    tahun: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    instansiIds?: KonsentrasiKeahlianCreateinstansiIdsInput | Enumerable<string>
+    instansi?: InstansiUncheckedCreateNestedManyWithoutMajorsInput
+    ClassRoom?: ClassRoomUncheckedCreateNestedManyWithoutMajorInput
+  }
+
+  export type KonsentrasiKeahlianCreateOrConnectWithoutStudentInput = {
+    where: KonsentrasiKeahlianWhereUniqueInput
+    create: XOR<KonsentrasiKeahlianCreateWithoutStudentInput, KonsentrasiKeahlianUncheckedCreateWithoutStudentInput>
+  }
+
+  export type ClassRoomCreateWithoutStudentsInput = {
+    id?: string
+    name: string
+    level: number
+    year: SchoolYearCreateNestedOneWithoutClassRoomInput
+    wali: TeacherCreateNestedOneWithoutClassRoomInput
+    major?: KonsentrasiKeahlianCreateNestedOneWithoutClassRoomInput
+    event?: CalendarCreateNestedManyWithoutClassRoomInput
+  }
+
+  export type ClassRoomUncheckedCreateWithoutStudentsInput = {
+    id?: string
+    name: string
+    yearId: string
+    waliId: string
+    level: number
+    majorId?: string | null
+    studentIds?: ClassRoomCreatestudentIdsInput | Enumerable<string>
+    eventIds?: ClassRoomCreateeventIdsInput | Enumerable<string>
+    event?: CalendarUncheckedCreateNestedManyWithoutClassRoomInput
+  }
+
+  export type ClassRoomCreateOrConnectWithoutStudentsInput = {
+    where: ClassRoomWhereUniqueInput
+    create: XOR<ClassRoomCreateWithoutStudentsInput, ClassRoomUncheckedCreateWithoutStudentsInput>
+  }
+
+  export type SchoolYearCreateWithoutStudentsInput = {
+    id?: string
+    year: number
+    organizational: XOR<OrganizationalCreateEnvelopeInput, OrganizationalCreateInput>
+    instansi: InstansiCreateNestedOneWithoutSchoolYearInput
+    classRoom?: ClassRoomCreateNestedManyWithoutYearInput
+    calendar?: CalendarCreateNestedManyWithoutRefInput
+  }
+
+  export type SchoolYearUncheckedCreateWithoutStudentsInput = {
+    id?: string
+    year: number
+    instansiId: string
+    organizational: XOR<OrganizationalCreateEnvelopeInput, OrganizationalCreateInput>
+    classRoom?: ClassRoomUncheckedCreateNestedManyWithoutYearInput
+    calendar?: CalendarUncheckedCreateNestedManyWithoutRefInput
+  }
+
+  export type SchoolYearCreateOrConnectWithoutStudentsInput = {
+    where: SchoolYearWhereUniqueInput
+    create: XOR<SchoolYearCreateWithoutStudentsInput, SchoolYearUncheckedCreateWithoutStudentsInput>
+  }
+
+  export type InstansiCreateWithoutStudentInput = {
+    id?: string
+    npsn: string
+    name: string
+    isPrivate: boolean
+    address: XOR<AddressCreateEnvelopeInput, AddressCreateInput>
+    level: Level
+    religion?: Religion | null
+    major?: boolean | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    majors?: KonsentrasiKeahlianCreateNestedManyWithoutInstansiInput
+    role?: RoleCreateNestedManyWithoutInstansiInput
+    schoolYear?: SchoolYearCreateNestedManyWithoutInstansiInput
+    teacher?: TeacherCreateNestedManyWithoutInstansiInput
+  }
+
+  export type InstansiUncheckedCreateWithoutStudentInput = {
+    id?: string
+    npsn: string
+    name: string
+    isPrivate: boolean
+    address: XOR<AddressCreateEnvelopeInput, AddressCreateInput>
+    level: Level
+    religion?: Religion | null
+    major?: boolean | null
+    majorIds?: InstansiCreatemajorIdsInput | Enumerable<string>
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    majors?: KonsentrasiKeahlianUncheckedCreateNestedManyWithoutInstansiInput
+    role?: RoleUncheckedCreateNestedManyWithoutInstansiInput
+    schoolYear?: SchoolYearUncheckedCreateNestedManyWithoutInstansiInput
+    teacher?: TeacherUncheckedCreateNestedManyWithoutInstansiInput
+  }
+
+  export type InstansiCreateOrConnectWithoutStudentInput = {
+    where: InstansiWhereUniqueInput
+    create: XOR<InstansiCreateWithoutStudentInput, InstansiUncheckedCreateWithoutStudentInput>
+  }
+
+  export type CalendarCreateWithoutStudentInput = {
+    id?: string
+    name: string
+    description?: string | null
+    start: Date | string
+    end?: Date | string | null
+    color: string
+    ref: SchoolYearCreateNestedOneWithoutCalendarInput
+    classRoom?: ClassRoomCreateNestedManyWithoutEventInput
+    teacher?: TeacherCreateNestedManyWithoutEventInput
+  }
+
+  export type CalendarUncheckedCreateWithoutStudentInput = {
+    id?: string
+    refId: string
+    name: string
+    description?: string | null
+    start: Date | string
+    end?: Date | string | null
+    color: string
+    classRoomIds?: CalendarCreateclassRoomIdsInput | Enumerable<string>
+    studentIds?: CalendarCreatestudentIdsInput | Enumerable<string>
+    teacherIds?: CalendarCreateteacherIdsInput | Enumerable<string>
+    classRoom?: ClassRoomUncheckedCreateNestedManyWithoutEventInput
+    teacher?: TeacherUncheckedCreateNestedManyWithoutEventInput
+  }
+
+  export type CalendarCreateOrConnectWithoutStudentInput = {
+    where: CalendarWhereUniqueInput
+    create: XOR<CalendarCreateWithoutStudentInput, CalendarUncheckedCreateWithoutStudentInput>
+  }
+
+  export type PersonalUpsertWithoutStudentInput = {
+    update: XOR<PersonalUpdateWithoutStudentInput, PersonalUncheckedUpdateWithoutStudentInput>
+    create: XOR<PersonalCreateWithoutStudentInput, PersonalUncheckedCreateWithoutStudentInput>
+  }
+
+  export type PersonalUpdateWithoutStudentInput = {
+    nik?: NullableStringFieldUpdateOperationsInput | string | null
+    nisn?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: EnumTypePersonalFieldUpdateOperationsInput | TypePersonal
+    fullname?: StringFieldUpdateOperationsInput | string
+    gender?: EnumGenderFieldUpdateOperationsInput | Gender
+    foreign?: BoolFieldUpdateOperationsInput | boolean
+    country?: NullableStringFieldUpdateOperationsInput | string | null
+    religion?: EnumReligionFieldUpdateOperationsInput | Religion
+    born?: XOR<BornUpdateEnvelopeInput, BornCreateInput>
+    email?: StringFieldUpdateOperationsInput | string
+    belajarId?: NullableStringFieldUpdateOperationsInput | string | null
+    nophone?: StringFieldUpdateOperationsInput | string
+    isLife?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    address?: XOR<AddressNullableUpdateEnvelopeInput, AddressCreateInput> | null
+    education?: XOR<EducationListUpdateEnvelopeInput, Enumerable<EducationCreateInput>>
+    training?: XOR<TrainingListUpdateEnvelopeInput, Enumerable<TrainingCreateInput>>
+    employment?: XOR<EmploymentListUpdateEnvelopeInput, Enumerable<EmploymentCreateInput>>
+    profession?: XOR<ProfessionListUpdateEnvelopeInput, Enumerable<ProfessionCreateInput>>
+    overseas?: XOR<OverseasListUpdateEnvelopeInput, Enumerable<OverseasCreateInput>>
+    scientific?: XOR<ScientificListUpdateEnvelopeInput, Enumerable<ScientificCreateInput>>
+    organization?: XOR<OrganizationListUpdateEnvelopeInput, Enumerable<OrganizationCreateInput>>
+    papers?: XOR<PapersListUpdateEnvelopeInput, Enumerable<PapersCreateInput>>
+    innovation?: XOR<InnovationListUpdateEnvelopeInput, Enumerable<InnovationCreateInput>>
+    award?: XOR<AwardListUpdateEnvelopeInput, Enumerable<AwardCreateInput>>
+    sourcePerson?: XOR<SourcePersonListUpdateEnvelopeInput, Enumerable<SourcePersonCreateInput>>
+    contest?: XOR<ContestListUpdateEnvelopeInput, Enumerable<ContestCreateInput>>
+    documents?: XOR<DocumentsListUpdateEnvelopeInput, Enumerable<DocumentsCreateInput>>
+    additional?: XOR<AdditionalListUpdateEnvelopeInput, Enumerable<AdditionalCreateInput>>
+    auth?: AuthUpdateOneWithoutPersonalNestedInput
+    father?: FamilyTreeUpdateManyWithoutFatherNestedInput
+    mother?: FamilyTreeUpdateManyWithoutMotherNestedInput
+    wali?: FamilyTreeUpdateManyWithoutWaliNestedInput
+    couple?: FamilyTreeUpdateManyWithoutCoupleNestedInput
+    child?: FamilyTreeChildUpdateOneWithoutPersonalNestedInput
+    teacher?: TeacherUpdateManyWithoutPersonalNestedInput
+  }
+
+  export type PersonalUncheckedUpdateWithoutStudentInput = {
+    nik?: NullableStringFieldUpdateOperationsInput | string | null
+    nisn?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: EnumTypePersonalFieldUpdateOperationsInput | TypePersonal
+    fullname?: StringFieldUpdateOperationsInput | string
+    gender?: EnumGenderFieldUpdateOperationsInput | Gender
+    foreign?: BoolFieldUpdateOperationsInput | boolean
+    country?: NullableStringFieldUpdateOperationsInput | string | null
+    religion?: EnumReligionFieldUpdateOperationsInput | Religion
+    born?: XOR<BornUpdateEnvelopeInput, BornCreateInput>
+    email?: StringFieldUpdateOperationsInput | string
+    belajarId?: NullableStringFieldUpdateOperationsInput | string | null
+    nophone?: StringFieldUpdateOperationsInput | string
+    isLife?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    address?: XOR<AddressNullableUpdateEnvelopeInput, AddressCreateInput> | null
+    education?: XOR<EducationListUpdateEnvelopeInput, Enumerable<EducationCreateInput>>
+    training?: XOR<TrainingListUpdateEnvelopeInput, Enumerable<TrainingCreateInput>>
+    employment?: XOR<EmploymentListUpdateEnvelopeInput, Enumerable<EmploymentCreateInput>>
+    profession?: XOR<ProfessionListUpdateEnvelopeInput, Enumerable<ProfessionCreateInput>>
+    overseas?: XOR<OverseasListUpdateEnvelopeInput, Enumerable<OverseasCreateInput>>
+    scientific?: XOR<ScientificListUpdateEnvelopeInput, Enumerable<ScientificCreateInput>>
+    organization?: XOR<OrganizationListUpdateEnvelopeInput, Enumerable<OrganizationCreateInput>>
+    papers?: XOR<PapersListUpdateEnvelopeInput, Enumerable<PapersCreateInput>>
+    innovation?: XOR<InnovationListUpdateEnvelopeInput, Enumerable<InnovationCreateInput>>
+    award?: XOR<AwardListUpdateEnvelopeInput, Enumerable<AwardCreateInput>>
+    sourcePerson?: XOR<SourcePersonListUpdateEnvelopeInput, Enumerable<SourcePersonCreateInput>>
+    contest?: XOR<ContestListUpdateEnvelopeInput, Enumerable<ContestCreateInput>>
+    documents?: XOR<DocumentsListUpdateEnvelopeInput, Enumerable<DocumentsCreateInput>>
+    additional?: XOR<AdditionalListUpdateEnvelopeInput, Enumerable<AdditionalCreateInput>>
+    auth?: AuthUncheckedUpdateOneWithoutPersonalNestedInput
+    father?: FamilyTreeUncheckedUpdateManyWithoutFatherNestedInput
+    mother?: FamilyTreeUncheckedUpdateManyWithoutMotherNestedInput
+    wali?: FamilyTreeUncheckedUpdateManyWithoutWaliNestedInput
+    couple?: FamilyTreeUncheckedUpdateManyWithoutCoupleNestedInput
+    child?: FamilyTreeChildUncheckedUpdateOneWithoutPersonalNestedInput
+    teacher?: TeacherUncheckedUpdateManyWithoutPersonalNestedInput
+  }
+
+  export type KonsentrasiKeahlianUpsertWithoutStudentInput = {
+    update: XOR<KonsentrasiKeahlianUpdateWithoutStudentInput, KonsentrasiKeahlianUncheckedUpdateWithoutStudentInput>
+    create: XOR<KonsentrasiKeahlianCreateWithoutStudentInput, KonsentrasiKeahlianUncheckedCreateWithoutStudentInput>
+  }
+
+  export type KonsentrasiKeahlianUpdateWithoutStudentInput = {
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    tahun?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    program?: ProgramKeahlianUpdateOneRequiredWithoutKonsentrasiNestedInput
+    instansi?: InstansiUpdateManyWithoutMajorsNestedInput
+    ClassRoom?: ClassRoomUpdateManyWithoutMajorNestedInput
+  }
+
+  export type KonsentrasiKeahlianUncheckedUpdateWithoutStudentInput = {
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    programId?: StringFieldUpdateOperationsInput | string
+    tahun?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    instansiIds?: KonsentrasiKeahlianUpdateinstansiIdsInput | Enumerable<string>
+    instansi?: InstansiUncheckedUpdateManyWithoutMajorsNestedInput
+    ClassRoom?: ClassRoomUncheckedUpdateManyWithoutMajorNestedInput
+  }
+
+  export type ClassRoomUpsertWithWhereUniqueWithoutStudentsInput = {
+    where: ClassRoomWhereUniqueInput
+    update: XOR<ClassRoomUpdateWithoutStudentsInput, ClassRoomUncheckedUpdateWithoutStudentsInput>
+    create: XOR<ClassRoomCreateWithoutStudentsInput, ClassRoomUncheckedCreateWithoutStudentsInput>
+  }
+
+  export type ClassRoomUpdateWithWhereUniqueWithoutStudentsInput = {
+    where: ClassRoomWhereUniqueInput
+    data: XOR<ClassRoomUpdateWithoutStudentsInput, ClassRoomUncheckedUpdateWithoutStudentsInput>
+  }
+
+  export type ClassRoomUpdateManyWithWhereWithoutStudentsInput = {
+    where: ClassRoomScalarWhereInput
+    data: XOR<ClassRoomUpdateManyMutationInput, ClassRoomUncheckedUpdateManyWithoutClassRoomInput>
+  }
+
+  export type SchoolYearUpsertWithoutStudentsInput = {
+    update: XOR<SchoolYearUpdateWithoutStudentsInput, SchoolYearUncheckedUpdateWithoutStudentsInput>
+    create: XOR<SchoolYearCreateWithoutStudentsInput, SchoolYearUncheckedCreateWithoutStudentsInput>
+  }
+
+  export type SchoolYearUpdateWithoutStudentsInput = {
+    year?: IntFieldUpdateOperationsInput | number
+    organizational?: XOR<OrganizationalUpdateEnvelopeInput, OrganizationalCreateInput>
+    instansi?: InstansiUpdateOneRequiredWithoutSchoolYearNestedInput
+    classRoom?: ClassRoomUpdateManyWithoutYearNestedInput
+    calendar?: CalendarUpdateManyWithoutRefNestedInput
+  }
+
+  export type SchoolYearUncheckedUpdateWithoutStudentsInput = {
+    year?: IntFieldUpdateOperationsInput | number
+    instansiId?: StringFieldUpdateOperationsInput | string
+    organizational?: XOR<OrganizationalUpdateEnvelopeInput, OrganizationalCreateInput>
+    classRoom?: ClassRoomUncheckedUpdateManyWithoutYearNestedInput
+    calendar?: CalendarUncheckedUpdateManyWithoutRefNestedInput
+  }
+
+  export type InstansiUpsertWithoutStudentInput = {
+    update: XOR<InstansiUpdateWithoutStudentInput, InstansiUncheckedUpdateWithoutStudentInput>
+    create: XOR<InstansiCreateWithoutStudentInput, InstansiUncheckedCreateWithoutStudentInput>
+  }
+
+  export type InstansiUpdateWithoutStudentInput = {
+    npsn?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    isPrivate?: BoolFieldUpdateOperationsInput | boolean
+    address?: XOR<AddressUpdateEnvelopeInput, AddressCreateInput>
+    level?: EnumLevelFieldUpdateOperationsInput | Level
+    religion?: NullableEnumReligionFieldUpdateOperationsInput | Religion | null
+    major?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    majors?: KonsentrasiKeahlianUpdateManyWithoutInstansiNestedInput
+    role?: RoleUpdateManyWithoutInstansiNestedInput
+    schoolYear?: SchoolYearUpdateManyWithoutInstansiNestedInput
+    teacher?: TeacherUpdateManyWithoutInstansiNestedInput
+  }
+
+  export type InstansiUncheckedUpdateWithoutStudentInput = {
+    npsn?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    isPrivate?: BoolFieldUpdateOperationsInput | boolean
+    address?: XOR<AddressUpdateEnvelopeInput, AddressCreateInput>
+    level?: EnumLevelFieldUpdateOperationsInput | Level
+    religion?: NullableEnumReligionFieldUpdateOperationsInput | Religion | null
+    major?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    majorIds?: InstansiUpdatemajorIdsInput | Enumerable<string>
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    majors?: KonsentrasiKeahlianUncheckedUpdateManyWithoutInstansiNestedInput
+    role?: RoleUncheckedUpdateManyWithoutInstansiNestedInput
+    schoolYear?: SchoolYearUncheckedUpdateManyWithoutInstansiNestedInput
+    teacher?: TeacherUncheckedUpdateManyWithoutInstansiNestedInput
+  }
+
+  export type CalendarUpsertWithWhereUniqueWithoutStudentInput = {
+    where: CalendarWhereUniqueInput
+    update: XOR<CalendarUpdateWithoutStudentInput, CalendarUncheckedUpdateWithoutStudentInput>
+    create: XOR<CalendarCreateWithoutStudentInput, CalendarUncheckedCreateWithoutStudentInput>
+  }
+
+  export type CalendarUpdateWithWhereUniqueWithoutStudentInput = {
+    where: CalendarWhereUniqueInput
+    data: XOR<CalendarUpdateWithoutStudentInput, CalendarUncheckedUpdateWithoutStudentInput>
+  }
+
+  export type CalendarUpdateManyWithWhereWithoutStudentInput = {
+    where: CalendarScalarWhereInput
+    data: XOR<CalendarUpdateManyMutationInput, CalendarUncheckedUpdateManyWithoutEventInput>
+  }
+
+  export type CalendarScalarWhereInput = {
+    AND?: Enumerable<CalendarScalarWhereInput>
+    OR?: Enumerable<CalendarScalarWhereInput>
+    NOT?: Enumerable<CalendarScalarWhereInput>
+    id?: StringFilter | string
+    refId?: StringFilter | string
+    name?: StringFilter | string
+    description?: StringNullableFilter | string | null
+    start?: DateTimeFilter | Date | string
+    end?: DateTimeNullableFilter | Date | string | null
+    color?: StringFilter | string
+    classRoomIds?: StringNullableListFilter
+    studentIds?: StringNullableListFilter
+    teacherIds?: StringNullableListFilter
+  }
+
+  export type PersonalCreateWithoutTeacherInput = {
+    id?: string
+    nik?: string | null
+    nisn?: string | null
+    type: TypePersonal
+    fullname: string
+    gender: Gender
+    foreign: boolean
+    country?: string | null
+    religion: Religion
+    born: XOR<BornCreateEnvelopeInput, BornCreateInput>
+    email: string
+    belajarId?: string | null
+    nophone: string
+    isLife?: boolean | null
+    address?: XOR<AddressNullableCreateEnvelopeInput, AddressCreateInput> | null
+    education?: XOR<EducationListCreateEnvelopeInput, Enumerable<EducationCreateInput>>
+    training?: XOR<TrainingListCreateEnvelopeInput, Enumerable<TrainingCreateInput>>
+    employment?: XOR<EmploymentListCreateEnvelopeInput, Enumerable<EmploymentCreateInput>>
+    profession?: XOR<ProfessionListCreateEnvelopeInput, Enumerable<ProfessionCreateInput>>
+    overseas?: XOR<OverseasListCreateEnvelopeInput, Enumerable<OverseasCreateInput>>
+    scientific?: XOR<ScientificListCreateEnvelopeInput, Enumerable<ScientificCreateInput>>
+    organization?: XOR<OrganizationListCreateEnvelopeInput, Enumerable<OrganizationCreateInput>>
+    papers?: XOR<PapersListCreateEnvelopeInput, Enumerable<PapersCreateInput>>
+    innovation?: XOR<InnovationListCreateEnvelopeInput, Enumerable<InnovationCreateInput>>
+    award?: XOR<AwardListCreateEnvelopeInput, Enumerable<AwardCreateInput>>
+    sourcePerson?: XOR<SourcePersonListCreateEnvelopeInput, Enumerable<SourcePersonCreateInput>>
+    contest?: XOR<ContestListCreateEnvelopeInput, Enumerable<ContestCreateInput>>
+    documents?: XOR<DocumentsListCreateEnvelopeInput, Enumerable<DocumentsCreateInput>>
+    additional?: XOR<AdditionalListCreateEnvelopeInput, Enumerable<AdditionalCreateInput>>
+    auth?: AuthCreateNestedOneWithoutPersonalInput
+    father?: FamilyTreeCreateNestedManyWithoutFatherInput
+    mother?: FamilyTreeCreateNestedManyWithoutMotherInput
+    wali?: FamilyTreeCreateNestedManyWithoutWaliInput
+    couple?: FamilyTreeCreateNestedManyWithoutCoupleInput
+    child?: FamilyTreeChildCreateNestedOneWithoutPersonalInput
+    student?: StudentCreateNestedManyWithoutPersonalInput
+  }
+
+  export type PersonalUncheckedCreateWithoutTeacherInput = {
+    id?: string
+    nik?: string | null
+    nisn?: string | null
+    type: TypePersonal
+    fullname: string
+    gender: Gender
+    foreign: boolean
+    country?: string | null
+    religion: Religion
+    born: XOR<BornCreateEnvelopeInput, BornCreateInput>
+    email: string
+    belajarId?: string | null
+    nophone: string
+    isLife?: boolean | null
+    address?: XOR<AddressNullableCreateEnvelopeInput, AddressCreateInput> | null
+    education?: XOR<EducationListCreateEnvelopeInput, Enumerable<EducationCreateInput>>
+    training?: XOR<TrainingListCreateEnvelopeInput, Enumerable<TrainingCreateInput>>
+    employment?: XOR<EmploymentListCreateEnvelopeInput, Enumerable<EmploymentCreateInput>>
+    profession?: XOR<ProfessionListCreateEnvelopeInput, Enumerable<ProfessionCreateInput>>
+    overseas?: XOR<OverseasListCreateEnvelopeInput, Enumerable<OverseasCreateInput>>
+    scientific?: XOR<ScientificListCreateEnvelopeInput, Enumerable<ScientificCreateInput>>
+    organization?: XOR<OrganizationListCreateEnvelopeInput, Enumerable<OrganizationCreateInput>>
+    papers?: XOR<PapersListCreateEnvelopeInput, Enumerable<PapersCreateInput>>
+    innovation?: XOR<InnovationListCreateEnvelopeInput, Enumerable<InnovationCreateInput>>
+    award?: XOR<AwardListCreateEnvelopeInput, Enumerable<AwardCreateInput>>
+    sourcePerson?: XOR<SourcePersonListCreateEnvelopeInput, Enumerable<SourcePersonCreateInput>>
+    contest?: XOR<ContestListCreateEnvelopeInput, Enumerable<ContestCreateInput>>
+    documents?: XOR<DocumentsListCreateEnvelopeInput, Enumerable<DocumentsCreateInput>>
+    additional?: XOR<AdditionalListCreateEnvelopeInput, Enumerable<AdditionalCreateInput>>
+    auth?: AuthUncheckedCreateNestedOneWithoutPersonalInput
+    father?: FamilyTreeUncheckedCreateNestedManyWithoutFatherInput
+    mother?: FamilyTreeUncheckedCreateNestedManyWithoutMotherInput
+    wali?: FamilyTreeUncheckedCreateNestedManyWithoutWaliInput
+    couple?: FamilyTreeUncheckedCreateNestedManyWithoutCoupleInput
+    child?: FamilyTreeChildUncheckedCreateNestedOneWithoutPersonalInput
+    student?: StudentUncheckedCreateNestedManyWithoutPersonalInput
+  }
+
+  export type PersonalCreateOrConnectWithoutTeacherInput = {
+    where: PersonalWhereUniqueInput
+    create: XOR<PersonalCreateWithoutTeacherInput, PersonalUncheckedCreateWithoutTeacherInput>
+  }
+
+  export type ClassRoomCreateWithoutWaliInput = {
+    id?: string
+    name: string
+    level: number
+    year: SchoolYearCreateNestedOneWithoutClassRoomInput
+    major?: KonsentrasiKeahlianCreateNestedOneWithoutClassRoomInput
+    students?: StudentCreateNestedManyWithoutClassRoomInput
+    event?: CalendarCreateNestedManyWithoutClassRoomInput
+  }
+
+  export type ClassRoomUncheckedCreateWithoutWaliInput = {
+    id?: string
+    name: string
+    yearId: string
+    level: number
+    majorId?: string | null
+    studentIds?: ClassRoomCreatestudentIdsInput | Enumerable<string>
+    eventIds?: ClassRoomCreateeventIdsInput | Enumerable<string>
+    students?: StudentUncheckedCreateNestedManyWithoutClassRoomInput
+    event?: CalendarUncheckedCreateNestedManyWithoutClassRoomInput
+  }
+
+  export type ClassRoomCreateOrConnectWithoutWaliInput = {
+    where: ClassRoomWhereUniqueInput
+    create: XOR<ClassRoomCreateWithoutWaliInput, ClassRoomUncheckedCreateWithoutWaliInput>
+  }
+
+  export type ClassRoomCreateManyWaliInputEnvelope = {
+    data: Enumerable<ClassRoomCreateManyWaliInput>
+  }
+
+  export type InstansiCreateWithoutTeacherInput = {
+    id?: string
+    npsn: string
+    name: string
+    isPrivate: boolean
+    address: XOR<AddressCreateEnvelopeInput, AddressCreateInput>
+    level: Level
+    religion?: Religion | null
+    major?: boolean | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    majors?: KonsentrasiKeahlianCreateNestedManyWithoutInstansiInput
+    role?: RoleCreateNestedManyWithoutInstansiInput
+    schoolYear?: SchoolYearCreateNestedManyWithoutInstansiInput
+    student?: StudentCreateNestedManyWithoutInstansiInput
+  }
+
+  export type InstansiUncheckedCreateWithoutTeacherInput = {
+    id?: string
+    npsn: string
+    name: string
+    isPrivate: boolean
+    address: XOR<AddressCreateEnvelopeInput, AddressCreateInput>
+    level: Level
+    religion?: Religion | null
+    major?: boolean | null
+    majorIds?: InstansiCreatemajorIdsInput | Enumerable<string>
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    majors?: KonsentrasiKeahlianUncheckedCreateNestedManyWithoutInstansiInput
+    role?: RoleUncheckedCreateNestedManyWithoutInstansiInput
+    schoolYear?: SchoolYearUncheckedCreateNestedManyWithoutInstansiInput
+    student?: StudentUncheckedCreateNestedManyWithoutInstansiInput
+  }
+
+  export type InstansiCreateOrConnectWithoutTeacherInput = {
+    where: InstansiWhereUniqueInput
+    create: XOR<InstansiCreateWithoutTeacherInput, InstansiUncheckedCreateWithoutTeacherInput>
+  }
+
+  export type CalendarCreateWithoutTeacherInput = {
+    id?: string
+    name: string
+    description?: string | null
+    start: Date | string
+    end?: Date | string | null
+    color: string
+    ref: SchoolYearCreateNestedOneWithoutCalendarInput
+    classRoom?: ClassRoomCreateNestedManyWithoutEventInput
+    student?: StudentCreateNestedManyWithoutEventInput
+  }
+
+  export type CalendarUncheckedCreateWithoutTeacherInput = {
+    id?: string
+    refId: string
+    name: string
+    description?: string | null
+    start: Date | string
+    end?: Date | string | null
+    color: string
+    classRoomIds?: CalendarCreateclassRoomIdsInput | Enumerable<string>
+    studentIds?: CalendarCreatestudentIdsInput | Enumerable<string>
+    teacherIds?: CalendarCreateteacherIdsInput | Enumerable<string>
+    classRoom?: ClassRoomUncheckedCreateNestedManyWithoutEventInput
+    student?: StudentUncheckedCreateNestedManyWithoutEventInput
+  }
+
+  export type CalendarCreateOrConnectWithoutTeacherInput = {
+    where: CalendarWhereUniqueInput
+    create: XOR<CalendarCreateWithoutTeacherInput, CalendarUncheckedCreateWithoutTeacherInput>
+  }
+
+  export type PersonalUpsertWithoutTeacherInput = {
+    update: XOR<PersonalUpdateWithoutTeacherInput, PersonalUncheckedUpdateWithoutTeacherInput>
+    create: XOR<PersonalCreateWithoutTeacherInput, PersonalUncheckedCreateWithoutTeacherInput>
+  }
+
+  export type PersonalUpdateWithoutTeacherInput = {
+    nik?: NullableStringFieldUpdateOperationsInput | string | null
+    nisn?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: EnumTypePersonalFieldUpdateOperationsInput | TypePersonal
+    fullname?: StringFieldUpdateOperationsInput | string
+    gender?: EnumGenderFieldUpdateOperationsInput | Gender
+    foreign?: BoolFieldUpdateOperationsInput | boolean
+    country?: NullableStringFieldUpdateOperationsInput | string | null
+    religion?: EnumReligionFieldUpdateOperationsInput | Religion
+    born?: XOR<BornUpdateEnvelopeInput, BornCreateInput>
+    email?: StringFieldUpdateOperationsInput | string
+    belajarId?: NullableStringFieldUpdateOperationsInput | string | null
+    nophone?: StringFieldUpdateOperationsInput | string
+    isLife?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    address?: XOR<AddressNullableUpdateEnvelopeInput, AddressCreateInput> | null
+    education?: XOR<EducationListUpdateEnvelopeInput, Enumerable<EducationCreateInput>>
+    training?: XOR<TrainingListUpdateEnvelopeInput, Enumerable<TrainingCreateInput>>
+    employment?: XOR<EmploymentListUpdateEnvelopeInput, Enumerable<EmploymentCreateInput>>
+    profession?: XOR<ProfessionListUpdateEnvelopeInput, Enumerable<ProfessionCreateInput>>
+    overseas?: XOR<OverseasListUpdateEnvelopeInput, Enumerable<OverseasCreateInput>>
+    scientific?: XOR<ScientificListUpdateEnvelopeInput, Enumerable<ScientificCreateInput>>
+    organization?: XOR<OrganizationListUpdateEnvelopeInput, Enumerable<OrganizationCreateInput>>
+    papers?: XOR<PapersListUpdateEnvelopeInput, Enumerable<PapersCreateInput>>
+    innovation?: XOR<InnovationListUpdateEnvelopeInput, Enumerable<InnovationCreateInput>>
+    award?: XOR<AwardListUpdateEnvelopeInput, Enumerable<AwardCreateInput>>
+    sourcePerson?: XOR<SourcePersonListUpdateEnvelopeInput, Enumerable<SourcePersonCreateInput>>
+    contest?: XOR<ContestListUpdateEnvelopeInput, Enumerable<ContestCreateInput>>
+    documents?: XOR<DocumentsListUpdateEnvelopeInput, Enumerable<DocumentsCreateInput>>
+    additional?: XOR<AdditionalListUpdateEnvelopeInput, Enumerable<AdditionalCreateInput>>
+    auth?: AuthUpdateOneWithoutPersonalNestedInput
+    father?: FamilyTreeUpdateManyWithoutFatherNestedInput
+    mother?: FamilyTreeUpdateManyWithoutMotherNestedInput
+    wali?: FamilyTreeUpdateManyWithoutWaliNestedInput
+    couple?: FamilyTreeUpdateManyWithoutCoupleNestedInput
+    child?: FamilyTreeChildUpdateOneWithoutPersonalNestedInput
+    student?: StudentUpdateManyWithoutPersonalNestedInput
+  }
+
+  export type PersonalUncheckedUpdateWithoutTeacherInput = {
+    nik?: NullableStringFieldUpdateOperationsInput | string | null
+    nisn?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: EnumTypePersonalFieldUpdateOperationsInput | TypePersonal
+    fullname?: StringFieldUpdateOperationsInput | string
+    gender?: EnumGenderFieldUpdateOperationsInput | Gender
+    foreign?: BoolFieldUpdateOperationsInput | boolean
+    country?: NullableStringFieldUpdateOperationsInput | string | null
+    religion?: EnumReligionFieldUpdateOperationsInput | Religion
+    born?: XOR<BornUpdateEnvelopeInput, BornCreateInput>
+    email?: StringFieldUpdateOperationsInput | string
+    belajarId?: NullableStringFieldUpdateOperationsInput | string | null
+    nophone?: StringFieldUpdateOperationsInput | string
+    isLife?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    address?: XOR<AddressNullableUpdateEnvelopeInput, AddressCreateInput> | null
+    education?: XOR<EducationListUpdateEnvelopeInput, Enumerable<EducationCreateInput>>
+    training?: XOR<TrainingListUpdateEnvelopeInput, Enumerable<TrainingCreateInput>>
+    employment?: XOR<EmploymentListUpdateEnvelopeInput, Enumerable<EmploymentCreateInput>>
+    profession?: XOR<ProfessionListUpdateEnvelopeInput, Enumerable<ProfessionCreateInput>>
+    overseas?: XOR<OverseasListUpdateEnvelopeInput, Enumerable<OverseasCreateInput>>
+    scientific?: XOR<ScientificListUpdateEnvelopeInput, Enumerable<ScientificCreateInput>>
+    organization?: XOR<OrganizationListUpdateEnvelopeInput, Enumerable<OrganizationCreateInput>>
+    papers?: XOR<PapersListUpdateEnvelopeInput, Enumerable<PapersCreateInput>>
+    innovation?: XOR<InnovationListUpdateEnvelopeInput, Enumerable<InnovationCreateInput>>
+    award?: XOR<AwardListUpdateEnvelopeInput, Enumerable<AwardCreateInput>>
+    sourcePerson?: XOR<SourcePersonListUpdateEnvelopeInput, Enumerable<SourcePersonCreateInput>>
+    contest?: XOR<ContestListUpdateEnvelopeInput, Enumerable<ContestCreateInput>>
+    documents?: XOR<DocumentsListUpdateEnvelopeInput, Enumerable<DocumentsCreateInput>>
+    additional?: XOR<AdditionalListUpdateEnvelopeInput, Enumerable<AdditionalCreateInput>>
+    auth?: AuthUncheckedUpdateOneWithoutPersonalNestedInput
+    father?: FamilyTreeUncheckedUpdateManyWithoutFatherNestedInput
+    mother?: FamilyTreeUncheckedUpdateManyWithoutMotherNestedInput
+    wali?: FamilyTreeUncheckedUpdateManyWithoutWaliNestedInput
+    couple?: FamilyTreeUncheckedUpdateManyWithoutCoupleNestedInput
+    child?: FamilyTreeChildUncheckedUpdateOneWithoutPersonalNestedInput
+    student?: StudentUncheckedUpdateManyWithoutPersonalNestedInput
   }
 
   export type ClassRoomUpsertWithWhereUniqueWithoutWaliInput = {
@@ -31682,7 +34162,7 @@ export namespace Prisma {
     year: number
     organizational: XOR<OrganizationalCreateEnvelopeInput, OrganizationalCreateInput>
     instansi: InstansiCreateNestedOneWithoutSchoolYearInput
-    studentsIn?: StudentCreateNestedManyWithoutStartYearInput
+    students?: StudentCreateNestedManyWithoutStartYearInput
     calendar?: CalendarCreateNestedManyWithoutRefInput
   }
 
@@ -31691,7 +34171,7 @@ export namespace Prisma {
     year: number
     instansiId: string
     organizational: XOR<OrganizationalCreateEnvelopeInput, OrganizationalCreateInput>
-    studentsIn?: StudentUncheckedCreateNestedManyWithoutStartYearInput
+    students?: StudentUncheckedCreateNestedManyWithoutStartYearInput
     calendar?: CalendarUncheckedCreateNestedManyWithoutRefInput
   }
 
@@ -31705,59 +34185,31 @@ export namespace Prisma {
     nip?: string | null
     nrg?: string | null
     noKarpeg?: string | null
-    tmtTugas?: string | null
-    tmtGol?: string | null
+    tmtTugas?: Date | string | null
+    tmtGol?: Date | string | null
     position?: string | null
     rank?: string | null
     period?: string | null
     certificate?: string | null
-    education?: XOR<EducationListCreateEnvelopeInput, Enumerable<EducationCreateInput>>
-    training?: XOR<TrainingListCreateEnvelopeInput, Enumerable<TrainingCreateInput>>
-    employment?: XOR<EmploymentListCreateEnvelopeInput, Enumerable<EmploymentCreateInput>>
-    profession?: XOR<ProfessionListCreateEnvelopeInput, Enumerable<ProfessionCreateInput>>
-    overseas?: XOR<OverseasListCreateEnvelopeInput, Enumerable<OverseasCreateInput>>
-    scientific?: XOR<ScientificListCreateEnvelopeInput, Enumerable<ScientificCreateInput>>
-    organization?: XOR<OrganizationListCreateEnvelopeInput, Enumerable<OrganizationCreateInput>>
-    papers?: XOR<PapersListCreateEnvelopeInput, Enumerable<PapersCreateInput>>
-    innovation?: XOR<InnovationListCreateEnvelopeInput, Enumerable<InnovationCreateInput>>
-    award?: XOR<AwardListCreateEnvelopeInput, Enumerable<AwardCreateInput>>
-    sourcePerson?: XOR<SourcePersonListCreateEnvelopeInput, Enumerable<SourcePersonCreateInput>>
-    contest?: XOR<ContestListCreateEnvelopeInput, Enumerable<ContestCreateInput>>
-    documents?: XOR<DocumentsListCreateEnvelopeInput, Enumerable<DocumentsCreateInput>>
-    additional?: XOR<AdditionalListCreateEnvelopeInput, Enumerable<AdditionalCreateInput>>
-    user?: UserCreateNestedOneWithoutTeacherInput
+    personal: PersonalCreateNestedOneWithoutTeacherInput
     instansi: InstansiCreateNestedOneWithoutTeacherInput
     event?: CalendarCreateNestedManyWithoutTeacherInput
   }
 
   export type TeacherUncheckedCreateWithoutClassRoomInput = {
     id?: string
-    userId?: string | null
+    personalId: string
     instansiId: string
     eventIds?: TeacherCreateeventIdsInput | Enumerable<string>
     nip?: string | null
     nrg?: string | null
     noKarpeg?: string | null
-    tmtTugas?: string | null
-    tmtGol?: string | null
+    tmtTugas?: Date | string | null
+    tmtGol?: Date | string | null
     position?: string | null
     rank?: string | null
     period?: string | null
     certificate?: string | null
-    education?: XOR<EducationListCreateEnvelopeInput, Enumerable<EducationCreateInput>>
-    training?: XOR<TrainingListCreateEnvelopeInput, Enumerable<TrainingCreateInput>>
-    employment?: XOR<EmploymentListCreateEnvelopeInput, Enumerable<EmploymentCreateInput>>
-    profession?: XOR<ProfessionListCreateEnvelopeInput, Enumerable<ProfessionCreateInput>>
-    overseas?: XOR<OverseasListCreateEnvelopeInput, Enumerable<OverseasCreateInput>>
-    scientific?: XOR<ScientificListCreateEnvelopeInput, Enumerable<ScientificCreateInput>>
-    organization?: XOR<OrganizationListCreateEnvelopeInput, Enumerable<OrganizationCreateInput>>
-    papers?: XOR<PapersListCreateEnvelopeInput, Enumerable<PapersCreateInput>>
-    innovation?: XOR<InnovationListCreateEnvelopeInput, Enumerable<InnovationCreateInput>>
-    award?: XOR<AwardListCreateEnvelopeInput, Enumerable<AwardCreateInput>>
-    sourcePerson?: XOR<SourcePersonListCreateEnvelopeInput, Enumerable<SourcePersonCreateInput>>
-    contest?: XOR<ContestListCreateEnvelopeInput, Enumerable<ContestCreateInput>>
-    documents?: XOR<DocumentsListCreateEnvelopeInput, Enumerable<DocumentsCreateInput>>
-    additional?: XOR<AdditionalListCreateEnvelopeInput, Enumerable<AdditionalCreateInput>>
     event?: CalendarUncheckedCreateNestedManyWithoutTeacherInput
   }
 
@@ -31766,18 +34218,52 @@ export namespace Prisma {
     create: XOR<TeacherCreateWithoutClassRoomInput, TeacherUncheckedCreateWithoutClassRoomInput>
   }
 
+  export type KonsentrasiKeahlianCreateWithoutClassRoomInput = {
+    id?: string
+    code: string
+    name: string
+    tahun: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    program: ProgramKeahlianCreateNestedOneWithoutKonsentrasiInput
+    student?: StudentCreateNestedManyWithoutMajorInput
+    instansi?: InstansiCreateNestedManyWithoutMajorsInput
+  }
+
+  export type KonsentrasiKeahlianUncheckedCreateWithoutClassRoomInput = {
+    id?: string
+    code: string
+    name: string
+    programId: string
+    tahun: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    instansiIds?: KonsentrasiKeahlianCreateinstansiIdsInput | Enumerable<string>
+    student?: StudentUncheckedCreateNestedManyWithoutMajorInput
+    instansi?: InstansiUncheckedCreateNestedManyWithoutMajorsInput
+  }
+
+  export type KonsentrasiKeahlianCreateOrConnectWithoutClassRoomInput = {
+    where: KonsentrasiKeahlianWhereUniqueInput
+    create: XOR<KonsentrasiKeahlianCreateWithoutClassRoomInput, KonsentrasiKeahlianUncheckedCreateWithoutClassRoomInput>
+  }
+
   export type StudentCreateWithoutClassRoomInput = {
     id?: string
-    user?: UserCreateNestedOneWithoutStudentInput
+    nis: string
+    nisn: string
+    personal: PersonalCreateNestedOneWithoutStudentInput
     major?: KonsentrasiKeahlianCreateNestedOneWithoutStudentInput
-    startYear: SchoolYearCreateNestedOneWithoutStudentsInInput
+    startYear: SchoolYearCreateNestedOneWithoutStudentsInput
     instansi: InstansiCreateNestedOneWithoutStudentInput
     event?: CalendarCreateNestedManyWithoutStudentInput
   }
 
   export type StudentUncheckedCreateWithoutClassRoomInput = {
     id?: string
-    userId?: string | null
+    nis: string
+    nisn: string
+    personalId: string
     majorId?: string | null
     classRoomIds?: StudentCreateclassRoomIdsInput | Enumerable<string>
     startYearId: string
@@ -31832,7 +34318,7 @@ export namespace Prisma {
     year?: IntFieldUpdateOperationsInput | number
     organizational?: XOR<OrganizationalUpdateEnvelopeInput, OrganizationalCreateInput>
     instansi?: InstansiUpdateOneRequiredWithoutSchoolYearNestedInput
-    studentsIn?: StudentUpdateManyWithoutStartYearNestedInput
+    students?: StudentUpdateManyWithoutStartYearNestedInput
     calendar?: CalendarUpdateManyWithoutRefNestedInput
   }
 
@@ -31840,7 +34326,7 @@ export namespace Prisma {
     year?: IntFieldUpdateOperationsInput | number
     instansiId?: StringFieldUpdateOperationsInput | string
     organizational?: XOR<OrganizationalUpdateEnvelopeInput, OrganizationalCreateInput>
-    studentsIn?: StudentUncheckedUpdateManyWithoutStartYearNestedInput
+    students?: StudentUncheckedUpdateManyWithoutStartYearNestedInput
     calendar?: CalendarUncheckedUpdateManyWithoutRefNestedInput
   }
 
@@ -31853,59 +34339,59 @@ export namespace Prisma {
     nip?: NullableStringFieldUpdateOperationsInput | string | null
     nrg?: NullableStringFieldUpdateOperationsInput | string | null
     noKarpeg?: NullableStringFieldUpdateOperationsInput | string | null
-    tmtTugas?: NullableStringFieldUpdateOperationsInput | string | null
-    tmtGol?: NullableStringFieldUpdateOperationsInput | string | null
+    tmtTugas?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    tmtGol?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     position?: NullableStringFieldUpdateOperationsInput | string | null
     rank?: NullableStringFieldUpdateOperationsInput | string | null
     period?: NullableStringFieldUpdateOperationsInput | string | null
     certificate?: NullableStringFieldUpdateOperationsInput | string | null
-    education?: XOR<EducationListUpdateEnvelopeInput, Enumerable<EducationCreateInput>>
-    training?: XOR<TrainingListUpdateEnvelopeInput, Enumerable<TrainingCreateInput>>
-    employment?: XOR<EmploymentListUpdateEnvelopeInput, Enumerable<EmploymentCreateInput>>
-    profession?: XOR<ProfessionListUpdateEnvelopeInput, Enumerable<ProfessionCreateInput>>
-    overseas?: XOR<OverseasListUpdateEnvelopeInput, Enumerable<OverseasCreateInput>>
-    scientific?: XOR<ScientificListUpdateEnvelopeInput, Enumerable<ScientificCreateInput>>
-    organization?: XOR<OrganizationListUpdateEnvelopeInput, Enumerable<OrganizationCreateInput>>
-    papers?: XOR<PapersListUpdateEnvelopeInput, Enumerable<PapersCreateInput>>
-    innovation?: XOR<InnovationListUpdateEnvelopeInput, Enumerable<InnovationCreateInput>>
-    award?: XOR<AwardListUpdateEnvelopeInput, Enumerable<AwardCreateInput>>
-    sourcePerson?: XOR<SourcePersonListUpdateEnvelopeInput, Enumerable<SourcePersonCreateInput>>
-    contest?: XOR<ContestListUpdateEnvelopeInput, Enumerable<ContestCreateInput>>
-    documents?: XOR<DocumentsListUpdateEnvelopeInput, Enumerable<DocumentsCreateInput>>
-    additional?: XOR<AdditionalListUpdateEnvelopeInput, Enumerable<AdditionalCreateInput>>
-    user?: UserUpdateOneWithoutTeacherNestedInput
+    personal?: PersonalUpdateOneRequiredWithoutTeacherNestedInput
     instansi?: InstansiUpdateOneRequiredWithoutTeacherNestedInput
     event?: CalendarUpdateManyWithoutTeacherNestedInput
   }
 
   export type TeacherUncheckedUpdateWithoutClassRoomInput = {
-    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    personalId?: StringFieldUpdateOperationsInput | string
     instansiId?: StringFieldUpdateOperationsInput | string
     eventIds?: TeacherUpdateeventIdsInput | Enumerable<string>
     nip?: NullableStringFieldUpdateOperationsInput | string | null
     nrg?: NullableStringFieldUpdateOperationsInput | string | null
     noKarpeg?: NullableStringFieldUpdateOperationsInput | string | null
-    tmtTugas?: NullableStringFieldUpdateOperationsInput | string | null
-    tmtGol?: NullableStringFieldUpdateOperationsInput | string | null
+    tmtTugas?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    tmtGol?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     position?: NullableStringFieldUpdateOperationsInput | string | null
     rank?: NullableStringFieldUpdateOperationsInput | string | null
     period?: NullableStringFieldUpdateOperationsInput | string | null
     certificate?: NullableStringFieldUpdateOperationsInput | string | null
-    education?: XOR<EducationListUpdateEnvelopeInput, Enumerable<EducationCreateInput>>
-    training?: XOR<TrainingListUpdateEnvelopeInput, Enumerable<TrainingCreateInput>>
-    employment?: XOR<EmploymentListUpdateEnvelopeInput, Enumerable<EmploymentCreateInput>>
-    profession?: XOR<ProfessionListUpdateEnvelopeInput, Enumerable<ProfessionCreateInput>>
-    overseas?: XOR<OverseasListUpdateEnvelopeInput, Enumerable<OverseasCreateInput>>
-    scientific?: XOR<ScientificListUpdateEnvelopeInput, Enumerable<ScientificCreateInput>>
-    organization?: XOR<OrganizationListUpdateEnvelopeInput, Enumerable<OrganizationCreateInput>>
-    papers?: XOR<PapersListUpdateEnvelopeInput, Enumerable<PapersCreateInput>>
-    innovation?: XOR<InnovationListUpdateEnvelopeInput, Enumerable<InnovationCreateInput>>
-    award?: XOR<AwardListUpdateEnvelopeInput, Enumerable<AwardCreateInput>>
-    sourcePerson?: XOR<SourcePersonListUpdateEnvelopeInput, Enumerable<SourcePersonCreateInput>>
-    contest?: XOR<ContestListUpdateEnvelopeInput, Enumerable<ContestCreateInput>>
-    documents?: XOR<DocumentsListUpdateEnvelopeInput, Enumerable<DocumentsCreateInput>>
-    additional?: XOR<AdditionalListUpdateEnvelopeInput, Enumerable<AdditionalCreateInput>>
     event?: CalendarUncheckedUpdateManyWithoutTeacherNestedInput
+  }
+
+  export type KonsentrasiKeahlianUpsertWithoutClassRoomInput = {
+    update: XOR<KonsentrasiKeahlianUpdateWithoutClassRoomInput, KonsentrasiKeahlianUncheckedUpdateWithoutClassRoomInput>
+    create: XOR<KonsentrasiKeahlianCreateWithoutClassRoomInput, KonsentrasiKeahlianUncheckedCreateWithoutClassRoomInput>
+  }
+
+  export type KonsentrasiKeahlianUpdateWithoutClassRoomInput = {
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    tahun?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    program?: ProgramKeahlianUpdateOneRequiredWithoutKonsentrasiNestedInput
+    student?: StudentUpdateManyWithoutMajorNestedInput
+    instansi?: InstansiUpdateManyWithoutMajorsNestedInput
+  }
+
+  export type KonsentrasiKeahlianUncheckedUpdateWithoutClassRoomInput = {
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    programId?: StringFieldUpdateOperationsInput | string
+    tahun?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    instansiIds?: KonsentrasiKeahlianUpdateinstansiIdsInput | Enumerable<string>
+    student?: StudentUncheckedUpdateManyWithoutMajorNestedInput
+    instansi?: InstansiUncheckedUpdateManyWithoutMajorsNestedInput
   }
 
   export type StudentUpsertWithWhereUniqueWithoutClassRoomInput = {
@@ -31983,7 +34469,9 @@ export namespace Prisma {
   export type ClassRoomCreateWithoutYearInput = {
     id?: string
     name: string
+    level: number
     wali: TeacherCreateNestedOneWithoutClassRoomInput
+    major?: KonsentrasiKeahlianCreateNestedOneWithoutClassRoomInput
     students?: StudentCreateNestedManyWithoutClassRoomInput
     event?: CalendarCreateNestedManyWithoutClassRoomInput
   }
@@ -31992,6 +34480,8 @@ export namespace Prisma {
     id?: string
     name: string
     waliId: string
+    level: number
+    majorId?: string | null
     studentIds?: ClassRoomCreatestudentIdsInput | Enumerable<string>
     eventIds?: ClassRoomCreateeventIdsInput | Enumerable<string>
     students?: StudentUncheckedCreateNestedManyWithoutClassRoomInput
@@ -32009,7 +34499,9 @@ export namespace Prisma {
 
   export type StudentCreateWithoutStartYearInput = {
     id?: string
-    user?: UserCreateNestedOneWithoutStudentInput
+    nis: string
+    nisn: string
+    personal: PersonalCreateNestedOneWithoutStudentInput
     major?: KonsentrasiKeahlianCreateNestedOneWithoutStudentInput
     classRoom?: ClassRoomCreateNestedManyWithoutStudentsInput
     instansi: InstansiCreateNestedOneWithoutStudentInput
@@ -32018,7 +34510,9 @@ export namespace Prisma {
 
   export type StudentUncheckedCreateWithoutStartYearInput = {
     id?: string
-    userId?: string | null
+    nis: string
+    nisn: string
+    personalId: string
     majorId?: string | null
     classRoomIds?: StudentCreateclassRoomIdsInput | Enumerable<string>
     instansiId: string
@@ -32148,7 +34642,7 @@ export namespace Prisma {
 
   export type StudentUpdateManyWithWhereWithoutStartYearInput = {
     where: StudentScalarWhereInput
-    data: XOR<StudentUpdateManyMutationInput, StudentUncheckedUpdateManyWithoutStudentsInInput>
+    data: XOR<StudentUpdateManyMutationInput, StudentUncheckedUpdateManyWithoutStudentsInput>
   }
 
   export type CalendarUpsertWithWhereUniqueWithoutRefInput = {
@@ -32173,7 +34667,7 @@ export namespace Prisma {
     organizational: XOR<OrganizationalCreateEnvelopeInput, OrganizationalCreateInput>
     instansi: InstansiCreateNestedOneWithoutSchoolYearInput
     classRoom?: ClassRoomCreateNestedManyWithoutYearInput
-    studentsIn?: StudentCreateNestedManyWithoutStartYearInput
+    students?: StudentCreateNestedManyWithoutStartYearInput
   }
 
   export type SchoolYearUncheckedCreateWithoutCalendarInput = {
@@ -32182,7 +34676,7 @@ export namespace Prisma {
     instansiId: string
     organizational: XOR<OrganizationalCreateEnvelopeInput, OrganizationalCreateInput>
     classRoom?: ClassRoomUncheckedCreateNestedManyWithoutYearInput
-    studentsIn?: StudentUncheckedCreateNestedManyWithoutStartYearInput
+    students?: StudentUncheckedCreateNestedManyWithoutStartYearInput
   }
 
   export type SchoolYearCreateOrConnectWithoutCalendarInput = {
@@ -32193,8 +34687,10 @@ export namespace Prisma {
   export type ClassRoomCreateWithoutEventInput = {
     id?: string
     name: string
+    level: number
     year: SchoolYearCreateNestedOneWithoutClassRoomInput
     wali: TeacherCreateNestedOneWithoutClassRoomInput
+    major?: KonsentrasiKeahlianCreateNestedOneWithoutClassRoomInput
     students?: StudentCreateNestedManyWithoutClassRoomInput
   }
 
@@ -32203,6 +34699,8 @@ export namespace Prisma {
     name: string
     yearId: string
     waliId: string
+    level: number
+    majorId?: string | null
     studentIds?: ClassRoomCreatestudentIdsInput | Enumerable<string>
     eventIds?: ClassRoomCreateeventIdsInput | Enumerable<string>
     students?: StudentUncheckedCreateNestedManyWithoutClassRoomInput
@@ -32215,16 +34713,20 @@ export namespace Prisma {
 
   export type StudentCreateWithoutEventInput = {
     id?: string
-    user?: UserCreateNestedOneWithoutStudentInput
+    nis: string
+    nisn: string
+    personal: PersonalCreateNestedOneWithoutStudentInput
     major?: KonsentrasiKeahlianCreateNestedOneWithoutStudentInput
     classRoom?: ClassRoomCreateNestedManyWithoutStudentsInput
-    startYear: SchoolYearCreateNestedOneWithoutStudentsInInput
+    startYear: SchoolYearCreateNestedOneWithoutStudentsInput
     instansi: InstansiCreateNestedOneWithoutStudentInput
   }
 
   export type StudentUncheckedCreateWithoutEventInput = {
     id?: string
-    userId?: string | null
+    nis: string
+    nisn: string
+    personalId: string
     majorId?: string | null
     classRoomIds?: StudentCreateclassRoomIdsInput | Enumerable<string>
     startYearId: string
@@ -32243,59 +34745,31 @@ export namespace Prisma {
     nip?: string | null
     nrg?: string | null
     noKarpeg?: string | null
-    tmtTugas?: string | null
-    tmtGol?: string | null
+    tmtTugas?: Date | string | null
+    tmtGol?: Date | string | null
     position?: string | null
     rank?: string | null
     period?: string | null
     certificate?: string | null
-    education?: XOR<EducationListCreateEnvelopeInput, Enumerable<EducationCreateInput>>
-    training?: XOR<TrainingListCreateEnvelopeInput, Enumerable<TrainingCreateInput>>
-    employment?: XOR<EmploymentListCreateEnvelopeInput, Enumerable<EmploymentCreateInput>>
-    profession?: XOR<ProfessionListCreateEnvelopeInput, Enumerable<ProfessionCreateInput>>
-    overseas?: XOR<OverseasListCreateEnvelopeInput, Enumerable<OverseasCreateInput>>
-    scientific?: XOR<ScientificListCreateEnvelopeInput, Enumerable<ScientificCreateInput>>
-    organization?: XOR<OrganizationListCreateEnvelopeInput, Enumerable<OrganizationCreateInput>>
-    papers?: XOR<PapersListCreateEnvelopeInput, Enumerable<PapersCreateInput>>
-    innovation?: XOR<InnovationListCreateEnvelopeInput, Enumerable<InnovationCreateInput>>
-    award?: XOR<AwardListCreateEnvelopeInput, Enumerable<AwardCreateInput>>
-    sourcePerson?: XOR<SourcePersonListCreateEnvelopeInput, Enumerable<SourcePersonCreateInput>>
-    contest?: XOR<ContestListCreateEnvelopeInput, Enumerable<ContestCreateInput>>
-    documents?: XOR<DocumentsListCreateEnvelopeInput, Enumerable<DocumentsCreateInput>>
-    additional?: XOR<AdditionalListCreateEnvelopeInput, Enumerable<AdditionalCreateInput>>
-    user?: UserCreateNestedOneWithoutTeacherInput
+    personal: PersonalCreateNestedOneWithoutTeacherInput
     classRoom?: ClassRoomCreateNestedManyWithoutWaliInput
     instansi: InstansiCreateNestedOneWithoutTeacherInput
   }
 
   export type TeacherUncheckedCreateWithoutEventInput = {
     id?: string
-    userId?: string | null
+    personalId: string
     instansiId: string
     eventIds?: TeacherCreateeventIdsInput | Enumerable<string>
     nip?: string | null
     nrg?: string | null
     noKarpeg?: string | null
-    tmtTugas?: string | null
-    tmtGol?: string | null
+    tmtTugas?: Date | string | null
+    tmtGol?: Date | string | null
     position?: string | null
     rank?: string | null
     period?: string | null
     certificate?: string | null
-    education?: XOR<EducationListCreateEnvelopeInput, Enumerable<EducationCreateInput>>
-    training?: XOR<TrainingListCreateEnvelopeInput, Enumerable<TrainingCreateInput>>
-    employment?: XOR<EmploymentListCreateEnvelopeInput, Enumerable<EmploymentCreateInput>>
-    profession?: XOR<ProfessionListCreateEnvelopeInput, Enumerable<ProfessionCreateInput>>
-    overseas?: XOR<OverseasListCreateEnvelopeInput, Enumerable<OverseasCreateInput>>
-    scientific?: XOR<ScientificListCreateEnvelopeInput, Enumerable<ScientificCreateInput>>
-    organization?: XOR<OrganizationListCreateEnvelopeInput, Enumerable<OrganizationCreateInput>>
-    papers?: XOR<PapersListCreateEnvelopeInput, Enumerable<PapersCreateInput>>
-    innovation?: XOR<InnovationListCreateEnvelopeInput, Enumerable<InnovationCreateInput>>
-    award?: XOR<AwardListCreateEnvelopeInput, Enumerable<AwardCreateInput>>
-    sourcePerson?: XOR<SourcePersonListCreateEnvelopeInput, Enumerable<SourcePersonCreateInput>>
-    contest?: XOR<ContestListCreateEnvelopeInput, Enumerable<ContestCreateInput>>
-    documents?: XOR<DocumentsListCreateEnvelopeInput, Enumerable<DocumentsCreateInput>>
-    additional?: XOR<AdditionalListCreateEnvelopeInput, Enumerable<AdditionalCreateInput>>
     classRoom?: ClassRoomUncheckedCreateNestedManyWithoutWaliInput
   }
 
@@ -32314,7 +34788,7 @@ export namespace Prisma {
     organizational?: XOR<OrganizationalUpdateEnvelopeInput, OrganizationalCreateInput>
     instansi?: InstansiUpdateOneRequiredWithoutSchoolYearNestedInput
     classRoom?: ClassRoomUpdateManyWithoutYearNestedInput
-    studentsIn?: StudentUpdateManyWithoutStartYearNestedInput
+    students?: StudentUpdateManyWithoutStartYearNestedInput
   }
 
   export type SchoolYearUncheckedUpdateWithoutCalendarInput = {
@@ -32322,7 +34796,7 @@ export namespace Prisma {
     instansiId?: StringFieldUpdateOperationsInput | string
     organizational?: XOR<OrganizationalUpdateEnvelopeInput, OrganizationalCreateInput>
     classRoom?: ClassRoomUncheckedUpdateManyWithoutYearNestedInput
-    studentsIn?: StudentUncheckedUpdateManyWithoutStartYearNestedInput
+    students?: StudentUncheckedUpdateManyWithoutStartYearNestedInput
   }
 
   export type ClassRoomUpsertWithWhereUniqueWithoutEventInput = {
@@ -32435,6 +34909,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     student?: StudentUpdateManyWithoutMajorNestedInput
     instansi?: InstansiUpdateManyWithoutMajorsNestedInput
+    ClassRoom?: ClassRoomUpdateManyWithoutMajorNestedInput
   }
 
   export type KonsentrasiKeahlianUncheckedUpdateWithoutProgramInput = {
@@ -32446,6 +34921,7 @@ export namespace Prisma {
     instansiIds?: KonsentrasiKeahlianUpdateinstansiIdsInput | Enumerable<string>
     student?: StudentUncheckedUpdateManyWithoutMajorNestedInput
     instansi?: InstansiUncheckedUpdateManyWithoutMajorsNestedInput
+    ClassRoom?: ClassRoomUncheckedUpdateManyWithoutMajorNestedInput
   }
 
   export type KonsentrasiKeahlianUncheckedUpdateManyWithoutKonsentrasiInput = {
@@ -32459,23 +34935,39 @@ export namespace Prisma {
 
   export type StudentCreateManyMajorInput = {
     id?: string
-    userId?: string | null
+    nis: string
+    nisn: string
+    personalId: string
     classRoomIds?: StudentCreateclassRoomIdsInput | Enumerable<string>
     startYearId: string
     instansiId: string
     eventIds?: StudentCreateeventIdsInput | Enumerable<string>
   }
 
+  export type ClassRoomCreateManyMajorInput = {
+    id?: string
+    name: string
+    yearId: string
+    waliId: string
+    level: number
+    studentIds?: ClassRoomCreatestudentIdsInput | Enumerable<string>
+    eventIds?: ClassRoomCreateeventIdsInput | Enumerable<string>
+  }
+
   export type StudentUpdateWithoutMajorInput = {
-    user?: UserUpdateOneWithoutStudentNestedInput
+    nis?: StringFieldUpdateOperationsInput | string
+    nisn?: StringFieldUpdateOperationsInput | string
+    personal?: PersonalUpdateOneRequiredWithoutStudentNestedInput
     classRoom?: ClassRoomUpdateManyWithoutStudentsNestedInput
-    startYear?: SchoolYearUpdateOneRequiredWithoutStudentsInNestedInput
+    startYear?: SchoolYearUpdateOneRequiredWithoutStudentsNestedInput
     instansi?: InstansiUpdateOneRequiredWithoutStudentNestedInput
     event?: CalendarUpdateManyWithoutStudentNestedInput
   }
 
   export type StudentUncheckedUpdateWithoutMajorInput = {
-    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    nis?: StringFieldUpdateOperationsInput | string
+    nisn?: StringFieldUpdateOperationsInput | string
+    personalId?: StringFieldUpdateOperationsInput | string
     classRoomIds?: StudentUpdateclassRoomIdsInput | Enumerable<string>
     startYearId?: StringFieldUpdateOperationsInput | string
     instansiId?: StringFieldUpdateOperationsInput | string
@@ -32485,7 +34977,9 @@ export namespace Prisma {
   }
 
   export type StudentUncheckedUpdateManyWithoutStudentInput = {
-    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    nis?: StringFieldUpdateOperationsInput | string
+    nisn?: StringFieldUpdateOperationsInput | string
+    personalId?: StringFieldUpdateOperationsInput | string
     classRoomIds?: StudentUpdateclassRoomIdsInput | Enumerable<string>
     startYearId?: StringFieldUpdateOperationsInput | string
     instansiId?: StringFieldUpdateOperationsInput | string
@@ -32538,8 +35032,38 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type ClassRoomUpdateWithoutMajorInput = {
+    name?: StringFieldUpdateOperationsInput | string
+    level?: IntFieldUpdateOperationsInput | number
+    year?: SchoolYearUpdateOneRequiredWithoutClassRoomNestedInput
+    wali?: TeacherUpdateOneRequiredWithoutClassRoomNestedInput
+    students?: StudentUpdateManyWithoutClassRoomNestedInput
+    event?: CalendarUpdateManyWithoutClassRoomNestedInput
+  }
+
+  export type ClassRoomUncheckedUpdateWithoutMajorInput = {
+    name?: StringFieldUpdateOperationsInput | string
+    yearId?: StringFieldUpdateOperationsInput | string
+    waliId?: StringFieldUpdateOperationsInput | string
+    level?: IntFieldUpdateOperationsInput | number
+    studentIds?: ClassRoomUpdatestudentIdsInput | Enumerable<string>
+    eventIds?: ClassRoomUpdateeventIdsInput | Enumerable<string>
+    students?: StudentUncheckedUpdateManyWithoutClassRoomNestedInput
+    event?: CalendarUncheckedUpdateManyWithoutClassRoomNestedInput
+  }
+
+  export type ClassRoomUncheckedUpdateManyWithoutClassRoomInput = {
+    name?: StringFieldUpdateOperationsInput | string
+    yearId?: StringFieldUpdateOperationsInput | string
+    waliId?: StringFieldUpdateOperationsInput | string
+    level?: IntFieldUpdateOperationsInput | number
+    studentIds?: ClassRoomUpdatestudentIdsInput | Enumerable<string>
+    eventIds?: ClassRoomUpdateeventIdsInput | Enumerable<string>
+  }
+
   export type AchievementCreateManyElementInput = {
     id?: string
+    no: number
     fase?: Fase
     description: string
     createdAt?: Date | string
@@ -32547,6 +35071,7 @@ export namespace Prisma {
   }
 
   export type AchievementUpdateWithoutElementInput = {
+    no?: IntFieldUpdateOperationsInput | number
     fase?: EnumFaseFieldUpdateOperationsInput | Fase
     description?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -32554,6 +35079,7 @@ export namespace Prisma {
   }
 
   export type AchievementUncheckedUpdateWithoutElementInput = {
+    no?: IntFieldUpdateOperationsInput | number
     fase?: EnumFaseFieldUpdateOperationsInput | Fase
     description?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -32561,6 +35087,7 @@ export namespace Prisma {
   }
 
   export type AchievementUncheckedUpdateManyWithoutAchievementInput = {
+    no?: IntFieldUpdateOperationsInput | number
     fase?: EnumFaseFieldUpdateOperationsInput | Fase
     description?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -32569,6 +35096,7 @@ export namespace Prisma {
 
   export type ElementCreateManyMapelInput = {
     id?: string
+    no: number
     name: string
     description: string
     createdAt?: Date | string
@@ -32576,6 +35104,7 @@ export namespace Prisma {
   }
 
   export type ElementUpdateWithoutMapelInput = {
+    no?: IntFieldUpdateOperationsInput | number
     name?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -32584,6 +35113,7 @@ export namespace Prisma {
   }
 
   export type ElementUncheckedUpdateWithoutMapelInput = {
+    no?: IntFieldUpdateOperationsInput | number
     name?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -32592,6 +35122,7 @@ export namespace Prisma {
   }
 
   export type ElementUncheckedUpdateManyWithoutElementInput = {
+    no?: IntFieldUpdateOperationsInput | number
     name?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -32613,36 +35144,24 @@ export namespace Prisma {
 
   export type TeacherCreateManyInstansiInput = {
     id?: string
-    userId?: string | null
+    personalId: string
     eventIds?: TeacherCreateeventIdsInput | Enumerable<string>
     nip?: string | null
     nrg?: string | null
     noKarpeg?: string | null
-    tmtTugas?: string | null
-    tmtGol?: string | null
+    tmtTugas?: Date | string | null
+    tmtGol?: Date | string | null
     position?: string | null
     rank?: string | null
     period?: string | null
     certificate?: string | null
-    education?: XOR<EducationListCreateEnvelopeInput, Enumerable<EducationCreateInput>>
-    training?: XOR<TrainingListCreateEnvelopeInput, Enumerable<TrainingCreateInput>>
-    employment?: XOR<EmploymentListCreateEnvelopeInput, Enumerable<EmploymentCreateInput>>
-    profession?: XOR<ProfessionListCreateEnvelopeInput, Enumerable<ProfessionCreateInput>>
-    overseas?: XOR<OverseasListCreateEnvelopeInput, Enumerable<OverseasCreateInput>>
-    scientific?: XOR<ScientificListCreateEnvelopeInput, Enumerable<ScientificCreateInput>>
-    organization?: XOR<OrganizationListCreateEnvelopeInput, Enumerable<OrganizationCreateInput>>
-    papers?: XOR<PapersListCreateEnvelopeInput, Enumerable<PapersCreateInput>>
-    innovation?: XOR<InnovationListCreateEnvelopeInput, Enumerable<InnovationCreateInput>>
-    award?: XOR<AwardListCreateEnvelopeInput, Enumerable<AwardCreateInput>>
-    sourcePerson?: XOR<SourcePersonListCreateEnvelopeInput, Enumerable<SourcePersonCreateInput>>
-    contest?: XOR<ContestListCreateEnvelopeInput, Enumerable<ContestCreateInput>>
-    documents?: XOR<DocumentsListCreateEnvelopeInput, Enumerable<DocumentsCreateInput>>
-    additional?: XOR<AdditionalListCreateEnvelopeInput, Enumerable<AdditionalCreateInput>>
   }
 
   export type StudentCreateManyInstansiInput = {
     id?: string
-    userId?: string | null
+    nis: string
+    nisn: string
+    personalId: string
     majorId?: string | null
     classRoomIds?: StudentCreateclassRoomIdsInput | Enumerable<string>
     startYearId: string
@@ -32662,6 +35181,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     program?: ProgramKeahlianUpdateOneRequiredWithoutKonsentrasiNestedInput
     student?: StudentUpdateManyWithoutMajorNestedInput
+    ClassRoom?: ClassRoomUpdateManyWithoutMajorNestedInput
   }
 
   export type KonsentrasiKeahlianUncheckedUpdateWithoutInstansiInput = {
@@ -32673,6 +35193,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     instansiIds?: KonsentrasiKeahlianUpdateinstansiIdsInput | Enumerable<string>
     student?: StudentUncheckedUpdateManyWithoutMajorNestedInput
+    ClassRoom?: ClassRoomUncheckedUpdateManyWithoutMajorNestedInput
   }
 
   export type KonsentrasiKeahlianUncheckedUpdateManyWithoutMajorsInput = {
@@ -32709,7 +35230,7 @@ export namespace Prisma {
     year?: IntFieldUpdateOperationsInput | number
     organizational?: XOR<OrganizationalUpdateEnvelopeInput, OrganizationalCreateInput>
     classRoom?: ClassRoomUpdateManyWithoutYearNestedInput
-    studentsIn?: StudentUpdateManyWithoutStartYearNestedInput
+    students?: StudentUpdateManyWithoutStartYearNestedInput
     calendar?: CalendarUpdateManyWithoutRefNestedInput
   }
 
@@ -32717,7 +35238,7 @@ export namespace Prisma {
     year?: IntFieldUpdateOperationsInput | number
     organizational?: XOR<OrganizationalUpdateEnvelopeInput, OrganizationalCreateInput>
     classRoom?: ClassRoomUncheckedUpdateManyWithoutYearNestedInput
-    studentsIn?: StudentUncheckedUpdateManyWithoutStartYearNestedInput
+    students?: StudentUncheckedUpdateManyWithoutStartYearNestedInput
     calendar?: CalendarUncheckedUpdateManyWithoutRefNestedInput
   }
 
@@ -32730,99 +35251,61 @@ export namespace Prisma {
     nip?: NullableStringFieldUpdateOperationsInput | string | null
     nrg?: NullableStringFieldUpdateOperationsInput | string | null
     noKarpeg?: NullableStringFieldUpdateOperationsInput | string | null
-    tmtTugas?: NullableStringFieldUpdateOperationsInput | string | null
-    tmtGol?: NullableStringFieldUpdateOperationsInput | string | null
+    tmtTugas?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    tmtGol?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     position?: NullableStringFieldUpdateOperationsInput | string | null
     rank?: NullableStringFieldUpdateOperationsInput | string | null
     period?: NullableStringFieldUpdateOperationsInput | string | null
     certificate?: NullableStringFieldUpdateOperationsInput | string | null
-    education?: XOR<EducationListUpdateEnvelopeInput, Enumerable<EducationCreateInput>>
-    training?: XOR<TrainingListUpdateEnvelopeInput, Enumerable<TrainingCreateInput>>
-    employment?: XOR<EmploymentListUpdateEnvelopeInput, Enumerable<EmploymentCreateInput>>
-    profession?: XOR<ProfessionListUpdateEnvelopeInput, Enumerable<ProfessionCreateInput>>
-    overseas?: XOR<OverseasListUpdateEnvelopeInput, Enumerable<OverseasCreateInput>>
-    scientific?: XOR<ScientificListUpdateEnvelopeInput, Enumerable<ScientificCreateInput>>
-    organization?: XOR<OrganizationListUpdateEnvelopeInput, Enumerable<OrganizationCreateInput>>
-    papers?: XOR<PapersListUpdateEnvelopeInput, Enumerable<PapersCreateInput>>
-    innovation?: XOR<InnovationListUpdateEnvelopeInput, Enumerable<InnovationCreateInput>>
-    award?: XOR<AwardListUpdateEnvelopeInput, Enumerable<AwardCreateInput>>
-    sourcePerson?: XOR<SourcePersonListUpdateEnvelopeInput, Enumerable<SourcePersonCreateInput>>
-    contest?: XOR<ContestListUpdateEnvelopeInput, Enumerable<ContestCreateInput>>
-    documents?: XOR<DocumentsListUpdateEnvelopeInput, Enumerable<DocumentsCreateInput>>
-    additional?: XOR<AdditionalListUpdateEnvelopeInput, Enumerable<AdditionalCreateInput>>
-    user?: UserUpdateOneWithoutTeacherNestedInput
+    personal?: PersonalUpdateOneRequiredWithoutTeacherNestedInput
     classRoom?: ClassRoomUpdateManyWithoutWaliNestedInput
     event?: CalendarUpdateManyWithoutTeacherNestedInput
   }
 
   export type TeacherUncheckedUpdateWithoutInstansiInput = {
-    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    personalId?: StringFieldUpdateOperationsInput | string
     eventIds?: TeacherUpdateeventIdsInput | Enumerable<string>
     nip?: NullableStringFieldUpdateOperationsInput | string | null
     nrg?: NullableStringFieldUpdateOperationsInput | string | null
     noKarpeg?: NullableStringFieldUpdateOperationsInput | string | null
-    tmtTugas?: NullableStringFieldUpdateOperationsInput | string | null
-    tmtGol?: NullableStringFieldUpdateOperationsInput | string | null
+    tmtTugas?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    tmtGol?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     position?: NullableStringFieldUpdateOperationsInput | string | null
     rank?: NullableStringFieldUpdateOperationsInput | string | null
     period?: NullableStringFieldUpdateOperationsInput | string | null
     certificate?: NullableStringFieldUpdateOperationsInput | string | null
-    education?: XOR<EducationListUpdateEnvelopeInput, Enumerable<EducationCreateInput>>
-    training?: XOR<TrainingListUpdateEnvelopeInput, Enumerable<TrainingCreateInput>>
-    employment?: XOR<EmploymentListUpdateEnvelopeInput, Enumerable<EmploymentCreateInput>>
-    profession?: XOR<ProfessionListUpdateEnvelopeInput, Enumerable<ProfessionCreateInput>>
-    overseas?: XOR<OverseasListUpdateEnvelopeInput, Enumerable<OverseasCreateInput>>
-    scientific?: XOR<ScientificListUpdateEnvelopeInput, Enumerable<ScientificCreateInput>>
-    organization?: XOR<OrganizationListUpdateEnvelopeInput, Enumerable<OrganizationCreateInput>>
-    papers?: XOR<PapersListUpdateEnvelopeInput, Enumerable<PapersCreateInput>>
-    innovation?: XOR<InnovationListUpdateEnvelopeInput, Enumerable<InnovationCreateInput>>
-    award?: XOR<AwardListUpdateEnvelopeInput, Enumerable<AwardCreateInput>>
-    sourcePerson?: XOR<SourcePersonListUpdateEnvelopeInput, Enumerable<SourcePersonCreateInput>>
-    contest?: XOR<ContestListUpdateEnvelopeInput, Enumerable<ContestCreateInput>>
-    documents?: XOR<DocumentsListUpdateEnvelopeInput, Enumerable<DocumentsCreateInput>>
-    additional?: XOR<AdditionalListUpdateEnvelopeInput, Enumerable<AdditionalCreateInput>>
     classRoom?: ClassRoomUncheckedUpdateManyWithoutWaliNestedInput
     event?: CalendarUncheckedUpdateManyWithoutTeacherNestedInput
   }
 
   export type TeacherUncheckedUpdateManyWithoutTeacherInput = {
-    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    personalId?: StringFieldUpdateOperationsInput | string
     eventIds?: TeacherUpdateeventIdsInput | Enumerable<string>
     nip?: NullableStringFieldUpdateOperationsInput | string | null
     nrg?: NullableStringFieldUpdateOperationsInput | string | null
     noKarpeg?: NullableStringFieldUpdateOperationsInput | string | null
-    tmtTugas?: NullableStringFieldUpdateOperationsInput | string | null
-    tmtGol?: NullableStringFieldUpdateOperationsInput | string | null
+    tmtTugas?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    tmtGol?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     position?: NullableStringFieldUpdateOperationsInput | string | null
     rank?: NullableStringFieldUpdateOperationsInput | string | null
     period?: NullableStringFieldUpdateOperationsInput | string | null
     certificate?: NullableStringFieldUpdateOperationsInput | string | null
-    education?: XOR<EducationListUpdateEnvelopeInput, Enumerable<EducationCreateInput>>
-    training?: XOR<TrainingListUpdateEnvelopeInput, Enumerable<TrainingCreateInput>>
-    employment?: XOR<EmploymentListUpdateEnvelopeInput, Enumerable<EmploymentCreateInput>>
-    profession?: XOR<ProfessionListUpdateEnvelopeInput, Enumerable<ProfessionCreateInput>>
-    overseas?: XOR<OverseasListUpdateEnvelopeInput, Enumerable<OverseasCreateInput>>
-    scientific?: XOR<ScientificListUpdateEnvelopeInput, Enumerable<ScientificCreateInput>>
-    organization?: XOR<OrganizationListUpdateEnvelopeInput, Enumerable<OrganizationCreateInput>>
-    papers?: XOR<PapersListUpdateEnvelopeInput, Enumerable<PapersCreateInput>>
-    innovation?: XOR<InnovationListUpdateEnvelopeInput, Enumerable<InnovationCreateInput>>
-    award?: XOR<AwardListUpdateEnvelopeInput, Enumerable<AwardCreateInput>>
-    sourcePerson?: XOR<SourcePersonListUpdateEnvelopeInput, Enumerable<SourcePersonCreateInput>>
-    contest?: XOR<ContestListUpdateEnvelopeInput, Enumerable<ContestCreateInput>>
-    documents?: XOR<DocumentsListUpdateEnvelopeInput, Enumerable<DocumentsCreateInput>>
-    additional?: XOR<AdditionalListUpdateEnvelopeInput, Enumerable<AdditionalCreateInput>>
   }
 
   export type StudentUpdateWithoutInstansiInput = {
-    user?: UserUpdateOneWithoutStudentNestedInput
+    nis?: StringFieldUpdateOperationsInput | string
+    nisn?: StringFieldUpdateOperationsInput | string
+    personal?: PersonalUpdateOneRequiredWithoutStudentNestedInput
     major?: KonsentrasiKeahlianUpdateOneWithoutStudentNestedInput
     classRoom?: ClassRoomUpdateManyWithoutStudentsNestedInput
-    startYear?: SchoolYearUpdateOneRequiredWithoutStudentsInNestedInput
+    startYear?: SchoolYearUpdateOneRequiredWithoutStudentsNestedInput
     event?: CalendarUpdateManyWithoutStudentNestedInput
   }
 
   export type StudentUncheckedUpdateWithoutInstansiInput = {
-    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    nis?: StringFieldUpdateOperationsInput | string
+    nisn?: StringFieldUpdateOperationsInput | string
+    personalId?: StringFieldUpdateOperationsInput | string
     majorId?: NullableStringFieldUpdateOperationsInput | string | null
     classRoomIds?: StudentUpdateclassRoomIdsInput | Enumerable<string>
     startYearId?: StringFieldUpdateOperationsInput | string
@@ -32854,9 +35337,7 @@ export namespace Prisma {
     passhash?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    personal?: PersonalUpdateOneWithoutUserNestedInput
-    student?: StudentUpdateOneWithoutUserNestedInput
-    teacher?: TeacherUpdateOneWithoutUserNestedInput
+    auth?: AuthUpdateOneWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutRoleInput = {
@@ -32869,9 +35350,7 @@ export namespace Prisma {
     passhash?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    personal?: PersonalUncheckedUpdateOneWithoutUserNestedInput
-    student?: StudentUncheckedUpdateOneWithoutUserNestedInput
-    teacher?: TeacherUncheckedUpdateOneWithoutUserNestedInput
+    auth?: AuthUncheckedUpdateOneWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateManyWithoutUsersInput = {
@@ -32891,6 +35370,7 @@ export namespace Prisma {
     nokk: string
     motherId?: string | null
     waliId?: string | null
+    coupleId?: string | null
     address: XOR<AddressCreateEnvelopeInput, AddressCreateInput>
   }
 
@@ -32899,6 +35379,7 @@ export namespace Prisma {
     nokk: string
     fatherId?: string | null
     waliId?: string | null
+    coupleId?: string | null
     address: XOR<AddressCreateEnvelopeInput, AddressCreateInput>
   }
 
@@ -32907,170 +35388,43 @@ export namespace Prisma {
     nokk: string
     fatherId?: string | null
     motherId?: string | null
+    coupleId?: string | null
     address: XOR<AddressCreateEnvelopeInput, AddressCreateInput>
   }
 
-  export type FamilyTreeUpdateWithoutFatherInput = {
-    nokk?: StringFieldUpdateOperationsInput | string
-    address?: XOR<AddressUpdateEnvelopeInput, AddressCreateInput>
-    mother?: PersonalUpdateOneWithoutMotherNestedInput
-    wali?: PersonalUpdateOneWithoutWaliNestedInput
-    childs?: FamilyTreeChildUpdateManyWithoutKkNestedInput
-  }
-
-  export type FamilyTreeUncheckedUpdateWithoutFatherInput = {
-    nokk?: StringFieldUpdateOperationsInput | string
-    motherId?: NullableStringFieldUpdateOperationsInput | string | null
-    waliId?: NullableStringFieldUpdateOperationsInput | string | null
-    address?: XOR<AddressUpdateEnvelopeInput, AddressCreateInput>
-    childs?: FamilyTreeChildUncheckedUpdateManyWithoutKkNestedInput
-  }
-
-  export type FamilyTreeUncheckedUpdateManyWithoutFatherInput = {
-    nokk?: StringFieldUpdateOperationsInput | string
-    motherId?: NullableStringFieldUpdateOperationsInput | string | null
-    waliId?: NullableStringFieldUpdateOperationsInput | string | null
-    address?: XOR<AddressUpdateEnvelopeInput, AddressCreateInput>
-  }
-
-  export type FamilyTreeUpdateWithoutMotherInput = {
-    nokk?: StringFieldUpdateOperationsInput | string
-    address?: XOR<AddressUpdateEnvelopeInput, AddressCreateInput>
-    father?: PersonalUpdateOneWithoutFatherNestedInput
-    wali?: PersonalUpdateOneWithoutWaliNestedInput
-    childs?: FamilyTreeChildUpdateManyWithoutKkNestedInput
-  }
-
-  export type FamilyTreeUncheckedUpdateWithoutMotherInput = {
-    nokk?: StringFieldUpdateOperationsInput | string
-    fatherId?: NullableStringFieldUpdateOperationsInput | string | null
-    waliId?: NullableStringFieldUpdateOperationsInput | string | null
-    address?: XOR<AddressUpdateEnvelopeInput, AddressCreateInput>
-    childs?: FamilyTreeChildUncheckedUpdateManyWithoutKkNestedInput
-  }
-
-  export type FamilyTreeUncheckedUpdateManyWithoutMotherInput = {
-    nokk?: StringFieldUpdateOperationsInput | string
-    fatherId?: NullableStringFieldUpdateOperationsInput | string | null
-    waliId?: NullableStringFieldUpdateOperationsInput | string | null
-    address?: XOR<AddressUpdateEnvelopeInput, AddressCreateInput>
-  }
-
-  export type FamilyTreeUpdateWithoutWaliInput = {
-    nokk?: StringFieldUpdateOperationsInput | string
-    address?: XOR<AddressUpdateEnvelopeInput, AddressCreateInput>
-    father?: PersonalUpdateOneWithoutFatherNestedInput
-    mother?: PersonalUpdateOneWithoutMotherNestedInput
-    childs?: FamilyTreeChildUpdateManyWithoutKkNestedInput
-  }
-
-  export type FamilyTreeUncheckedUpdateWithoutWaliInput = {
-    nokk?: StringFieldUpdateOperationsInput | string
-    fatherId?: NullableStringFieldUpdateOperationsInput | string | null
-    motherId?: NullableStringFieldUpdateOperationsInput | string | null
-    address?: XOR<AddressUpdateEnvelopeInput, AddressCreateInput>
-    childs?: FamilyTreeChildUncheckedUpdateManyWithoutKkNestedInput
-  }
-
-  export type FamilyTreeUncheckedUpdateManyWithoutWaliInput = {
-    nokk?: StringFieldUpdateOperationsInput | string
-    fatherId?: NullableStringFieldUpdateOperationsInput | string | null
-    motherId?: NullableStringFieldUpdateOperationsInput | string | null
-    address?: XOR<AddressUpdateEnvelopeInput, AddressCreateInput>
-  }
-
-  export type FamilyTreeChildCreateManyKkInput = {
+  export type FamilyTreeCreateManyCoupleInput = {
     id?: string
-    no: number
-    type: ChildType
-    personalId: string
+    nokk: string
+    fatherId?: string | null
+    motherId?: string | null
+    waliId?: string | null
+    address: XOR<AddressCreateEnvelopeInput, AddressCreateInput>
   }
 
-  export type FamilyTreeChildUpdateWithoutKkInput = {
-    no?: IntFieldUpdateOperationsInput | number
-    type?: EnumChildTypeFieldUpdateOperationsInput | ChildType
-    personal?: PersonalUpdateOneRequiredWithoutChildNestedInput
-  }
-
-  export type FamilyTreeChildUncheckedUpdateWithoutKkInput = {
-    no?: IntFieldUpdateOperationsInput | number
-    type?: EnumChildTypeFieldUpdateOperationsInput | ChildType
-    personalId?: StringFieldUpdateOperationsInput | string
-  }
-
-  export type FamilyTreeChildUncheckedUpdateManyWithoutChildsInput = {
-    no?: IntFieldUpdateOperationsInput | number
-    type?: EnumChildTypeFieldUpdateOperationsInput | ChildType
-    personalId?: StringFieldUpdateOperationsInput | string
-  }
-
-  export type ClassRoomUpdateWithoutStudentsInput = {
-    name?: StringFieldUpdateOperationsInput | string
-    year?: SchoolYearUpdateOneRequiredWithoutClassRoomNestedInput
-    wali?: TeacherUpdateOneRequiredWithoutClassRoomNestedInput
-    event?: CalendarUpdateManyWithoutClassRoomNestedInput
-  }
-
-  export type ClassRoomUncheckedUpdateWithoutStudentsInput = {
-    name?: StringFieldUpdateOperationsInput | string
-    yearId?: StringFieldUpdateOperationsInput | string
-    waliId?: StringFieldUpdateOperationsInput | string
-    studentIds?: ClassRoomUpdatestudentIdsInput | Enumerable<string>
-    eventIds?: ClassRoomUpdateeventIdsInput | Enumerable<string>
-    event?: CalendarUncheckedUpdateManyWithoutClassRoomNestedInput
-  }
-
-  export type ClassRoomUncheckedUpdateManyWithoutClassRoomInput = {
-    name?: StringFieldUpdateOperationsInput | string
-    yearId?: StringFieldUpdateOperationsInput | string
-    waliId?: StringFieldUpdateOperationsInput | string
-    studentIds?: ClassRoomUpdatestudentIdsInput | Enumerable<string>
-    eventIds?: ClassRoomUpdateeventIdsInput | Enumerable<string>
-  }
-
-  export type CalendarUpdateWithoutStudentInput = {
-    name?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    start?: DateTimeFieldUpdateOperationsInput | Date | string
-    end?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    color?: StringFieldUpdateOperationsInput | string
-    ref?: SchoolYearUpdateOneRequiredWithoutCalendarNestedInput
-    classRoom?: ClassRoomUpdateManyWithoutEventNestedInput
-    teacher?: TeacherUpdateManyWithoutEventNestedInput
-  }
-
-  export type CalendarUncheckedUpdateWithoutStudentInput = {
-    refId?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    start?: DateTimeFieldUpdateOperationsInput | Date | string
-    end?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    color?: StringFieldUpdateOperationsInput | string
-    classRoomIds?: CalendarUpdateclassRoomIdsInput | Enumerable<string>
-    studentIds?: CalendarUpdatestudentIdsInput | Enumerable<string>
-    teacherIds?: CalendarUpdateteacherIdsInput | Enumerable<string>
-    classRoom?: ClassRoomUncheckedUpdateManyWithoutEventNestedInput
-    teacher?: TeacherUncheckedUpdateManyWithoutEventNestedInput
-  }
-
-  export type CalendarUncheckedUpdateManyWithoutEventInput = {
-    refId?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    start?: DateTimeFieldUpdateOperationsInput | Date | string
-    end?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    color?: StringFieldUpdateOperationsInput | string
-    classRoomIds?: CalendarUpdateclassRoomIdsInput | Enumerable<string>
-    studentIds?: CalendarUpdatestudentIdsInput | Enumerable<string>
-    teacherIds?: CalendarUpdateteacherIdsInput | Enumerable<string>
-  }
-
-  export type ClassRoomCreateManyWaliInput = {
+  export type StudentCreateManyPersonalInput = {
     id?: string
-    name: string
-    yearId: string
-    studentIds?: ClassRoomCreatestudentIdsInput | Enumerable<string>
-    eventIds?: ClassRoomCreateeventIdsInput | Enumerable<string>
+    nis: string
+    nisn: string
+    majorId?: string | null
+    classRoomIds?: StudentCreateclassRoomIdsInput | Enumerable<string>
+    startYearId: string
+    instansiId: string
+    eventIds?: StudentCreateeventIdsInput | Enumerable<string>
+  }
+
+  export type TeacherCreateManyPersonalInput = {
+    id?: string
+    instansiId: string
+    eventIds?: TeacherCreateeventIdsInput | Enumerable<string>
+    nip?: string | null
+    nrg?: string | null
+    noKarpeg?: string | null
+    tmtTugas?: Date | string | null
+    tmtGol?: Date | string | null
+    position?: string | null
+    rank?: string | null
+    period?: string | null
+    certificate?: string | null
   }
 
   export type EducationUpdateInput = {
@@ -33181,9 +35535,260 @@ export namespace Prisma {
     attachment?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
+  export type FamilyTreeUpdateWithoutFatherInput = {
+    nokk?: StringFieldUpdateOperationsInput | string
+    address?: XOR<AddressUpdateEnvelopeInput, AddressCreateInput>
+    mother?: PersonalUpdateOneWithoutMotherNestedInput
+    wali?: PersonalUpdateOneWithoutWaliNestedInput
+    couple?: PersonalUpdateOneWithoutCoupleNestedInput
+    childs?: FamilyTreeChildUpdateManyWithoutKkNestedInput
+  }
+
+  export type FamilyTreeUncheckedUpdateWithoutFatherInput = {
+    nokk?: StringFieldUpdateOperationsInput | string
+    motherId?: NullableStringFieldUpdateOperationsInput | string | null
+    waliId?: NullableStringFieldUpdateOperationsInput | string | null
+    coupleId?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: XOR<AddressUpdateEnvelopeInput, AddressCreateInput>
+    childs?: FamilyTreeChildUncheckedUpdateManyWithoutKkNestedInput
+  }
+
+  export type FamilyTreeUncheckedUpdateManyWithoutFatherInput = {
+    nokk?: StringFieldUpdateOperationsInput | string
+    motherId?: NullableStringFieldUpdateOperationsInput | string | null
+    waliId?: NullableStringFieldUpdateOperationsInput | string | null
+    coupleId?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: XOR<AddressUpdateEnvelopeInput, AddressCreateInput>
+  }
+
+  export type FamilyTreeUpdateWithoutMotherInput = {
+    nokk?: StringFieldUpdateOperationsInput | string
+    address?: XOR<AddressUpdateEnvelopeInput, AddressCreateInput>
+    father?: PersonalUpdateOneWithoutFatherNestedInput
+    wali?: PersonalUpdateOneWithoutWaliNestedInput
+    couple?: PersonalUpdateOneWithoutCoupleNestedInput
+    childs?: FamilyTreeChildUpdateManyWithoutKkNestedInput
+  }
+
+  export type FamilyTreeUncheckedUpdateWithoutMotherInput = {
+    nokk?: StringFieldUpdateOperationsInput | string
+    fatherId?: NullableStringFieldUpdateOperationsInput | string | null
+    waliId?: NullableStringFieldUpdateOperationsInput | string | null
+    coupleId?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: XOR<AddressUpdateEnvelopeInput, AddressCreateInput>
+    childs?: FamilyTreeChildUncheckedUpdateManyWithoutKkNestedInput
+  }
+
+  export type FamilyTreeUncheckedUpdateManyWithoutMotherInput = {
+    nokk?: StringFieldUpdateOperationsInput | string
+    fatherId?: NullableStringFieldUpdateOperationsInput | string | null
+    waliId?: NullableStringFieldUpdateOperationsInput | string | null
+    coupleId?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: XOR<AddressUpdateEnvelopeInput, AddressCreateInput>
+  }
+
+  export type FamilyTreeUpdateWithoutWaliInput = {
+    nokk?: StringFieldUpdateOperationsInput | string
+    address?: XOR<AddressUpdateEnvelopeInput, AddressCreateInput>
+    father?: PersonalUpdateOneWithoutFatherNestedInput
+    mother?: PersonalUpdateOneWithoutMotherNestedInput
+    couple?: PersonalUpdateOneWithoutCoupleNestedInput
+    childs?: FamilyTreeChildUpdateManyWithoutKkNestedInput
+  }
+
+  export type FamilyTreeUncheckedUpdateWithoutWaliInput = {
+    nokk?: StringFieldUpdateOperationsInput | string
+    fatherId?: NullableStringFieldUpdateOperationsInput | string | null
+    motherId?: NullableStringFieldUpdateOperationsInput | string | null
+    coupleId?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: XOR<AddressUpdateEnvelopeInput, AddressCreateInput>
+    childs?: FamilyTreeChildUncheckedUpdateManyWithoutKkNestedInput
+  }
+
+  export type FamilyTreeUncheckedUpdateManyWithoutWaliInput = {
+    nokk?: StringFieldUpdateOperationsInput | string
+    fatherId?: NullableStringFieldUpdateOperationsInput | string | null
+    motherId?: NullableStringFieldUpdateOperationsInput | string | null
+    coupleId?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: XOR<AddressUpdateEnvelopeInput, AddressCreateInput>
+  }
+
+  export type FamilyTreeUpdateWithoutCoupleInput = {
+    nokk?: StringFieldUpdateOperationsInput | string
+    address?: XOR<AddressUpdateEnvelopeInput, AddressCreateInput>
+    father?: PersonalUpdateOneWithoutFatherNestedInput
+    mother?: PersonalUpdateOneWithoutMotherNestedInput
+    wali?: PersonalUpdateOneWithoutWaliNestedInput
+    childs?: FamilyTreeChildUpdateManyWithoutKkNestedInput
+  }
+
+  export type FamilyTreeUncheckedUpdateWithoutCoupleInput = {
+    nokk?: StringFieldUpdateOperationsInput | string
+    fatherId?: NullableStringFieldUpdateOperationsInput | string | null
+    motherId?: NullableStringFieldUpdateOperationsInput | string | null
+    waliId?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: XOR<AddressUpdateEnvelopeInput, AddressCreateInput>
+    childs?: FamilyTreeChildUncheckedUpdateManyWithoutKkNestedInput
+  }
+
+  export type FamilyTreeUncheckedUpdateManyWithoutCoupleInput = {
+    nokk?: StringFieldUpdateOperationsInput | string
+    fatherId?: NullableStringFieldUpdateOperationsInput | string | null
+    motherId?: NullableStringFieldUpdateOperationsInput | string | null
+    waliId?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: XOR<AddressUpdateEnvelopeInput, AddressCreateInput>
+  }
+
+  export type StudentUpdateWithoutPersonalInput = {
+    nis?: StringFieldUpdateOperationsInput | string
+    nisn?: StringFieldUpdateOperationsInput | string
+    major?: KonsentrasiKeahlianUpdateOneWithoutStudentNestedInput
+    classRoom?: ClassRoomUpdateManyWithoutStudentsNestedInput
+    startYear?: SchoolYearUpdateOneRequiredWithoutStudentsNestedInput
+    instansi?: InstansiUpdateOneRequiredWithoutStudentNestedInput
+    event?: CalendarUpdateManyWithoutStudentNestedInput
+  }
+
+  export type StudentUncheckedUpdateWithoutPersonalInput = {
+    nis?: StringFieldUpdateOperationsInput | string
+    nisn?: StringFieldUpdateOperationsInput | string
+    majorId?: NullableStringFieldUpdateOperationsInput | string | null
+    classRoomIds?: StudentUpdateclassRoomIdsInput | Enumerable<string>
+    startYearId?: StringFieldUpdateOperationsInput | string
+    instansiId?: StringFieldUpdateOperationsInput | string
+    eventIds?: StudentUpdateeventIdsInput | Enumerable<string>
+    classRoom?: ClassRoomUncheckedUpdateManyWithoutStudentsNestedInput
+    event?: CalendarUncheckedUpdateManyWithoutStudentNestedInput
+  }
+
+  export type TeacherUpdateWithoutPersonalInput = {
+    nip?: NullableStringFieldUpdateOperationsInput | string | null
+    nrg?: NullableStringFieldUpdateOperationsInput | string | null
+    noKarpeg?: NullableStringFieldUpdateOperationsInput | string | null
+    tmtTugas?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    tmtGol?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    position?: NullableStringFieldUpdateOperationsInput | string | null
+    rank?: NullableStringFieldUpdateOperationsInput | string | null
+    period?: NullableStringFieldUpdateOperationsInput | string | null
+    certificate?: NullableStringFieldUpdateOperationsInput | string | null
+    classRoom?: ClassRoomUpdateManyWithoutWaliNestedInput
+    instansi?: InstansiUpdateOneRequiredWithoutTeacherNestedInput
+    event?: CalendarUpdateManyWithoutTeacherNestedInput
+  }
+
+  export type TeacherUncheckedUpdateWithoutPersonalInput = {
+    instansiId?: StringFieldUpdateOperationsInput | string
+    eventIds?: TeacherUpdateeventIdsInput | Enumerable<string>
+    nip?: NullableStringFieldUpdateOperationsInput | string | null
+    nrg?: NullableStringFieldUpdateOperationsInput | string | null
+    noKarpeg?: NullableStringFieldUpdateOperationsInput | string | null
+    tmtTugas?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    tmtGol?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    position?: NullableStringFieldUpdateOperationsInput | string | null
+    rank?: NullableStringFieldUpdateOperationsInput | string | null
+    period?: NullableStringFieldUpdateOperationsInput | string | null
+    certificate?: NullableStringFieldUpdateOperationsInput | string | null
+    classRoom?: ClassRoomUncheckedUpdateManyWithoutWaliNestedInput
+    event?: CalendarUncheckedUpdateManyWithoutTeacherNestedInput
+  }
+
+  export type FamilyTreeChildCreateManyKkInput = {
+    id?: string
+    no: number
+    type: ChildType
+    personalId: string
+  }
+
+  export type FamilyTreeChildUpdateWithoutKkInput = {
+    no?: IntFieldUpdateOperationsInput | number
+    type?: EnumChildTypeFieldUpdateOperationsInput | ChildType
+    personal?: PersonalUpdateOneRequiredWithoutChildNestedInput
+  }
+
+  export type FamilyTreeChildUncheckedUpdateWithoutKkInput = {
+    no?: IntFieldUpdateOperationsInput | number
+    type?: EnumChildTypeFieldUpdateOperationsInput | ChildType
+    personalId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type FamilyTreeChildUncheckedUpdateManyWithoutChildsInput = {
+    no?: IntFieldUpdateOperationsInput | number
+    type?: EnumChildTypeFieldUpdateOperationsInput | ChildType
+    personalId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type ClassRoomUpdateWithoutStudentsInput = {
+    name?: StringFieldUpdateOperationsInput | string
+    level?: IntFieldUpdateOperationsInput | number
+    year?: SchoolYearUpdateOneRequiredWithoutClassRoomNestedInput
+    wali?: TeacherUpdateOneRequiredWithoutClassRoomNestedInput
+    major?: KonsentrasiKeahlianUpdateOneWithoutClassRoomNestedInput
+    event?: CalendarUpdateManyWithoutClassRoomNestedInput
+  }
+
+  export type ClassRoomUncheckedUpdateWithoutStudentsInput = {
+    name?: StringFieldUpdateOperationsInput | string
+    yearId?: StringFieldUpdateOperationsInput | string
+    waliId?: StringFieldUpdateOperationsInput | string
+    level?: IntFieldUpdateOperationsInput | number
+    majorId?: NullableStringFieldUpdateOperationsInput | string | null
+    studentIds?: ClassRoomUpdatestudentIdsInput | Enumerable<string>
+    eventIds?: ClassRoomUpdateeventIdsInput | Enumerable<string>
+    event?: CalendarUncheckedUpdateManyWithoutClassRoomNestedInput
+  }
+
+  export type CalendarUpdateWithoutStudentInput = {
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    start?: DateTimeFieldUpdateOperationsInput | Date | string
+    end?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    color?: StringFieldUpdateOperationsInput | string
+    ref?: SchoolYearUpdateOneRequiredWithoutCalendarNestedInput
+    classRoom?: ClassRoomUpdateManyWithoutEventNestedInput
+    teacher?: TeacherUpdateManyWithoutEventNestedInput
+  }
+
+  export type CalendarUncheckedUpdateWithoutStudentInput = {
+    refId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    start?: DateTimeFieldUpdateOperationsInput | Date | string
+    end?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    color?: StringFieldUpdateOperationsInput | string
+    classRoomIds?: CalendarUpdateclassRoomIdsInput | Enumerable<string>
+    studentIds?: CalendarUpdatestudentIdsInput | Enumerable<string>
+    teacherIds?: CalendarUpdateteacherIdsInput | Enumerable<string>
+    classRoom?: ClassRoomUncheckedUpdateManyWithoutEventNestedInput
+    teacher?: TeacherUncheckedUpdateManyWithoutEventNestedInput
+  }
+
+  export type CalendarUncheckedUpdateManyWithoutEventInput = {
+    refId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    start?: DateTimeFieldUpdateOperationsInput | Date | string
+    end?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    color?: StringFieldUpdateOperationsInput | string
+    classRoomIds?: CalendarUpdateclassRoomIdsInput | Enumerable<string>
+    studentIds?: CalendarUpdatestudentIdsInput | Enumerable<string>
+    teacherIds?: CalendarUpdateteacherIdsInput | Enumerable<string>
+  }
+
+  export type ClassRoomCreateManyWaliInput = {
+    id?: string
+    name: string
+    yearId: string
+    level: number
+    majorId?: string | null
+    studentIds?: ClassRoomCreatestudentIdsInput | Enumerable<string>
+    eventIds?: ClassRoomCreateeventIdsInput | Enumerable<string>
+  }
+
   export type ClassRoomUpdateWithoutWaliInput = {
     name?: StringFieldUpdateOperationsInput | string
+    level?: IntFieldUpdateOperationsInput | number
     year?: SchoolYearUpdateOneRequiredWithoutClassRoomNestedInput
+    major?: KonsentrasiKeahlianUpdateOneWithoutClassRoomNestedInput
     students?: StudentUpdateManyWithoutClassRoomNestedInput
     event?: CalendarUpdateManyWithoutClassRoomNestedInput
   }
@@ -33191,6 +35796,8 @@ export namespace Prisma {
   export type ClassRoomUncheckedUpdateWithoutWaliInput = {
     name?: StringFieldUpdateOperationsInput | string
     yearId?: StringFieldUpdateOperationsInput | string
+    level?: IntFieldUpdateOperationsInput | number
+    majorId?: NullableStringFieldUpdateOperationsInput | string | null
     studentIds?: ClassRoomUpdatestudentIdsInput | Enumerable<string>
     eventIds?: ClassRoomUpdateeventIdsInput | Enumerable<string>
     students?: StudentUncheckedUpdateManyWithoutClassRoomNestedInput
@@ -33223,15 +35830,19 @@ export namespace Prisma {
   }
 
   export type StudentUpdateWithoutClassRoomInput = {
-    user?: UserUpdateOneWithoutStudentNestedInput
+    nis?: StringFieldUpdateOperationsInput | string
+    nisn?: StringFieldUpdateOperationsInput | string
+    personal?: PersonalUpdateOneRequiredWithoutStudentNestedInput
     major?: KonsentrasiKeahlianUpdateOneWithoutStudentNestedInput
-    startYear?: SchoolYearUpdateOneRequiredWithoutStudentsInNestedInput
+    startYear?: SchoolYearUpdateOneRequiredWithoutStudentsNestedInput
     instansi?: InstansiUpdateOneRequiredWithoutStudentNestedInput
     event?: CalendarUpdateManyWithoutStudentNestedInput
   }
 
   export type StudentUncheckedUpdateWithoutClassRoomInput = {
-    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    nis?: StringFieldUpdateOperationsInput | string
+    nisn?: StringFieldUpdateOperationsInput | string
+    personalId?: StringFieldUpdateOperationsInput | string
     majorId?: NullableStringFieldUpdateOperationsInput | string | null
     classRoomIds?: StudentUpdateclassRoomIdsInput | Enumerable<string>
     startYearId?: StringFieldUpdateOperationsInput | string
@@ -33241,7 +35852,9 @@ export namespace Prisma {
   }
 
   export type StudentUncheckedUpdateManyWithoutStudentsInput = {
-    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    nis?: StringFieldUpdateOperationsInput | string
+    nisn?: StringFieldUpdateOperationsInput | string
+    personalId?: StringFieldUpdateOperationsInput | string
     majorId?: NullableStringFieldUpdateOperationsInput | string | null
     classRoomIds?: StudentUpdateclassRoomIdsInput | Enumerable<string>
     startYearId?: StringFieldUpdateOperationsInput | string
@@ -33278,13 +35891,17 @@ export namespace Prisma {
     id?: string
     name: string
     waliId: string
+    level: number
+    majorId?: string | null
     studentIds?: ClassRoomCreatestudentIdsInput | Enumerable<string>
     eventIds?: ClassRoomCreateeventIdsInput | Enumerable<string>
   }
 
   export type StudentCreateManyStartYearInput = {
     id?: string
-    userId?: string | null
+    nis: string
+    nisn: string
+    personalId: string
     majorId?: string | null
     classRoomIds?: StudentCreateclassRoomIdsInput | Enumerable<string>
     instansiId: string
@@ -33305,7 +35922,9 @@ export namespace Prisma {
 
   export type ClassRoomUpdateWithoutYearInput = {
     name?: StringFieldUpdateOperationsInput | string
+    level?: IntFieldUpdateOperationsInput | number
     wali?: TeacherUpdateOneRequiredWithoutClassRoomNestedInput
+    major?: KonsentrasiKeahlianUpdateOneWithoutClassRoomNestedInput
     students?: StudentUpdateManyWithoutClassRoomNestedInput
     event?: CalendarUpdateManyWithoutClassRoomNestedInput
   }
@@ -33313,6 +35932,8 @@ export namespace Prisma {
   export type ClassRoomUncheckedUpdateWithoutYearInput = {
     name?: StringFieldUpdateOperationsInput | string
     waliId?: StringFieldUpdateOperationsInput | string
+    level?: IntFieldUpdateOperationsInput | number
+    majorId?: NullableStringFieldUpdateOperationsInput | string | null
     studentIds?: ClassRoomUpdatestudentIdsInput | Enumerable<string>
     eventIds?: ClassRoomUpdateeventIdsInput | Enumerable<string>
     students?: StudentUncheckedUpdateManyWithoutClassRoomNestedInput
@@ -33320,7 +35941,9 @@ export namespace Prisma {
   }
 
   export type StudentUpdateWithoutStartYearInput = {
-    user?: UserUpdateOneWithoutStudentNestedInput
+    nis?: StringFieldUpdateOperationsInput | string
+    nisn?: StringFieldUpdateOperationsInput | string
+    personal?: PersonalUpdateOneRequiredWithoutStudentNestedInput
     major?: KonsentrasiKeahlianUpdateOneWithoutStudentNestedInput
     classRoom?: ClassRoomUpdateManyWithoutStudentsNestedInput
     instansi?: InstansiUpdateOneRequiredWithoutStudentNestedInput
@@ -33328,21 +35951,15 @@ export namespace Prisma {
   }
 
   export type StudentUncheckedUpdateWithoutStartYearInput = {
-    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    nis?: StringFieldUpdateOperationsInput | string
+    nisn?: StringFieldUpdateOperationsInput | string
+    personalId?: StringFieldUpdateOperationsInput | string
     majorId?: NullableStringFieldUpdateOperationsInput | string | null
     classRoomIds?: StudentUpdateclassRoomIdsInput | Enumerable<string>
     instansiId?: StringFieldUpdateOperationsInput | string
     eventIds?: StudentUpdateeventIdsInput | Enumerable<string>
     classRoom?: ClassRoomUncheckedUpdateManyWithoutStudentsNestedInput
     event?: CalendarUncheckedUpdateManyWithoutStudentNestedInput
-  }
-
-  export type StudentUncheckedUpdateManyWithoutStudentsInInput = {
-    userId?: NullableStringFieldUpdateOperationsInput | string | null
-    majorId?: NullableStringFieldUpdateOperationsInput | string | null
-    classRoomIds?: StudentUpdateclassRoomIdsInput | Enumerable<string>
-    instansiId?: StringFieldUpdateOperationsInput | string
-    eventIds?: StudentUpdateeventIdsInput | Enumerable<string>
   }
 
   export type CalendarUpdateWithoutRefInput = {
@@ -33383,8 +36000,10 @@ export namespace Prisma {
 
   export type ClassRoomUpdateWithoutEventInput = {
     name?: StringFieldUpdateOperationsInput | string
+    level?: IntFieldUpdateOperationsInput | number
     year?: SchoolYearUpdateOneRequiredWithoutClassRoomNestedInput
     wali?: TeacherUpdateOneRequiredWithoutClassRoomNestedInput
+    major?: KonsentrasiKeahlianUpdateOneWithoutClassRoomNestedInput
     students?: StudentUpdateManyWithoutClassRoomNestedInput
   }
 
@@ -33392,21 +36011,27 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     yearId?: StringFieldUpdateOperationsInput | string
     waliId?: StringFieldUpdateOperationsInput | string
+    level?: IntFieldUpdateOperationsInput | number
+    majorId?: NullableStringFieldUpdateOperationsInput | string | null
     studentIds?: ClassRoomUpdatestudentIdsInput | Enumerable<string>
     eventIds?: ClassRoomUpdateeventIdsInput | Enumerable<string>
     students?: StudentUncheckedUpdateManyWithoutClassRoomNestedInput
   }
 
   export type StudentUpdateWithoutEventInput = {
-    user?: UserUpdateOneWithoutStudentNestedInput
+    nis?: StringFieldUpdateOperationsInput | string
+    nisn?: StringFieldUpdateOperationsInput | string
+    personal?: PersonalUpdateOneRequiredWithoutStudentNestedInput
     major?: KonsentrasiKeahlianUpdateOneWithoutStudentNestedInput
     classRoom?: ClassRoomUpdateManyWithoutStudentsNestedInput
-    startYear?: SchoolYearUpdateOneRequiredWithoutStudentsInNestedInput
+    startYear?: SchoolYearUpdateOneRequiredWithoutStudentsNestedInput
     instansi?: InstansiUpdateOneRequiredWithoutStudentNestedInput
   }
 
   export type StudentUncheckedUpdateWithoutEventInput = {
-    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    nis?: StringFieldUpdateOperationsInput | string
+    nisn?: StringFieldUpdateOperationsInput | string
+    personalId?: StringFieldUpdateOperationsInput | string
     majorId?: NullableStringFieldUpdateOperationsInput | string | null
     classRoomIds?: StudentUpdateclassRoomIdsInput | Enumerable<string>
     startYearId?: StringFieldUpdateOperationsInput | string
@@ -33419,58 +36044,30 @@ export namespace Prisma {
     nip?: NullableStringFieldUpdateOperationsInput | string | null
     nrg?: NullableStringFieldUpdateOperationsInput | string | null
     noKarpeg?: NullableStringFieldUpdateOperationsInput | string | null
-    tmtTugas?: NullableStringFieldUpdateOperationsInput | string | null
-    tmtGol?: NullableStringFieldUpdateOperationsInput | string | null
+    tmtTugas?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    tmtGol?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     position?: NullableStringFieldUpdateOperationsInput | string | null
     rank?: NullableStringFieldUpdateOperationsInput | string | null
     period?: NullableStringFieldUpdateOperationsInput | string | null
     certificate?: NullableStringFieldUpdateOperationsInput | string | null
-    education?: XOR<EducationListUpdateEnvelopeInput, Enumerable<EducationCreateInput>>
-    training?: XOR<TrainingListUpdateEnvelopeInput, Enumerable<TrainingCreateInput>>
-    employment?: XOR<EmploymentListUpdateEnvelopeInput, Enumerable<EmploymentCreateInput>>
-    profession?: XOR<ProfessionListUpdateEnvelopeInput, Enumerable<ProfessionCreateInput>>
-    overseas?: XOR<OverseasListUpdateEnvelopeInput, Enumerable<OverseasCreateInput>>
-    scientific?: XOR<ScientificListUpdateEnvelopeInput, Enumerable<ScientificCreateInput>>
-    organization?: XOR<OrganizationListUpdateEnvelopeInput, Enumerable<OrganizationCreateInput>>
-    papers?: XOR<PapersListUpdateEnvelopeInput, Enumerable<PapersCreateInput>>
-    innovation?: XOR<InnovationListUpdateEnvelopeInput, Enumerable<InnovationCreateInput>>
-    award?: XOR<AwardListUpdateEnvelopeInput, Enumerable<AwardCreateInput>>
-    sourcePerson?: XOR<SourcePersonListUpdateEnvelopeInput, Enumerable<SourcePersonCreateInput>>
-    contest?: XOR<ContestListUpdateEnvelopeInput, Enumerable<ContestCreateInput>>
-    documents?: XOR<DocumentsListUpdateEnvelopeInput, Enumerable<DocumentsCreateInput>>
-    additional?: XOR<AdditionalListUpdateEnvelopeInput, Enumerable<AdditionalCreateInput>>
-    user?: UserUpdateOneWithoutTeacherNestedInput
+    personal?: PersonalUpdateOneRequiredWithoutTeacherNestedInput
     classRoom?: ClassRoomUpdateManyWithoutWaliNestedInput
     instansi?: InstansiUpdateOneRequiredWithoutTeacherNestedInput
   }
 
   export type TeacherUncheckedUpdateWithoutEventInput = {
-    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    personalId?: StringFieldUpdateOperationsInput | string
     instansiId?: StringFieldUpdateOperationsInput | string
     eventIds?: TeacherUpdateeventIdsInput | Enumerable<string>
     nip?: NullableStringFieldUpdateOperationsInput | string | null
     nrg?: NullableStringFieldUpdateOperationsInput | string | null
     noKarpeg?: NullableStringFieldUpdateOperationsInput | string | null
-    tmtTugas?: NullableStringFieldUpdateOperationsInput | string | null
-    tmtGol?: NullableStringFieldUpdateOperationsInput | string | null
+    tmtTugas?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    tmtGol?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     position?: NullableStringFieldUpdateOperationsInput | string | null
     rank?: NullableStringFieldUpdateOperationsInput | string | null
     period?: NullableStringFieldUpdateOperationsInput | string | null
     certificate?: NullableStringFieldUpdateOperationsInput | string | null
-    education?: XOR<EducationListUpdateEnvelopeInput, Enumerable<EducationCreateInput>>
-    training?: XOR<TrainingListUpdateEnvelopeInput, Enumerable<TrainingCreateInput>>
-    employment?: XOR<EmploymentListUpdateEnvelopeInput, Enumerable<EmploymentCreateInput>>
-    profession?: XOR<ProfessionListUpdateEnvelopeInput, Enumerable<ProfessionCreateInput>>
-    overseas?: XOR<OverseasListUpdateEnvelopeInput, Enumerable<OverseasCreateInput>>
-    scientific?: XOR<ScientificListUpdateEnvelopeInput, Enumerable<ScientificCreateInput>>
-    organization?: XOR<OrganizationListUpdateEnvelopeInput, Enumerable<OrganizationCreateInput>>
-    papers?: XOR<PapersListUpdateEnvelopeInput, Enumerable<PapersCreateInput>>
-    innovation?: XOR<InnovationListUpdateEnvelopeInput, Enumerable<InnovationCreateInput>>
-    award?: XOR<AwardListUpdateEnvelopeInput, Enumerable<AwardCreateInput>>
-    sourcePerson?: XOR<SourcePersonListUpdateEnvelopeInput, Enumerable<SourcePersonCreateInput>>
-    contest?: XOR<ContestListUpdateEnvelopeInput, Enumerable<ContestCreateInput>>
-    documents?: XOR<DocumentsListUpdateEnvelopeInput, Enumerable<DocumentsCreateInput>>
-    additional?: XOR<AdditionalListUpdateEnvelopeInput, Enumerable<AdditionalCreateInput>>
     classRoom?: ClassRoomUncheckedUpdateManyWithoutWaliNestedInput
   }
 

@@ -91,11 +91,18 @@ function makeEnum(x) { return x; }
 
 exports.Prisma.AchievementScalarFieldEnum = makeEnum({
   id: 'id',
+  no: 'no',
   fase: 'fase',
   description: 'description',
   elementId: 'elementId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
+});
+
+exports.Prisma.AuthScalarFieldEnum = makeEnum({
+  id: 'id',
+  userId: 'userId',
+  personalId: 'personalId'
 });
 
 exports.Prisma.BidangKeahlianScalarFieldEnum = makeEnum({
@@ -124,12 +131,15 @@ exports.Prisma.ClassRoomScalarFieldEnum = makeEnum({
   name: 'name',
   yearId: 'yearId',
   waliId: 'waliId',
+  level: 'level',
+  majorId: 'majorId',
   studentIds: 'studentIds',
   eventIds: 'eventIds'
 });
 
 exports.Prisma.ElementScalarFieldEnum = makeEnum({
   id: 'id',
+  no: 'no',
   name: 'name',
   description: 'description',
   mapelId: 'mapelId',
@@ -150,7 +160,8 @@ exports.Prisma.FamilyTreeScalarFieldEnum = makeEnum({
   nokk: 'nokk',
   fatherId: 'fatherId',
   motherId: 'motherId',
-  waliId: 'waliId'
+  waliId: 'waliId',
+  coupleId: 'coupleId'
 });
 
 exports.Prisma.InstansiScalarFieldEnum = makeEnum({
@@ -192,7 +203,6 @@ exports.Prisma.PersonalScalarFieldEnum = makeEnum({
   nik: 'nik',
   nisn: 'nisn',
   type: 'type',
-  userId: 'userId',
   fullname: 'fullname',
   gender: 'gender',
   foreign: 'foreign',
@@ -239,7 +249,9 @@ exports.Prisma.SortOrder = makeEnum({
 
 exports.Prisma.StudentScalarFieldEnum = makeEnum({
   id: 'id',
-  userId: 'userId',
+  nis: 'nis',
+  nisn: 'nisn',
+  personalId: 'personalId',
   majorId: 'majorId',
   classRoomIds: 'classRoomIds',
   startYearId: 'startYearId',
@@ -249,7 +261,7 @@ exports.Prisma.StudentScalarFieldEnum = makeEnum({
 
 exports.Prisma.TeacherScalarFieldEnum = makeEnum({
   id: 'id',
-  userId: 'userId',
+  personalId: 'personalId',
   instansiId: 'instansiId',
   eventIds: 'eventIds',
   nip: 'nip',
@@ -353,6 +365,7 @@ exports.Prisma.ModelName = makeEnum({
   Role: 'Role',
   User: 'User',
   Personal: 'Personal',
+  Auth: 'Auth',
   FamilyTree: 'FamilyTree',
   FamilyTreeChild: 'FamilyTreeChild',
   Student: 'Student',
