@@ -10,106 +10,66 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model BidangKeahlian {
-  id        String            @id @default(auto()) @map("_id") @db.ObjectId
-  code      String
-  name      String
-  program   ProgramKeahlian[]
-  createdAt DateTime          @default(now())
-  updatedAt DateTime          @updatedAt
-
-  @@unique([code, name], name: "nameBidang")
+enum TypeTracker {
+  CREATE
+  UPDATE
+  DISABLE
+  RECOVER
 }
 
-model ProgramKeahlian {
-  id          String                @id @default(auto()) @map("_id") @db.ObjectId
-  code        String
-  name        String
-  bidang      BidangKeahlian        @relation(fields: [bidangId], references: [id])
-  bidangId    String                @db.ObjectId
-  konsentrasi KonsentrasiKeahlian[]
-  createdAt   DateTime              @default(now())
-  updatedAt   DateTime              @updatedAt
-
-  @@unique([code, name], name: "nameProgram")
+enum PointTracker {
+  instansi
+  user
+  mapel
+  elemen
+  cp
+  bidang
+  program
+  konsentrasi
+  tp
+  teacher
+  kelas
+  murid
+  jadwal
+  // perangkat
 }
 
-model KonsentrasiKeahlian {
-  id          String          @id @default(auto()) @map("_id") @db.ObjectId
-  code        String
-  name        String
-  program     ProgramKeahlian @relation(fields: [programId], references: [id])
-  programId   String          @db.ObjectId
-  tahun       Int
-  createdAt   DateTime        @default(now())
-  updatedAt   DateTime        @updatedAt
-  student     Student[]
-  instansi    Instansi[]      @relation(fields: [instansiIds], references: [id])
-  instansiIds String[]        @db.ObjectId
-  ClassRoom   ClassRoom[]
+model Tracker {
+  id            String               @id @default(auto()) @map("_id") @db.ObjectId
+  point         PointTracker
+  type          TypeTracker
+  user          User                 @relation(fields: [userId], references: [id])
+  userId        String               @db.ObjectId
+  ref           Instansi             @relation("Trackers", fields: [refId], references: [id])
+  refId         String               @db.ObjectId
+  instansi      Instansi?            @relation("TrackerHistory", fields: [instansiId], references: [id])
+  instansiId    String?              @db.ObjectId
+  createdAt     DateTime             @default(now())
+  mapel         MataPelajaran?       @relation(fields: [mapelId], references: [id])
+  mapelId       String?              @db.ObjectId
+  elemen        Element?             @relation(fields: [elementId], references: [id])
+  elementId     String?              @db.ObjectId
+  cp            Achievement?         @relation(fields: [cpId], references: [id])
+  cpId          String?              @db.ObjectId
+  bidang        BidangKeahlian?      @relation(fields: [bidangId], references: [id])
+  bidangId      String?              @db.ObjectId
+  program       ProgramKeahlian?     @relation(fields: [programId], references: [id])
+  programId     String?              @db.ObjectId
+  konsentrasi   KonsentrasiKeahlian? @relation(fields: [konsentrasiId], references: [id])
+  konsentrasiId String?              @db.ObjectId
+  tp            SchoolYear?          @relation(fields: [tpId], references: [id])
+  tpId          String?              @db.ObjectId
+  teacher       Teacher?             @relation(fields: [teacherId], references: [id])
+  teacherId     String?              @db.ObjectId
+  kelas         ClassRoom?           @relation(fields: [kelasId], references: [id])
+  kelasId       String?              @db.ObjectId
+  murid         Student?             @relation(fields: [muridId], references: [id])
+  muridId       String?              @db.ObjectId
+  jadwal        Schedule?            @relation(fields: [jadwalId], references: [id])
+  jadwalId      String?              @db.ObjectId
 
-  @@unique([programId, name], name: "nameKonsentrasi")
-}
-
-enum Fase {
-  A
-  B
-  C
-  D
-  E
-  F
-  FP
-}
-
-model Achievement {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  no          Int
-  fase        Fase     @default(A)
-  description String
-  element     Element  @relation(fields: [elementId], references: [id])
-  elementId   String   @db.ObjectId
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  @@unique([elementId, fase], name: "nameCP")
-}
-
-model Element {
-  id          String        @id @default(auto()) @map("_id") @db.ObjectId
-  no          Int
-  name        String
-  description String
-  achievement Achievement[]
-  mapel       MataPelajaran @relation(fields: [mapelId], references: [id])
-  mapelId     String        @db.ObjectId
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
-
-  @@unique([mapelId, name], name: "nameElement")
-}
-
-enum Religion {
-  Islam
-  Protestan
-  Katolik
-  Hindu
-  Buddha
-  Khonghucu
-}
-
-model MataPelajaran {
-  id         String    @id @default(auto()) @map("_id") @db.ObjectId
-  no         String
-  code       String
-  name       String
-  religion   Religion?
-  vocational Boolean
-  element    Element[]
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
-
-  @@unique([code, name], name: "nameMapel")
-  @@index([no])
+  @@index([userId])
+  @@index([instansiId])
 }
 
 type Coordinate {
@@ -144,12 +104,126 @@ model Instansi {
   major      Boolean?
   majors     KonsentrasiKeahlian[] @relation(fields: [majorIds], references: [id])
   majorIds   String[]              @db.ObjectId
-  createdAt  DateTime              @default(now())
-  updatedAt  DateTime              @updatedAt
   role       Role[]
   schoolYear SchoolYear[]
   teacher    Teacher[]
   student    Student[]
+  tracker    Tracker[]             @relation("TrackerHistory")
+  history    Tracker[]             @relation("Trackers")
+  disable    Boolean               @default(false)
+
+  @@index([disable])
+}
+
+enum Fase {
+  A
+  B
+  C
+  D
+  E
+  F
+  FP
+}
+
+enum Religion {
+  Islam
+  Protestan
+  Katolik
+  Hindu
+  Buddha
+  Khonghucu
+}
+
+model MataPelajaran {
+  id         String     @id @default(auto()) @map("_id") @db.ObjectId
+  no         String
+  code       String
+  name       String
+  religion   Religion?
+  vocational Boolean
+  element    Element[]
+  schedule   Schedule[]
+  tracker    Tracker[]
+  disable    Boolean    @default(false)
+
+  @@unique([code, name], name: "nameMapel")
+  @@index([no])
+  @@index([disable])
+}
+
+model Element {
+  id               String          @id @default(auto()) @map("_id") @db.ObjectId
+  no               Int
+  name             String
+  description      String
+  achievement      Achievement[]
+  mapel            MataPelajaran   @relation(fields: [mapelId], references: [id])
+  mapelId          String          @db.ObjectId
+  tracker          Tracker[]
+  disable          Boolean         @default(false)
+  scheduleClass    ScheduleClass[] @relation(fields: [scheduleClassIds], references: [id])
+  scheduleClassIds String[]        @db.ObjectId
+
+  @@unique([mapelId, name], name: "nameElement")
+  @@index([disable])
+}
+
+model Achievement {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  no          Int
+  fase        Fase      @default(A)
+  description String
+  element     Element   @relation(fields: [elementId], references: [id])
+  elementId   String    @db.ObjectId
+  tracker     Tracker[]
+  disable     Boolean   @default(false)
+
+  @@unique([elementId, fase], name: "nameCP")
+  @@index([disable])
+}
+
+model BidangKeahlian {
+  id      String            @id @default(auto()) @map("_id") @db.ObjectId
+  code    String
+  name    String
+  program ProgramKeahlian[]
+  tracker Tracker[]
+  disable Boolean           @default(false)
+
+  @@unique([code, name], name: "nameBidang")
+  @@index([disable])
+}
+
+model ProgramKeahlian {
+  id          String                @id @default(auto()) @map("_id") @db.ObjectId
+  code        String
+  name        String
+  bidang      BidangKeahlian        @relation(fields: [bidangId], references: [id])
+  bidangId    String                @db.ObjectId
+  konsentrasi KonsentrasiKeahlian[]
+  tracker     Tracker[]
+  disable     Boolean               @default(false)
+
+  @@unique([code, name], name: "nameProgram")
+  @@index([disable])
+}
+
+model KonsentrasiKeahlian {
+  id          String          @id @default(auto()) @map("_id") @db.ObjectId
+  code        String
+  name        String
+  program     ProgramKeahlian @relation(fields: [programId], references: [id])
+  programId   String          @db.ObjectId
+  tahun       Int
+  student     Student[]
+  instansi    Instansi[]      @relation(fields: [instansiIds], references: [id])
+  instansiIds String[]        @db.ObjectId
+  classRoom   ClassRoom[]
+  tracker     Tracker[]
+  disable     Boolean         @default(false)
+
+  @@unique([programId, name], name: "nameKonsentrasi")
+  @@index([disable])
 }
 
 enum Roles {
@@ -172,19 +246,33 @@ model Role {
 }
 
 model User {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  name      String
-  picture   String?
-  username  String   @unique
-  active    Boolean
-  verify    Boolean  @default(false)
-  password  String
-  passhash  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  role      Role?    @relation(fields: [roleId], references: [id])
-  roleId    String?  @db.ObjectId
-  auth      Auth?
+  id       String    @id @default(auto()) @map("_id") @db.ObjectId
+  name     String
+  picture  String?
+  username String    @unique
+  active   Boolean
+  verify   Boolean   @default(false)
+  password String
+  passhash String
+  role     Role?     @relation(fields: [roleId], references: [id])
+  roleId   String?   @db.ObjectId
+  auth     Auth?
+  tracker  Tracker[]
+  disable  Boolean   @default(false)
+
+  @@index([disable])
+}
+
+enum UploadType {
+  DRIVE
+  STORAGE
+}
+
+model Upload {
+  id   String     @id @default(auto()) @map("_id") @db.ObjectId
+  type UploadType
+  name String
+  url  String
 }
 
 enum Gender {
@@ -373,6 +461,9 @@ model Personal {
   contest      Contest[]
   documents    Documents[]
   additional   Additional[]
+  disable      Boolean          @default(false)
+
+  @@index([disable])
 }
 
 model Auth {
@@ -416,66 +507,6 @@ model FamilyTreeChild {
   personalId String     @unique @db.ObjectId
 }
 
-model Student {
-  id           String               @id @default(auto()) @map("_id") @db.ObjectId
-  nis          String
-  nisn         String
-  personal     Personal             @relation(fields: [personalId], references: [id])
-  personalId   String               @db.ObjectId
-  major        KonsentrasiKeahlian? @relation(fields: [majorId], references: [id])
-  majorId      String?              @db.ObjectId
-  classRoom    ClassRoom[]          @relation(fields: [classRoomIds], references: [id])
-  classRoomIds String[]             @db.ObjectId
-  startYear    SchoolYear           @relation(fields: [startYearId], references: [id])
-  startYearId  String               @db.ObjectId
-  instansi     Instansi             @relation(fields: [instansiId], references: [id])
-  instansiId   String               @db.ObjectId
-  event        Calendar[]           @relation(fields: [eventIds], references: [id])
-  eventIds     String[]             @db.ObjectId
-
-  @@unique([personalId, instansiId], name: "studyIn")
-}
-
-model Teacher {
-  id          String      @id @default(auto()) @map("_id") @db.ObjectId
-  personal    Personal    @relation(fields: [personalId], references: [id])
-  personalId  String      @db.ObjectId
-  classRoom   ClassRoom[]
-  instansi    Instansi    @relation(fields: [instansiId], references: [id])
-  instansiId  String      @db.ObjectId
-  event       Calendar[]  @relation(fields: [eventIds], references: [id])
-  eventIds    String[]    @db.ObjectId
-  nip         String?
-  nrg         String?
-  noKarpeg    String?
-  tmtTugas    DateTime?
-  tmtGol      DateTime?
-  position    String?
-  rank        String?
-  period      String?
-  certificate String?
-
-  @@unique([personalId, instansiId], name: "teachIn")
-}
-
-model ClassRoom {
-  id         String               @id @default(auto()) @map("_id") @db.ObjectId
-  name       String
-  year       SchoolYear           @relation(fields: [yearId], references: [id])
-  yearId     String               @db.ObjectId
-  wali       Teacher              @relation(fields: [waliId], references: [id])
-  waliId     String               @db.ObjectId
-  level      Int
-  major      KonsentrasiKeahlian? @relation(fields: [majorId], references: [id])
-  majorId    String?              @db.ObjectId
-  students   Student[]            @relation(fields: [studentIds], references: [id])
-  studentIds String[]             @db.ObjectId
-  event      Calendar[]           @relation(fields: [eventIds], references: [id])
-  eventIds   String[]             @db.ObjectId
-
-  @@unique([yearId, name], name: "nameClassRoom")
-}
-
 type Organizational {
   kepsek  String  @db.ObjectId
   wakasek String  @db.ObjectId
@@ -494,9 +525,128 @@ model SchoolYear {
   classRoom      ClassRoom[]
   students       Student[]
   calendar       Calendar[]
+  schedule       Schedule[]
+  tracker        Tracker[]
+  disable        Boolean        @default(false)
 
   @@unique([instansiId, year], name: "eSchoolYear")
+  @@index([disable])
 }
+
+model Teacher {
+  id            String          @id @default(auto()) @map("_id") @db.ObjectId
+  personal      Personal        @relation(fields: [personalId], references: [id])
+  personalId    String          @db.ObjectId
+  classRoom     ClassRoom[]
+  instansi      Instansi        @relation(fields: [instansiId], references: [id])
+  instansiId    String          @db.ObjectId
+  event         Calendar[]      @relation(fields: [eventIds], references: [id])
+  eventIds      String[]        @db.ObjectId
+  nip           String?
+  nrg           String?
+  noKarpeg      String?
+  tmtTugas      DateTime?
+  tmtGol        DateTime?
+  position      String?
+  rank          String?
+  period        String?
+  certificate   String?
+  tracker       Tracker[]
+  disable       Boolean         @default(false)
+  scheduleClass ScheduleClass[]
+
+  @@unique([personalId, instansiId], name: "teachIn")
+  @@index([disable])
+}
+
+type RoomProperty {
+  pkl Boolean @default(false)
+}
+
+model ClassRoom {
+  id            String               @id @default(auto()) @map("_id") @db.ObjectId
+  name          String
+  year          SchoolYear           @relation(fields: [yearId], references: [id])
+  yearId        String               @db.ObjectId
+  wali          Teacher              @relation(fields: [waliId], references: [id])
+  waliId        String               @db.ObjectId
+  level         Int
+  property      RoomProperty
+  major         KonsentrasiKeahlian? @relation(fields: [majorId], references: [id])
+  majorId       String?              @db.ObjectId
+  students      Student[]            @relation(fields: [studentIds], references: [id])
+  studentIds    String[]             @db.ObjectId
+  event         Calendar[]           @relation(fields: [eventIds], references: [id])
+  eventIds      String[]             @db.ObjectId
+  disable       Boolean              @default(false)
+  tracker       Tracker[]
+  scheduleClass ScheduleClass[]
+
+  @@unique([yearId, name], name: "nameClassRoom")
+  @@index([disable])
+}
+
+model Student {
+  id           String               @id @default(auto()) @map("_id") @db.ObjectId
+  nis          String
+  nisn         String
+  personal     Personal             @relation(fields: [personalId], references: [id])
+  personalId   String               @db.ObjectId
+  major        KonsentrasiKeahlian? @relation(fields: [majorId], references: [id])
+  majorId      String?              @db.ObjectId
+  classRoom    ClassRoom[]          @relation(fields: [classRoomIds], references: [id])
+  classRoomIds String[]             @db.ObjectId
+  startYear    SchoolYear           @relation(fields: [startYearId], references: [id])
+  startYearId  String               @db.ObjectId
+  instansi     Instansi             @relation(fields: [instansiId], references: [id])
+  instansiId   String               @db.ObjectId
+  event        Calendar[]           @relation(fields: [eventIds], references: [id])
+  eventIds     String[]             @db.ObjectId
+  tracker      Tracker[]
+  disable      Boolean              @default(false)
+
+  @@unique([personalId, instansiId], name: "studyIn")
+  @@index([disable])
+}
+
+model Schedule {
+  id      String          @id @default(auto()) @map("_id") @db.ObjectId
+  year    SchoolYear      @relation(fields: [yearId], references: [id])
+  yearId  String          @db.ObjectId
+  mapel   MataPelajaran   @relation(fields: [mapelId], references: [id])
+  mapelId String          @db.ObjectId
+  disable Boolean         @default(false)
+  tracker Tracker[]
+  mapping ScheduleClass[]
+
+  @@unique([yearId, mapelId])
+  @@index([disable])
+}
+
+model ScheduleClass {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  ref         Schedule  @relation(fields: [refId], references: [id])
+  refId       String    @db.ObjectId
+  hours       Int
+  isEven      Boolean
+  teacher     Teacher   @relation(fields: [teacherId], references: [id])
+  teacherId   String    @db.ObjectId
+  classRoom   ClassRoom @relation(fields: [classRoomId], references: [id])
+  classRoomId String    @db.ObjectId
+  elemen      Element[] @relation(fields: [elemenIds], references: [id])
+  elemenIds   String[]  @db.ObjectId
+
+  @@unique([isEven, refId, classRoomId])
+}
+
+// enum TypeTimeSheet {
+//   CLASS
+// }
+
+// model TimeSheet {
+//   id          String      @id @default(auto()) @map("_id") @db.ObjectId
+//   date        DateTime
+// }
 
 model Calendar {
   id           String      @id @default(auto()) @map("_id") @db.ObjectId

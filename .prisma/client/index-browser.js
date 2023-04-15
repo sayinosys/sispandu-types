@@ -95,8 +95,7 @@ exports.Prisma.AchievementScalarFieldEnum = makeEnum({
   fase: 'fase',
   description: 'description',
   elementId: 'elementId',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  disable: 'disable'
 });
 
 exports.Prisma.AuthScalarFieldEnum = makeEnum({
@@ -109,8 +108,7 @@ exports.Prisma.BidangKeahlianScalarFieldEnum = makeEnum({
   id: 'id',
   code: 'code',
   name: 'name',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  disable: 'disable'
 });
 
 exports.Prisma.CalendarScalarFieldEnum = makeEnum({
@@ -134,7 +132,8 @@ exports.Prisma.ClassRoomScalarFieldEnum = makeEnum({
   level: 'level',
   majorId: 'majorId',
   studentIds: 'studentIds',
-  eventIds: 'eventIds'
+  eventIds: 'eventIds',
+  disable: 'disable'
 });
 
 exports.Prisma.ElementScalarFieldEnum = makeEnum({
@@ -143,8 +142,8 @@ exports.Prisma.ElementScalarFieldEnum = makeEnum({
   name: 'name',
   description: 'description',
   mapelId: 'mapelId',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  disable: 'disable',
+  scheduleClassIds: 'scheduleClassIds'
 });
 
 exports.Prisma.FamilyTreeChildScalarFieldEnum = makeEnum({
@@ -173,8 +172,7 @@ exports.Prisma.InstansiScalarFieldEnum = makeEnum({
   religion: 'religion',
   major: 'major',
   majorIds: 'majorIds',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  disable: 'disable'
 });
 
 exports.Prisma.KonsentrasiKeahlianScalarFieldEnum = makeEnum({
@@ -183,9 +181,8 @@ exports.Prisma.KonsentrasiKeahlianScalarFieldEnum = makeEnum({
   name: 'name',
   programId: 'programId',
   tahun: 'tahun',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  instansiIds: 'instansiIds'
+  instansiIds: 'instansiIds',
+  disable: 'disable'
 });
 
 exports.Prisma.MataPelajaranScalarFieldEnum = makeEnum({
@@ -195,8 +192,7 @@ exports.Prisma.MataPelajaranScalarFieldEnum = makeEnum({
   name: 'name',
   religion: 'religion',
   vocational: 'vocational',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  disable: 'disable'
 });
 
 exports.Prisma.PersonalScalarFieldEnum = makeEnum({
@@ -212,7 +208,8 @@ exports.Prisma.PersonalScalarFieldEnum = makeEnum({
   email: 'email',
   belajarId: 'belajarId',
   nophone: 'nophone',
-  isLife: 'isLife'
+  isLife: 'isLife',
+  disable: 'disable'
 });
 
 exports.Prisma.ProgramKeahlianScalarFieldEnum = makeEnum({
@@ -220,8 +217,7 @@ exports.Prisma.ProgramKeahlianScalarFieldEnum = makeEnum({
   code: 'code',
   name: 'name',
   bidangId: 'bidangId',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  disable: 'disable'
 });
 
 exports.Prisma.QueryMode = makeEnum({
@@ -237,10 +233,28 @@ exports.Prisma.RoleScalarFieldEnum = makeEnum({
   updatedAt: 'updatedAt'
 });
 
+exports.Prisma.ScheduleClassScalarFieldEnum = makeEnum({
+  id: 'id',
+  refId: 'refId',
+  hours: 'hours',
+  isEven: 'isEven',
+  teacherId: 'teacherId',
+  classRoomId: 'classRoomId',
+  elemenIds: 'elemenIds'
+});
+
+exports.Prisma.ScheduleScalarFieldEnum = makeEnum({
+  id: 'id',
+  yearId: 'yearId',
+  mapelId: 'mapelId',
+  disable: 'disable'
+});
+
 exports.Prisma.SchoolYearScalarFieldEnum = makeEnum({
   id: 'id',
   year: 'year',
-  instansiId: 'instansiId'
+  instansiId: 'instansiId',
+  disable: 'disable'
 });
 
 exports.Prisma.SortOrder = makeEnum({
@@ -257,7 +271,8 @@ exports.Prisma.StudentScalarFieldEnum = makeEnum({
   classRoomIds: 'classRoomIds',
   startYearId: 'startYearId',
   instansiId: 'instansiId',
-  eventIds: 'eventIds'
+  eventIds: 'eventIds',
+  disable: 'disable'
 });
 
 exports.Prisma.TeacherScalarFieldEnum = makeEnum({
@@ -273,7 +288,36 @@ exports.Prisma.TeacherScalarFieldEnum = makeEnum({
   position: 'position',
   rank: 'rank',
   period: 'period',
-  certificate: 'certificate'
+  certificate: 'certificate',
+  disable: 'disable'
+});
+
+exports.Prisma.TrackerScalarFieldEnum = makeEnum({
+  id: 'id',
+  point: 'point',
+  type: 'type',
+  userId: 'userId',
+  refId: 'refId',
+  instansiId: 'instansiId',
+  createdAt: 'createdAt',
+  mapelId: 'mapelId',
+  elementId: 'elementId',
+  cpId: 'cpId',
+  bidangId: 'bidangId',
+  programId: 'programId',
+  konsentrasiId: 'konsentrasiId',
+  tpId: 'tpId',
+  teacherId: 'teacherId',
+  kelasId: 'kelasId',
+  muridId: 'muridId',
+  jadwalId: 'jadwalId'
+});
+
+exports.Prisma.UploadScalarFieldEnum = makeEnum({
+  id: 'id',
+  type: 'type',
+  name: 'name',
+  url: 'url'
 });
 
 exports.Prisma.UserScalarFieldEnum = makeEnum({
@@ -285,9 +329,8 @@ exports.Prisma.UserScalarFieldEnum = makeEnum({
   verify: 'verify',
   password: 'password',
   passhash: 'passhash',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  roleId: 'roleId'
+  roleId: 'roleId',
+  disable: 'disable'
 });
 exports.ChildType = makeEnum({
   KANDUNG: 'KANDUNG',
@@ -330,6 +373,22 @@ exports.LevelEdu = makeEnum({
   S3: 'S3'
 });
 
+exports.PointTracker = makeEnum({
+  instansi: 'instansi',
+  user: 'user',
+  mapel: 'mapel',
+  elemen: 'elemen',
+  cp: 'cp',
+  bidang: 'bidang',
+  program: 'program',
+  konsentrasi: 'konsentrasi',
+  tp: 'tp',
+  teacher: 'teacher',
+  kelas: 'kelas',
+  murid: 'murid',
+  jadwal: 'jadwal'
+});
+
 exports.Religion = makeEnum({
   Islam: 'Islam',
   Protestan: 'Protestan',
@@ -355,24 +414,40 @@ exports.TypePersonal = makeEnum({
   WALI: 'WALI'
 });
 
+exports.TypeTracker = makeEnum({
+  CREATE: 'CREATE',
+  UPDATE: 'UPDATE',
+  DISABLE: 'DISABLE',
+  RECOVER: 'RECOVER'
+});
+
+exports.UploadType = makeEnum({
+  DRIVE: 'DRIVE',
+  STORAGE: 'STORAGE'
+});
+
 exports.Prisma.ModelName = makeEnum({
+  Tracker: 'Tracker',
+  Instansi: 'Instansi',
+  MataPelajaran: 'MataPelajaran',
+  Element: 'Element',
+  Achievement: 'Achievement',
   BidangKeahlian: 'BidangKeahlian',
   ProgramKeahlian: 'ProgramKeahlian',
   KonsentrasiKeahlian: 'KonsentrasiKeahlian',
-  Achievement: 'Achievement',
-  Element: 'Element',
-  MataPelajaran: 'MataPelajaran',
-  Instansi: 'Instansi',
   Role: 'Role',
   User: 'User',
+  Upload: 'Upload',
   Personal: 'Personal',
   Auth: 'Auth',
   FamilyTree: 'FamilyTree',
   FamilyTreeChild: 'FamilyTreeChild',
-  Student: 'Student',
+  SchoolYear: 'SchoolYear',
   Teacher: 'Teacher',
   ClassRoom: 'ClassRoom',
-  SchoolYear: 'SchoolYear',
+  Student: 'Student',
+  Schedule: 'Schedule',
+  ScheduleClass: 'ScheduleClass',
   Calendar: 'Calendar'
 });
 
