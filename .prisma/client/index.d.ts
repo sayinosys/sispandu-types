@@ -35,6 +35,17 @@ export type Address = {
 }
 
 /**
+ * Model Google
+ * 
+ */
+export type Google = {
+  scopes: string[]
+  tokens: Prisma.JsonValue
+  createdAt: Date
+  updatedAt: Date
+}
+
+/**
  * Model Born
  * 
  */
@@ -375,6 +386,7 @@ export type User = {
   passhash: string
   roleId: string | null
   disable: boolean
+  google: Google | null
 }
 
 /**
@@ -655,7 +667,7 @@ export type PointTracker = (typeof PointTracker)[keyof typeof PointTracker]
 
 export const Religion: {
   Islam: 'Islam',
-  Protestan: 'Protestan',
+  Kristen: 'Kristen',
   Katolik: 'Katolik',
   Hindu: 'Hindu',
   Buddha: 'Buddha',
@@ -2716,6 +2728,108 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well.
      */
     include?: AddressInclude | null
+  }
+
+
+
+  /**
+   * Model Google
+   */
+
+
+
+
+
+  export type GoogleSelect = {
+    scopes?: boolean
+    tokens?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+
+  export type GoogleGetPayload<S extends boolean | null | undefined | GoogleArgs> =
+    S extends { select: any, include: any } ? 'Please either choose `select` or `include`' :
+    S extends true ? Google :
+    S extends undefined ? never :
+    S extends { include: any } & (GoogleArgs)
+    ? Google 
+    : S extends { select: any } & (GoogleArgs)
+      ? {
+    [P in TruthyKeys<S['select']>]:
+    P extends keyof Google ? Google[P] : never
+  } 
+      : Google
+
+
+
+  export interface GoogleDelegate<GlobalRejectSettings extends Prisma.RejectOnNotFound | Prisma.RejectPerOperation | false | undefined> {
+
+
+
+
+
+
+
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Google.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export class Prisma__GoogleClient<T, Null = never> implements Prisma.PrismaPromise<T> {
+    private readonly _dmmf;
+    private readonly _queryType;
+    private readonly _rootField;
+    private readonly _clientMethod;
+    private readonly _args;
+    private readonly _dataPath;
+    private readonly _errorFormat;
+    private readonly _measurePerformance?;
+    private _isList;
+    private _callsite;
+    private _requestPromise?;
+    readonly [Symbol.toStringTag]: 'PrismaPromise';
+    constructor(_dmmf: runtime.DMMFClass, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
+
+
+    private get _document();
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): Promise<TResult1 | TResult2>;
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): Promise<T | TResult>;
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): Promise<T>;
+  }
+
+
+
+  // Custom InputTypes
+
+  /**
+   * Google without action
+   */
+  export type GoogleArgs = {
+    /**
+     * Select specific fields to fetch from the Google
+     */
+    select?: GoogleSelect | null
   }
 
 
@@ -14541,6 +14655,7 @@ export namespace Prisma {
     passhash?: boolean
     roleId?: boolean
     disable?: boolean
+    google?: boolean | GoogleArgs
     role?: boolean | RoleArgs
     auth?: boolean | AuthArgs
     tracker?: boolean | User$trackerArgs
@@ -14570,6 +14685,7 @@ export namespace Prisma {
     : S extends { select: any } & (UserArgs | UserFindManyArgs)
       ? {
     [P in TruthyKeys<S['select']>]:
+        P extends 'google' ? GoogleGetPayload<S['select'][P]> | null :
         P extends 'role' ? RoleGetPayload<S['select'][P]> | null :
         P extends 'auth' ? AuthGetPayload<S['select'][P]> | null :
         P extends 'tracker' ? Array < TrackerGetPayload<S['select'][P]>>  :
@@ -14971,6 +15087,8 @@ export namespace Prisma {
     private _requestPromise?;
     readonly [Symbol.toStringTag]: 'PrismaPromise';
     constructor(_dmmf: runtime.DMMFClass, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
+
+    google<T extends GoogleArgs= {}>(args?: Subset<T, GoogleArgs>): Prisma__GoogleClient<GoogleGetPayload<T> | Null>;
 
     role<T extends RoleArgs= {}>(args?: Subset<T, RoleArgs>): Prisma__RoleClient<RoleGetPayload<T> | Null>;
 
@@ -29458,6 +29576,7 @@ export namespace Prisma {
     passhash?: StringFilter | string
     roleId?: StringNullableFilter | string | null
     disable?: BoolFilter | boolean
+    google?: XOR<GoogleNullableCompositeFilter, GoogleObjectEqualityInput> | null
     role?: XOR<RoleRelationFilter, RoleWhereInput> | null
     auth?: XOR<AuthRelationFilter, AuthWhereInput> | null
     tracker?: TrackerListRelationFilter
@@ -29474,6 +29593,7 @@ export namespace Prisma {
     passhash?: SortOrder
     roleId?: SortOrder
     disable?: SortOrder
+    google?: GoogleOrderByInput
     role?: RoleOrderByWithRelationInput
     auth?: AuthOrderByWithRelationInput
     tracker?: TrackerOrderByRelationAggregateInput
@@ -31052,6 +31172,7 @@ export namespace Prisma {
     password: string
     passhash: string
     disable?: boolean
+    google?: XOR<GoogleNullableCreateEnvelopeInput, GoogleCreateInput> | null
     role?: RoleCreateNestedOneWithoutUsersInput
     auth?: AuthCreateNestedOneWithoutUserInput
     tracker?: TrackerCreateNestedManyWithoutUserInput
@@ -31068,6 +31189,7 @@ export namespace Prisma {
     passhash: string
     roleId?: string | null
     disable?: boolean
+    google?: XOR<GoogleNullableCreateEnvelopeInput, GoogleCreateInput> | null
     auth?: AuthUncheckedCreateNestedOneWithoutUserInput
     tracker?: TrackerUncheckedCreateNestedManyWithoutUserInput
   }
@@ -31081,6 +31203,7 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     passhash?: StringFieldUpdateOperationsInput | string
     disable?: BoolFieldUpdateOperationsInput | boolean
+    google?: XOR<GoogleNullableUpdateEnvelopeInput, GoogleCreateInput> | null
     role?: RoleUpdateOneWithoutUsersNestedInput
     auth?: AuthUpdateOneWithoutUserNestedInput
     tracker?: TrackerUpdateManyWithoutUserNestedInput
@@ -31096,6 +31219,7 @@ export namespace Prisma {
     passhash?: StringFieldUpdateOperationsInput | string
     roleId?: NullableStringFieldUpdateOperationsInput | string | null
     disable?: BoolFieldUpdateOperationsInput | boolean
+    google?: XOR<GoogleNullableUpdateEnvelopeInput, GoogleCreateInput> | null
     auth?: AuthUncheckedUpdateOneWithoutUserNestedInput
     tracker?: TrackerUncheckedUpdateManyWithoutUserNestedInput
   }
@@ -31111,6 +31235,7 @@ export namespace Prisma {
     passhash: string
     roleId?: string | null
     disable?: boolean
+    google?: XOR<GoogleNullableCreateEnvelopeInput, GoogleCreateInput> | null
   }
 
   export type UserUpdateManyMutationInput = {
@@ -31122,6 +31247,7 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     passhash?: StringFieldUpdateOperationsInput | string
     disable?: BoolFieldUpdateOperationsInput | boolean
+    google?: XOR<GoogleNullableUpdateEnvelopeInput, GoogleCreateInput> | null
   }
 
   export type UserUncheckedUpdateManyInput = {
@@ -31134,6 +31260,7 @@ export namespace Prisma {
     passhash?: StringFieldUpdateOperationsInput | string
     roleId?: NullableStringFieldUpdateOperationsInput | string | null
     disable?: BoolFieldUpdateOperationsInput | boolean
+    google?: XOR<GoogleNullableUpdateEnvelopeInput, GoogleCreateInput> | null
   }
 
   export type UploadCreateInput = {
@@ -33004,6 +33131,20 @@ export namespace Prisma {
     _max?: NestedEnumRolesFilter
   }
 
+  export type GoogleNullableCompositeFilter = {
+    equals?: GoogleObjectEqualityInput | null
+    is?: GoogleWhereInput | null
+    isNot?: GoogleWhereInput | null
+    isSet?: boolean
+  }
+
+  export type GoogleObjectEqualityInput = {
+    scopes?: Enumerable<string>
+    tokens: InputJsonValue
+    createdAt: Date | string
+    updatedAt: Date | string
+  }
+
   export type RoleRelationFilter = {
     is?: RoleWhereInput | null
     isNot?: RoleWhereInput | null
@@ -33012,6 +33153,13 @@ export namespace Prisma {
   export type AuthRelationFilter = {
     is?: AuthWhereInput | null
     isNot?: AuthWhereInput | null
+  }
+
+  export type GoogleOrderByInput = {
+    scopes?: SortOrder
+    tokens?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
   }
 
   export type UserCountOrderByAggregateInput = {
@@ -35333,6 +35481,17 @@ export namespace Prisma {
     deleteMany?: Enumerable<UserScalarWhereInput>
   }
 
+  export type GoogleNullableCreateEnvelopeInput = {
+    set?: GoogleCreateInput | null
+  }
+
+  export type GoogleCreateInput = {
+    scopes?: GoogleCreatescopesInput | Enumerable<string>
+    tokens: InputJsonValue
+    createdAt: Date | string
+    updatedAt: Date | string
+  }
+
   export type RoleCreateNestedOneWithoutUsersInput = {
     create?: XOR<RoleCreateWithoutUsersInput, RoleUncheckedCreateWithoutUsersInput>
     connectOrCreate?: RoleCreateOrConnectWithoutUsersInput
@@ -35363,6 +35522,12 @@ export namespace Prisma {
     connectOrCreate?: Enumerable<TrackerCreateOrConnectWithoutUserInput>
     createMany?: TrackerCreateManyUserInputEnvelope
     connect?: Enumerable<TrackerWhereUniqueInput>
+  }
+
+  export type GoogleNullableUpdateEnvelopeInput = {
+    set?: GoogleCreateInput | null
+    upsert?: GoogleUpsertInput
+    unset?: boolean
   }
 
   export type RoleUpdateOneWithoutUsersNestedInput = {
@@ -37733,6 +37898,16 @@ export namespace Prisma {
     _max?: NestedEnumRolesFilter
   }
 
+  export type GoogleWhereInput = {
+    AND?: Enumerable<GoogleWhereInput>
+    OR?: Enumerable<GoogleWhereInput>
+    NOT?: Enumerable<GoogleWhereInput>
+    scopes?: StringNullableListFilter
+    tokens?: JsonFilter
+    createdAt?: DateTimeFilter | Date | string
+    updatedAt?: DateTimeFilter | Date | string
+  }
+
   export type NestedEnumUploadTypeFilter = {
     equals?: UploadType
     in?: Enumerable<UploadType>
@@ -38032,6 +38207,7 @@ export namespace Prisma {
     password: string
     passhash: string
     disable?: boolean
+    google?: XOR<GoogleNullableCreateEnvelopeInput, GoogleCreateInput> | null
     role?: RoleCreateNestedOneWithoutUsersInput
     auth?: AuthCreateNestedOneWithoutUserInput
   }
@@ -38047,6 +38223,7 @@ export namespace Prisma {
     passhash: string
     roleId?: string | null
     disable?: boolean
+    google?: XOR<GoogleNullableCreateEnvelopeInput, GoogleCreateInput> | null
     auth?: AuthUncheckedCreateNestedOneWithoutUserInput
   }
 
@@ -38469,6 +38646,7 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     passhash?: StringFieldUpdateOperationsInput | string
     disable?: BoolFieldUpdateOperationsInput | boolean
+    google?: XOR<GoogleNullableUpdateEnvelopeInput, GoogleCreateInput> | null
     role?: RoleUpdateOneWithoutUsersNestedInput
     auth?: AuthUpdateOneWithoutUserNestedInput
   }
@@ -38483,6 +38661,7 @@ export namespace Prisma {
     passhash?: StringFieldUpdateOperationsInput | string
     roleId?: NullableStringFieldUpdateOperationsInput | string | null
     disable?: BoolFieldUpdateOperationsInput | boolean
+    google?: XOR<GoogleNullableUpdateEnvelopeInput, GoogleCreateInput> | null
     auth?: AuthUncheckedUpdateOneWithoutUserNestedInput
   }
 
@@ -40507,6 +40686,7 @@ export namespace Prisma {
     password: string
     passhash: string
     disable?: boolean
+    google?: XOR<GoogleNullableCreateEnvelopeInput, GoogleCreateInput> | null
     auth?: AuthCreateNestedOneWithoutUserInput
     tracker?: TrackerCreateNestedManyWithoutUserInput
   }
@@ -40521,6 +40701,7 @@ export namespace Prisma {
     password: string
     passhash: string
     disable?: boolean
+    google?: XOR<GoogleNullableCreateEnvelopeInput, GoogleCreateInput> | null
     auth?: AuthUncheckedCreateNestedOneWithoutUserInput
     tracker?: TrackerUncheckedCreateNestedManyWithoutUserInput
   }
@@ -40606,6 +40787,10 @@ export namespace Prisma {
     disable?: BoolFilter | boolean
   }
 
+  export type GoogleCreatescopesInput = {
+    set: Enumerable<string>
+  }
+
   export type RoleCreateWithoutUsersInput = {
     id?: string
     key: Roles
@@ -40689,6 +40874,11 @@ export namespace Prisma {
 
   export type TrackerCreateManyUserInputEnvelope = {
     data: Enumerable<TrackerCreateManyUserInput>
+  }
+
+  export type GoogleUpsertInput = {
+    set: GoogleCreateInput | null
+    update: GoogleUpdateInput
   }
 
   export type RoleUpsertWithoutUsersInput = {
@@ -41258,6 +41448,7 @@ export namespace Prisma {
     password: string
     passhash: string
     disable?: boolean
+    google?: XOR<GoogleNullableCreateEnvelopeInput, GoogleCreateInput> | null
     role?: RoleCreateNestedOneWithoutUsersInput
     tracker?: TrackerCreateNestedManyWithoutUserInput
   }
@@ -41273,6 +41464,7 @@ export namespace Prisma {
     passhash: string
     roleId?: string | null
     disable?: boolean
+    google?: XOR<GoogleNullableCreateEnvelopeInput, GoogleCreateInput> | null
     tracker?: TrackerUncheckedCreateNestedManyWithoutUserInput
   }
 
@@ -41380,6 +41572,7 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     passhash?: StringFieldUpdateOperationsInput | string
     disable?: BoolFieldUpdateOperationsInput | boolean
+    google?: XOR<GoogleNullableUpdateEnvelopeInput, GoogleCreateInput> | null
     role?: RoleUpdateOneWithoutUsersNestedInput
     tracker?: TrackerUpdateManyWithoutUserNestedInput
   }
@@ -41394,6 +41587,7 @@ export namespace Prisma {
     passhash?: StringFieldUpdateOperationsInput | string
     roleId?: NullableStringFieldUpdateOperationsInput | string | null
     disable?: BoolFieldUpdateOperationsInput | boolean
+    google?: XOR<GoogleNullableUpdateEnvelopeInput, GoogleCreateInput> | null
     tracker?: TrackerUncheckedUpdateManyWithoutUserNestedInput
   }
 
@@ -44871,6 +45065,17 @@ export namespace Prisma {
     is?: CoordinateWhereInput
     isNot?: CoordinateWhereInput
   }
+  export type JsonFilter = 
+    | PatchUndefined<
+        Either<Required<JsonFilterBase>, Exclude<keyof Required<JsonFilterBase>, 'path'>>,
+        Required<JsonFilterBase>
+      >
+    | OptionalFlat<Omit<Required<JsonFilterBase>, 'path'>>
+
+  export type JsonFilterBase = {
+    equals?: InputJsonValue
+    not?: InputJsonValue
+  }
 
   export type EnumLevelEduFilter = {
     equals?: LevelEdu
@@ -45932,6 +46137,7 @@ export namespace Prisma {
     password: string
     passhash: string
     disable?: boolean
+    google?: XOR<GoogleNullableCreateEnvelopeInput, GoogleCreateInput> | null
   }
 
   export type UserUpdateWithoutRoleInput = {
@@ -45943,6 +46149,7 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     passhash?: StringFieldUpdateOperationsInput | string
     disable?: BoolFieldUpdateOperationsInput | boolean
+    google?: XOR<GoogleNullableUpdateEnvelopeInput, GoogleCreateInput> | null
     auth?: AuthUpdateOneWithoutUserNestedInput
     tracker?: TrackerUpdateManyWithoutUserNestedInput
   }
@@ -45956,6 +46163,7 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     passhash?: StringFieldUpdateOperationsInput | string
     disable?: BoolFieldUpdateOperationsInput | boolean
+    google?: XOR<GoogleNullableUpdateEnvelopeInput, GoogleCreateInput> | null
     auth?: AuthUncheckedUpdateOneWithoutUserNestedInput
     tracker?: TrackerUncheckedUpdateManyWithoutUserNestedInput
   }
@@ -45969,6 +46177,7 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     passhash?: StringFieldUpdateOperationsInput | string
     disable?: BoolFieldUpdateOperationsInput | boolean
+    google?: XOR<GoogleNullableUpdateEnvelopeInput, GoogleCreateInput> | null
   }
 
   export type TrackerCreateManyUserInput = {
@@ -45989,6 +46198,13 @@ export namespace Prisma {
     kelasId?: string | null
     muridId?: string | null
     jadwalId?: string | null
+  }
+
+  export type GoogleUpdateInput = {
+    scopes?: GoogleUpdatescopesInput | Enumerable<string>
+    tokens?: InputJsonValue | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type TrackerUpdateWithoutUserInput = {
@@ -47246,6 +47462,11 @@ export namespace Prisma {
   export type CoordinateUpdateInput = {
     longitude?: FloatFieldUpdateOperationsInput | number
     latitude?: FloatFieldUpdateOperationsInput | number
+  }
+
+  export type GoogleUpdatescopesInput = {
+    set?: Enumerable<string>
+    push?: string | Enumerable<string>
   }
 
   export type EnumLevelEduFieldUpdateOperationsInput = {

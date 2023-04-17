@@ -391,7 +391,7 @@ exports.PointTracker = makeEnum({
 
 exports.Religion = makeEnum({
   Islam: 'Islam',
-  Protestan: 'Protestan',
+  Kristen: 'Kristen',
   Katolik: 'Katolik',
   Hindu: 'Hindu',
   Buddha: 'Buddha',

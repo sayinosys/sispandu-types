@@ -127,7 +127,7 @@ enum Fase {
 
 enum Religion {
   Islam
-  Protestan
+  Kristen
   Katolik
   Hindu
   Buddha
@@ -245,6 +245,13 @@ model Role {
   @@unique([instansiId, key], name: "nameRole")
 }
 
+type Google {
+  scopes    String[]
+  tokens    Json
+  createdAt DateTime
+  updatedAt DateTime
+}
+
 model User {
   id       String    @id @default(auto()) @map("_id") @db.ObjectId
   name     String
@@ -259,6 +266,7 @@ model User {
   auth     Auth?
   tracker  Tracker[]
   disable  Boolean   @default(false)
+  google   Google?
 
   @@index([disable])
 }
