@@ -13,12 +13,12 @@ const Prisma = {}
 exports.Prisma = Prisma
 
 /**
- * Prisma Client JS version: 4.12.0
- * Query Engine version: 659ef412370fa3b41cd7bf6e94587c1dfb7f67e7
+ * Prisma Client JS version: 4.13.0
+ * Query Engine version: 1e7af066ee9cb95cf3a403c78d9aab3e6b04f37a
  */
 Prisma.prismaVersion = {
-  client: "4.12.0",
-  engine: "659ef412370fa3b41cd7bf6e94587c1dfb7f67e7"
+  client: "4.13.0",
+  engine: "1e7af066ee9cb95cf3a403c78d9aab3e6b04f37a"
 }
 
 Prisma.PrismaClientKnownRequestError = () => {
@@ -85,33 +85,37 @@ Prisma.NullTypes = {
 /**
  * Enums
  */
-// Based on
-// https://github.com/microsoft/TypeScript/issues/3192#issuecomment-261720275
-function makeEnum(x) { return x; }
 
-exports.Prisma.AchievementScalarFieldEnum = makeEnum({
+exports.Prisma.AchievementScalarFieldEnum = {
   id: 'id',
   no: 'no',
   fase: 'fase',
   description: 'description',
   elementId: 'elementId',
   disable: 'disable'
-});
+};
 
-exports.Prisma.AuthScalarFieldEnum = makeEnum({
+exports.Prisma.AuthScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
   personalId: 'personalId'
-});
+};
 
-exports.Prisma.BidangKeahlianScalarFieldEnum = makeEnum({
+exports.Prisma.BidangKeahlianScalarFieldEnum = {
   id: 'id',
   code: 'code',
   name: 'name',
   disable: 'disable'
-});
+};
 
-exports.Prisma.CalendarScalarFieldEnum = makeEnum({
+exports.Prisma.BookScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  description: 'description',
+  author: 'author'
+};
+
+exports.Prisma.CalendarScalarFieldEnum = {
   id: 'id',
   refId: 'refId',
   name: 'name',
@@ -122,9 +126,9 @@ exports.Prisma.CalendarScalarFieldEnum = makeEnum({
   classRoomIds: 'classRoomIds',
   studentIds: 'studentIds',
   teacherIds: 'teacherIds'
-});
+};
 
-exports.Prisma.ClassRoomScalarFieldEnum = makeEnum({
+exports.Prisma.ClassRoomScalarFieldEnum = {
   id: 'id',
   name: 'name',
   yearId: 'yearId',
@@ -133,10 +137,11 @@ exports.Prisma.ClassRoomScalarFieldEnum = makeEnum({
   majorId: 'majorId',
   studentIds: 'studentIds',
   eventIds: 'eventIds',
-  disable: 'disable'
-});
+  disable: 'disable',
+  teachingIds: 'teachingIds'
+};
 
-exports.Prisma.ElementScalarFieldEnum = makeEnum({
+exports.Prisma.ElementScalarFieldEnum = {
   id: 'id',
   no: 'no',
   name: 'name',
@@ -144,26 +149,26 @@ exports.Prisma.ElementScalarFieldEnum = makeEnum({
   mapelId: 'mapelId',
   disable: 'disable',
   scheduleClassIds: 'scheduleClassIds'
-});
+};
 
-exports.Prisma.FamilyTreeChildScalarFieldEnum = makeEnum({
+exports.Prisma.FamilyTreeChildScalarFieldEnum = {
   id: 'id',
   no: 'no',
   type: 'type',
   kkId: 'kkId',
   personalId: 'personalId'
-});
+};
 
-exports.Prisma.FamilyTreeScalarFieldEnum = makeEnum({
+exports.Prisma.FamilyTreeScalarFieldEnum = {
   id: 'id',
   nokk: 'nokk',
   fatherId: 'fatherId',
   motherId: 'motherId',
   waliId: 'waliId',
   coupleId: 'coupleId'
-});
+};
 
-exports.Prisma.InstansiScalarFieldEnum = makeEnum({
+exports.Prisma.InstansiScalarFieldEnum = {
   id: 'id',
   npsn: 'npsn',
   name: 'name',
@@ -173,9 +178,9 @@ exports.Prisma.InstansiScalarFieldEnum = makeEnum({
   major: 'major',
   majorIds: 'majorIds',
   disable: 'disable'
-});
+};
 
-exports.Prisma.KonsentrasiKeahlianScalarFieldEnum = makeEnum({
+exports.Prisma.KonsentrasiKeahlianScalarFieldEnum = {
   id: 'id',
   code: 'code',
   name: 'name',
@@ -183,19 +188,101 @@ exports.Prisma.KonsentrasiKeahlianScalarFieldEnum = makeEnum({
   tahun: 'tahun',
   instansiIds: 'instansiIds',
   disable: 'disable'
-});
+};
 
-exports.Prisma.MataPelajaranScalarFieldEnum = makeEnum({
+exports.Prisma.LinkScalarFieldEnum = {
   id: 'id',
+  url: 'url',
+  title: 'title',
+  description: 'description',
+  image: 'image',
+  width: 'width',
+  height: 'height',
+  userId: 'userId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.MataPelajaranScalarFieldEnum = {
+  id: 'id',
+  level: 'level',
+  type: 'type',
   no: 'no',
   code: 'code',
   name: 'name',
   religion: 'religion',
-  vocational: 'vocational',
+  programId: 'programId',
+  keahlianid: 'keahlianid',
+  instansiId: 'instansiId',
   disable: 'disable'
-});
+};
 
-exports.Prisma.PersonalScalarFieldEnum = makeEnum({
+exports.Prisma.OLearningScalarFieldEnum = {
+  id: 'id',
+  refId: 'refId',
+  no: 'no',
+  content: 'content',
+  taksonomi: 'taksonomi',
+  sentence: 'sentence'
+};
+
+exports.Prisma.OMaterialScalarFieldEnum = {
+  id: 'id',
+  refId: 'refId',
+  no: 'no',
+  content: 'content',
+  model: 'model'
+};
+
+exports.Prisma.ObjectiveScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  instansiId: 'instansiId',
+  yearId: 'yearId',
+  mapelId: 'mapelId',
+  elementId: 'elementId',
+  achievementId: 'achievementId',
+  code: 'code',
+  kkm: 'kkm',
+  steps: 'steps',
+  subjectMatter: 'subjectMatter',
+  competencie: 'competencie',
+  firstSkill: 'firstSkill',
+  triggerQuest: 'triggerQuest',
+  disable: 'disable',
+  deviceIds: 'deviceIds',
+  toolIds: 'toolIds',
+  mateIds: 'mateIds',
+  methIds: 'methIds',
+  mediaIds: 'mediaIds'
+};
+
+exports.Prisma.OhelperScalarFieldEnum = {
+  id: 'id',
+  type: 'type',
+  name: 'name',
+  toolIds: 'toolIds',
+  mateIds: 'mateIds',
+  methIds: 'methIds',
+  mediaIds: 'mediaIds'
+};
+
+exports.Prisma.OpppScalarFieldEnum = {
+  id: 'id',
+  refId: 'refId',
+  name: 'name',
+  description: 'description'
+};
+
+exports.Prisma.OresourceScalarFieldEnum = {
+  id: 'id',
+  type: 'type',
+  refId: 'refId',
+  linkId: 'linkId',
+  description: 'description'
+};
+
+exports.Prisma.PersonalScalarFieldEnum = {
   id: 'id',
   nik: 'nik',
   nisn: 'nisn',
@@ -210,62 +297,52 @@ exports.Prisma.PersonalScalarFieldEnum = makeEnum({
   nophone: 'nophone',
   isLife: 'isLife',
   disable: 'disable'
-});
+};
 
-exports.Prisma.ProgramKeahlianScalarFieldEnum = makeEnum({
+exports.Prisma.ProgramKeahlianScalarFieldEnum = {
   id: 'id',
   code: 'code',
   name: 'name',
   bidangId: 'bidangId',
   disable: 'disable'
-});
+};
 
-exports.Prisma.QueryMode = makeEnum({
+exports.Prisma.QueryMode = {
   default: 'default',
   insensitive: 'insensitive'
-});
+};
 
-exports.Prisma.RoleScalarFieldEnum = makeEnum({
+exports.Prisma.RoleScalarFieldEnum = {
   id: 'id',
   key: 'key',
   instansiId: 'instansiId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
-});
+};
 
-exports.Prisma.ScheduleClassScalarFieldEnum = makeEnum({
-  id: 'id',
-  refId: 'refId',
-  hours: 'hours',
-  isEven: 'isEven',
-  teacherId: 'teacherId',
-  classRoomId: 'classRoomId',
-  elemenIds: 'elemenIds'
-});
-
-exports.Prisma.ScheduleScalarFieldEnum = makeEnum({
+exports.Prisma.ScheduleScalarFieldEnum = {
   id: 'id',
   yearId: 'yearId',
   mapelId: 'mapelId',
   disable: 'disable'
-});
+};
 
-exports.Prisma.SchoolYearScalarFieldEnum = makeEnum({
+exports.Prisma.SchoolYearScalarFieldEnum = {
   id: 'id',
   year: 'year',
   instansiId: 'instansiId',
   disable: 'disable'
-});
+};
 
-exports.Prisma.SortOrder = makeEnum({
+exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
-});
+};
 
-exports.Prisma.StudentScalarFieldEnum = makeEnum({
+exports.Prisma.StudentScalarFieldEnum = {
   id: 'id',
   nis: 'nis',
-  nisn: 'nisn',
+  lastSchool: 'lastSchool',
   personalId: 'personalId',
   majorId: 'majorId',
   classRoomIds: 'classRoomIds',
@@ -273,9 +350,18 @@ exports.Prisma.StudentScalarFieldEnum = makeEnum({
   instansiId: 'instansiId',
   eventIds: 'eventIds',
   disable: 'disable'
-});
+};
 
-exports.Prisma.TeacherScalarFieldEnum = makeEnum({
+exports.Prisma.TDeviceScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  instansiId: 'instansiId',
+  mapelId: 'mapelId',
+  objectiveIds: 'objectiveIds',
+  disable: 'disable'
+};
+
+exports.Prisma.TeacherScalarFieldEnum = {
   id: 'id',
   personalId: 'personalId',
   instansiId: 'instansiId',
@@ -290,9 +376,20 @@ exports.Prisma.TeacherScalarFieldEnum = makeEnum({
   period: 'period',
   certificate: 'certificate',
   disable: 'disable'
-});
+};
 
-exports.Prisma.TrackerScalarFieldEnum = makeEnum({
+exports.Prisma.TeachingScalarFieldEnum = {
+  id: 'id',
+  refId: 'refId',
+  hours: 'hours',
+  isEven: 'isEven',
+  teacherId: 'teacherId',
+  classRoomIds: 'classRoomIds',
+  elemenIds: 'elemenIds',
+  disable: 'disable'
+};
+
+exports.Prisma.TrackerScalarFieldEnum = {
   id: 'id',
   point: 'point',
   type: 'type',
@@ -310,17 +407,20 @@ exports.Prisma.TrackerScalarFieldEnum = makeEnum({
   teacherId: 'teacherId',
   kelasId: 'kelasId',
   muridId: 'muridId',
-  jadwalId: 'jadwalId'
-});
+  jadwalId: 'jadwalId',
+  mengajarId: 'mengajarId',
+  tujuanId: 'tujuanId',
+  perangkatId: 'perangkatId'
+};
 
-exports.Prisma.UploadScalarFieldEnum = makeEnum({
+exports.Prisma.UploadScalarFieldEnum = {
   id: 'id',
   type: 'type',
   name: 'name',
   url: 'url'
-});
+};
 
-exports.Prisma.UserScalarFieldEnum = makeEnum({
+exports.Prisma.UserScalarFieldEnum = {
   id: 'id',
   name: 'name',
   picture: 'picture',
@@ -331,14 +431,14 @@ exports.Prisma.UserScalarFieldEnum = makeEnum({
   passhash: 'passhash',
   roleId: 'roleId',
   disable: 'disable'
-});
-exports.ChildType = makeEnum({
+};
+exports.ChildType = {
   KANDUNG: 'KANDUNG',
   TIRI: 'TIRI',
   ANGKAT: 'ANGKAT'
-});
+};
 
-exports.Fase = makeEnum({
+exports.Fase = {
   A: 'A',
   B: 'B',
   C: 'C',
@@ -346,21 +446,21 @@ exports.Fase = makeEnum({
   E: 'E',
   F: 'F',
   FP: 'FP'
-});
+};
 
-exports.Gender = makeEnum({
+exports.Gender = {
   L: 'L',
   P: 'P'
-});
+};
 
-exports.Level = makeEnum({
+exports.Level = {
   SD: 'SD',
   SMP: 'SMP',
   SMA: 'SMA',
   SMK: 'SMK'
-});
+};
 
-exports.LevelEdu = makeEnum({
+exports.LevelEdu = {
   SD: 'SD',
   SMP: 'SMP',
   SMA: 'SMA',
@@ -371,9 +471,37 @@ exports.LevelEdu = makeEnum({
   S1: 'S1',
   S2: 'S2',
   S3: 'S3'
-});
+};
 
-exports.PointTracker = makeEnum({
+exports.MataPelajaranType = {
+  UMUM: 'UMUM',
+  PROGRAM: 'PROGRAM',
+  KONSENTRASI: 'KONSENTRASI',
+  MULOK: 'MULOK'
+};
+
+exports.OMaterialModel = {
+  DL: 'DL',
+  IL: 'IL',
+  PBL: 'PBL',
+  PjBL: 'PjBL',
+  TF: 'TF',
+  PSL: 'PSL'
+};
+
+exports.OhelperType = {
+  TOOL: 'TOOL',
+  MATE: 'MATE',
+  METH: 'METH',
+  MEDIA: 'MEDIA'
+};
+
+exports.OresourceType = {
+  URL: 'URL',
+  BOOK: 'BOOK'
+};
+
+exports.PointTracker = {
   instansi: 'instansi',
   user: 'user',
   mapel: 'mapel',
@@ -386,47 +514,68 @@ exports.PointTracker = makeEnum({
   teacher: 'teacher',
   kelas: 'kelas',
   murid: 'murid',
-  jadwal: 'jadwal'
-});
+  jadwal: 'jadwal',
+  mengajar: 'mengajar',
+  acp: 'acp',
+  akm: 'akm',
+  amp: 'amp',
+  atp: 'atp',
+  a_asesmen: 'a_asesmen',
+  perangkat: 'perangkat'
+};
 
-exports.Religion = makeEnum({
+exports.Religion = {
   Islam: 'Islam',
   Kristen: 'Kristen',
   Katolik: 'Katolik',
   Hindu: 'Hindu',
   Buddha: 'Buddha',
   Khonghucu: 'Khonghucu'
-});
+};
 
-exports.Roles = makeEnum({
+exports.Roles = {
   SU: 'SU',
   GURU: 'GURU',
   STAF: 'STAF',
   SISWA: 'SISWA'
-});
+};
 
-exports.TypePersonal = makeEnum({
+exports.Taksonomi = {
+  C1: 'C1',
+  C2: 'C2',
+  C3: 'C3',
+  C4: 'C4',
+  C5: 'C5',
+  C6: 'C6',
+  P1: 'P1',
+  P2: 'P2',
+  P3: 'P3',
+  P4: 'P4',
+  P5: 'P5'
+};
+
+exports.TypePersonal = {
   ADMIN: 'ADMIN',
   GURU: 'GURU',
   SISWA: 'SISWA',
   IBU: 'IBU',
   AYAH: 'AYAH',
   WALI: 'WALI'
-});
+};
 
-exports.TypeTracker = makeEnum({
+exports.TypeTracker = {
   CREATE: 'CREATE',
   UPDATE: 'UPDATE',
   DISABLE: 'DISABLE',
   RECOVER: 'RECOVER'
-});
+};
 
-exports.UploadType = makeEnum({
+exports.UploadType = {
   DRIVE: 'DRIVE',
   STORAGE: 'STORAGE'
-});
+};
 
-exports.Prisma.ModelName = makeEnum({
+exports.Prisma.ModelName = {
   Tracker: 'Tracker',
   Instansi: 'Instansi',
   MataPelajaran: 'MataPelajaran',
@@ -447,9 +596,18 @@ exports.Prisma.ModelName = makeEnum({
   ClassRoom: 'ClassRoom',
   Student: 'Student',
   Schedule: 'Schedule',
-  ScheduleClass: 'ScheduleClass',
+  Teaching: 'Teaching',
+  Link: 'Link',
+  Objective: 'Objective',
+  OMaterial: 'OMaterial',
+  OLearning: 'OLearning',
+  Ohelper: 'Ohelper',
+  Oppp: 'Oppp',
+  Oresource: 'Oresource',
+  Book: 'Book',
+  TDevice: 'TDevice',
   Calendar: 'Calendar'
-});
+};
 
 /**
  * Create the Client

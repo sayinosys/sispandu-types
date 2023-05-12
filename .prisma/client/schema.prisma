@@ -31,7 +31,13 @@ enum PointTracker {
   kelas
   murid
   jadwal
-  // perangkat
+  mengajar
+  acp //analisis c p #
+  akm
+  amp
+  atp
+  a_asesmen //analisisa asesmen #
+  perangkat
 }
 
 model Tracker {
@@ -67,7 +73,14 @@ model Tracker {
   muridId       String?              @db.ObjectId
   jadwal        Schedule?            @relation(fields: [jadwalId], references: [id])
   jadwalId      String?              @db.ObjectId
+  mengajar      Teaching?            @relation(fields: [mengajarId], references: [id])
+  mengajarId    String?              @db.ObjectId
+  tujuan        Objective?           @relation(fields: [tujuanId], references: [id])
+  tujuanId      String?              @db.ObjectId
+  perangkat     TDevice?             @relation(fields: [perangkatId], references: [id])
+  perangkatId   String?              @db.ObjectId
 
+  @@index([point])
   @@index([userId])
   @@index([instansiId])
 }
@@ -111,6 +124,9 @@ model Instansi {
   tracker    Tracker[]             @relation("TrackerHistory")
   history    Tracker[]             @relation("Trackers")
   disable    Boolean               @default(false)
+  unikMapels MataPelajaran[]
+  tDevice    TDevice[]
+  objective  Objective[]
 
   @@index([disable])
 }
@@ -134,17 +150,33 @@ enum Religion {
   Khonghucu
 }
 
+enum MataPelajaranType {
+  UMUM
+  PROGRAM
+  KONSENTRASI
+  MULOK
+}
+
 model MataPelajaran {
-  id         String     @id @default(auto()) @map("_id") @db.ObjectId
+  id         String               @id @default(auto()) @map("_id") @db.ObjectId
+  level      Level?
+  type       MataPelajaranType    @default(UMUM)
   no         String
   code       String
   name       String
   religion   Religion?
-  vocational Boolean
+  program    ProgramKeahlian?     @relation(fields: [programId], references: [id])
+  programId  String?              @db.ObjectId
+  keahlian   KonsentrasiKeahlian? @relation(fields: [keahlianid], references: [id])
+  keahlianid String?              @db.ObjectId
+  instansi   Instansi?            @relation(fields: [instansiId], references: [id])
+  instansiId String?              @db.ObjectId
   element    Element[]
   schedule   Schedule[]
   tracker    Tracker[]
-  disable    Boolean    @default(false)
+  disable    Boolean              @default(false)
+  objective  Objective[]
+  device     TDevice[]
 
   @@unique([code, name], name: "nameMapel")
   @@index([no])
@@ -152,31 +184,33 @@ model MataPelajaran {
 }
 
 model Element {
-  id               String          @id @default(auto()) @map("_id") @db.ObjectId
+  id               String        @id @default(auto()) @map("_id") @db.ObjectId
   no               Int
   name             String
   description      String
   achievement      Achievement[]
-  mapel            MataPelajaran   @relation(fields: [mapelId], references: [id])
-  mapelId          String          @db.ObjectId
+  mapel            MataPelajaran @relation(fields: [mapelId], references: [id])
+  mapelId          String        @db.ObjectId
   tracker          Tracker[]
-  disable          Boolean         @default(false)
-  scheduleClass    ScheduleClass[] @relation(fields: [scheduleClassIds], references: [id])
-  scheduleClassIds String[]        @db.ObjectId
+  disable          Boolean       @default(false)
+  scheduleClass    Teaching[]    @relation(fields: [scheduleClassIds], references: [id])
+  scheduleClassIds String[]      @db.ObjectId
+  objective        Objective[]
 
   @@unique([mapelId, name], name: "nameElement")
   @@index([disable])
 }
 
 model Achievement {
-  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  id          String      @id @default(auto()) @map("_id") @db.ObjectId
   no          Int
-  fase        Fase      @default(A)
+  fase        Fase        @default(A)
   description String
-  element     Element   @relation(fields: [elementId], references: [id])
-  elementId   String    @db.ObjectId
+  element     Element     @relation(fields: [elementId], references: [id])
+  elementId   String      @db.ObjectId
+  objective   Objective[]
   tracker     Tracker[]
-  disable     Boolean   @default(false)
+  disable     Boolean     @default(false)
 
   @@unique([elementId, fase], name: "nameCP")
   @@index([disable])
@@ -203,6 +237,7 @@ model ProgramKeahlian {
   konsentrasi KonsentrasiKeahlian[]
   tracker     Tracker[]
   disable     Boolean               @default(false)
+  mapel       MataPelajaran[]
 
   @@unique([code, name], name: "nameProgram")
   @@index([disable])
@@ -221,6 +256,7 @@ model KonsentrasiKeahlian {
   classRoom   ClassRoom[]
   tracker     Tracker[]
   disable     Boolean         @default(false)
+  mapel       MataPelajaran[]
 
   @@unique([programId, name], name: "nameKonsentrasi")
   @@index([disable])
@@ -253,20 +289,23 @@ type Google {
 }
 
 model User {
-  id       String    @id @default(auto()) @map("_id") @db.ObjectId
-  name     String
-  picture  String?
-  username String    @unique
-  active   Boolean
-  verify   Boolean   @default(false)
-  password String
-  passhash String
-  role     Role?     @relation(fields: [roleId], references: [id])
-  roleId   String?   @db.ObjectId
-  auth     Auth?
-  tracker  Tracker[]
-  disable  Boolean   @default(false)
-  google   Google?
+  id        String      @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  picture   String?
+  username  String      @unique
+  active    Boolean
+  verify    Boolean     @default(false)
+  password  String
+  passhash  String
+  role      Role?       @relation(fields: [roleId], references: [id])
+  roleId    String?     @db.ObjectId
+  auth      Auth?
+  tracker   Tracker[]
+  disable   Boolean     @default(false)
+  google    Google?
+  objective Objective[]
+  link      Link[]
+  tDevice   TDevice[]
 
   @@index([disable])
 }
@@ -439,13 +478,13 @@ model Personal {
   auth         Auth?
   fullname     String
   gender       Gender
-  foreign      Boolean
+  foreign      Boolean?
   country      String?
   religion     Religion
   born         Born
-  email        String
+  email        String?
   belajarId    String?
-  nophone      String
+  nophone      String?
   isLife       Boolean?
   address      Address?
   father       FamilyTree[]     @relation("FamilyTreeFather")
@@ -534,6 +573,7 @@ model SchoolYear {
   students       Student[]
   calendar       Calendar[]
   schedule       Schedule[]
+  objective      Objective[]
   tracker        Tracker[]
   disable        Boolean        @default(false)
 
@@ -542,53 +582,54 @@ model SchoolYear {
 }
 
 model Teacher {
-  id            String          @id @default(auto()) @map("_id") @db.ObjectId
-  personal      Personal        @relation(fields: [personalId], references: [id])
-  personalId    String          @db.ObjectId
-  classRoom     ClassRoom[]
-  instansi      Instansi        @relation(fields: [instansiId], references: [id])
-  instansiId    String          @db.ObjectId
-  event         Calendar[]      @relation(fields: [eventIds], references: [id])
-  eventIds      String[]        @db.ObjectId
-  nip           String?
-  nrg           String?
-  noKarpeg      String?
-  tmtTugas      DateTime?
-  tmtGol        DateTime?
-  position      String?
-  rank          String?
-  period        String?
-  certificate   String?
-  tracker       Tracker[]
-  disable       Boolean         @default(false)
-  scheduleClass ScheduleClass[]
+  id          String      @id @default(auto()) @map("_id") @db.ObjectId
+  personal    Personal    @relation(fields: [personalId], references: [id])
+  personalId  String      @db.ObjectId
+  classRoom   ClassRoom[]
+  instansi    Instansi    @relation(fields: [instansiId], references: [id])
+  instansiId  String      @db.ObjectId
+  event       Calendar[]  @relation(fields: [eventIds], references: [id])
+  eventIds    String[]    @db.ObjectId
+  nip         String?
+  nrg         String?
+  noKarpeg    String?
+  tmtTugas    DateTime?
+  tmtGol      DateTime?
+  position    String?
+  rank        String?
+  period      String?
+  certificate String?
+  tracker     Tracker[]
+  disable     Boolean     @default(false)
+  teaching    Teaching[]
 
   @@unique([personalId, instansiId], name: "teachIn")
   @@index([disable])
 }
 
 type RoomProperty {
-  pkl Boolean @default(false)
+  pkl Boolean?
 }
 
 model ClassRoom {
-  id            String               @id @default(auto()) @map("_id") @db.ObjectId
-  name          String
-  year          SchoolYear           @relation(fields: [yearId], references: [id])
-  yearId        String               @db.ObjectId
-  wali          Teacher              @relation(fields: [waliId], references: [id])
-  waliId        String               @db.ObjectId
-  level         Int
-  property      RoomProperty
-  major         KonsentrasiKeahlian? @relation(fields: [majorId], references: [id])
-  majorId       String?              @db.ObjectId
-  students      Student[]            @relation(fields: [studentIds], references: [id])
-  studentIds    String[]             @db.ObjectId
-  event         Calendar[]           @relation(fields: [eventIds], references: [id])
-  eventIds      String[]             @db.ObjectId
-  disable       Boolean              @default(false)
-  tracker       Tracker[]
-  scheduleClass ScheduleClass[]
+  id          String               @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  year        SchoolYear           @relation(fields: [yearId], references: [id])
+  yearId      String               @db.ObjectId
+  wali        Teacher              @relation(fields: [waliId], references: [id])
+  waliId      String               @db.ObjectId
+  level       Int
+  property    RoomProperty?
+  major       KonsentrasiKeahlian? @relation(fields: [majorId], references: [id])
+  majorId     String?              @db.ObjectId
+  students    Student[]            @relation(fields: [studentIds], references: [id])
+  studentIds  String[]             @db.ObjectId
+  event       Calendar[]           @relation(fields: [eventIds], references: [id])
+  eventIds    String[]             @db.ObjectId
+  disable     Boolean              @default(false)
+  tracker     Tracker[]
+  teaching    Teaching[]           @relation(fields: [teachingIds], references: [id])
+  teachingIds String[]             @db.ObjectId
 
   @@unique([yearId, name], name: "nameClassRoom")
   @@index([disable])
@@ -597,7 +638,7 @@ model ClassRoom {
 model Student {
   id           String               @id @default(auto()) @map("_id") @db.ObjectId
   nis          String
-  nisn         String
+  lastSchool   String
   personal     Personal             @relation(fields: [personalId], references: [id])
   personalId   String               @db.ObjectId
   major        KonsentrasiKeahlian? @relation(fields: [majorId], references: [id])
@@ -618,43 +659,208 @@ model Student {
 }
 
 model Schedule {
-  id      String          @id @default(auto()) @map("_id") @db.ObjectId
-  year    SchoolYear      @relation(fields: [yearId], references: [id])
-  yearId  String          @db.ObjectId
-  mapel   MataPelajaran   @relation(fields: [mapelId], references: [id])
-  mapelId String          @db.ObjectId
-  disable Boolean         @default(false)
-  tracker Tracker[]
-  mapping ScheduleClass[]
+  id       String        @id @default(auto()) @map("_id") @db.ObjectId
+  year     SchoolYear    @relation(fields: [yearId], references: [id])
+  yearId   String        @db.ObjectId
+  mapel    MataPelajaran @relation(fields: [mapelId], references: [id])
+  mapelId  String        @db.ObjectId
+  disable  Boolean       @default(false)
+  tracker  Tracker[]
+  teaching Teaching[]
 
   @@unique([yearId, mapelId])
   @@index([disable])
 }
 
-model ScheduleClass {
-  id          String    @id @default(auto()) @map("_id") @db.ObjectId
-  ref         Schedule  @relation(fields: [refId], references: [id])
-  refId       String    @db.ObjectId
-  hours       Int
-  isEven      Boolean
-  teacher     Teacher   @relation(fields: [teacherId], references: [id])
-  teacherId   String    @db.ObjectId
-  classRoom   ClassRoom @relation(fields: [classRoomId], references: [id])
-  classRoomId String    @db.ObjectId
-  elemen      Element[] @relation(fields: [elemenIds], references: [id])
-  elemenIds   String[]  @db.ObjectId
+model Teaching {
+  id           String      @id @default(auto()) @map("_id") @db.ObjectId
+  ref          Schedule    @relation(fields: [refId], references: [id])
+  refId        String      @db.ObjectId
+  hours        Int
+  isEven       Boolean
+  teacher      Teacher     @relation(fields: [teacherId], references: [id])
+  teacherId    String      @db.ObjectId
+  classRoom    ClassRoom[] @relation(fields: [classRoomIds], references: [id])
+  classRoomIds String[]    @db.ObjectId
+  elemen       Element[]   @relation(fields: [elemenIds], references: [id])
+  elemenIds    String[]    @db.ObjectId
+  disable      Boolean     @default(false)
+  tracker      Tracker[]
 
-  @@unique([isEven, refId, classRoomId])
+  @@unique([isEven, refId, teacherId])
 }
 
-// enum TypeTimeSheet {
-//   CLASS
-// }
+model Link {
+  id          String      @id @default(auto()) @map("_id") @db.ObjectId
+  url         String?     @unique
+  title       String
+  description String?
+  image       String?
+  width       Int?
+  height      Int?
+  user        User        @relation(fields: [userId], references: [id])
+  userId      String      @db.ObjectId
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  objResource Oresource[]
+}
 
-// model TimeSheet {
-//   id          String      @id @default(auto()) @map("_id") @db.ObjectId
-//   date        DateTime
-// }
+model Objective {
+  id            String        @id @default(auto()) @map("_id") @db.ObjectId
+  user          User          @relation(fields: [userId], references: [id])
+  userId        String        @db.ObjectId
+  instansi      Instansi      @relation(fields: [instansiId], references: [id])
+  instansiId    String        @db.ObjectId
+  year          SchoolYear    @relation(fields: [yearId], references: [id])
+  yearId        String        @db.ObjectId
+  mapel         MataPelajaran @relation(fields: [mapelId], references: [id])
+  mapelId       String        @db.ObjectId
+  elemen        Element       @relation(fields: [elementId], references: [id])
+  elementId     String        @db.ObjectId
+  achievement   Achievement   @relation(fields: [achievementId], references: [id])
+  achievementId String        @db.ObjectId
+  code          String
+  kkm           Int
+  steps         Int           @default(1)
+  material      OMaterial[]
+  subjectMatter String
+  competencie   String[]
+  firstSkill    String[]
+  triggerQuest  String[]
+  disable       Boolean       @default(false)
+  tracker       Tracker[]
+  device        TDevice[]     @relation(fields: [deviceIds], references: [id])
+  deviceIds     String[]      @db.ObjectId
+  resourse      Oresource[]
+  ppp           Oppp[]
+  tool          Ohelper[]     @relation("objective_helper_tool", fields: [toolIds], references: [id])
+  toolIds       String[]      @db.ObjectId
+  mate          Ohelper[]     @relation("objective_helper_mate", fields: [mateIds], references: [id])
+  mateIds       String[]      @db.ObjectId
+  meth          Ohelper[]     @relation("objective_helper_meth", fields: [methIds], references: [id])
+  methIds       String[]      @db.ObjectId
+  media         Ohelper[]     @relation("objective_helper_media", fields: [mediaIds], references: [id])
+  mediaIds      String[]      @db.ObjectId
+}
+
+enum OMaterialModel {
+  DL
+  IL
+  PBL
+  PjBL
+  TF
+  PSL
+}
+
+model OMaterial {
+  id       String         @id @default(auto()) @map("_id") @db.ObjectId
+  ref      Objective      @relation(fields: [refId], references: [id])
+  refId    String         @db.ObjectId
+  no       Int
+  content  String
+  model    OMaterialModel
+  learning OLearning[]
+
+  @@unique([no, refId])
+}
+
+enum Taksonomi {
+  C1
+  C2
+  C3
+  C4
+  C5
+  C6
+  P1
+  P2
+  P3
+  P4
+  P5
+}
+
+model OLearning {
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  ref       OMaterial @relation(fields: [refId], references: [id])
+  refId     String    @db.ObjectId
+  no        Int
+  content   String
+  taksonomi Taksonomi
+  sentence  String
+
+  @@unique([no, refId])
+}
+
+enum OhelperType {
+  TOOL
+  MATE
+  METH
+  MEDIA
+}
+
+model Ohelper {
+  id       String      @id @default(auto()) @map("_id") @db.ObjectId
+  type     OhelperType
+  name     String
+  tool     Objective[] @relation("objective_helper_tool", fields: [toolIds], references: [id])
+  toolIds  String[]    @db.ObjectId
+  mate     Objective[] @relation("objective_helper_mate", fields: [mateIds], references: [id])
+  mateIds  String[]    @db.ObjectId
+  meth     Objective[] @relation("objective_helper_meth", fields: [methIds], references: [id])
+  methIds  String[]    @db.ObjectId
+  media    Objective[] @relation("objective_helper_media", fields: [mediaIds], references: [id])
+  mediaIds String[]    @db.ObjectId
+
+  @@unique([type, name])
+  @@index([type])
+}
+
+model Oppp {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  ref         Objective @relation(fields: [refId], references: [id])
+  refId       String    @db.ObjectId
+  name        String
+  description String?
+
+  @@unique([refId, name])
+}
+
+enum OresourceType {
+  URL
+  BOOK
+}
+
+model Oresource {
+  id          String        @id @default(auto()) @map("_id") @db.ObjectId
+  type        OresourceType
+  ref         Objective     @relation(fields: [refId], references: [id])
+  refId       String        @db.ObjectId
+  link        Link?         @relation(fields: [linkId], references: [id])
+  linkId      String?       @db.ObjectId
+  description String?
+
+  @@unique([refId, linkId, description], name: "keys")
+}
+
+model Book {
+  id          String  @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  description String?
+  author      String?
+}
+
+model TDevice {
+  id           String        @id @default(auto()) @map("_id") @db.ObjectId
+  user         User          @relation(fields: [userId], references: [id])
+  userId       String        @db.ObjectId
+  instansi     Instansi      @relation(fields: [instansiId], references: [id])
+  instansiId   String        @db.ObjectId
+  mapel        MataPelajaran @relation(fields: [mapelId], references: [id])
+  mapelId      String        @db.ObjectId
+  objective    Objective[]   @relation(fields: [objectiveIds], references: [id])
+  objectiveIds String[]      @db.ObjectId
+  disable      Boolean       @default(false)
+  tracker      Tracker[]
+}
 
 model Calendar {
   id           String      @id @default(auto()) @map("_id") @db.ObjectId
