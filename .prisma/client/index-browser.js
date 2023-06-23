@@ -4,8 +4,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const {
   Decimal,
   objectEnumValues,
-  makeStrictEnum,
-  Public,
+  makeStrictEnum
 } = require('@prisma/client/runtime/index-browser')
 
 
@@ -14,12 +13,12 @@ const Prisma = {}
 exports.Prisma = Prisma
 
 /**
- * Prisma Client JS version: 4.16.1
- * Query Engine version: b20ead4d3ab9e78ac112966e242ded703f4a052c
+ * Prisma Client JS version: 4.15.0
+ * Query Engine version: 8fbc245156db7124f997f4cecdd8d1219e360944
  */
 Prisma.prismaVersion = {
-  client: "4.16.1",
-  engine: "b20ead4d3ab9e78ac112966e242ded703f4a052c"
+  client: "4.15.0",
+  engine: "8fbc245156db7124f997f4cecdd8d1219e360944"
 }
 
 Prisma.PrismaClientKnownRequestError = () => {
@@ -67,19 +66,8 @@ Prisma.raw = () => {
   throw new Error(`raw is unable to be run in the browser.
 In case this error is unexpected for you, please report it in https://github.com/prisma/prisma/issues`,
 )}
-Prisma.validator = Public.validator
+Prisma.validator = () => (val) => val
 
-/**
-* Extensions
-*/
-Prisma.getExtensionContext = () => {
-  throw new Error(`Extensions.getExtensionContext is unable to be run in the browser.
-In case this error is unexpected for you, please report it in https://github.com/prisma/prisma/issues`,
-)}
-Prisma.defineExtension = () => {
-  throw new Error(`Extensions.defineExtension is unable to be run in the browser.
-In case this error is unexpected for you, please report it in https://github.com/prisma/prisma/issues`,
-)}
 
 /**
  * Shorthand utilities for JSON filtering
@@ -98,67 +86,6 @@ Prisma.NullTypes = {
  * Enums
  */
 
-exports.Prisma.TrackerScalarFieldEnum = {
-  id: 'id',
-  point: 'point',
-  type: 'type',
-  userId: 'userId',
-  refId: 'refId',
-  instansiId: 'instansiId',
-  createdAt: 'createdAt',
-  mapelId: 'mapelId',
-  elementId: 'elementId',
-  cpId: 'cpId',
-  bidangId: 'bidangId',
-  programId: 'programId',
-  konsentrasiId: 'konsentrasiId',
-  tpId: 'tpId',
-  teacherId: 'teacherId',
-  kelasId: 'kelasId',
-  muridId: 'muridId',
-  jadwalId: 'jadwalId',
-  mengajarId: 'mengajarId',
-  tujuanId: 'tujuanId',
-  perangkatId: 'perangkatId',
-  kalenderId: 'kalenderId'
-};
-
-exports.Prisma.InstansiScalarFieldEnum = {
-  id: 'id',
-  npsn: 'npsn',
-  name: 'name',
-  isPrivate: 'isPrivate',
-  level: 'level',
-  religion: 'religion',
-  major: 'major',
-  majorIds: 'majorIds',
-  disable: 'disable'
-};
-
-exports.Prisma.MataPelajaranScalarFieldEnum = {
-  id: 'id',
-  level: 'level',
-  type: 'type',
-  no: 'no',
-  code: 'code',
-  name: 'name',
-  religion: 'religion',
-  programId: 'programId',
-  keahlianid: 'keahlianid',
-  instansiId: 'instansiId',
-  disable: 'disable'
-};
-
-exports.Prisma.ElementScalarFieldEnum = {
-  id: 'id',
-  no: 'no',
-  name: 'name',
-  description: 'description',
-  mapelId: 'mapelId',
-  disable: 'disable',
-  scheduleClassIds: 'scheduleClassIds'
-};
-
 exports.Prisma.AchievementScalarFieldEnum = {
   id: 'id',
   no: 'no',
@@ -168,6 +95,12 @@ exports.Prisma.AchievementScalarFieldEnum = {
   disable: 'disable'
 };
 
+exports.Prisma.AuthScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  personalId: 'personalId'
+};
+
 exports.Prisma.BidangKeahlianScalarFieldEnum = {
   id: 'id',
   code: 'code',
@@ -175,114 +108,24 @@ exports.Prisma.BidangKeahlianScalarFieldEnum = {
   disable: 'disable'
 };
 
-exports.Prisma.ProgramKeahlianScalarFieldEnum = {
-  id: 'id',
-  code: 'code',
-  name: 'name',
-  bidangId: 'bidangId',
-  disable: 'disable'
-};
-
-exports.Prisma.KonsentrasiKeahlianScalarFieldEnum = {
-  id: 'id',
-  code: 'code',
-  name: 'name',
-  programId: 'programId',
-  tahun: 'tahun',
-  instansiIds: 'instansiIds',
-  disable: 'disable'
-};
-
-exports.Prisma.RoleScalarFieldEnum = {
-  id: 'id',
-  key: 'key',
-  instansiId: 'instansiId',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
-exports.Prisma.UserScalarFieldEnum = {
+exports.Prisma.BookScalarFieldEnum = {
   id: 'id',
   name: 'name',
-  picture: 'picture',
-  username: 'username',
-  active: 'active',
-  verify: 'verify',
-  password: 'password',
-  passhash: 'passhash',
-  roleId: 'roleId',
-  disable: 'disable'
+  description: 'description',
+  author: 'author'
 };
 
-exports.Prisma.UploadScalarFieldEnum = {
+exports.Prisma.CalendarScalarFieldEnum = {
   id: 'id',
-  type: 'type',
+  refId: 'refId',
   name: 'name',
-  url: 'url'
-};
-
-exports.Prisma.PersonalScalarFieldEnum = {
-  id: 'id',
-  nik: 'nik',
-  nisn: 'nisn',
-  type: 'type',
-  fullname: 'fullname',
-  gender: 'gender',
-  foreign: 'foreign',
-  country: 'country',
-  religion: 'religion',
-  email: 'email',
-  belajarId: 'belajarId',
-  nophone: 'nophone',
-  isLife: 'isLife',
-  disable: 'disable'
-};
-
-exports.Prisma.AuthScalarFieldEnum = {
-  id: 'id',
-  userId: 'userId',
-  personalId: 'personalId'
-};
-
-exports.Prisma.FamilyTreeScalarFieldEnum = {
-  id: 'id',
-  nokk: 'nokk',
-  fatherId: 'fatherId',
-  motherId: 'motherId',
-  waliId: 'waliId',
-  coupleId: 'coupleId'
-};
-
-exports.Prisma.FamilyTreeChildScalarFieldEnum = {
-  id: 'id',
-  no: 'no',
-  type: 'type',
-  kkId: 'kkId',
-  personalId: 'personalId'
-};
-
-exports.Prisma.SchoolYearScalarFieldEnum = {
-  id: 'id',
-  year: 'year',
-  instansiId: 'instansiId',
-  departments: 'departments',
-  disable: 'disable'
-};
-
-exports.Prisma.TeacherScalarFieldEnum = {
-  id: 'id',
-  personalId: 'personalId',
-  instansiId: 'instansiId',
-  eventIds: 'eventIds',
-  nip: 'nip',
-  nrg: 'nrg',
-  noKarpeg: 'noKarpeg',
-  tmtTugas: 'tmtTugas',
-  tmtGol: 'tmtGol',
-  position: 'position',
-  rank: 'rank',
-  period: 'period',
-  certificate: 'certificate',
+  description: 'description',
+  start: 'start',
+  end: 'end',
+  color: 'color',
+  classRoomIds: 'classRoomIds',
+  studentIds: 'studentIds',
+  teacherIds: 'teacherIds',
   disable: 'disable'
 };
 
@@ -300,34 +143,52 @@ exports.Prisma.ClassRoomScalarFieldEnum = {
   tDeviceIds: 'tDeviceIds'
 };
 
-exports.Prisma.StudentScalarFieldEnum = {
+exports.Prisma.ElementScalarFieldEnum = {
   id: 'id',
-  nis: 'nis',
-  lastSchool: 'lastSchool',
-  personalId: 'personalId',
-  majorId: 'majorId',
-  classRoomIds: 'classRoomIds',
-  startYearId: 'startYearId',
-  instansiId: 'instansiId',
-  eventIds: 'eventIds',
-  disable: 'disable'
-};
-
-exports.Prisma.ScheduleScalarFieldEnum = {
-  id: 'id',
-  yearId: 'yearId',
+  no: 'no',
+  name: 'name',
+  description: 'description',
   mapelId: 'mapelId',
+  disable: 'disable',
+  scheduleClassIds: 'scheduleClassIds'
+};
+
+exports.Prisma.FamilyTreeChildScalarFieldEnum = {
+  id: 'id',
+  no: 'no',
+  type: 'type',
+  kkId: 'kkId',
+  personalId: 'personalId'
+};
+
+exports.Prisma.FamilyTreeScalarFieldEnum = {
+  id: 'id',
+  nokk: 'nokk',
+  fatherId: 'fatherId',
+  motherId: 'motherId',
+  waliId: 'waliId',
+  coupleId: 'coupleId'
+};
+
+exports.Prisma.InstansiScalarFieldEnum = {
+  id: 'id',
+  npsn: 'npsn',
+  name: 'name',
+  isPrivate: 'isPrivate',
+  level: 'level',
+  religion: 'religion',
+  major: 'major',
+  majorIds: 'majorIds',
   disable: 'disable'
 };
 
-exports.Prisma.TeachingScalarFieldEnum = {
+exports.Prisma.KonsentrasiKeahlianScalarFieldEnum = {
   id: 'id',
-  refId: 'refId',
-  hours: 'hours',
-  isEven: 'isEven',
-  teacherId: 'teacherId',
-  classRoomIds: 'classRoomIds',
-  elemenIds: 'elemenIds',
+  code: 'code',
+  name: 'name',
+  programId: 'programId',
+  tahun: 'tahun',
+  instansiIds: 'instansiIds',
   disable: 'disable'
 };
 
@@ -344,11 +205,42 @@ exports.Prisma.LinkScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.MataPelajaranScalarFieldEnum = {
+  id: 'id',
+  level: 'level',
+  type: 'type',
+  no: 'no',
+  code: 'code',
+  name: 'name',
+  religion: 'religion',
+  programId: 'programId',
+  keahlianid: 'keahlianid',
+  instansiId: 'instansiId',
+  disable: 'disable'
+};
+
 exports.Prisma.OAssessmentScalarFieldEnum = {
   id: 'id',
   refId: 'refId',
   type: 'type',
   techs: 'techs'
+};
+
+exports.Prisma.OLearningScalarFieldEnum = {
+  id: 'id',
+  refId: 'refId',
+  no: 'no',
+  content: 'content',
+  taksonomi: 'taksonomi',
+  sentence: 'sentence'
+};
+
+exports.Prisma.OMaterialScalarFieldEnum = {
+  id: 'id',
+  refId: 'refId',
+  no: 'no',
+  content: 'content',
+  model: 'model'
 };
 
 exports.Prisma.ObjectiveScalarFieldEnum = {
@@ -371,23 +263,6 @@ exports.Prisma.ObjectiveScalarFieldEnum = {
   mateIds: 'mateIds',
   methIds: 'methIds',
   mediaIds: 'mediaIds'
-};
-
-exports.Prisma.OMaterialScalarFieldEnum = {
-  id: 'id',
-  refId: 'refId',
-  no: 'no',
-  content: 'content',
-  model: 'model'
-};
-
-exports.Prisma.OLearningScalarFieldEnum = {
-  id: 'id',
-  refId: 'refId',
-  no: 'no',
-  content: 'content',
-  taksonomi: 'taksonomi',
-  sentence: 'sentence'
 };
 
 exports.Prisma.OhelperScalarFieldEnum = {
@@ -415,11 +290,81 @@ exports.Prisma.OresourceScalarFieldEnum = {
   linkId: 'linkId'
 };
 
-exports.Prisma.BookScalarFieldEnum = {
+exports.Prisma.PersonalScalarFieldEnum = {
   id: 'id',
+  nik: 'nik',
+  nisn: 'nisn',
+  type: 'type',
+  fullname: 'fullname',
+  gender: 'gender',
+  foreign: 'foreign',
+  country: 'country',
+  religion: 'religion',
+  email: 'email',
+  belajarId: 'belajarId',
+  nophone: 'nophone',
+  isLife: 'isLife',
+  disable: 'disable'
+};
+
+exports.Prisma.ProgramKeahlianScalarFieldEnum = {
+  id: 'id',
+  code: 'code',
   name: 'name',
-  description: 'description',
-  author: 'author'
+  bidangId: 'bidangId',
+  disable: 'disable'
+};
+
+exports.Prisma.QueryMode = {
+  default: 'default',
+  insensitive: 'insensitive'
+};
+
+exports.Prisma.RoleScalarFieldEnum = {
+  id: 'id',
+  key: 'key',
+  instansiId: 'instansiId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ScheduleScalarFieldEnum = {
+  id: 'id',
+  yearId: 'yearId',
+  mapelId: 'mapelId',
+  disable: 'disable'
+};
+
+exports.Prisma.SchoolYearScalarFieldEnum = {
+  id: 'id',
+  year: 'year',
+  instansiId: 'instansiId',
+  departments: 'departments',
+  disable: 'disable'
+};
+
+exports.Prisma.SortOrder = {
+  asc: 'asc',
+  desc: 'desc'
+};
+
+exports.Prisma.StudentScalarFieldEnum = {
+  id: 'id',
+  nis: 'nis',
+  lastSchool: 'lastSchool',
+  personalId: 'personalId',
+  majorId: 'majorId',
+  classRoomIds: 'classRoomIds',
+  startYearId: 'startYearId',
+  instansiId: 'instansiId',
+  eventIds: 'eventIds',
+  disable: 'disable'
+};
+
+exports.Prisma.TDeviceDataScalarFieldEnum = {
+  id: 'id',
+  refId: 'refId',
+  objectiveId: 'objectiveId'
 };
 
 exports.Prisma.TDeviceScalarFieldEnum = {
@@ -435,35 +380,147 @@ exports.Prisma.TDeviceScalarFieldEnum = {
   parentId: 'parentId'
 };
 
-exports.Prisma.TDeviceDataScalarFieldEnum = {
+exports.Prisma.TeacherScalarFieldEnum = {
   id: 'id',
-  refId: 'refId',
-  objectiveId: 'objectiveId'
-};
-
-exports.Prisma.CalendarScalarFieldEnum = {
-  id: 'id',
-  refId: 'refId',
-  name: 'name',
-  description: 'description',
-  start: 'start',
-  end: 'end',
-  color: 'color',
-  classRoomIds: 'classRoomIds',
-  studentIds: 'studentIds',
-  teacherIds: 'teacherIds',
+  personalId: 'personalId',
+  instansiId: 'instansiId',
+  eventIds: 'eventIds',
+  nip: 'nip',
+  nrg: 'nrg',
+  noKarpeg: 'noKarpeg',
+  tmtTugas: 'tmtTugas',
+  tmtGol: 'tmtGol',
+  position: 'position',
+  rank: 'rank',
+  period: 'period',
+  certificate: 'certificate',
   disable: 'disable'
 };
 
-exports.Prisma.SortOrder = {
-  asc: 'asc',
-  desc: 'desc'
+exports.Prisma.TeachingScalarFieldEnum = {
+  id: 'id',
+  refId: 'refId',
+  hours: 'hours',
+  isEven: 'isEven',
+  teacherId: 'teacherId',
+  classRoomIds: 'classRoomIds',
+  elemenIds: 'elemenIds',
+  disable: 'disable'
 };
 
-exports.Prisma.QueryMode = {
-  default: 'default',
-  insensitive: 'insensitive'
+exports.Prisma.TrackerScalarFieldEnum = {
+  id: 'id',
+  point: 'point',
+  type: 'type',
+  userId: 'userId',
+  refId: 'refId',
+  instansiId: 'instansiId',
+  createdAt: 'createdAt',
+  mapelId: 'mapelId',
+  elementId: 'elementId',
+  cpId: 'cpId',
+  bidangId: 'bidangId',
+  programId: 'programId',
+  konsentrasiId: 'konsentrasiId',
+  tpId: 'tpId',
+  teacherId: 'teacherId',
+  kelasId: 'kelasId',
+  muridId: 'muridId',
+  jadwalId: 'jadwalId',
+  mengajarId: 'mengajarId',
+  tujuanId: 'tujuanId',
+  perangkatId: 'perangkatId',
+  kalenderId: 'kalenderId'
 };
+
+exports.Prisma.UploadScalarFieldEnum = {
+  id: 'id',
+  type: 'type',
+  name: 'name',
+  url: 'url'
+};
+
+exports.Prisma.UserScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  picture: 'picture',
+  username: 'username',
+  active: 'active',
+  verify: 'verify',
+  password: 'password',
+  passhash: 'passhash',
+  roleId: 'roleId',
+  disable: 'disable'
+};
+exports.ChildType = {
+  KANDUNG: 'KANDUNG',
+  TIRI: 'TIRI',
+  ANGKAT: 'ANGKAT'
+};
+
+exports.Fase = {
+  A: 'A',
+  B: 'B',
+  C: 'C',
+  D: 'D',
+  E: 'E',
+  F: 'F',
+  FP: 'FP'
+};
+
+exports.Gender = {
+  L: 'L',
+  P: 'P'
+};
+
+exports.Level = {
+  SD: 'SD',
+  SMP: 'SMP',
+  SMA: 'SMA',
+  SMK: 'SMK'
+};
+
+exports.LevelEdu = {
+  SD: 'SD',
+  SMP: 'SMP',
+  SMA: 'SMA',
+  D1: 'D1',
+  D2: 'D2',
+  D3: 'D3',
+  D4: 'D4',
+  S1: 'S1',
+  S2: 'S2',
+  S3: 'S3'
+};
+
+exports.MataPelajaranType = {
+  UMUM: 'UMUM',
+  PROGRAM: 'PROGRAM',
+  KONSENTRASI: 'KONSENTRASI',
+  MULOK: 'MULOK'
+};
+
+exports.OMaterialModel = {
+  DL: 'DL',
+  IL: 'IL',
+  PBL: 'PBL',
+  PjBL: 'PjBL',
+  TF: 'TF',
+  PSL: 'PSL'
+};
+
+exports.OhelperType = {
+  TOOL: 'TOOL',
+  MATE: 'MATE',
+  METH: 'METH',
+  MEDIA: 'MEDIA'
+};
+
+exports.OresourceType = {
+  URL: 'URL',
+  BOOK: 'BOOK'
+};
+
 exports.PointTracker = {
   instansi: 'instansi',
   user: 'user',
@@ -490,20 +547,6 @@ exports.PointTracker = {
   kalender: 'kalender'
 };
 
-exports.TypeTracker = {
-  CREATE: 'CREATE',
-  UPDATE: 'UPDATE',
-  DISABLE: 'DISABLE',
-  RECOVER: 'RECOVER'
-};
-
-exports.Level = {
-  SD: 'SD',
-  SMP: 'SMP',
-  SMA: 'SMA',
-  SMK: 'SMK'
-};
-
 exports.Religion = {
   Islam: 'Islam',
   Kristen: 'Kristen',
@@ -513,62 +556,11 @@ exports.Religion = {
   Khonghucu: 'Khonghucu'
 };
 
-exports.MataPelajaranType = {
-  UMUM: 'UMUM',
-  PROGRAM: 'PROGRAM',
-  KONSENTRASI: 'KONSENTRASI',
-  MULOK: 'MULOK'
-};
-
-exports.Fase = {
-  A: 'A',
-  B: 'B',
-  C: 'C',
-  D: 'D',
-  E: 'E',
-  F: 'F',
-  FP: 'FP'
-};
-
 exports.Roles = {
   SU: 'SU',
   GURU: 'GURU',
   STAF: 'STAF',
   SISWA: 'SISWA'
-};
-
-exports.UploadType = {
-  DRIVE: 'DRIVE',
-  STORAGE: 'STORAGE'
-};
-
-exports.TypePersonal = {
-  ADMIN: 'ADMIN',
-  GURU: 'GURU',
-  SISWA: 'SISWA',
-  IBU: 'IBU',
-  AYAH: 'AYAH',
-  WALI: 'WALI'
-};
-
-exports.Gender = {
-  L: 'L',
-  P: 'P'
-};
-
-exports.ChildType = {
-  KANDUNG: 'KANDUNG',
-  TIRI: 'TIRI',
-  ANGKAT: 'ANGKAT'
-};
-
-exports.OMaterialModel = {
-  DL: 'DL',
-  IL: 'IL',
-  PBL: 'PBL',
-  PjBL: 'PjBL',
-  TF: 'TF',
-  PSL: 'PSL'
 };
 
 exports.Taksonomi = {
@@ -585,29 +577,25 @@ exports.Taksonomi = {
   P5: 'P5'
 };
 
-exports.OhelperType = {
-  TOOL: 'TOOL',
-  MATE: 'MATE',
-  METH: 'METH',
-  MEDIA: 'MEDIA'
+exports.TypePersonal = {
+  ADMIN: 'ADMIN',
+  GURU: 'GURU',
+  SISWA: 'SISWA',
+  IBU: 'IBU',
+  AYAH: 'AYAH',
+  WALI: 'WALI'
 };
 
-exports.OresourceType = {
-  URL: 'URL',
-  BOOK: 'BOOK'
+exports.TypeTracker = {
+  CREATE: 'CREATE',
+  UPDATE: 'UPDATE',
+  DISABLE: 'DISABLE',
+  RECOVER: 'RECOVER'
 };
 
-exports.LevelEdu = {
-  SD: 'SD',
-  SMP: 'SMP',
-  SMA: 'SMA',
-  D1: 'D1',
-  D2: 'D2',
-  D3: 'D3',
-  D4: 'D4',
-  S1: 'S1',
-  S2: 'S2',
-  S3: 'S3'
+exports.UploadType = {
+  DRIVE: 'DRIVE',
+  STORAGE: 'STORAGE'
 };
 
 exports.Prisma.ModelName = {
