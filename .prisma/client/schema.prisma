@@ -32,12 +32,15 @@ enum PointTracker {
   murid
   jadwal
   mengajar
+  modul
   acp //analisis c p #
   akm
   amp
   atp
-  a_asesmen //analisisa asesmen #
+  asp
+  a_asesmen
   perangkat
+  kalender
 }
 
 model Tracker {
@@ -79,6 +82,8 @@ model Tracker {
   tujuanId      String?              @db.ObjectId
   perangkat     TDevice?             @relation(fields: [perangkatId], references: [id])
   perangkatId   String?              @db.ObjectId
+  kalender      Calendar?            @relation(fields: [kalenderId], references: [id])
+  kalenderId    String?              @db.ObjectId
 
   @@index([point])
   @@index([userId])
@@ -305,7 +310,7 @@ model User {
   google    Google?
   objective Objective[]
   link      Link[]
-  tDevice   TDevice[]
+  tDevice   TDevice[]   @relation("created_tDevice")
 
   @@index([disable])
 }
@@ -568,6 +573,7 @@ model SchoolYear {
   year           Int
   instansi       Instansi       @relation(fields: [instansiId], references: [id])
   instansiId     String         @db.ObjectId
+  departments    String[]
   organizational Organizational
   classRoom      ClassRoom[]
   students       Student[]
@@ -576,6 +582,7 @@ model SchoolYear {
   objective      Objective[]
   tracker        Tracker[]
   disable        Boolean        @default(false)
+  TDevice        TDevice[]
 
   @@unique([instansiId, year], name: "eSchoolYear")
   @@index([disable])
@@ -630,6 +637,8 @@ model ClassRoom {
   tracker     Tracker[]
   teaching    Teaching[]           @relation(fields: [teachingIds], references: [id])
   teachingIds String[]             @db.ObjectId
+  tDevice     TDevice[]            @relation(fields: [tDeviceIds], references: [id])
+  tDeviceIds  String[]             @db.ObjectId
 
   @@unique([yearId, name], name: "nameClassRoom")
   @@index([disable])
@@ -705,6 +714,14 @@ model Link {
   objResource Oresource[]
 }
 
+model OAssessment {
+  id    String    @id @default(auto()) @map("_id") @db.ObjectId
+  ref   Objective @relation(fields: [refId], references: [id])
+  refId String    @db.ObjectId
+  type  String
+  techs String[]
+}
+
 model Objective {
   id            String        @id @default(auto()) @map("_id") @db.ObjectId
   user          User          @relation(fields: [userId], references: [id])
@@ -729,8 +746,6 @@ model Objective {
   triggerQuest  String[]
   disable       Boolean       @default(false)
   tracker       Tracker[]
-  device        TDevice[]     @relation(fields: [deviceIds], references: [id])
-  deviceIds     String[]      @db.ObjectId
   resourse      Oresource[]
   ppp           Oppp[]
   tool          Ohelper[]     @relation("objective_helper_tool", fields: [toolIds], references: [id])
@@ -741,6 +756,8 @@ model Objective {
   methIds       String[]      @db.ObjectId
   media         Ohelper[]     @relation("objective_helper_media", fields: [mediaIds], references: [id])
   mediaIds      String[]      @db.ObjectId
+  assessments   OAssessment[]
+  devices       TDeviceData[]
 }
 
 enum OMaterialModel {
@@ -830,15 +847,15 @@ enum OresourceType {
 }
 
 model Oresource {
-  id          String        @id @default(auto()) @map("_id") @db.ObjectId
-  type        OresourceType
-  ref         Objective     @relation(fields: [refId], references: [id])
-  refId       String        @db.ObjectId
-  link        Link?         @relation(fields: [linkId], references: [id])
-  linkId      String?       @db.ObjectId
-  description String?
+  id     String        @id @default(auto()) @map("_id") @db.ObjectId
+  name   String
+  type   OresourceType
+  ref    Objective     @relation(fields: [refId], references: [id])
+  refId  String        @db.ObjectId
+  link   Link?         @relation(fields: [linkId], references: [id])
+  linkId String?       @db.ObjectId
 
-  @@unique([refId, linkId, description], name: "keys")
+  @@unique([refId, linkId, name], name: "keys")
 }
 
 model Book {
@@ -848,18 +865,52 @@ model Book {
   author      String?
 }
 
+type TDevicePos {
+  mouth  Int
+  week   Int
+  active Boolean
+}
+
+type TDeviceProps {
+  docDate DateTime
+  kepText String
+  kepUser String
+  ke3Text String
+  jabText String
+  ke3User String
+}
+
 model TDevice {
   id           String        @id @default(auto()) @map("_id") @db.ObjectId
-  user         User          @relation(fields: [userId], references: [id])
+  name         String
+  property     TDeviceProps
+  year         SchoolYear    @relation(fields: [yearId], references: [id])
+  yearId       String        @db.ObjectId
+  user         User          @relation("created_tDevice", fields: [userId], references: [id])
   userId       String        @db.ObjectId
   instansi     Instansi      @relation(fields: [instansiId], references: [id])
   instansiId   String        @db.ObjectId
   mapel        MataPelajaran @relation(fields: [mapelId], references: [id])
   mapelId      String        @db.ObjectId
-  objective    Objective[]   @relation(fields: [objectiveIds], references: [id])
-  objectiveIds String[]      @db.ObjectId
+  classRoom    ClassRoom[]   @relation(fields: [classRoomIds], references: [id])
+  classRoomIds String[]      @db.ObjectId
+  elemen       String[]      @db.ObjectId
   disable      Boolean       @default(false)
   tracker      Tracker[]
+  data         TDeviceData[]
+  children     TDevice[]     @relation("children")
+  parent       TDevice?      @relation("children", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  parentId     String?       @db.ObjectId
+  positions    TDevicePos[]
+}
+
+model TDeviceData {
+  id          String       @id @default(auto()) @map("_id") @db.ObjectId
+  ref         TDevice      @relation(fields: [refId], references: [id])
+  refId       String       @db.ObjectId
+  objective   Objective    @relation(fields: [objectiveId], references: [id])
+  objectiveId String       @db.ObjectId
+  positions   TDevicePos[]
 }
 
 model Calendar {
@@ -877,4 +928,6 @@ model Calendar {
   studentIds   String[]    @db.ObjectId
   teacher      Teacher[]   @relation(fields: [teacherIds], references: [id])
   teacherIds   String[]    @db.ObjectId
+  disable      Boolean     @default(false)
+  tracker      Tracker[]
 }
