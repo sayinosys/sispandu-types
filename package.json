@@ -14,6 +14,10 @@
     "index.d.ts",
     "index-browser.js"
   ],
+  "engines": {
+    "npm": ">=8.0.0",
+    "node": ">=16.0.0"
+  },
   "author": "",
   "license": "ISC"
 }
