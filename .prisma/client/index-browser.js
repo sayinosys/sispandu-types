@@ -245,6 +245,8 @@ exports.Prisma.OMaterialScalarFieldEnum = {
 
 exports.Prisma.ObjectiveScalarFieldEnum = {
   id: 'id',
+  level: 'level',
+  fase: 'fase',
   userId: 'userId',
   instansiId: 'instansiId',
   yearId: 'yearId',
@@ -370,6 +372,9 @@ exports.Prisma.TDeviceDataScalarFieldEnum = {
 exports.Prisma.TDeviceScalarFieldEnum = {
   id: 'id',
   name: 'name',
+  level: 'level',
+  fase: 'fase',
+  teachingId: 'teachingId',
   yearId: 'yearId',
   userId: 'userId',
   instansiId: 'instansiId',

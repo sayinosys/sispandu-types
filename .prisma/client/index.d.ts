@@ -255,6 +255,7 @@ export type TDevicePos = {
  */
 export type TDeviceProps = {
   docDate: Date
+  docAddr: string
   kepText: string
   kepUser: string
   ke3Text: string
@@ -634,6 +635,8 @@ export type OAssessment = {
  */
 export type Objective = {
   id: string
+  level: number
+  fase: Fase
   userId: string
   instansiId: string
   yearId: string
@@ -734,6 +737,9 @@ export type Book = {
 export type TDevice = {
   id: string
   name: string
+  level: number
+  fase: Fase
+  teachingId: string
   property: TDeviceProps
   yearId: string
   userId: string
@@ -2844,12 +2850,14 @@ export namespace Prisma {
     classRoom: number
     elemen: number
     tracker: number
+    tDevice: number
   }
 
   export type TeachingCountOutputTypeSelect = {
     classRoom?: boolean
     elemen?: boolean
     tracker?: boolean
+    tDevice?: boolean
   }
 
   export type TeachingCountOutputTypeGetPayload<S extends boolean | null | undefined | TeachingCountOutputTypeArgs> =
@@ -5345,6 +5353,7 @@ export namespace Prisma {
 
   export type TDevicePropsSelect = {
     docDate?: boolean
+    docAddr?: boolean
     kepText?: boolean
     kepUser?: boolean
     ke3Text?: boolean
@@ -28069,6 +28078,7 @@ export namespace Prisma {
     classRoom?: boolean | Teaching$classRoomArgs
     elemen?: boolean | Teaching$elemenArgs
     tracker?: boolean | Teaching$trackerArgs
+    tDevice?: boolean | Teaching$tDeviceArgs
     _count?: boolean | TeachingCountOutputTypeArgs
   }
 
@@ -28079,6 +28089,7 @@ export namespace Prisma {
     classRoom?: boolean | Teaching$classRoomArgs
     elemen?: boolean | Teaching$elemenArgs
     tracker?: boolean | Teaching$trackerArgs
+    tDevice?: boolean | Teaching$tDeviceArgs
     _count?: boolean | TeachingCountOutputTypeArgs
   }
 
@@ -28094,6 +28105,7 @@ export namespace Prisma {
         P extends 'classRoom' ? Array < ClassRoomGetPayload<S['include'][P]>>  :
         P extends 'elemen' ? Array < ElementGetPayload<S['include'][P]>>  :
         P extends 'tracker' ? Array < TrackerGetPayload<S['include'][P]>>  :
+        P extends 'tDevice' ? Array < TDeviceGetPayload<S['include'][P]>>  :
         P extends '_count' ? TeachingCountOutputTypeGetPayload<S['include'][P]> :  never
   } 
     : S extends { select: any } & (TeachingArgs | TeachingFindManyArgs)
@@ -28104,6 +28116,7 @@ export namespace Prisma {
         P extends 'classRoom' ? Array < ClassRoomGetPayload<S['select'][P]>>  :
         P extends 'elemen' ? Array < ElementGetPayload<S['select'][P]>>  :
         P extends 'tracker' ? Array < TrackerGetPayload<S['select'][P]>>  :
+        P extends 'tDevice' ? Array < TDeviceGetPayload<S['select'][P]>>  :
         P extends '_count' ? TeachingCountOutputTypeGetPayload<S['select'][P]> :  P extends keyof Teaching ? Teaching[P] : never
   } 
       : Teaching
@@ -28512,6 +28525,8 @@ export namespace Prisma {
     elemen<T extends Teaching$elemenArgs= {}>(args?: Subset<T, Teaching$elemenArgs>): Prisma.PrismaPromise<Array<ElementGetPayload<T>>| Null>;
 
     tracker<T extends Teaching$trackerArgs= {}>(args?: Subset<T, Teaching$trackerArgs>): Prisma.PrismaPromise<Array<TrackerGetPayload<T>>| Null>;
+
+    tDevice<T extends Teaching$tDeviceArgs= {}>(args?: Subset<T, Teaching$tDeviceArgs>): Prisma.PrismaPromise<Array<TDeviceGetPayload<T>>| Null>;
 
     private get _document();
     /**
@@ -28957,6 +28972,27 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: Enumerable<TrackerScalarFieldEnum>
+  }
+
+
+  /**
+   * Teaching.tDevice
+   */
+  export type Teaching$tDeviceArgs = {
+    /**
+     * Select specific fields to fetch from the TDevice
+     */
+    select?: TDeviceSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: TDeviceInclude | null
+    where?: TDeviceWhereInput
+    orderBy?: Enumerable<TDeviceOrderByWithRelationInput>
+    cursor?: TDeviceWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: Enumerable<TDeviceScalarFieldEnum>
   }
 
 
@@ -31061,17 +31097,21 @@ export namespace Prisma {
   }
 
   export type ObjectiveAvgAggregateOutputType = {
+    level: number | null
     kkm: number | null
     steps: number | null
   }
 
   export type ObjectiveSumAggregateOutputType = {
+    level: number | null
     kkm: number | null
     steps: number | null
   }
 
   export type ObjectiveMinAggregateOutputType = {
     id: string | null
+    level: number | null
+    fase: Fase | null
     userId: string | null
     instansiId: string | null
     yearId: string | null
@@ -31087,6 +31127,8 @@ export namespace Prisma {
 
   export type ObjectiveMaxAggregateOutputType = {
     id: string | null
+    level: number | null
+    fase: Fase | null
     userId: string | null
     instansiId: string | null
     yearId: string | null
@@ -31102,6 +31144,8 @@ export namespace Prisma {
 
   export type ObjectiveCountAggregateOutputType = {
     id: number
+    level: number
+    fase: number
     userId: number
     instansiId: number
     yearId: number
@@ -31125,17 +31169,21 @@ export namespace Prisma {
 
 
   export type ObjectiveAvgAggregateInputType = {
+    level?: true
     kkm?: true
     steps?: true
   }
 
   export type ObjectiveSumAggregateInputType = {
+    level?: true
     kkm?: true
     steps?: true
   }
 
   export type ObjectiveMinAggregateInputType = {
     id?: true
+    level?: true
+    fase?: true
     userId?: true
     instansiId?: true
     yearId?: true
@@ -31151,6 +31199,8 @@ export namespace Prisma {
 
   export type ObjectiveMaxAggregateInputType = {
     id?: true
+    level?: true
+    fase?: true
     userId?: true
     instansiId?: true
     yearId?: true
@@ -31166,6 +31216,8 @@ export namespace Prisma {
 
   export type ObjectiveCountAggregateInputType = {
     id?: true
+    level?: true
+    fase?: true
     userId?: true
     instansiId?: true
     yearId?: true
@@ -31276,6 +31328,8 @@ export namespace Prisma {
 
   export type ObjectiveGroupByOutputType = {
     id: string
+    level: number
+    fase: Fase
     userId: string
     instansiId: string
     yearId: string
@@ -31317,6 +31371,8 @@ export namespace Prisma {
 
   export type ObjectiveSelect = {
     id?: boolean
+    level?: boolean
+    fase?: boolean
     userId?: boolean
     instansiId?: boolean
     yearId?: boolean
@@ -38543,13 +38599,26 @@ export namespace Prisma {
 
   export type AggregateTDevice = {
     _count: TDeviceCountAggregateOutputType | null
+    _avg: TDeviceAvgAggregateOutputType | null
+    _sum: TDeviceSumAggregateOutputType | null
     _min: TDeviceMinAggregateOutputType | null
     _max: TDeviceMaxAggregateOutputType | null
+  }
+
+  export type TDeviceAvgAggregateOutputType = {
+    level: number | null
+  }
+
+  export type TDeviceSumAggregateOutputType = {
+    level: number | null
   }
 
   export type TDeviceMinAggregateOutputType = {
     id: string | null
     name: string | null
+    level: number | null
+    fase: Fase | null
+    teachingId: string | null
     yearId: string | null
     userId: string | null
     instansiId: string | null
@@ -38561,6 +38630,9 @@ export namespace Prisma {
   export type TDeviceMaxAggregateOutputType = {
     id: string | null
     name: string | null
+    level: number | null
+    fase: Fase | null
+    teachingId: string | null
     yearId: string | null
     userId: string | null
     instansiId: string | null
@@ -38572,6 +38644,9 @@ export namespace Prisma {
   export type TDeviceCountAggregateOutputType = {
     id: number
     name: number
+    level: number
+    fase: number
+    teachingId: number
     yearId: number
     userId: number
     instansiId: number
@@ -38584,9 +38659,20 @@ export namespace Prisma {
   }
 
 
+  export type TDeviceAvgAggregateInputType = {
+    level?: true
+  }
+
+  export type TDeviceSumAggregateInputType = {
+    level?: true
+  }
+
   export type TDeviceMinAggregateInputType = {
     id?: true
     name?: true
+    level?: true
+    fase?: true
+    teachingId?: true
     yearId?: true
     userId?: true
     instansiId?: true
@@ -38598,6 +38684,9 @@ export namespace Prisma {
   export type TDeviceMaxAggregateInputType = {
     id?: true
     name?: true
+    level?: true
+    fase?: true
+    teachingId?: true
     yearId?: true
     userId?: true
     instansiId?: true
@@ -38609,6 +38698,9 @@ export namespace Prisma {
   export type TDeviceCountAggregateInputType = {
     id?: true
     name?: true
+    level?: true
+    fase?: true
+    teachingId?: true
     yearId?: true
     userId?: true
     instansiId?: true
@@ -38658,6 +38750,18 @@ export namespace Prisma {
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
+     * Select which fields to average
+    **/
+    _avg?: TDeviceAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: TDeviceSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
      * Select which fields to find the minimum value
     **/
     _min?: TDeviceMinAggregateInputType
@@ -38688,6 +38792,8 @@ export namespace Prisma {
     take?: number
     skip?: number
     _count?: TDeviceCountAggregateInputType | true
+    _avg?: TDeviceAvgAggregateInputType
+    _sum?: TDeviceSumAggregateInputType
     _min?: TDeviceMinAggregateInputType
     _max?: TDeviceMaxAggregateInputType
   }
@@ -38696,6 +38802,9 @@ export namespace Prisma {
   export type TDeviceGroupByOutputType = {
     id: string
     name: string
+    level: number
+    fase: Fase
+    teachingId: string
     yearId: string
     userId: string
     instansiId: string
@@ -38705,6 +38814,8 @@ export namespace Prisma {
     disable: boolean
     parentId: string | null
     _count: TDeviceCountAggregateOutputType | null
+    _avg: TDeviceAvgAggregateOutputType | null
+    _sum: TDeviceSumAggregateOutputType | null
     _min: TDeviceMinAggregateOutputType | null
     _max: TDeviceMaxAggregateOutputType | null
   }
@@ -38726,6 +38837,9 @@ export namespace Prisma {
   export type TDeviceSelect = {
     id?: boolean
     name?: boolean
+    level?: boolean
+    fase?: boolean
+    teachingId?: boolean
     property?: boolean | TDevicePropsArgs
     yearId?: boolean
     userId?: boolean
@@ -38736,6 +38850,7 @@ export namespace Prisma {
     disable?: boolean
     parentId?: boolean
     positions?: boolean | TDevicePosArgs
+    teaching?: boolean | TeachingArgs
     year?: boolean | SchoolYearArgs
     user?: boolean | UserArgs
     instansi?: boolean | InstansiArgs
@@ -38750,6 +38865,7 @@ export namespace Prisma {
 
 
   export type TDeviceInclude = {
+    teaching?: boolean | TeachingArgs
     year?: boolean | SchoolYearArgs
     user?: boolean | UserArgs
     instansi?: boolean | InstansiArgs
@@ -38769,6 +38885,7 @@ export namespace Prisma {
     S extends { include: any } & (TDeviceArgs | TDeviceFindManyArgs)
     ? TDevice  & {
     [P in TruthyKeys<S['include']>]:
+        P extends 'teaching' ? TeachingGetPayload<S['include'][P]> :
         P extends 'year' ? SchoolYearGetPayload<S['include'][P]> :
         P extends 'user' ? UserGetPayload<S['include'][P]> :
         P extends 'instansi' ? InstansiGetPayload<S['include'][P]> :
@@ -38785,6 +38902,7 @@ export namespace Prisma {
     [P in TruthyKeys<S['select']>]:
         P extends 'property' ? TDevicePropsGetPayload<S['select'][P]> :
         P extends 'positions' ? Array < TDevicePosGetPayload<S['select'][P]>>  :
+        P extends 'teaching' ? TeachingGetPayload<S['select'][P]> :
         P extends 'year' ? SchoolYearGetPayload<S['select'][P]> :
         P extends 'user' ? UserGetPayload<S['select'][P]> :
         P extends 'instansi' ? InstansiGetPayload<S['select'][P]> :
@@ -39196,6 +39314,8 @@ export namespace Prisma {
     property<T extends TDevicePropsArgs= {}>(args?: Subset<T, TDevicePropsArgs>): Prisma__TDevicePropsClient<TDevicePropsGetPayload<T> | Null>;
 
     positions<T extends TDevicePosArgs= {}>(args?: Subset<T, TDevicePosArgs>): Prisma.PrismaPromise<Array<TDevicePosGetPayload<T>>| Null>;
+
+    teaching<T extends TeachingArgs= {}>(args?: Subset<T, TeachingArgs>): Prisma__TeachingClient<TeachingGetPayload<T> | Null>;
 
     year<T extends SchoolYearArgs= {}>(args?: Subset<T, SchoolYearArgs>): Prisma__SchoolYearClient<SchoolYearGetPayload<T> | Null>;
 
@@ -42026,6 +42146,8 @@ export namespace Prisma {
 
   export const ObjectiveScalarFieldEnum: {
     id: 'id',
+    level: 'level',
+    fase: 'fase',
     userId: 'userId',
     instansiId: 'instansiId',
     yearId: 'yearId',
@@ -42190,6 +42312,9 @@ export namespace Prisma {
   export const TDeviceScalarFieldEnum: {
     id: 'id',
     name: 'name',
+    level: 'level',
+    fase: 'fase',
+    teachingId: 'teachingId',
     yearId: 'yearId',
     userId: 'userId',
     instansiId: 'instansiId',
@@ -43761,6 +43886,7 @@ export namespace Prisma {
     classRoom?: ClassRoomListRelationFilter
     elemen?: ElementListRelationFilter
     tracker?: TrackerListRelationFilter
+    tDevice?: TDeviceListRelationFilter
   }
 
   export type TeachingOrderByWithRelationInput = {
@@ -43777,6 +43903,7 @@ export namespace Prisma {
     classRoom?: ClassRoomOrderByRelationAggregateInput
     elemen?: ElementOrderByRelationAggregateInput
     tracker?: TrackerOrderByRelationAggregateInput
+    tDevice?: TDeviceOrderByRelationAggregateInput
   }
 
   export type TeachingWhereUniqueInput = {
@@ -43934,6 +44061,8 @@ export namespace Prisma {
     OR?: Enumerable<ObjectiveWhereInput>
     NOT?: Enumerable<ObjectiveWhereInput>
     id?: StringFilter | string
+    level?: IntFilter | number
+    fase?: EnumFaseFilter | Fase
     userId?: StringFilter | string
     instansiId?: StringFilter | string
     yearId?: StringFilter | string
@@ -43972,6 +44101,8 @@ export namespace Prisma {
 
   export type ObjectiveOrderByWithRelationInput = {
     id?: SortOrder
+    level?: SortOrder
+    fase?: SortOrder
     userId?: SortOrder
     instansiId?: SortOrder
     yearId?: SortOrder
@@ -44014,6 +44145,8 @@ export namespace Prisma {
 
   export type ObjectiveOrderByWithAggregationInput = {
     id?: SortOrder
+    level?: SortOrder
+    fase?: SortOrder
     userId?: SortOrder
     instansiId?: SortOrder
     yearId?: SortOrder
@@ -44044,6 +44177,8 @@ export namespace Prisma {
     OR?: Enumerable<ObjectiveScalarWhereWithAggregatesInput>
     NOT?: Enumerable<ObjectiveScalarWhereWithAggregatesInput>
     id?: StringWithAggregatesFilter | string
+    level?: IntWithAggregatesFilter | number
+    fase?: EnumFaseWithAggregatesFilter | Fase
     userId?: StringWithAggregatesFilter | string
     instansiId?: StringWithAggregatesFilter | string
     yearId?: StringWithAggregatesFilter | string
@@ -44373,6 +44508,9 @@ export namespace Prisma {
     NOT?: Enumerable<TDeviceWhereInput>
     id?: StringFilter | string
     name?: StringFilter | string
+    level?: IntFilter | number
+    fase?: EnumFaseFilter | Fase
+    teachingId?: StringFilter | string
     property?: XOR<TDevicePropsCompositeFilter, TDevicePropsObjectEqualityInput>
     yearId?: StringFilter | string
     userId?: StringFilter | string
@@ -44383,6 +44521,7 @@ export namespace Prisma {
     disable?: BoolFilter | boolean
     parentId?: StringNullableFilter | string | null
     positions?: XOR<TDevicePosCompositeListFilter, Enumerable<TDevicePosObjectEqualityInput>>
+    teaching?: XOR<TeachingRelationFilter, TeachingWhereInput>
     year?: XOR<SchoolYearRelationFilter, SchoolYearWhereInput>
     user?: XOR<UserRelationFilter, UserWhereInput>
     instansi?: XOR<InstansiRelationFilter, InstansiWhereInput>
@@ -44397,6 +44536,9 @@ export namespace Prisma {
   export type TDeviceOrderByWithRelationInput = {
     id?: SortOrder
     name?: SortOrder
+    level?: SortOrder
+    fase?: SortOrder
+    teachingId?: SortOrder
     property?: TDevicePropsOrderByInput
     yearId?: SortOrder
     userId?: SortOrder
@@ -44407,6 +44549,7 @@ export namespace Prisma {
     disable?: SortOrder
     parentId?: SortOrder
     positions?: TDevicePosOrderByCompositeAggregateInput
+    teaching?: TeachingOrderByWithRelationInput
     year?: SchoolYearOrderByWithRelationInput
     user?: UserOrderByWithRelationInput
     instansi?: InstansiOrderByWithRelationInput
@@ -44425,6 +44568,9 @@ export namespace Prisma {
   export type TDeviceOrderByWithAggregationInput = {
     id?: SortOrder
     name?: SortOrder
+    level?: SortOrder
+    fase?: SortOrder
+    teachingId?: SortOrder
     yearId?: SortOrder
     userId?: SortOrder
     instansiId?: SortOrder
@@ -44434,8 +44580,10 @@ export namespace Prisma {
     disable?: SortOrder
     parentId?: SortOrder
     _count?: TDeviceCountOrderByAggregateInput
+    _avg?: TDeviceAvgOrderByAggregateInput
     _max?: TDeviceMaxOrderByAggregateInput
     _min?: TDeviceMinOrderByAggregateInput
+    _sum?: TDeviceSumOrderByAggregateInput
   }
 
   export type TDeviceScalarWhereWithAggregatesInput = {
@@ -44444,6 +44592,9 @@ export namespace Prisma {
     NOT?: Enumerable<TDeviceScalarWhereWithAggregatesInput>
     id?: StringWithAggregatesFilter | string
     name?: StringWithAggregatesFilter | string
+    level?: IntWithAggregatesFilter | number
+    fase?: EnumFaseWithAggregatesFilter | Fase
+    teachingId?: StringWithAggregatesFilter | string
     yearId?: StringWithAggregatesFilter | string
     userId?: StringWithAggregatesFilter | string
     instansiId?: StringWithAggregatesFilter | string
@@ -46399,6 +46550,7 @@ export namespace Prisma {
     classRoom?: ClassRoomCreateNestedManyWithoutTeachingInput
     elemen?: ElementCreateNestedManyWithoutScheduleClassInput
     tracker?: TrackerCreateNestedManyWithoutMengajarInput
+    tDevice?: TDeviceCreateNestedManyWithoutTeachingInput
   }
 
   export type TeachingUncheckedCreateInput = {
@@ -46413,6 +46565,7 @@ export namespace Prisma {
     classRoom?: ClassRoomUncheckedCreateNestedManyWithoutTeachingInput
     elemen?: ElementUncheckedCreateNestedManyWithoutScheduleClassInput
     tracker?: TrackerUncheckedCreateNestedManyWithoutMengajarInput
+    tDevice?: TDeviceUncheckedCreateNestedManyWithoutTeachingInput
   }
 
   export type TeachingUpdateInput = {
@@ -46424,6 +46577,7 @@ export namespace Prisma {
     classRoom?: ClassRoomUpdateManyWithoutTeachingNestedInput
     elemen?: ElementUpdateManyWithoutScheduleClassNestedInput
     tracker?: TrackerUpdateManyWithoutMengajarNestedInput
+    tDevice?: TDeviceUpdateManyWithoutTeachingNestedInput
   }
 
   export type TeachingUncheckedUpdateInput = {
@@ -46437,6 +46591,7 @@ export namespace Prisma {
     classRoom?: ClassRoomUncheckedUpdateManyWithoutTeachingNestedInput
     elemen?: ElementUncheckedUpdateManyWithoutScheduleClassNestedInput
     tracker?: TrackerUncheckedUpdateManyWithoutMengajarNestedInput
+    tDevice?: TDeviceUncheckedUpdateManyWithoutTeachingNestedInput
   }
 
   export type TeachingCreateManyInput = {
@@ -46602,6 +46757,8 @@ export namespace Prisma {
 
   export type ObjectiveCreateInput = {
     id?: string
+    level: number
+    fase: Fase
     code: string
     kkm: number
     steps?: number
@@ -46630,6 +46787,8 @@ export namespace Prisma {
 
   export type ObjectiveUncheckedCreateInput = {
     id?: string
+    level: number
+    fase: Fase
     userId: string
     instansiId: string
     yearId: string
@@ -46661,6 +46820,8 @@ export namespace Prisma {
   }
 
   export type ObjectiveUpdateInput = {
+    level?: IntFieldUpdateOperationsInput | number
+    fase?: EnumFaseFieldUpdateOperationsInput | Fase
     code?: StringFieldUpdateOperationsInput | string
     kkm?: IntFieldUpdateOperationsInput | number
     steps?: IntFieldUpdateOperationsInput | number
@@ -46688,6 +46849,8 @@ export namespace Prisma {
   }
 
   export type ObjectiveUncheckedUpdateInput = {
+    level?: IntFieldUpdateOperationsInput | number
+    fase?: EnumFaseFieldUpdateOperationsInput | Fase
     userId?: StringFieldUpdateOperationsInput | string
     instansiId?: StringFieldUpdateOperationsInput | string
     yearId?: StringFieldUpdateOperationsInput | string
@@ -46720,6 +46883,8 @@ export namespace Prisma {
 
   export type ObjectiveCreateManyInput = {
     id?: string
+    level: number
+    fase: Fase
     userId: string
     instansiId: string
     yearId: string
@@ -46741,6 +46906,8 @@ export namespace Prisma {
   }
 
   export type ObjectiveUpdateManyMutationInput = {
+    level?: IntFieldUpdateOperationsInput | number
+    fase?: EnumFaseFieldUpdateOperationsInput | Fase
     code?: StringFieldUpdateOperationsInput | string
     kkm?: IntFieldUpdateOperationsInput | number
     steps?: IntFieldUpdateOperationsInput | number
@@ -46752,6 +46919,8 @@ export namespace Prisma {
   }
 
   export type ObjectiveUncheckedUpdateManyInput = {
+    level?: IntFieldUpdateOperationsInput | number
+    fase?: EnumFaseFieldUpdateOperationsInput | Fase
     userId?: StringFieldUpdateOperationsInput | string
     instansiId?: StringFieldUpdateOperationsInput | string
     yearId?: StringFieldUpdateOperationsInput | string
@@ -47097,10 +47266,13 @@ export namespace Prisma {
   export type TDeviceCreateInput = {
     id?: string
     name: string
+    level: number
+    fase: Fase
     property: XOR<TDevicePropsCreateEnvelopeInput, TDevicePropsCreateInput>
     elemen?: TDeviceCreateelemenInput | Enumerable<string>
     disable?: boolean
     positions?: XOR<TDevicePosListCreateEnvelopeInput, Enumerable<TDevicePosCreateInput>>
+    teaching: TeachingCreateNestedOneWithoutTDeviceInput
     year: SchoolYearCreateNestedOneWithoutTDeviceInput
     user: UserCreateNestedOneWithoutTDeviceInput
     instansi: InstansiCreateNestedOneWithoutTDeviceInput
@@ -47115,6 +47287,9 @@ export namespace Prisma {
   export type TDeviceUncheckedCreateInput = {
     id?: string
     name: string
+    level: number
+    fase: Fase
+    teachingId: string
     property: XOR<TDevicePropsCreateEnvelopeInput, TDevicePropsCreateInput>
     yearId: string
     userId: string
@@ -47133,10 +47308,13 @@ export namespace Prisma {
 
   export type TDeviceUpdateInput = {
     name?: StringFieldUpdateOperationsInput | string
+    level?: IntFieldUpdateOperationsInput | number
+    fase?: EnumFaseFieldUpdateOperationsInput | Fase
     property?: XOR<TDevicePropsUpdateEnvelopeInput, TDevicePropsCreateInput>
     elemen?: TDeviceUpdateelemenInput | Enumerable<string>
     disable?: BoolFieldUpdateOperationsInput | boolean
     positions?: XOR<TDevicePosListUpdateEnvelopeInput, Enumerable<TDevicePosCreateInput>>
+    teaching?: TeachingUpdateOneRequiredWithoutTDeviceNestedInput
     year?: SchoolYearUpdateOneRequiredWithoutTDeviceNestedInput
     user?: UserUpdateOneRequiredWithoutTDeviceNestedInput
     instansi?: InstansiUpdateOneRequiredWithoutTDeviceNestedInput
@@ -47150,6 +47328,9 @@ export namespace Prisma {
 
   export type TDeviceUncheckedUpdateInput = {
     name?: StringFieldUpdateOperationsInput | string
+    level?: IntFieldUpdateOperationsInput | number
+    fase?: EnumFaseFieldUpdateOperationsInput | Fase
+    teachingId?: StringFieldUpdateOperationsInput | string
     property?: XOR<TDevicePropsUpdateEnvelopeInput, TDevicePropsCreateInput>
     yearId?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
@@ -47169,6 +47350,9 @@ export namespace Prisma {
   export type TDeviceCreateManyInput = {
     id?: string
     name: string
+    level: number
+    fase: Fase
+    teachingId: string
     property: XOR<TDevicePropsCreateEnvelopeInput, TDevicePropsCreateInput>
     yearId: string
     userId: string
@@ -47183,6 +47367,8 @@ export namespace Prisma {
 
   export type TDeviceUpdateManyMutationInput = {
     name?: StringFieldUpdateOperationsInput | string
+    level?: IntFieldUpdateOperationsInput | number
+    fase?: EnumFaseFieldUpdateOperationsInput | Fase
     property?: XOR<TDevicePropsUpdateEnvelopeInput, TDevicePropsCreateInput>
     elemen?: TDeviceUpdateelemenInput | Enumerable<string>
     disable?: BoolFieldUpdateOperationsInput | boolean
@@ -47191,6 +47377,9 @@ export namespace Prisma {
 
   export type TDeviceUncheckedUpdateManyInput = {
     name?: StringFieldUpdateOperationsInput | string
+    level?: IntFieldUpdateOperationsInput | number
+    fase?: EnumFaseFieldUpdateOperationsInput | Fase
+    teachingId?: StringFieldUpdateOperationsInput | string
     property?: XOR<TDevicePropsUpdateEnvelopeInput, TDevicePropsCreateInput>
     yearId?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
@@ -47468,8 +47657,8 @@ export namespace Prisma {
   }
 
   export type TeachingRelationFilter = {
-    is?: TeachingWhereInput | null
-    isNot?: TeachingWhereInput | null
+    is?: TeachingWhereInput
+    isNot?: TeachingWhereInput
   }
 
   export type ObjectiveRelationFilter = {
@@ -49430,6 +49619,8 @@ export namespace Prisma {
 
   export type ObjectiveCountOrderByAggregateInput = {
     id?: SortOrder
+    level?: SortOrder
+    fase?: SortOrder
     userId?: SortOrder
     instansiId?: SortOrder
     yearId?: SortOrder
@@ -49451,12 +49642,15 @@ export namespace Prisma {
   }
 
   export type ObjectiveAvgOrderByAggregateInput = {
+    level?: SortOrder
     kkm?: SortOrder
     steps?: SortOrder
   }
 
   export type ObjectiveMaxOrderByAggregateInput = {
     id?: SortOrder
+    level?: SortOrder
+    fase?: SortOrder
     userId?: SortOrder
     instansiId?: SortOrder
     yearId?: SortOrder
@@ -49472,6 +49666,8 @@ export namespace Prisma {
 
   export type ObjectiveMinOrderByAggregateInput = {
     id?: SortOrder
+    level?: SortOrder
+    fase?: SortOrder
     userId?: SortOrder
     instansiId?: SortOrder
     yearId?: SortOrder
@@ -49486,6 +49682,7 @@ export namespace Prisma {
   }
 
   export type ObjectiveSumOrderByAggregateInput = {
+    level?: SortOrder
     kkm?: SortOrder
     steps?: SortOrder
   }
@@ -49767,6 +49964,7 @@ export namespace Prisma {
 
   export type TDevicePropsObjectEqualityInput = {
     docDate: Date | string
+    docAddr: string
     kepText: string
     kepUser: string
     ke3Text: string
@@ -49791,6 +49989,7 @@ export namespace Prisma {
 
   export type TDevicePropsOrderByInput = {
     docDate?: SortOrder
+    docAddr?: SortOrder
     kepText?: SortOrder
     kepUser?: SortOrder
     ke3Text?: SortOrder
@@ -49805,6 +50004,9 @@ export namespace Prisma {
   export type TDeviceCountOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
+    level?: SortOrder
+    fase?: SortOrder
+    teachingId?: SortOrder
     yearId?: SortOrder
     userId?: SortOrder
     instansiId?: SortOrder
@@ -49815,9 +50017,16 @@ export namespace Prisma {
     parentId?: SortOrder
   }
 
+  export type TDeviceAvgOrderByAggregateInput = {
+    level?: SortOrder
+  }
+
   export type TDeviceMaxOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
+    level?: SortOrder
+    fase?: SortOrder
+    teachingId?: SortOrder
     yearId?: SortOrder
     userId?: SortOrder
     instansiId?: SortOrder
@@ -49829,12 +50038,19 @@ export namespace Prisma {
   export type TDeviceMinOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
+    level?: SortOrder
+    fase?: SortOrder
+    teachingId?: SortOrder
     yearId?: SortOrder
     userId?: SortOrder
     instansiId?: SortOrder
     mapelId?: SortOrder
     disable?: SortOrder
     parentId?: SortOrder
+  }
+
+  export type TDeviceSumOrderByAggregateInput = {
+    level?: SortOrder
   }
 
   export type TDeviceDataCountOrderByAggregateInput = {
@@ -53917,6 +54133,13 @@ export namespace Prisma {
     connect?: Enumerable<TrackerWhereUniqueInput>
   }
 
+  export type TDeviceCreateNestedManyWithoutTeachingInput = {
+    create?: XOR<Enumerable<TDeviceCreateWithoutTeachingInput>, Enumerable<TDeviceUncheckedCreateWithoutTeachingInput>>
+    connectOrCreate?: Enumerable<TDeviceCreateOrConnectWithoutTeachingInput>
+    createMany?: TDeviceCreateManyTeachingInputEnvelope
+    connect?: Enumerable<TDeviceWhereUniqueInput>
+  }
+
   export type TeachingCreateclassRoomIdsInput = {
     set: Enumerable<string>
   }
@@ -53942,6 +54165,13 @@ export namespace Prisma {
     connectOrCreate?: Enumerable<TrackerCreateOrConnectWithoutMengajarInput>
     createMany?: TrackerCreateManyMengajarInputEnvelope
     connect?: Enumerable<TrackerWhereUniqueInput>
+  }
+
+  export type TDeviceUncheckedCreateNestedManyWithoutTeachingInput = {
+    create?: XOR<Enumerable<TDeviceCreateWithoutTeachingInput>, Enumerable<TDeviceUncheckedCreateWithoutTeachingInput>>
+    connectOrCreate?: Enumerable<TDeviceCreateOrConnectWithoutTeachingInput>
+    createMany?: TDeviceCreateManyTeachingInputEnvelope
+    connect?: Enumerable<TDeviceWhereUniqueInput>
   }
 
   export type ScheduleUpdateOneRequiredWithoutTeachingNestedInput = {
@@ -54000,6 +54230,20 @@ export namespace Prisma {
     deleteMany?: Enumerable<TrackerScalarWhereInput>
   }
 
+  export type TDeviceUpdateManyWithoutTeachingNestedInput = {
+    create?: XOR<Enumerable<TDeviceCreateWithoutTeachingInput>, Enumerable<TDeviceUncheckedCreateWithoutTeachingInput>>
+    connectOrCreate?: Enumerable<TDeviceCreateOrConnectWithoutTeachingInput>
+    upsert?: Enumerable<TDeviceUpsertWithWhereUniqueWithoutTeachingInput>
+    createMany?: TDeviceCreateManyTeachingInputEnvelope
+    set?: Enumerable<TDeviceWhereUniqueInput>
+    disconnect?: Enumerable<TDeviceWhereUniqueInput>
+    delete?: Enumerable<TDeviceWhereUniqueInput>
+    connect?: Enumerable<TDeviceWhereUniqueInput>
+    update?: Enumerable<TDeviceUpdateWithWhereUniqueWithoutTeachingInput>
+    updateMany?: Enumerable<TDeviceUpdateManyWithWhereWithoutTeachingInput>
+    deleteMany?: Enumerable<TDeviceScalarWhereInput>
+  }
+
   export type TeachingUpdateclassRoomIdsInput = {
     set?: Enumerable<string>
     push?: string | Enumerable<string>
@@ -54048,6 +54292,20 @@ export namespace Prisma {
     update?: Enumerable<TrackerUpdateWithWhereUniqueWithoutMengajarInput>
     updateMany?: Enumerable<TrackerUpdateManyWithWhereWithoutMengajarInput>
     deleteMany?: Enumerable<TrackerScalarWhereInput>
+  }
+
+  export type TDeviceUncheckedUpdateManyWithoutTeachingNestedInput = {
+    create?: XOR<Enumerable<TDeviceCreateWithoutTeachingInput>, Enumerable<TDeviceUncheckedCreateWithoutTeachingInput>>
+    connectOrCreate?: Enumerable<TDeviceCreateOrConnectWithoutTeachingInput>
+    upsert?: Enumerable<TDeviceUpsertWithWhereUniqueWithoutTeachingInput>
+    createMany?: TDeviceCreateManyTeachingInputEnvelope
+    set?: Enumerable<TDeviceWhereUniqueInput>
+    disconnect?: Enumerable<TDeviceWhereUniqueInput>
+    delete?: Enumerable<TDeviceWhereUniqueInput>
+    connect?: Enumerable<TDeviceWhereUniqueInput>
+    update?: Enumerable<TDeviceUpdateWithWhereUniqueWithoutTeachingInput>
+    updateMany?: Enumerable<TDeviceUpdateManyWithWhereWithoutTeachingInput>
+    deleteMany?: Enumerable<TDeviceScalarWhereInput>
   }
 
   export type UserCreateNestedOneWithoutLinkInput = {
@@ -55013,6 +55271,7 @@ export namespace Prisma {
 
   export type TDevicePropsCreateInput = {
     docDate: Date | string
+    docAddr: string
     kepText: string
     kepUser: string
     ke3Text: string
@@ -55032,6 +55291,12 @@ export namespace Prisma {
     mouth: number
     week: number
     active: boolean
+  }
+
+  export type TeachingCreateNestedOneWithoutTDeviceInput = {
+    create?: XOR<TeachingCreateWithoutTDeviceInput, TeachingUncheckedCreateWithoutTDeviceInput>
+    connectOrCreate?: TeachingCreateOrConnectWithoutTDeviceInput
+    connect?: TeachingWhereUniqueInput
   }
 
   export type SchoolYearCreateNestedOneWithoutTDeviceInput = {
@@ -55137,6 +55402,14 @@ export namespace Prisma {
     push?: Enumerable<TDevicePosCreateInput>
     updateMany?: TDevicePosUpdateManyInput
     deleteMany?: TDevicePosDeleteManyInput
+  }
+
+  export type TeachingUpdateOneRequiredWithoutTDeviceNestedInput = {
+    create?: XOR<TeachingCreateWithoutTDeviceInput, TeachingUncheckedCreateWithoutTDeviceInput>
+    connectOrCreate?: TeachingCreateOrConnectWithoutTDeviceInput
+    upsert?: TeachingUpsertWithoutTDeviceInput
+    connect?: TeachingWhereUniqueInput
+    update?: XOR<TeachingUpdateWithoutTDeviceInput, TeachingUncheckedUpdateWithoutTDeviceInput>
   }
 
   export type SchoolYearUpdateOneRequiredWithoutTDeviceNestedInput = {
@@ -56251,6 +56524,7 @@ export namespace Prisma {
     OR?: Enumerable<TDevicePropsWhereInput>
     NOT?: Enumerable<TDevicePropsWhereInput>
     docDate?: DateTimeFilter | Date | string
+    docAddr?: StringFilter | string
     kepText?: StringFilter | string
     kepUser?: StringFilter | string
     ke3Text?: StringFilter | string
@@ -56759,6 +57033,7 @@ export namespace Prisma {
     teacher: TeacherCreateNestedOneWithoutTeachingInput
     classRoom?: ClassRoomCreateNestedManyWithoutTeachingInput
     elemen?: ElementCreateNestedManyWithoutScheduleClassInput
+    tDevice?: TDeviceCreateNestedManyWithoutTeachingInput
   }
 
   export type TeachingUncheckedCreateWithoutTrackerInput = {
@@ -56772,6 +57047,7 @@ export namespace Prisma {
     disable?: boolean
     classRoom?: ClassRoomUncheckedCreateNestedManyWithoutTeachingInput
     elemen?: ElementUncheckedCreateNestedManyWithoutScheduleClassInput
+    tDevice?: TDeviceUncheckedCreateNestedManyWithoutTeachingInput
   }
 
   export type TeachingCreateOrConnectWithoutTrackerInput = {
@@ -56781,6 +57057,8 @@ export namespace Prisma {
 
   export type ObjectiveCreateWithoutTrackerInput = {
     id?: string
+    level: number
+    fase: Fase
     code: string
     kkm: number
     steps?: number
@@ -56808,6 +57086,8 @@ export namespace Prisma {
 
   export type ObjectiveUncheckedCreateWithoutTrackerInput = {
     id?: string
+    level: number
+    fase: Fase
     userId: string
     instansiId: string
     yearId: string
@@ -56845,10 +57125,13 @@ export namespace Prisma {
   export type TDeviceCreateWithoutTrackerInput = {
     id?: string
     name: string
+    level: number
+    fase: Fase
     property: XOR<TDevicePropsCreateEnvelopeInput, TDevicePropsCreateInput>
     elemen?: TDeviceCreateelemenInput | Enumerable<string>
     disable?: boolean
     positions?: XOR<TDevicePosListCreateEnvelopeInput, Enumerable<TDevicePosCreateInput>>
+    teaching: TeachingCreateNestedOneWithoutTDeviceInput
     year: SchoolYearCreateNestedOneWithoutTDeviceInput
     user: UserCreateNestedOneWithoutTDeviceInput
     instansi: InstansiCreateNestedOneWithoutTDeviceInput
@@ -56862,6 +57145,9 @@ export namespace Prisma {
   export type TDeviceUncheckedCreateWithoutTrackerInput = {
     id?: string
     name: string
+    level: number
+    fase: Fase
+    teachingId: string
     property: XOR<TDevicePropsCreateEnvelopeInput, TDevicePropsCreateInput>
     yearId: string
     userId: string
@@ -57386,6 +57672,7 @@ export namespace Prisma {
     teacher?: TeacherUpdateOneRequiredWithoutTeachingNestedInput
     classRoom?: ClassRoomUpdateManyWithoutTeachingNestedInput
     elemen?: ElementUpdateManyWithoutScheduleClassNestedInput
+    tDevice?: TDeviceUpdateManyWithoutTeachingNestedInput
   }
 
   export type TeachingUncheckedUpdateWithoutTrackerInput = {
@@ -57398,6 +57685,7 @@ export namespace Prisma {
     disable?: BoolFieldUpdateOperationsInput | boolean
     classRoom?: ClassRoomUncheckedUpdateManyWithoutTeachingNestedInput
     elemen?: ElementUncheckedUpdateManyWithoutScheduleClassNestedInput
+    tDevice?: TDeviceUncheckedUpdateManyWithoutTeachingNestedInput
   }
 
   export type ObjectiveUpsertWithoutTrackerInput = {
@@ -57406,6 +57694,8 @@ export namespace Prisma {
   }
 
   export type ObjectiveUpdateWithoutTrackerInput = {
+    level?: IntFieldUpdateOperationsInput | number
+    fase?: EnumFaseFieldUpdateOperationsInput | Fase
     code?: StringFieldUpdateOperationsInput | string
     kkm?: IntFieldUpdateOperationsInput | number
     steps?: IntFieldUpdateOperationsInput | number
@@ -57432,6 +57722,8 @@ export namespace Prisma {
   }
 
   export type ObjectiveUncheckedUpdateWithoutTrackerInput = {
+    level?: IntFieldUpdateOperationsInput | number
+    fase?: EnumFaseFieldUpdateOperationsInput | Fase
     userId?: StringFieldUpdateOperationsInput | string
     instansiId?: StringFieldUpdateOperationsInput | string
     yearId?: StringFieldUpdateOperationsInput | string
@@ -57468,10 +57760,13 @@ export namespace Prisma {
 
   export type TDeviceUpdateWithoutTrackerInput = {
     name?: StringFieldUpdateOperationsInput | string
+    level?: IntFieldUpdateOperationsInput | number
+    fase?: EnumFaseFieldUpdateOperationsInput | Fase
     property?: XOR<TDevicePropsUpdateEnvelopeInput, TDevicePropsCreateInput>
     elemen?: TDeviceUpdateelemenInput | Enumerable<string>
     disable?: BoolFieldUpdateOperationsInput | boolean
     positions?: XOR<TDevicePosListUpdateEnvelopeInput, Enumerable<TDevicePosCreateInput>>
+    teaching?: TeachingUpdateOneRequiredWithoutTDeviceNestedInput
     year?: SchoolYearUpdateOneRequiredWithoutTDeviceNestedInput
     user?: UserUpdateOneRequiredWithoutTDeviceNestedInput
     instansi?: InstansiUpdateOneRequiredWithoutTDeviceNestedInput
@@ -57484,6 +57779,9 @@ export namespace Prisma {
 
   export type TDeviceUncheckedUpdateWithoutTrackerInput = {
     name?: StringFieldUpdateOperationsInput | string
+    level?: IntFieldUpdateOperationsInput | number
+    fase?: EnumFaseFieldUpdateOperationsInput | Fase
+    teachingId?: StringFieldUpdateOperationsInput | string
     property?: XOR<TDevicePropsUpdateEnvelopeInput, TDevicePropsCreateInput>
     yearId?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
@@ -57881,10 +58179,13 @@ export namespace Prisma {
   export type TDeviceCreateWithoutInstansiInput = {
     id?: string
     name: string
+    level: number
+    fase: Fase
     property: XOR<TDevicePropsCreateEnvelopeInput, TDevicePropsCreateInput>
     elemen?: TDeviceCreateelemenInput | Enumerable<string>
     disable?: boolean
     positions?: XOR<TDevicePosListCreateEnvelopeInput, Enumerable<TDevicePosCreateInput>>
+    teaching: TeachingCreateNestedOneWithoutTDeviceInput
     year: SchoolYearCreateNestedOneWithoutTDeviceInput
     user: UserCreateNestedOneWithoutTDeviceInput
     mapel: MataPelajaranCreateNestedOneWithoutDeviceInput
@@ -57898,6 +58199,9 @@ export namespace Prisma {
   export type TDeviceUncheckedCreateWithoutInstansiInput = {
     id?: string
     name: string
+    level: number
+    fase: Fase
+    teachingId: string
     property: XOR<TDevicePropsCreateEnvelopeInput, TDevicePropsCreateInput>
     yearId: string
     userId: string
@@ -57924,6 +58228,8 @@ export namespace Prisma {
 
   export type ObjectiveCreateWithoutInstansiInput = {
     id?: string
+    level: number
+    fase: Fase
     code: string
     kkm: number
     steps?: number
@@ -57951,6 +58257,8 @@ export namespace Prisma {
 
   export type ObjectiveUncheckedCreateWithoutInstansiInput = {
     id?: string
+    level: number
+    fase: Fase
     userId: string
     yearId: string
     mapelId: string
@@ -58264,6 +58572,9 @@ export namespace Prisma {
     NOT?: Enumerable<TDeviceScalarWhereInput>
     id?: StringFilter | string
     name?: StringFilter | string
+    level?: IntFilter | number
+    fase?: EnumFaseFilter | Fase
+    teachingId?: StringFilter | string
     yearId?: StringFilter | string
     userId?: StringFilter | string
     instansiId?: StringFilter | string
@@ -58295,6 +58606,8 @@ export namespace Prisma {
     OR?: Enumerable<ObjectiveScalarWhereInput>
     NOT?: Enumerable<ObjectiveScalarWhereInput>
     id?: StringFilter | string
+    level?: IntFilter | number
+    fase?: EnumFaseFilter | Fase
     userId?: StringFilter | string
     instansiId?: StringFilter | string
     yearId?: StringFilter | string
@@ -58538,6 +58851,8 @@ export namespace Prisma {
 
   export type ObjectiveCreateWithoutMapelInput = {
     id?: string
+    level: number
+    fase: Fase
     code: string
     kkm: number
     steps?: number
@@ -58565,6 +58880,8 @@ export namespace Prisma {
 
   export type ObjectiveUncheckedCreateWithoutMapelInput = {
     id?: string
+    level: number
+    fase: Fase
     userId: string
     instansiId: string
     yearId: string
@@ -58606,10 +58923,13 @@ export namespace Prisma {
   export type TDeviceCreateWithoutMapelInput = {
     id?: string
     name: string
+    level: number
+    fase: Fase
     property: XOR<TDevicePropsCreateEnvelopeInput, TDevicePropsCreateInput>
     elemen?: TDeviceCreateelemenInput | Enumerable<string>
     disable?: boolean
     positions?: XOR<TDevicePosListCreateEnvelopeInput, Enumerable<TDevicePosCreateInput>>
+    teaching: TeachingCreateNestedOneWithoutTDeviceInput
     year: SchoolYearCreateNestedOneWithoutTDeviceInput
     user: UserCreateNestedOneWithoutTDeviceInput
     instansi: InstansiCreateNestedOneWithoutTDeviceInput
@@ -58623,6 +58943,9 @@ export namespace Prisma {
   export type TDeviceUncheckedCreateWithoutMapelInput = {
     id?: string
     name: string
+    level: number
+    fase: Fase
+    teachingId: string
     property: XOR<TDevicePropsCreateEnvelopeInput, TDevicePropsCreateInput>
     yearId: string
     userId: string
@@ -58985,6 +59308,7 @@ export namespace Prisma {
     teacher: TeacherCreateNestedOneWithoutTeachingInput
     classRoom?: ClassRoomCreateNestedManyWithoutTeachingInput
     tracker?: TrackerCreateNestedManyWithoutMengajarInput
+    tDevice?: TDeviceCreateNestedManyWithoutTeachingInput
   }
 
   export type TeachingUncheckedCreateWithoutElemenInput = {
@@ -58998,6 +59322,7 @@ export namespace Prisma {
     disable?: boolean
     classRoom?: ClassRoomUncheckedCreateNestedManyWithoutTeachingInput
     tracker?: TrackerUncheckedCreateNestedManyWithoutMengajarInput
+    tDevice?: TDeviceUncheckedCreateNestedManyWithoutTeachingInput
   }
 
   export type TeachingCreateOrConnectWithoutElemenInput = {
@@ -59007,6 +59332,8 @@ export namespace Prisma {
 
   export type ObjectiveCreateWithoutElemenInput = {
     id?: string
+    level: number
+    fase: Fase
     code: string
     kkm: number
     steps?: number
@@ -59034,6 +59361,8 @@ export namespace Prisma {
 
   export type ObjectiveUncheckedCreateWithoutElemenInput = {
     id?: string
+    level: number
+    fase: Fase
     userId: string
     instansiId: string
     yearId: string
@@ -59233,6 +59562,8 @@ export namespace Prisma {
 
   export type ObjectiveCreateWithoutAchievementInput = {
     id?: string
+    level: number
+    fase: Fase
     code: string
     kkm: number
     steps?: number
@@ -59260,6 +59591,8 @@ export namespace Prisma {
 
   export type ObjectiveUncheckedCreateWithoutAchievementInput = {
     id?: string
+    level: number
+    fase: Fase
     userId: string
     instansiId: string
     yearId: string
@@ -60430,6 +60763,8 @@ export namespace Prisma {
 
   export type ObjectiveCreateWithoutUserInput = {
     id?: string
+    level: number
+    fase: Fase
     code: string
     kkm: number
     steps?: number
@@ -60457,6 +60792,8 @@ export namespace Prisma {
 
   export type ObjectiveUncheckedCreateWithoutUserInput = {
     id?: string
+    level: number
+    fase: Fase
     instansiId: string
     yearId: string
     mapelId: string
@@ -60533,10 +60870,13 @@ export namespace Prisma {
   export type TDeviceCreateWithoutUserInput = {
     id?: string
     name: string
+    level: number
+    fase: Fase
     property: XOR<TDevicePropsCreateEnvelopeInput, TDevicePropsCreateInput>
     elemen?: TDeviceCreateelemenInput | Enumerable<string>
     disable?: boolean
     positions?: XOR<TDevicePosListCreateEnvelopeInput, Enumerable<TDevicePosCreateInput>>
+    teaching: TeachingCreateNestedOneWithoutTDeviceInput
     year: SchoolYearCreateNestedOneWithoutTDeviceInput
     instansi: InstansiCreateNestedOneWithoutTDeviceInput
     mapel: MataPelajaranCreateNestedOneWithoutDeviceInput
@@ -60550,6 +60890,9 @@ export namespace Prisma {
   export type TDeviceUncheckedCreateWithoutUserInput = {
     id?: string
     name: string
+    level: number
+    fase: Fase
+    teachingId: string
     property: XOR<TDevicePropsCreateEnvelopeInput, TDevicePropsCreateInput>
     yearId: string
     instansiId: string
@@ -62581,6 +62924,8 @@ export namespace Prisma {
 
   export type ObjectiveCreateWithoutYearInput = {
     id?: string
+    level: number
+    fase: Fase
     code: string
     kkm: number
     steps?: number
@@ -62608,6 +62953,8 @@ export namespace Prisma {
 
   export type ObjectiveUncheckedCreateWithoutYearInput = {
     id?: string
+    level: number
+    fase: Fase
     userId: string
     instansiId: string
     mapelId: string
@@ -62706,10 +63053,13 @@ export namespace Prisma {
   export type TDeviceCreateWithoutYearInput = {
     id?: string
     name: string
+    level: number
+    fase: Fase
     property: XOR<TDevicePropsCreateEnvelopeInput, TDevicePropsCreateInput>
     elemen?: TDeviceCreateelemenInput | Enumerable<string>
     disable?: boolean
     positions?: XOR<TDevicePosListCreateEnvelopeInput, Enumerable<TDevicePosCreateInput>>
+    teaching: TeachingCreateNestedOneWithoutTDeviceInput
     user: UserCreateNestedOneWithoutTDeviceInput
     instansi: InstansiCreateNestedOneWithoutTDeviceInput
     mapel: MataPelajaranCreateNestedOneWithoutDeviceInput
@@ -62723,6 +63073,9 @@ export namespace Prisma {
   export type TDeviceUncheckedCreateWithoutYearInput = {
     id?: string
     name: string
+    level: number
+    fase: Fase
+    teachingId: string
     property: XOR<TDevicePropsCreateEnvelopeInput, TDevicePropsCreateInput>
     userId: string
     instansiId: string
@@ -63209,6 +63562,7 @@ export namespace Prisma {
     classRoom?: ClassRoomCreateNestedManyWithoutTeachingInput
     elemen?: ElementCreateNestedManyWithoutScheduleClassInput
     tracker?: TrackerCreateNestedManyWithoutMengajarInput
+    tDevice?: TDeviceCreateNestedManyWithoutTeachingInput
   }
 
   export type TeachingUncheckedCreateWithoutTeacherInput = {
@@ -63222,6 +63576,7 @@ export namespace Prisma {
     classRoom?: ClassRoomUncheckedCreateNestedManyWithoutTeachingInput
     elemen?: ElementUncheckedCreateNestedManyWithoutScheduleClassInput
     tracker?: TrackerUncheckedCreateNestedManyWithoutMengajarInput
+    tDevice?: TDeviceUncheckedCreateNestedManyWithoutTeachingInput
   }
 
   export type TeachingCreateOrConnectWithoutTeacherInput = {
@@ -63672,6 +64027,7 @@ export namespace Prisma {
     teacher: TeacherCreateNestedOneWithoutTeachingInput
     elemen?: ElementCreateNestedManyWithoutScheduleClassInput
     tracker?: TrackerCreateNestedManyWithoutMengajarInput
+    tDevice?: TDeviceCreateNestedManyWithoutTeachingInput
   }
 
   export type TeachingUncheckedCreateWithoutClassRoomInput = {
@@ -63685,6 +64041,7 @@ export namespace Prisma {
     disable?: boolean
     elemen?: ElementUncheckedCreateNestedManyWithoutScheduleClassInput
     tracker?: TrackerUncheckedCreateNestedManyWithoutMengajarInput
+    tDevice?: TDeviceUncheckedCreateNestedManyWithoutTeachingInput
   }
 
   export type TeachingCreateOrConnectWithoutClassRoomInput = {
@@ -63695,10 +64052,13 @@ export namespace Prisma {
   export type TDeviceCreateWithoutClassRoomInput = {
     id?: string
     name: string
+    level: number
+    fase: Fase
     property: XOR<TDevicePropsCreateEnvelopeInput, TDevicePropsCreateInput>
     elemen?: TDeviceCreateelemenInput | Enumerable<string>
     disable?: boolean
     positions?: XOR<TDevicePosListCreateEnvelopeInput, Enumerable<TDevicePosCreateInput>>
+    teaching: TeachingCreateNestedOneWithoutTDeviceInput
     year: SchoolYearCreateNestedOneWithoutTDeviceInput
     user: UserCreateNestedOneWithoutTDeviceInput
     instansi: InstansiCreateNestedOneWithoutTDeviceInput
@@ -63712,6 +64072,9 @@ export namespace Prisma {
   export type TDeviceUncheckedCreateWithoutClassRoomInput = {
     id?: string
     name: string
+    level: number
+    fase: Fase
+    teachingId: string
     property: XOR<TDevicePropsCreateEnvelopeInput, TDevicePropsCreateInput>
     yearId: string
     userId: string
@@ -64636,6 +64999,7 @@ export namespace Prisma {
     classRoom?: ClassRoomCreateNestedManyWithoutTeachingInput
     elemen?: ElementCreateNestedManyWithoutScheduleClassInput
     tracker?: TrackerCreateNestedManyWithoutMengajarInput
+    tDevice?: TDeviceCreateNestedManyWithoutTeachingInput
   }
 
   export type TeachingUncheckedCreateWithoutRefInput = {
@@ -64649,6 +65013,7 @@ export namespace Prisma {
     classRoom?: ClassRoomUncheckedCreateNestedManyWithoutTeachingInput
     elemen?: ElementUncheckedCreateNestedManyWithoutScheduleClassInput
     tracker?: TrackerUncheckedCreateNestedManyWithoutMengajarInput
+    tDevice?: TDeviceUncheckedCreateNestedManyWithoutTeachingInput
   }
 
   export type TeachingCreateOrConnectWithoutRefInput = {
@@ -64955,6 +65320,56 @@ export namespace Prisma {
     data: Enumerable<TrackerCreateManyMengajarInput>
   }
 
+  export type TDeviceCreateWithoutTeachingInput = {
+    id?: string
+    name: string
+    level: number
+    fase: Fase
+    property: XOR<TDevicePropsCreateEnvelopeInput, TDevicePropsCreateInput>
+    elemen?: TDeviceCreateelemenInput | Enumerable<string>
+    disable?: boolean
+    positions?: XOR<TDevicePosListCreateEnvelopeInput, Enumerable<TDevicePosCreateInput>>
+    year: SchoolYearCreateNestedOneWithoutTDeviceInput
+    user: UserCreateNestedOneWithoutTDeviceInput
+    instansi: InstansiCreateNestedOneWithoutTDeviceInput
+    mapel: MataPelajaranCreateNestedOneWithoutDeviceInput
+    classRoom?: ClassRoomCreateNestedManyWithoutTDeviceInput
+    tracker?: TrackerCreateNestedManyWithoutPerangkatInput
+    data?: TDeviceDataCreateNestedManyWithoutRefInput
+    children?: TDeviceCreateNestedManyWithoutParentInput
+    parent?: TDeviceCreateNestedOneWithoutChildrenInput
+  }
+
+  export type TDeviceUncheckedCreateWithoutTeachingInput = {
+    id?: string
+    name: string
+    level: number
+    fase: Fase
+    property: XOR<TDevicePropsCreateEnvelopeInput, TDevicePropsCreateInput>
+    yearId: string
+    userId: string
+    instansiId: string
+    mapelId: string
+    classRoomIds?: TDeviceCreateclassRoomIdsInput | Enumerable<string>
+    elemen?: TDeviceCreateelemenInput | Enumerable<string>
+    disable?: boolean
+    parentId?: string | null
+    positions?: XOR<TDevicePosListCreateEnvelopeInput, Enumerable<TDevicePosCreateInput>>
+    classRoom?: ClassRoomUncheckedCreateNestedManyWithoutTDeviceInput
+    tracker?: TrackerUncheckedCreateNestedManyWithoutPerangkatInput
+    data?: TDeviceDataUncheckedCreateNestedManyWithoutRefInput
+    children?: TDeviceUncheckedCreateNestedManyWithoutParentInput
+  }
+
+  export type TDeviceCreateOrConnectWithoutTeachingInput = {
+    where: TDeviceWhereUniqueInput
+    create: XOR<TDeviceCreateWithoutTeachingInput, TDeviceUncheckedCreateWithoutTeachingInput>
+  }
+
+  export type TDeviceCreateManyTeachingInputEnvelope = {
+    data: Enumerable<TDeviceCreateManyTeachingInput>
+  }
+
   export type ScheduleUpsertWithoutTeachingInput = {
     update: XOR<ScheduleUpdateWithoutTeachingInput, ScheduleUncheckedUpdateWithoutTeachingInput>
     create: XOR<ScheduleCreateWithoutTeachingInput, ScheduleUncheckedCreateWithoutTeachingInput>
@@ -65062,6 +65477,22 @@ export namespace Prisma {
   export type TrackerUpdateManyWithWhereWithoutMengajarInput = {
     where: TrackerScalarWhereInput
     data: XOR<TrackerUpdateManyMutationInput, TrackerUncheckedUpdateManyWithoutTrackerInput>
+  }
+
+  export type TDeviceUpsertWithWhereUniqueWithoutTeachingInput = {
+    where: TDeviceWhereUniqueInput
+    update: XOR<TDeviceUpdateWithoutTeachingInput, TDeviceUncheckedUpdateWithoutTeachingInput>
+    create: XOR<TDeviceCreateWithoutTeachingInput, TDeviceUncheckedCreateWithoutTeachingInput>
+  }
+
+  export type TDeviceUpdateWithWhereUniqueWithoutTeachingInput = {
+    where: TDeviceWhereUniqueInput
+    data: XOR<TDeviceUpdateWithoutTeachingInput, TDeviceUncheckedUpdateWithoutTeachingInput>
+  }
+
+  export type TDeviceUpdateManyWithWhereWithoutTeachingInput = {
+    where: TDeviceScalarWhereInput
+    data: XOR<TDeviceUpdateManyMutationInput, TDeviceUncheckedUpdateManyWithoutTDeviceInput>
   }
 
   export type UserCreateWithoutLinkInput = {
@@ -65196,6 +65627,8 @@ export namespace Prisma {
 
   export type ObjectiveCreateWithoutAssessmentsInput = {
     id?: string
+    level: number
+    fase: Fase
     code: string
     kkm: number
     steps?: number
@@ -65223,6 +65656,8 @@ export namespace Prisma {
 
   export type ObjectiveUncheckedCreateWithoutAssessmentsInput = {
     id?: string
+    level: number
+    fase: Fase
     userId: string
     instansiId: string
     yearId: string
@@ -65263,6 +65698,8 @@ export namespace Prisma {
   }
 
   export type ObjectiveUpdateWithoutAssessmentsInput = {
+    level?: IntFieldUpdateOperationsInput | number
+    fase?: EnumFaseFieldUpdateOperationsInput | Fase
     code?: StringFieldUpdateOperationsInput | string
     kkm?: IntFieldUpdateOperationsInput | number
     steps?: IntFieldUpdateOperationsInput | number
@@ -65289,6 +65726,8 @@ export namespace Prisma {
   }
 
   export type ObjectiveUncheckedUpdateWithoutAssessmentsInput = {
+    level?: IntFieldUpdateOperationsInput | number
+    fase?: EnumFaseFieldUpdateOperationsInput | Fase
     userId?: StringFieldUpdateOperationsInput | string
     instansiId?: StringFieldUpdateOperationsInput | string
     yearId?: StringFieldUpdateOperationsInput | string
@@ -66237,6 +66676,8 @@ export namespace Prisma {
 
   export type ObjectiveCreateWithoutMaterialInput = {
     id?: string
+    level: number
+    fase: Fase
     code: string
     kkm: number
     steps?: number
@@ -66264,6 +66705,8 @@ export namespace Prisma {
 
   export type ObjectiveUncheckedCreateWithoutMaterialInput = {
     id?: string
+    level: number
+    fase: Fase
     userId: string
     instansiId: string
     yearId: string
@@ -66329,6 +66772,8 @@ export namespace Prisma {
   }
 
   export type ObjectiveUpdateWithoutMaterialInput = {
+    level?: IntFieldUpdateOperationsInput | number
+    fase?: EnumFaseFieldUpdateOperationsInput | Fase
     code?: StringFieldUpdateOperationsInput | string
     kkm?: IntFieldUpdateOperationsInput | number
     steps?: IntFieldUpdateOperationsInput | number
@@ -66355,6 +66800,8 @@ export namespace Prisma {
   }
 
   export type ObjectiveUncheckedUpdateWithoutMaterialInput = {
+    level?: IntFieldUpdateOperationsInput | number
+    fase?: EnumFaseFieldUpdateOperationsInput | Fase
     userId?: StringFieldUpdateOperationsInput | string
     instansiId?: StringFieldUpdateOperationsInput | string
     yearId?: StringFieldUpdateOperationsInput | string
@@ -66454,6 +66901,8 @@ export namespace Prisma {
 
   export type ObjectiveCreateWithoutToolInput = {
     id?: string
+    level: number
+    fase: Fase
     code: string
     kkm: number
     steps?: number
@@ -66481,6 +66930,8 @@ export namespace Prisma {
 
   export type ObjectiveUncheckedCreateWithoutToolInput = {
     id?: string
+    level: number
+    fase: Fase
     userId: string
     instansiId: string
     yearId: string
@@ -66517,6 +66968,8 @@ export namespace Prisma {
 
   export type ObjectiveCreateWithoutMateInput = {
     id?: string
+    level: number
+    fase: Fase
     code: string
     kkm: number
     steps?: number
@@ -66544,6 +66997,8 @@ export namespace Prisma {
 
   export type ObjectiveUncheckedCreateWithoutMateInput = {
     id?: string
+    level: number
+    fase: Fase
     userId: string
     instansiId: string
     yearId: string
@@ -66580,6 +67035,8 @@ export namespace Prisma {
 
   export type ObjectiveCreateWithoutMethInput = {
     id?: string
+    level: number
+    fase: Fase
     code: string
     kkm: number
     steps?: number
@@ -66607,6 +67064,8 @@ export namespace Prisma {
 
   export type ObjectiveUncheckedCreateWithoutMethInput = {
     id?: string
+    level: number
+    fase: Fase
     userId: string
     instansiId: string
     yearId: string
@@ -66643,6 +67102,8 @@ export namespace Prisma {
 
   export type ObjectiveCreateWithoutMediaInput = {
     id?: string
+    level: number
+    fase: Fase
     code: string
     kkm: number
     steps?: number
@@ -66670,6 +67131,8 @@ export namespace Prisma {
 
   export type ObjectiveUncheckedCreateWithoutMediaInput = {
     id?: string
+    level: number
+    fase: Fase
     userId: string
     instansiId: string
     yearId: string
@@ -66770,6 +67233,8 @@ export namespace Prisma {
 
   export type ObjectiveCreateWithoutPppInput = {
     id?: string
+    level: number
+    fase: Fase
     code: string
     kkm: number
     steps?: number
@@ -66797,6 +67262,8 @@ export namespace Prisma {
 
   export type ObjectiveUncheckedCreateWithoutPppInput = {
     id?: string
+    level: number
+    fase: Fase
     userId: string
     instansiId: string
     yearId: string
@@ -66837,6 +67304,8 @@ export namespace Prisma {
   }
 
   export type ObjectiveUpdateWithoutPppInput = {
+    level?: IntFieldUpdateOperationsInput | number
+    fase?: EnumFaseFieldUpdateOperationsInput | Fase
     code?: StringFieldUpdateOperationsInput | string
     kkm?: IntFieldUpdateOperationsInput | number
     steps?: IntFieldUpdateOperationsInput | number
@@ -66863,6 +67332,8 @@ export namespace Prisma {
   }
 
   export type ObjectiveUncheckedUpdateWithoutPppInput = {
+    level?: IntFieldUpdateOperationsInput | number
+    fase?: EnumFaseFieldUpdateOperationsInput | Fase
     userId?: StringFieldUpdateOperationsInput | string
     instansiId?: StringFieldUpdateOperationsInput | string
     yearId?: StringFieldUpdateOperationsInput | string
@@ -66894,6 +67365,8 @@ export namespace Prisma {
 
   export type ObjectiveCreateWithoutResourseInput = {
     id?: string
+    level: number
+    fase: Fase
     code: string
     kkm: number
     steps?: number
@@ -66921,6 +67394,8 @@ export namespace Prisma {
 
   export type ObjectiveUncheckedCreateWithoutResourseInput = {
     id?: string
+    level: number
+    fase: Fase
     userId: string
     instansiId: string
     yearId: string
@@ -66992,6 +67467,8 @@ export namespace Prisma {
   }
 
   export type ObjectiveUpdateWithoutResourseInput = {
+    level?: IntFieldUpdateOperationsInput | number
+    fase?: EnumFaseFieldUpdateOperationsInput | Fase
     code?: StringFieldUpdateOperationsInput | string
     kkm?: IntFieldUpdateOperationsInput | number
     steps?: IntFieldUpdateOperationsInput | number
@@ -67018,6 +67495,8 @@ export namespace Prisma {
   }
 
   export type ObjectiveUncheckedUpdateWithoutResourseInput = {
+    level?: IntFieldUpdateOperationsInput | number
+    fase?: EnumFaseFieldUpdateOperationsInput | Fase
     userId?: StringFieldUpdateOperationsInput | string
     instansiId?: StringFieldUpdateOperationsInput | string
     yearId?: StringFieldUpdateOperationsInput | string
@@ -67074,6 +67553,37 @@ export namespace Prisma {
     userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TeachingCreateWithoutTDeviceInput = {
+    id?: string
+    hours: number
+    isEven: boolean
+    disable?: boolean
+    ref: ScheduleCreateNestedOneWithoutTeachingInput
+    teacher: TeacherCreateNestedOneWithoutTeachingInput
+    classRoom?: ClassRoomCreateNestedManyWithoutTeachingInput
+    elemen?: ElementCreateNestedManyWithoutScheduleClassInput
+    tracker?: TrackerCreateNestedManyWithoutMengajarInput
+  }
+
+  export type TeachingUncheckedCreateWithoutTDeviceInput = {
+    id?: string
+    refId: string
+    hours: number
+    isEven: boolean
+    teacherId: string
+    classRoomIds?: TeachingCreateclassRoomIdsInput | Enumerable<string>
+    elemenIds?: TeachingCreateelemenIdsInput | Enumerable<string>
+    disable?: boolean
+    classRoom?: ClassRoomUncheckedCreateNestedManyWithoutTeachingInput
+    elemen?: ElementUncheckedCreateNestedManyWithoutScheduleClassInput
+    tracker?: TrackerUncheckedCreateNestedManyWithoutMengajarInput
+  }
+
+  export type TeachingCreateOrConnectWithoutTDeviceInput = {
+    where: TeachingWhereUniqueInput
+    create: XOR<TeachingCreateWithoutTDeviceInput, TeachingUncheckedCreateWithoutTDeviceInput>
   }
 
   export type SchoolYearCreateWithoutTDeviceInput = {
@@ -67361,10 +67871,13 @@ export namespace Prisma {
   export type TDeviceCreateWithoutParentInput = {
     id?: string
     name: string
+    level: number
+    fase: Fase
     property: XOR<TDevicePropsCreateEnvelopeInput, TDevicePropsCreateInput>
     elemen?: TDeviceCreateelemenInput | Enumerable<string>
     disable?: boolean
     positions?: XOR<TDevicePosListCreateEnvelopeInput, Enumerable<TDevicePosCreateInput>>
+    teaching: TeachingCreateNestedOneWithoutTDeviceInput
     year: SchoolYearCreateNestedOneWithoutTDeviceInput
     user: UserCreateNestedOneWithoutTDeviceInput
     instansi: InstansiCreateNestedOneWithoutTDeviceInput
@@ -67378,6 +67891,9 @@ export namespace Prisma {
   export type TDeviceUncheckedCreateWithoutParentInput = {
     id?: string
     name: string
+    level: number
+    fase: Fase
+    teachingId: string
     property: XOR<TDevicePropsCreateEnvelopeInput, TDevicePropsCreateInput>
     yearId: string
     userId: string
@@ -67405,10 +67921,13 @@ export namespace Prisma {
   export type TDeviceCreateWithoutChildrenInput = {
     id?: string
     name: string
+    level: number
+    fase: Fase
     property: XOR<TDevicePropsCreateEnvelopeInput, TDevicePropsCreateInput>
     elemen?: TDeviceCreateelemenInput | Enumerable<string>
     disable?: boolean
     positions?: XOR<TDevicePosListCreateEnvelopeInput, Enumerable<TDevicePosCreateInput>>
+    teaching: TeachingCreateNestedOneWithoutTDeviceInput
     year: SchoolYearCreateNestedOneWithoutTDeviceInput
     user: UserCreateNestedOneWithoutTDeviceInput
     instansi: InstansiCreateNestedOneWithoutTDeviceInput
@@ -67422,6 +67941,9 @@ export namespace Prisma {
   export type TDeviceUncheckedCreateWithoutChildrenInput = {
     id?: string
     name: string
+    level: number
+    fase: Fase
+    teachingId: string
     property: XOR<TDevicePropsCreateEnvelopeInput, TDevicePropsCreateInput>
     yearId: string
     userId: string
@@ -67444,6 +67966,7 @@ export namespace Prisma {
 
   export type TDevicePropsUpdateInput = {
     docDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    docAddr?: StringFieldUpdateOperationsInput | string
     kepText?: StringFieldUpdateOperationsInput | string
     kepUser?: StringFieldUpdateOperationsInput | string
     ke3Text?: StringFieldUpdateOperationsInput | string
@@ -67458,6 +67981,35 @@ export namespace Prisma {
 
   export type TDevicePosDeleteManyInput = {
     where: TDevicePosWhereInput
+  }
+
+  export type TeachingUpsertWithoutTDeviceInput = {
+    update: XOR<TeachingUpdateWithoutTDeviceInput, TeachingUncheckedUpdateWithoutTDeviceInput>
+    create: XOR<TeachingCreateWithoutTDeviceInput, TeachingUncheckedCreateWithoutTDeviceInput>
+  }
+
+  export type TeachingUpdateWithoutTDeviceInput = {
+    hours?: IntFieldUpdateOperationsInput | number
+    isEven?: BoolFieldUpdateOperationsInput | boolean
+    disable?: BoolFieldUpdateOperationsInput | boolean
+    ref?: ScheduleUpdateOneRequiredWithoutTeachingNestedInput
+    teacher?: TeacherUpdateOneRequiredWithoutTeachingNestedInput
+    classRoom?: ClassRoomUpdateManyWithoutTeachingNestedInput
+    elemen?: ElementUpdateManyWithoutScheduleClassNestedInput
+    tracker?: TrackerUpdateManyWithoutMengajarNestedInput
+  }
+
+  export type TeachingUncheckedUpdateWithoutTDeviceInput = {
+    refId?: StringFieldUpdateOperationsInput | string
+    hours?: IntFieldUpdateOperationsInput | number
+    isEven?: BoolFieldUpdateOperationsInput | boolean
+    teacherId?: StringFieldUpdateOperationsInput | string
+    classRoomIds?: TeachingUpdateclassRoomIdsInput | Enumerable<string>
+    elemenIds?: TeachingUpdateelemenIdsInput | Enumerable<string>
+    disable?: BoolFieldUpdateOperationsInput | boolean
+    classRoom?: ClassRoomUncheckedUpdateManyWithoutTeachingNestedInput
+    elemen?: ElementUncheckedUpdateManyWithoutScheduleClassNestedInput
+    tracker?: TrackerUncheckedUpdateManyWithoutMengajarNestedInput
   }
 
   export type SchoolYearUpsertWithoutTDeviceInput = {
@@ -67688,10 +68240,13 @@ export namespace Prisma {
 
   export type TDeviceUpdateWithoutChildrenInput = {
     name?: StringFieldUpdateOperationsInput | string
+    level?: IntFieldUpdateOperationsInput | number
+    fase?: EnumFaseFieldUpdateOperationsInput | Fase
     property?: XOR<TDevicePropsUpdateEnvelopeInput, TDevicePropsCreateInput>
     elemen?: TDeviceUpdateelemenInput | Enumerable<string>
     disable?: BoolFieldUpdateOperationsInput | boolean
     positions?: XOR<TDevicePosListUpdateEnvelopeInput, Enumerable<TDevicePosCreateInput>>
+    teaching?: TeachingUpdateOneRequiredWithoutTDeviceNestedInput
     year?: SchoolYearUpdateOneRequiredWithoutTDeviceNestedInput
     user?: UserUpdateOneRequiredWithoutTDeviceNestedInput
     instansi?: InstansiUpdateOneRequiredWithoutTDeviceNestedInput
@@ -67704,6 +68259,9 @@ export namespace Prisma {
 
   export type TDeviceUncheckedUpdateWithoutChildrenInput = {
     name?: StringFieldUpdateOperationsInput | string
+    level?: IntFieldUpdateOperationsInput | number
+    fase?: EnumFaseFieldUpdateOperationsInput | Fase
+    teachingId?: StringFieldUpdateOperationsInput | string
     property?: XOR<TDevicePropsUpdateEnvelopeInput, TDevicePropsCreateInput>
     yearId?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
@@ -67722,10 +68280,13 @@ export namespace Prisma {
   export type TDeviceCreateWithoutDataInput = {
     id?: string
     name: string
+    level: number
+    fase: Fase
     property: XOR<TDevicePropsCreateEnvelopeInput, TDevicePropsCreateInput>
     elemen?: TDeviceCreateelemenInput | Enumerable<string>
     disable?: boolean
     positions?: XOR<TDevicePosListCreateEnvelopeInput, Enumerable<TDevicePosCreateInput>>
+    teaching: TeachingCreateNestedOneWithoutTDeviceInput
     year: SchoolYearCreateNestedOneWithoutTDeviceInput
     user: UserCreateNestedOneWithoutTDeviceInput
     instansi: InstansiCreateNestedOneWithoutTDeviceInput
@@ -67739,6 +68300,9 @@ export namespace Prisma {
   export type TDeviceUncheckedCreateWithoutDataInput = {
     id?: string
     name: string
+    level: number
+    fase: Fase
+    teachingId: string
     property: XOR<TDevicePropsCreateEnvelopeInput, TDevicePropsCreateInput>
     yearId: string
     userId: string
@@ -67761,6 +68325,8 @@ export namespace Prisma {
 
   export type ObjectiveCreateWithoutDevicesInput = {
     id?: string
+    level: number
+    fase: Fase
     code: string
     kkm: number
     steps?: number
@@ -67788,6 +68354,8 @@ export namespace Prisma {
 
   export type ObjectiveUncheckedCreateWithoutDevicesInput = {
     id?: string
+    level: number
+    fase: Fase
     userId: string
     instansiId: string
     yearId: string
@@ -67829,10 +68397,13 @@ export namespace Prisma {
 
   export type TDeviceUpdateWithoutDataInput = {
     name?: StringFieldUpdateOperationsInput | string
+    level?: IntFieldUpdateOperationsInput | number
+    fase?: EnumFaseFieldUpdateOperationsInput | Fase
     property?: XOR<TDevicePropsUpdateEnvelopeInput, TDevicePropsCreateInput>
     elemen?: TDeviceUpdateelemenInput | Enumerable<string>
     disable?: BoolFieldUpdateOperationsInput | boolean
     positions?: XOR<TDevicePosListUpdateEnvelopeInput, Enumerable<TDevicePosCreateInput>>
+    teaching?: TeachingUpdateOneRequiredWithoutTDeviceNestedInput
     year?: SchoolYearUpdateOneRequiredWithoutTDeviceNestedInput
     user?: UserUpdateOneRequiredWithoutTDeviceNestedInput
     instansi?: InstansiUpdateOneRequiredWithoutTDeviceNestedInput
@@ -67845,6 +68416,9 @@ export namespace Prisma {
 
   export type TDeviceUncheckedUpdateWithoutDataInput = {
     name?: StringFieldUpdateOperationsInput | string
+    level?: IntFieldUpdateOperationsInput | number
+    fase?: EnumFaseFieldUpdateOperationsInput | Fase
+    teachingId?: StringFieldUpdateOperationsInput | string
     property?: XOR<TDevicePropsUpdateEnvelopeInput, TDevicePropsCreateInput>
     yearId?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
@@ -67866,6 +68440,8 @@ export namespace Prisma {
   }
 
   export type ObjectiveUpdateWithoutDevicesInput = {
+    level?: IntFieldUpdateOperationsInput | number
+    fase?: EnumFaseFieldUpdateOperationsInput | Fase
     code?: StringFieldUpdateOperationsInput | string
     kkm?: IntFieldUpdateOperationsInput | number
     steps?: IntFieldUpdateOperationsInput | number
@@ -67892,6 +68468,8 @@ export namespace Prisma {
   }
 
   export type ObjectiveUncheckedUpdateWithoutDevicesInput = {
+    level?: IntFieldUpdateOperationsInput | number
+    fase?: EnumFaseFieldUpdateOperationsInput | Fase
     userId?: StringFieldUpdateOperationsInput | string
     instansiId?: StringFieldUpdateOperationsInput | string
     yearId?: StringFieldUpdateOperationsInput | string
@@ -68357,6 +68935,9 @@ export namespace Prisma {
   export type TDeviceCreateManyInstansiInput = {
     id?: string
     name: string
+    level: number
+    fase: Fase
+    teachingId: string
     property: XOR<TDevicePropsCreateEnvelopeInput, TDevicePropsCreateInput>
     yearId: string
     userId: string
@@ -68370,6 +68951,8 @@ export namespace Prisma {
 
   export type ObjectiveCreateManyInstansiInput = {
     id?: string
+    level: number
+    fase: Fase
     userId: string
     yearId: string
     mapelId: string
@@ -68758,10 +69341,13 @@ export namespace Prisma {
 
   export type TDeviceUpdateWithoutInstansiInput = {
     name?: StringFieldUpdateOperationsInput | string
+    level?: IntFieldUpdateOperationsInput | number
+    fase?: EnumFaseFieldUpdateOperationsInput | Fase
     property?: XOR<TDevicePropsUpdateEnvelopeInput, TDevicePropsCreateInput>
     elemen?: TDeviceUpdateelemenInput | Enumerable<string>
     disable?: BoolFieldUpdateOperationsInput | boolean
     positions?: XOR<TDevicePosListUpdateEnvelopeInput, Enumerable<TDevicePosCreateInput>>
+    teaching?: TeachingUpdateOneRequiredWithoutTDeviceNestedInput
     year?: SchoolYearUpdateOneRequiredWithoutTDeviceNestedInput
     user?: UserUpdateOneRequiredWithoutTDeviceNestedInput
     mapel?: MataPelajaranUpdateOneRequiredWithoutDeviceNestedInput
@@ -68774,6 +69360,9 @@ export namespace Prisma {
 
   export type TDeviceUncheckedUpdateWithoutInstansiInput = {
     name?: StringFieldUpdateOperationsInput | string
+    level?: IntFieldUpdateOperationsInput | number
+    fase?: EnumFaseFieldUpdateOperationsInput | Fase
+    teachingId?: StringFieldUpdateOperationsInput | string
     property?: XOR<TDevicePropsUpdateEnvelopeInput, TDevicePropsCreateInput>
     yearId?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
@@ -68791,6 +69380,9 @@ export namespace Prisma {
 
   export type TDeviceUncheckedUpdateManyWithoutTDeviceInput = {
     name?: StringFieldUpdateOperationsInput | string
+    level?: IntFieldUpdateOperationsInput | number
+    fase?: EnumFaseFieldUpdateOperationsInput | Fase
+    teachingId?: StringFieldUpdateOperationsInput | string
     property?: XOR<TDevicePropsUpdateEnvelopeInput, TDevicePropsCreateInput>
     yearId?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
@@ -68803,6 +69395,8 @@ export namespace Prisma {
   }
 
   export type ObjectiveUpdateWithoutInstansiInput = {
+    level?: IntFieldUpdateOperationsInput | number
+    fase?: EnumFaseFieldUpdateOperationsInput | Fase
     code?: StringFieldUpdateOperationsInput | string
     kkm?: IntFieldUpdateOperationsInput | number
     steps?: IntFieldUpdateOperationsInput | number
@@ -68829,6 +69423,8 @@ export namespace Prisma {
   }
 
   export type ObjectiveUncheckedUpdateWithoutInstansiInput = {
+    level?: IntFieldUpdateOperationsInput | number
+    fase?: EnumFaseFieldUpdateOperationsInput | Fase
     userId?: StringFieldUpdateOperationsInput | string
     yearId?: StringFieldUpdateOperationsInput | string
     mapelId?: StringFieldUpdateOperationsInput | string
@@ -68859,6 +69455,8 @@ export namespace Prisma {
   }
 
   export type ObjectiveUncheckedUpdateManyWithoutObjectiveInput = {
+    level?: IntFieldUpdateOperationsInput | number
+    fase?: EnumFaseFieldUpdateOperationsInput | Fase
     userId?: StringFieldUpdateOperationsInput | string
     yearId?: StringFieldUpdateOperationsInput | string
     mapelId?: StringFieldUpdateOperationsInput | string
@@ -68919,6 +69517,8 @@ export namespace Prisma {
 
   export type ObjectiveCreateManyMapelInput = {
     id?: string
+    level: number
+    fase: Fase
     userId: string
     instansiId: string
     yearId: string
@@ -68941,6 +69541,9 @@ export namespace Prisma {
   export type TDeviceCreateManyMapelInput = {
     id?: string
     name: string
+    level: number
+    fase: Fase
+    teachingId: string
     property: XOR<TDevicePropsCreateEnvelopeInput, TDevicePropsCreateInput>
     yearId: string
     userId: string
@@ -69049,6 +69652,8 @@ export namespace Prisma {
   }
 
   export type ObjectiveUpdateWithoutMapelInput = {
+    level?: IntFieldUpdateOperationsInput | number
+    fase?: EnumFaseFieldUpdateOperationsInput | Fase
     code?: StringFieldUpdateOperationsInput | string
     kkm?: IntFieldUpdateOperationsInput | number
     steps?: IntFieldUpdateOperationsInput | number
@@ -69075,6 +69680,8 @@ export namespace Prisma {
   }
 
   export type ObjectiveUncheckedUpdateWithoutMapelInput = {
+    level?: IntFieldUpdateOperationsInput | number
+    fase?: EnumFaseFieldUpdateOperationsInput | Fase
     userId?: StringFieldUpdateOperationsInput | string
     instansiId?: StringFieldUpdateOperationsInput | string
     yearId?: StringFieldUpdateOperationsInput | string
@@ -69106,10 +69713,13 @@ export namespace Prisma {
 
   export type TDeviceUpdateWithoutMapelInput = {
     name?: StringFieldUpdateOperationsInput | string
+    level?: IntFieldUpdateOperationsInput | number
+    fase?: EnumFaseFieldUpdateOperationsInput | Fase
     property?: XOR<TDevicePropsUpdateEnvelopeInput, TDevicePropsCreateInput>
     elemen?: TDeviceUpdateelemenInput | Enumerable<string>
     disable?: BoolFieldUpdateOperationsInput | boolean
     positions?: XOR<TDevicePosListUpdateEnvelopeInput, Enumerable<TDevicePosCreateInput>>
+    teaching?: TeachingUpdateOneRequiredWithoutTDeviceNestedInput
     year?: SchoolYearUpdateOneRequiredWithoutTDeviceNestedInput
     user?: UserUpdateOneRequiredWithoutTDeviceNestedInput
     instansi?: InstansiUpdateOneRequiredWithoutTDeviceNestedInput
@@ -69122,6 +69732,9 @@ export namespace Prisma {
 
   export type TDeviceUncheckedUpdateWithoutMapelInput = {
     name?: StringFieldUpdateOperationsInput | string
+    level?: IntFieldUpdateOperationsInput | number
+    fase?: EnumFaseFieldUpdateOperationsInput | Fase
+    teachingId?: StringFieldUpdateOperationsInput | string
     property?: XOR<TDevicePropsUpdateEnvelopeInput, TDevicePropsCreateInput>
     yearId?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
@@ -69139,6 +69752,9 @@ export namespace Prisma {
 
   export type TDeviceUncheckedUpdateManyWithoutDeviceInput = {
     name?: StringFieldUpdateOperationsInput | string
+    level?: IntFieldUpdateOperationsInput | number
+    fase?: EnumFaseFieldUpdateOperationsInput | Fase
+    teachingId?: StringFieldUpdateOperationsInput | string
     property?: XOR<TDevicePropsUpdateEnvelopeInput, TDevicePropsCreateInput>
     yearId?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
@@ -69184,6 +69800,8 @@ export namespace Prisma {
 
   export type ObjectiveCreateManyElemenInput = {
     id?: string
+    level: number
+    fase: Fase
     userId: string
     instansiId: string
     yearId: string
@@ -69282,6 +69900,7 @@ export namespace Prisma {
     teacher?: TeacherUpdateOneRequiredWithoutTeachingNestedInput
     classRoom?: ClassRoomUpdateManyWithoutTeachingNestedInput
     tracker?: TrackerUpdateManyWithoutMengajarNestedInput
+    tDevice?: TDeviceUpdateManyWithoutTeachingNestedInput
   }
 
   export type TeachingUncheckedUpdateWithoutElemenInput = {
@@ -69294,6 +69913,7 @@ export namespace Prisma {
     disable?: BoolFieldUpdateOperationsInput | boolean
     classRoom?: ClassRoomUncheckedUpdateManyWithoutTeachingNestedInput
     tracker?: TrackerUncheckedUpdateManyWithoutMengajarNestedInput
+    tDevice?: TDeviceUncheckedUpdateManyWithoutTeachingNestedInput
   }
 
   export type TeachingUncheckedUpdateManyWithoutScheduleClassInput = {
@@ -69307,6 +69927,8 @@ export namespace Prisma {
   }
 
   export type ObjectiveUpdateWithoutElemenInput = {
+    level?: IntFieldUpdateOperationsInput | number
+    fase?: EnumFaseFieldUpdateOperationsInput | Fase
     code?: StringFieldUpdateOperationsInput | string
     kkm?: IntFieldUpdateOperationsInput | number
     steps?: IntFieldUpdateOperationsInput | number
@@ -69333,6 +69955,8 @@ export namespace Prisma {
   }
 
   export type ObjectiveUncheckedUpdateWithoutElemenInput = {
+    level?: IntFieldUpdateOperationsInput | number
+    fase?: EnumFaseFieldUpdateOperationsInput | Fase
     userId?: StringFieldUpdateOperationsInput | string
     instansiId?: StringFieldUpdateOperationsInput | string
     yearId?: StringFieldUpdateOperationsInput | string
@@ -69364,6 +69988,8 @@ export namespace Prisma {
 
   export type ObjectiveCreateManyAchievementInput = {
     id?: string
+    level: number
+    fase: Fase
     userId: string
     instansiId: string
     yearId: string
@@ -69408,6 +70034,8 @@ export namespace Prisma {
   }
 
   export type ObjectiveUpdateWithoutAchievementInput = {
+    level?: IntFieldUpdateOperationsInput | number
+    fase?: EnumFaseFieldUpdateOperationsInput | Fase
     code?: StringFieldUpdateOperationsInput | string
     kkm?: IntFieldUpdateOperationsInput | number
     steps?: IntFieldUpdateOperationsInput | number
@@ -69434,6 +70062,8 @@ export namespace Prisma {
   }
 
   export type ObjectiveUncheckedUpdateWithoutAchievementInput = {
+    level?: IntFieldUpdateOperationsInput | number
+    fase?: EnumFaseFieldUpdateOperationsInput | Fase
     userId?: StringFieldUpdateOperationsInput | string
     instansiId?: StringFieldUpdateOperationsInput | string
     yearId?: StringFieldUpdateOperationsInput | string
@@ -70133,6 +70763,8 @@ export namespace Prisma {
 
   export type ObjectiveCreateManyUserInput = {
     id?: string
+    level: number
+    fase: Fase
     instansiId: string
     yearId: string
     mapelId: string
@@ -70167,6 +70799,9 @@ export namespace Prisma {
   export type TDeviceCreateManyUserInput = {
     id?: string
     name: string
+    level: number
+    fase: Fase
+    teachingId: string
     property: XOR<TDevicePropsCreateEnvelopeInput, TDevicePropsCreateInput>
     yearId: string
     instansiId: string
@@ -70232,6 +70867,8 @@ export namespace Prisma {
   }
 
   export type ObjectiveUpdateWithoutUserInput = {
+    level?: IntFieldUpdateOperationsInput | number
+    fase?: EnumFaseFieldUpdateOperationsInput | Fase
     code?: StringFieldUpdateOperationsInput | string
     kkm?: IntFieldUpdateOperationsInput | number
     steps?: IntFieldUpdateOperationsInput | number
@@ -70258,6 +70895,8 @@ export namespace Prisma {
   }
 
   export type ObjectiveUncheckedUpdateWithoutUserInput = {
+    level?: IntFieldUpdateOperationsInput | number
+    fase?: EnumFaseFieldUpdateOperationsInput | Fase
     instansiId?: StringFieldUpdateOperationsInput | string
     yearId?: StringFieldUpdateOperationsInput | string
     mapelId?: StringFieldUpdateOperationsInput | string
@@ -70324,10 +70963,13 @@ export namespace Prisma {
 
   export type TDeviceUpdateWithoutUserInput = {
     name?: StringFieldUpdateOperationsInput | string
+    level?: IntFieldUpdateOperationsInput | number
+    fase?: EnumFaseFieldUpdateOperationsInput | Fase
     property?: XOR<TDevicePropsUpdateEnvelopeInput, TDevicePropsCreateInput>
     elemen?: TDeviceUpdateelemenInput | Enumerable<string>
     disable?: BoolFieldUpdateOperationsInput | boolean
     positions?: XOR<TDevicePosListUpdateEnvelopeInput, Enumerable<TDevicePosCreateInput>>
+    teaching?: TeachingUpdateOneRequiredWithoutTDeviceNestedInput
     year?: SchoolYearUpdateOneRequiredWithoutTDeviceNestedInput
     instansi?: InstansiUpdateOneRequiredWithoutTDeviceNestedInput
     mapel?: MataPelajaranUpdateOneRequiredWithoutDeviceNestedInput
@@ -70340,6 +70982,9 @@ export namespace Prisma {
 
   export type TDeviceUncheckedUpdateWithoutUserInput = {
     name?: StringFieldUpdateOperationsInput | string
+    level?: IntFieldUpdateOperationsInput | number
+    fase?: EnumFaseFieldUpdateOperationsInput | Fase
+    teachingId?: StringFieldUpdateOperationsInput | string
     property?: XOR<TDevicePropsUpdateEnvelopeInput, TDevicePropsCreateInput>
     yearId?: StringFieldUpdateOperationsInput | string
     instansiId?: StringFieldUpdateOperationsInput | string
@@ -70766,6 +71411,8 @@ export namespace Prisma {
 
   export type ObjectiveCreateManyYearInput = {
     id?: string
+    level: number
+    fase: Fase
     userId: string
     instansiId: string
     mapelId: string
@@ -70812,6 +71459,9 @@ export namespace Prisma {
   export type TDeviceCreateManyYearInput = {
     id?: string
     name: string
+    level: number
+    fase: Fase
+    teachingId: string
     property: XOR<TDevicePropsCreateEnvelopeInput, TDevicePropsCreateInput>
     userId: string
     instansiId: string
@@ -70948,6 +71598,8 @@ export namespace Prisma {
   }
 
   export type ObjectiveUpdateWithoutYearInput = {
+    level?: IntFieldUpdateOperationsInput | number
+    fase?: EnumFaseFieldUpdateOperationsInput | Fase
     code?: StringFieldUpdateOperationsInput | string
     kkm?: IntFieldUpdateOperationsInput | number
     steps?: IntFieldUpdateOperationsInput | number
@@ -70974,6 +71626,8 @@ export namespace Prisma {
   }
 
   export type ObjectiveUncheckedUpdateWithoutYearInput = {
+    level?: IntFieldUpdateOperationsInput | number
+    fase?: EnumFaseFieldUpdateOperationsInput | Fase
     userId?: StringFieldUpdateOperationsInput | string
     instansiId?: StringFieldUpdateOperationsInput | string
     mapelId?: StringFieldUpdateOperationsInput | string
@@ -71051,10 +71705,13 @@ export namespace Prisma {
 
   export type TDeviceUpdateWithoutYearInput = {
     name?: StringFieldUpdateOperationsInput | string
+    level?: IntFieldUpdateOperationsInput | number
+    fase?: EnumFaseFieldUpdateOperationsInput | Fase
     property?: XOR<TDevicePropsUpdateEnvelopeInput, TDevicePropsCreateInput>
     elemen?: TDeviceUpdateelemenInput | Enumerable<string>
     disable?: BoolFieldUpdateOperationsInput | boolean
     positions?: XOR<TDevicePosListUpdateEnvelopeInput, Enumerable<TDevicePosCreateInput>>
+    teaching?: TeachingUpdateOneRequiredWithoutTDeviceNestedInput
     user?: UserUpdateOneRequiredWithoutTDeviceNestedInput
     instansi?: InstansiUpdateOneRequiredWithoutTDeviceNestedInput
     mapel?: MataPelajaranUpdateOneRequiredWithoutDeviceNestedInput
@@ -71067,6 +71724,9 @@ export namespace Prisma {
 
   export type TDeviceUncheckedUpdateWithoutYearInput = {
     name?: StringFieldUpdateOperationsInput | string
+    level?: IntFieldUpdateOperationsInput | number
+    fase?: EnumFaseFieldUpdateOperationsInput | Fase
+    teachingId?: StringFieldUpdateOperationsInput | string
     property?: XOR<TDevicePropsUpdateEnvelopeInput, TDevicePropsCreateInput>
     userId?: StringFieldUpdateOperationsInput | string
     instansiId?: StringFieldUpdateOperationsInput | string
@@ -71258,6 +71918,7 @@ export namespace Prisma {
     classRoom?: ClassRoomUpdateManyWithoutTeachingNestedInput
     elemen?: ElementUpdateManyWithoutScheduleClassNestedInput
     tracker?: TrackerUpdateManyWithoutMengajarNestedInput
+    tDevice?: TDeviceUpdateManyWithoutTeachingNestedInput
   }
 
   export type TeachingUncheckedUpdateWithoutTeacherInput = {
@@ -71270,6 +71931,7 @@ export namespace Prisma {
     classRoom?: ClassRoomUncheckedUpdateManyWithoutTeachingNestedInput
     elemen?: ElementUncheckedUpdateManyWithoutScheduleClassNestedInput
     tracker?: TrackerUncheckedUpdateManyWithoutMengajarNestedInput
+    tDevice?: TDeviceUncheckedUpdateManyWithoutTeachingNestedInput
   }
 
   export type TeachingUncheckedUpdateManyWithoutTeachingInput = {
@@ -71418,6 +72080,7 @@ export namespace Prisma {
     teacher?: TeacherUpdateOneRequiredWithoutTeachingNestedInput
     elemen?: ElementUpdateManyWithoutScheduleClassNestedInput
     tracker?: TrackerUpdateManyWithoutMengajarNestedInput
+    tDevice?: TDeviceUpdateManyWithoutTeachingNestedInput
   }
 
   export type TeachingUncheckedUpdateWithoutClassRoomInput = {
@@ -71430,14 +72093,18 @@ export namespace Prisma {
     disable?: BoolFieldUpdateOperationsInput | boolean
     elemen?: ElementUncheckedUpdateManyWithoutScheduleClassNestedInput
     tracker?: TrackerUncheckedUpdateManyWithoutMengajarNestedInput
+    tDevice?: TDeviceUncheckedUpdateManyWithoutTeachingNestedInput
   }
 
   export type TDeviceUpdateWithoutClassRoomInput = {
     name?: StringFieldUpdateOperationsInput | string
+    level?: IntFieldUpdateOperationsInput | number
+    fase?: EnumFaseFieldUpdateOperationsInput | Fase
     property?: XOR<TDevicePropsUpdateEnvelopeInput, TDevicePropsCreateInput>
     elemen?: TDeviceUpdateelemenInput | Enumerable<string>
     disable?: BoolFieldUpdateOperationsInput | boolean
     positions?: XOR<TDevicePosListUpdateEnvelopeInput, Enumerable<TDevicePosCreateInput>>
+    teaching?: TeachingUpdateOneRequiredWithoutTDeviceNestedInput
     year?: SchoolYearUpdateOneRequiredWithoutTDeviceNestedInput
     user?: UserUpdateOneRequiredWithoutTDeviceNestedInput
     instansi?: InstansiUpdateOneRequiredWithoutTDeviceNestedInput
@@ -71450,6 +72117,9 @@ export namespace Prisma {
 
   export type TDeviceUncheckedUpdateWithoutClassRoomInput = {
     name?: StringFieldUpdateOperationsInput | string
+    level?: IntFieldUpdateOperationsInput | number
+    fase?: EnumFaseFieldUpdateOperationsInput | Fase
+    teachingId?: StringFieldUpdateOperationsInput | string
     property?: XOR<TDevicePropsUpdateEnvelopeInput, TDevicePropsCreateInput>
     yearId?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
@@ -71684,6 +72354,7 @@ export namespace Prisma {
     classRoom?: ClassRoomUpdateManyWithoutTeachingNestedInput
     elemen?: ElementUpdateManyWithoutScheduleClassNestedInput
     tracker?: TrackerUpdateManyWithoutMengajarNestedInput
+    tDevice?: TDeviceUpdateManyWithoutTeachingNestedInput
   }
 
   export type TeachingUncheckedUpdateWithoutRefInput = {
@@ -71696,6 +72367,7 @@ export namespace Prisma {
     classRoom?: ClassRoomUncheckedUpdateManyWithoutTeachingNestedInput
     elemen?: ElementUncheckedUpdateManyWithoutScheduleClassNestedInput
     tracker?: TrackerUncheckedUpdateManyWithoutMengajarNestedInput
+    tDevice?: TDeviceUncheckedUpdateManyWithoutTeachingNestedInput
   }
 
   export type TrackerCreateManyMengajarInput = {
@@ -71720,6 +72392,23 @@ export namespace Prisma {
     tujuanId?: string | null
     perangkatId?: string | null
     kalenderId?: string | null
+  }
+
+  export type TDeviceCreateManyTeachingInput = {
+    id?: string
+    name: string
+    level: number
+    fase: Fase
+    property: XOR<TDevicePropsCreateEnvelopeInput, TDevicePropsCreateInput>
+    yearId: string
+    userId: string
+    instansiId: string
+    mapelId: string
+    classRoomIds?: TDeviceCreateclassRoomIdsInput | Enumerable<string>
+    elemen?: TDeviceCreateelemenInput | Enumerable<string>
+    disable?: boolean
+    parentId?: string | null
+    positions?: XOR<TDevicePosListCreateEnvelopeInput, Enumerable<TDevicePosCreateInput>>
   }
 
   export type ClassRoomUpdateWithoutTeachingInput = {
@@ -71830,6 +72519,45 @@ export namespace Prisma {
     tujuanId?: NullableStringFieldUpdateOperationsInput | string | null
     perangkatId?: NullableStringFieldUpdateOperationsInput | string | null
     kalenderId?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type TDeviceUpdateWithoutTeachingInput = {
+    name?: StringFieldUpdateOperationsInput | string
+    level?: IntFieldUpdateOperationsInput | number
+    fase?: EnumFaseFieldUpdateOperationsInput | Fase
+    property?: XOR<TDevicePropsUpdateEnvelopeInput, TDevicePropsCreateInput>
+    elemen?: TDeviceUpdateelemenInput | Enumerable<string>
+    disable?: BoolFieldUpdateOperationsInput | boolean
+    positions?: XOR<TDevicePosListUpdateEnvelopeInput, Enumerable<TDevicePosCreateInput>>
+    year?: SchoolYearUpdateOneRequiredWithoutTDeviceNestedInput
+    user?: UserUpdateOneRequiredWithoutTDeviceNestedInput
+    instansi?: InstansiUpdateOneRequiredWithoutTDeviceNestedInput
+    mapel?: MataPelajaranUpdateOneRequiredWithoutDeviceNestedInput
+    classRoom?: ClassRoomUpdateManyWithoutTDeviceNestedInput
+    tracker?: TrackerUpdateManyWithoutPerangkatNestedInput
+    data?: TDeviceDataUpdateManyWithoutRefNestedInput
+    children?: TDeviceUpdateManyWithoutParentNestedInput
+    parent?: TDeviceUpdateOneWithoutChildrenNestedInput
+  }
+
+  export type TDeviceUncheckedUpdateWithoutTeachingInput = {
+    name?: StringFieldUpdateOperationsInput | string
+    level?: IntFieldUpdateOperationsInput | number
+    fase?: EnumFaseFieldUpdateOperationsInput | Fase
+    property?: XOR<TDevicePropsUpdateEnvelopeInput, TDevicePropsCreateInput>
+    yearId?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    instansiId?: StringFieldUpdateOperationsInput | string
+    mapelId?: StringFieldUpdateOperationsInput | string
+    classRoomIds?: TDeviceUpdateclassRoomIdsInput | Enumerable<string>
+    elemen?: TDeviceUpdateelemenInput | Enumerable<string>
+    disable?: BoolFieldUpdateOperationsInput | boolean
+    parentId?: NullableStringFieldUpdateOperationsInput | string | null
+    positions?: XOR<TDevicePosListUpdateEnvelopeInput, Enumerable<TDevicePosCreateInput>>
+    classRoom?: ClassRoomUncheckedUpdateManyWithoutTDeviceNestedInput
+    tracker?: TrackerUncheckedUpdateManyWithoutPerangkatNestedInput
+    data?: TDeviceDataUncheckedUpdateManyWithoutRefNestedInput
+    children?: TDeviceUncheckedUpdateManyWithoutParentNestedInput
   }
 
   export type OresourceCreateManyLinkInput = {
@@ -72188,6 +72916,8 @@ export namespace Prisma {
   }
 
   export type ObjectiveUpdateWithoutToolInput = {
+    level?: IntFieldUpdateOperationsInput | number
+    fase?: EnumFaseFieldUpdateOperationsInput | Fase
     code?: StringFieldUpdateOperationsInput | string
     kkm?: IntFieldUpdateOperationsInput | number
     steps?: IntFieldUpdateOperationsInput | number
@@ -72214,6 +72944,8 @@ export namespace Prisma {
   }
 
   export type ObjectiveUncheckedUpdateWithoutToolInput = {
+    level?: IntFieldUpdateOperationsInput | number
+    fase?: EnumFaseFieldUpdateOperationsInput | Fase
     userId?: StringFieldUpdateOperationsInput | string
     instansiId?: StringFieldUpdateOperationsInput | string
     yearId?: StringFieldUpdateOperationsInput | string
@@ -72244,6 +72976,8 @@ export namespace Prisma {
   }
 
   export type ObjectiveUncheckedUpdateManyWithoutToolInput = {
+    level?: IntFieldUpdateOperationsInput | number
+    fase?: EnumFaseFieldUpdateOperationsInput | Fase
     userId?: StringFieldUpdateOperationsInput | string
     instansiId?: StringFieldUpdateOperationsInput | string
     yearId?: StringFieldUpdateOperationsInput | string
@@ -72265,6 +72999,8 @@ export namespace Prisma {
   }
 
   export type ObjectiveUpdateWithoutMateInput = {
+    level?: IntFieldUpdateOperationsInput | number
+    fase?: EnumFaseFieldUpdateOperationsInput | Fase
     code?: StringFieldUpdateOperationsInput | string
     kkm?: IntFieldUpdateOperationsInput | number
     steps?: IntFieldUpdateOperationsInput | number
@@ -72291,6 +73027,8 @@ export namespace Prisma {
   }
 
   export type ObjectiveUncheckedUpdateWithoutMateInput = {
+    level?: IntFieldUpdateOperationsInput | number
+    fase?: EnumFaseFieldUpdateOperationsInput | Fase
     userId?: StringFieldUpdateOperationsInput | string
     instansiId?: StringFieldUpdateOperationsInput | string
     yearId?: StringFieldUpdateOperationsInput | string
@@ -72321,6 +73059,8 @@ export namespace Prisma {
   }
 
   export type ObjectiveUncheckedUpdateManyWithoutMateInput = {
+    level?: IntFieldUpdateOperationsInput | number
+    fase?: EnumFaseFieldUpdateOperationsInput | Fase
     userId?: StringFieldUpdateOperationsInput | string
     instansiId?: StringFieldUpdateOperationsInput | string
     yearId?: StringFieldUpdateOperationsInput | string
@@ -72342,6 +73082,8 @@ export namespace Prisma {
   }
 
   export type ObjectiveUpdateWithoutMethInput = {
+    level?: IntFieldUpdateOperationsInput | number
+    fase?: EnumFaseFieldUpdateOperationsInput | Fase
     code?: StringFieldUpdateOperationsInput | string
     kkm?: IntFieldUpdateOperationsInput | number
     steps?: IntFieldUpdateOperationsInput | number
@@ -72368,6 +73110,8 @@ export namespace Prisma {
   }
 
   export type ObjectiveUncheckedUpdateWithoutMethInput = {
+    level?: IntFieldUpdateOperationsInput | number
+    fase?: EnumFaseFieldUpdateOperationsInput | Fase
     userId?: StringFieldUpdateOperationsInput | string
     instansiId?: StringFieldUpdateOperationsInput | string
     yearId?: StringFieldUpdateOperationsInput | string
@@ -72398,6 +73142,8 @@ export namespace Prisma {
   }
 
   export type ObjectiveUncheckedUpdateManyWithoutMethInput = {
+    level?: IntFieldUpdateOperationsInput | number
+    fase?: EnumFaseFieldUpdateOperationsInput | Fase
     userId?: StringFieldUpdateOperationsInput | string
     instansiId?: StringFieldUpdateOperationsInput | string
     yearId?: StringFieldUpdateOperationsInput | string
@@ -72419,6 +73165,8 @@ export namespace Prisma {
   }
 
   export type ObjectiveUpdateWithoutMediaInput = {
+    level?: IntFieldUpdateOperationsInput | number
+    fase?: EnumFaseFieldUpdateOperationsInput | Fase
     code?: StringFieldUpdateOperationsInput | string
     kkm?: IntFieldUpdateOperationsInput | number
     steps?: IntFieldUpdateOperationsInput | number
@@ -72445,6 +73193,8 @@ export namespace Prisma {
   }
 
   export type ObjectiveUncheckedUpdateWithoutMediaInput = {
+    level?: IntFieldUpdateOperationsInput | number
+    fase?: EnumFaseFieldUpdateOperationsInput | Fase
     userId?: StringFieldUpdateOperationsInput | string
     instansiId?: StringFieldUpdateOperationsInput | string
     yearId?: StringFieldUpdateOperationsInput | string
@@ -72475,6 +73225,8 @@ export namespace Prisma {
   }
 
   export type ObjectiveUncheckedUpdateManyWithoutMediaInput = {
+    level?: IntFieldUpdateOperationsInput | number
+    fase?: EnumFaseFieldUpdateOperationsInput | Fase
     userId?: StringFieldUpdateOperationsInput | string
     instansiId?: StringFieldUpdateOperationsInput | string
     yearId?: StringFieldUpdateOperationsInput | string
@@ -72528,6 +73280,9 @@ export namespace Prisma {
   export type TDeviceCreateManyParentInput = {
     id?: string
     name: string
+    level: number
+    fase: Fase
+    teachingId: string
     property: XOR<TDevicePropsCreateEnvelopeInput, TDevicePropsCreateInput>
     yearId: string
     userId: string
@@ -72640,10 +73395,13 @@ export namespace Prisma {
 
   export type TDeviceUpdateWithoutParentInput = {
     name?: StringFieldUpdateOperationsInput | string
+    level?: IntFieldUpdateOperationsInput | number
+    fase?: EnumFaseFieldUpdateOperationsInput | Fase
     property?: XOR<TDevicePropsUpdateEnvelopeInput, TDevicePropsCreateInput>
     elemen?: TDeviceUpdateelemenInput | Enumerable<string>
     disable?: BoolFieldUpdateOperationsInput | boolean
     positions?: XOR<TDevicePosListUpdateEnvelopeInput, Enumerable<TDevicePosCreateInput>>
+    teaching?: TeachingUpdateOneRequiredWithoutTDeviceNestedInput
     year?: SchoolYearUpdateOneRequiredWithoutTDeviceNestedInput
     user?: UserUpdateOneRequiredWithoutTDeviceNestedInput
     instansi?: InstansiUpdateOneRequiredWithoutTDeviceNestedInput
@@ -72656,6 +73414,9 @@ export namespace Prisma {
 
   export type TDeviceUncheckedUpdateWithoutParentInput = {
     name?: StringFieldUpdateOperationsInput | string
+    level?: IntFieldUpdateOperationsInput | number
+    fase?: EnumFaseFieldUpdateOperationsInput | Fase
+    teachingId?: StringFieldUpdateOperationsInput | string
     property?: XOR<TDevicePropsUpdateEnvelopeInput, TDevicePropsCreateInput>
     yearId?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
@@ -72673,6 +73434,9 @@ export namespace Prisma {
 
   export type TDeviceUncheckedUpdateManyWithoutChildrenInput = {
     name?: StringFieldUpdateOperationsInput | string
+    level?: IntFieldUpdateOperationsInput | number
+    fase?: EnumFaseFieldUpdateOperationsInput | Fase
+    teachingId?: StringFieldUpdateOperationsInput | string
     property?: XOR<TDevicePropsUpdateEnvelopeInput, TDevicePropsCreateInput>
     yearId?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string

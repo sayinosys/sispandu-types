@@ -695,6 +695,7 @@ model Teaching {
   elemenIds    String[]    @db.ObjectId
   disable      Boolean     @default(false)
   tracker      Tracker[]
+  tDevice      TDevice[]
 
   @@unique([isEven, refId, teacherId])
 }
@@ -724,6 +725,8 @@ model OAssessment {
 
 model Objective {
   id            String        @id @default(auto()) @map("_id") @db.ObjectId
+  level         Int
+  fase          Fase
   user          User          @relation(fields: [userId], references: [id])
   userId        String        @db.ObjectId
   instansi      Instansi      @relation(fields: [instansiId], references: [id])
@@ -873,6 +876,7 @@ type TDevicePos {
 
 type TDeviceProps {
   docDate DateTime
+  docAddr String
   kepText String
   kepUser String
   ke3Text String
@@ -883,6 +887,10 @@ type TDeviceProps {
 model TDevice {
   id           String        @id @default(auto()) @map("_id") @db.ObjectId
   name         String
+  level        Int
+  fase         Fase
+  teaching     Teaching      @relation(fields: [teachingId], references: [id])
+  teachingId   String        @db.ObjectId
   property     TDeviceProps
   year         SchoolYear    @relation(fields: [yearId], references: [id])
   yearId       String        @db.ObjectId
