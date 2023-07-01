@@ -821,7 +821,8 @@ export type Calendar = {
 export type Dudi = {
   id: string
   name: string
-  address: Address | null
+  street: string
+  address: Address
   instansiId: string
   majorId: string
   contact: ContactDudi
@@ -42465,6 +42466,7 @@ export namespace Prisma {
   export type DudiMinAggregateOutputType = {
     id: string | null
     name: string | null
+    street: string | null
     instansiId: string | null
     majorId: string | null
     disable: boolean | null
@@ -42473,6 +42475,7 @@ export namespace Prisma {
   export type DudiMaxAggregateOutputType = {
     id: string | null
     name: string | null
+    street: string | null
     instansiId: string | null
     majorId: string | null
     disable: boolean | null
@@ -42481,6 +42484,7 @@ export namespace Prisma {
   export type DudiCountAggregateOutputType = {
     id: number
     name: number
+    street: number
     instansiId: number
     majorId: number
     collabs: number
@@ -42492,6 +42496,7 @@ export namespace Prisma {
   export type DudiMinAggregateInputType = {
     id?: true
     name?: true
+    street?: true
     instansiId?: true
     majorId?: true
     disable?: true
@@ -42500,6 +42505,7 @@ export namespace Prisma {
   export type DudiMaxAggregateInputType = {
     id?: true
     name?: true
+    street?: true
     instansiId?: true
     majorId?: true
     disable?: true
@@ -42508,6 +42514,7 @@ export namespace Prisma {
   export type DudiCountAggregateInputType = {
     id?: true
     name?: true
+    street?: true
     instansiId?: true
     majorId?: true
     collabs?: true
@@ -42591,6 +42598,7 @@ export namespace Prisma {
   export type DudiGroupByOutputType = {
     id: string
     name: string
+    street: string
     instansiId: string
     majorId: string
     collabs: string[]
@@ -42617,6 +42625,7 @@ export namespace Prisma {
   export type DudiSelect = {
     id?: boolean
     name?: boolean
+    street?: boolean
     address?: boolean | AddressArgs
     instansiId?: boolean
     majorId?: boolean
@@ -42656,7 +42665,7 @@ export namespace Prisma {
     : S extends { select: any } & (DudiArgs | DudiFindManyArgs)
       ? {
     [P in TruthyKeys<S['select']>]:
-        P extends 'address' ? AddressGetPayload<S['select'][P]> | null :
+        P extends 'address' ? AddressGetPayload<S['select'][P]> :
         P extends 'contact' ? ContactDudiGetPayload<S['select'][P]> :
         P extends 'timework' ? DudiTimeWorkGetPayload<S['select'][P]> :
         P extends 'instansi' ? InstansiGetPayload<S['select'][P]> :
@@ -44636,6 +44645,7 @@ export namespace Prisma {
   export const DudiScalarFieldEnum: {
     id: 'id',
     name: 'name',
+    street: 'street',
     instansiId: 'instansiId',
     majorId: 'majorId',
     collabs: 'collabs',
@@ -47375,7 +47385,8 @@ export namespace Prisma {
     NOT?: Enumerable<DudiWhereInput>
     id?: StringFilter | string
     name?: StringFilter | string
-    address?: XOR<AddressNullableCompositeFilter, AddressObjectEqualityInput> | null
+    street?: StringFilter | string
+    address?: XOR<AddressCompositeFilter, AddressObjectEqualityInput>
     instansiId?: StringFilter | string
     majorId?: StringFilter | string
     contact?: XOR<ContactDudiCompositeFilter, ContactDudiObjectEqualityInput>
@@ -47391,6 +47402,7 @@ export namespace Prisma {
   export type DudiOrderByWithRelationInput = {
     id?: SortOrder
     name?: SortOrder
+    street?: SortOrder
     address?: AddressOrderByInput
     instansiId?: SortOrder
     majorId?: SortOrder
@@ -47411,6 +47423,7 @@ export namespace Prisma {
   export type DudiOrderByWithAggregationInput = {
     id?: SortOrder
     name?: SortOrder
+    street?: SortOrder
     instansiId?: SortOrder
     majorId?: SortOrder
     collabs?: SortOrder
@@ -47426,6 +47439,7 @@ export namespace Prisma {
     NOT?: Enumerable<DudiScalarWhereWithAggregatesInput>
     id?: StringWithAggregatesFilter | string
     name?: StringWithAggregatesFilter | string
+    street?: StringWithAggregatesFilter | string
     instansiId?: StringWithAggregatesFilter | string
     majorId?: StringWithAggregatesFilter | string
     collabs?: StringNullableListFilter
@@ -50308,7 +50322,8 @@ export namespace Prisma {
   export type DudiCreateInput = {
     id?: string
     name: string
-    address?: XOR<AddressNullableCreateEnvelopeInput, AddressCreateInput> | null
+    street: string
+    address: XOR<AddressCreateEnvelopeInput, AddressCreateInput>
     contact: XOR<ContactDudiCreateEnvelopeInput, ContactDudiCreateInput>
     collabs?: DudiCreatecollabsInput | Enumerable<string>
     timework: XOR<DudiTimeWorkCreateEnvelopeInput, DudiTimeWorkCreateInput>
@@ -50322,7 +50337,8 @@ export namespace Prisma {
   export type DudiUncheckedCreateInput = {
     id?: string
     name: string
-    address?: XOR<AddressNullableCreateEnvelopeInput, AddressCreateInput> | null
+    street: string
+    address: XOR<AddressCreateEnvelopeInput, AddressCreateInput>
     instansiId: string
     majorId: string
     contact: XOR<ContactDudiCreateEnvelopeInput, ContactDudiCreateInput>
@@ -50335,7 +50351,8 @@ export namespace Prisma {
 
   export type DudiUpdateInput = {
     name?: StringFieldUpdateOperationsInput | string
-    address?: XOR<AddressNullableUpdateEnvelopeInput, AddressCreateInput> | null
+    street?: StringFieldUpdateOperationsInput | string
+    address?: XOR<AddressUpdateEnvelopeInput, AddressCreateInput>
     contact?: XOR<ContactDudiUpdateEnvelopeInput, ContactDudiCreateInput>
     collabs?: DudiUpdatecollabsInput | Enumerable<string>
     timework?: XOR<DudiTimeWorkUpdateEnvelopeInput, DudiTimeWorkCreateInput>
@@ -50348,7 +50365,8 @@ export namespace Prisma {
 
   export type DudiUncheckedUpdateInput = {
     name?: StringFieldUpdateOperationsInput | string
-    address?: XOR<AddressNullableUpdateEnvelopeInput, AddressCreateInput> | null
+    street?: StringFieldUpdateOperationsInput | string
+    address?: XOR<AddressUpdateEnvelopeInput, AddressCreateInput>
     instansiId?: StringFieldUpdateOperationsInput | string
     majorId?: StringFieldUpdateOperationsInput | string
     contact?: XOR<ContactDudiUpdateEnvelopeInput, ContactDudiCreateInput>
@@ -50362,7 +50380,8 @@ export namespace Prisma {
   export type DudiCreateManyInput = {
     id?: string
     name: string
-    address?: XOR<AddressNullableCreateEnvelopeInput, AddressCreateInput> | null
+    street: string
+    address: XOR<AddressCreateEnvelopeInput, AddressCreateInput>
     instansiId: string
     majorId: string
     contact: XOR<ContactDudiCreateEnvelopeInput, ContactDudiCreateInput>
@@ -50373,7 +50392,8 @@ export namespace Prisma {
 
   export type DudiUpdateManyMutationInput = {
     name?: StringFieldUpdateOperationsInput | string
-    address?: XOR<AddressNullableUpdateEnvelopeInput, AddressCreateInput> | null
+    street?: StringFieldUpdateOperationsInput | string
+    address?: XOR<AddressUpdateEnvelopeInput, AddressCreateInput>
     contact?: XOR<ContactDudiUpdateEnvelopeInput, ContactDudiCreateInput>
     collabs?: DudiUpdatecollabsInput | Enumerable<string>
     timework?: XOR<DudiTimeWorkUpdateEnvelopeInput, DudiTimeWorkCreateInput>
@@ -50382,7 +50402,8 @@ export namespace Prisma {
 
   export type DudiUncheckedUpdateManyInput = {
     name?: StringFieldUpdateOperationsInput | string
-    address?: XOR<AddressNullableUpdateEnvelopeInput, AddressCreateInput> | null
+    street?: StringFieldUpdateOperationsInput | string
+    address?: XOR<AddressUpdateEnvelopeInput, AddressCreateInput>
     instansiId?: StringFieldUpdateOperationsInput | string
     majorId?: StringFieldUpdateOperationsInput | string
     contact?: XOR<ContactDudiUpdateEnvelopeInput, ContactDudiCreateInput>
@@ -53109,6 +53130,7 @@ export namespace Prisma {
   export type DudiCountOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
+    street?: SortOrder
     instansiId?: SortOrder
     majorId?: SortOrder
     collabs?: SortOrder
@@ -53118,6 +53140,7 @@ export namespace Prisma {
   export type DudiMaxOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
+    street?: SortOrder
     instansiId?: SortOrder
     majorId?: SortOrder
     disable?: SortOrder
@@ -53126,6 +53149,7 @@ export namespace Prisma {
   export type DudiMinOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
+    street?: SortOrder
     instansiId?: SortOrder
     majorId?: SortOrder
     disable?: SortOrder
@@ -60622,7 +60646,8 @@ export namespace Prisma {
   export type DudiCreateWithoutTrackerInput = {
     id?: string
     name: string
-    address?: XOR<AddressNullableCreateEnvelopeInput, AddressCreateInput> | null
+    street: string
+    address: XOR<AddressCreateEnvelopeInput, AddressCreateInput>
     contact: XOR<ContactDudiCreateEnvelopeInput, ContactDudiCreateInput>
     collabs?: DudiCreatecollabsInput | Enumerable<string>
     timework: XOR<DudiTimeWorkCreateEnvelopeInput, DudiTimeWorkCreateInput>
@@ -60635,7 +60660,8 @@ export namespace Prisma {
   export type DudiUncheckedCreateWithoutTrackerInput = {
     id?: string
     name: string
-    address?: XOR<AddressNullableCreateEnvelopeInput, AddressCreateInput> | null
+    street: string
+    address: XOR<AddressCreateEnvelopeInput, AddressCreateInput>
     instansiId: string
     majorId: string
     contact: XOR<ContactDudiCreateEnvelopeInput, ContactDudiCreateInput>
@@ -61290,7 +61316,8 @@ export namespace Prisma {
 
   export type DudiUpdateWithoutTrackerInput = {
     name?: StringFieldUpdateOperationsInput | string
-    address?: XOR<AddressNullableUpdateEnvelopeInput, AddressCreateInput> | null
+    street?: StringFieldUpdateOperationsInput | string
+    address?: XOR<AddressUpdateEnvelopeInput, AddressCreateInput>
     contact?: XOR<ContactDudiUpdateEnvelopeInput, ContactDudiCreateInput>
     collabs?: DudiUpdatecollabsInput | Enumerable<string>
     timework?: XOR<DudiTimeWorkUpdateEnvelopeInput, DudiTimeWorkCreateInput>
@@ -61302,7 +61329,8 @@ export namespace Prisma {
 
   export type DudiUncheckedUpdateWithoutTrackerInput = {
     name?: StringFieldUpdateOperationsInput | string
-    address?: XOR<AddressNullableUpdateEnvelopeInput, AddressCreateInput> | null
+    street?: StringFieldUpdateOperationsInput | string
+    address?: XOR<AddressUpdateEnvelopeInput, AddressCreateInput>
     instansiId?: StringFieldUpdateOperationsInput | string
     majorId?: StringFieldUpdateOperationsInput | string
     contact?: XOR<ContactDudiUpdateEnvelopeInput, ContactDudiCreateInput>
@@ -61787,7 +61815,8 @@ export namespace Prisma {
   export type DudiCreateWithoutInstansiInput = {
     id?: string
     name: string
-    address?: XOR<AddressNullableCreateEnvelopeInput, AddressCreateInput> | null
+    street: string
+    address: XOR<AddressCreateEnvelopeInput, AddressCreateInput>
     contact: XOR<ContactDudiCreateEnvelopeInput, ContactDudiCreateInput>
     collabs?: DudiCreatecollabsInput | Enumerable<string>
     timework: XOR<DudiTimeWorkCreateEnvelopeInput, DudiTimeWorkCreateInput>
@@ -61800,7 +61829,8 @@ export namespace Prisma {
   export type DudiUncheckedCreateWithoutInstansiInput = {
     id?: string
     name: string
-    address?: XOR<AddressNullableCreateEnvelopeInput, AddressCreateInput> | null
+    street: string
+    address: XOR<AddressCreateEnvelopeInput, AddressCreateInput>
     majorId: string
     contact: XOR<ContactDudiCreateEnvelopeInput, ContactDudiCreateInput>
     collabs?: DudiCreatecollabsInput | Enumerable<string>
@@ -62173,6 +62203,7 @@ export namespace Prisma {
     NOT?: Enumerable<DudiScalarWhereInput>
     id?: StringFilter | string
     name?: StringFilter | string
+    street?: StringFilter | string
     instansiId?: StringFilter | string
     majorId?: StringFilter | string
     collabs?: StringNullableListFilter
@@ -63936,7 +63967,8 @@ export namespace Prisma {
   export type DudiCreateWithoutMajorInput = {
     id?: string
     name: string
-    address?: XOR<AddressNullableCreateEnvelopeInput, AddressCreateInput> | null
+    street: string
+    address: XOR<AddressCreateEnvelopeInput, AddressCreateInput>
     contact: XOR<ContactDudiCreateEnvelopeInput, ContactDudiCreateInput>
     collabs?: DudiCreatecollabsInput | Enumerable<string>
     timework: XOR<DudiTimeWorkCreateEnvelopeInput, DudiTimeWorkCreateInput>
@@ -63949,7 +63981,8 @@ export namespace Prisma {
   export type DudiUncheckedCreateWithoutMajorInput = {
     id?: string
     name: string
-    address?: XOR<AddressNullableCreateEnvelopeInput, AddressCreateInput> | null
+    street: string
+    address: XOR<AddressCreateEnvelopeInput, AddressCreateInput>
     instansiId: string
     contact: XOR<ContactDudiCreateEnvelopeInput, ContactDudiCreateInput>
     collabs?: DudiCreatecollabsInput | Enumerable<string>
@@ -72794,7 +72827,8 @@ export namespace Prisma {
   export type DudiCreateWithoutLearningInput = {
     id?: string
     name: string
-    address?: XOR<AddressNullableCreateEnvelopeInput, AddressCreateInput> | null
+    street: string
+    address: XOR<AddressCreateEnvelopeInput, AddressCreateInput>
     contact: XOR<ContactDudiCreateEnvelopeInput, ContactDudiCreateInput>
     collabs?: DudiCreatecollabsInput | Enumerable<string>
     timework: XOR<DudiTimeWorkCreateEnvelopeInput, DudiTimeWorkCreateInput>
@@ -72807,7 +72841,8 @@ export namespace Prisma {
   export type DudiUncheckedCreateWithoutLearningInput = {
     id?: string
     name: string
-    address?: XOR<AddressNullableCreateEnvelopeInput, AddressCreateInput> | null
+    street: string
+    address: XOR<AddressCreateEnvelopeInput, AddressCreateInput>
     instansiId: string
     majorId: string
     contact: XOR<ContactDudiCreateEnvelopeInput, ContactDudiCreateInput>
@@ -72838,7 +72873,8 @@ export namespace Prisma {
 
   export type DudiUpdateWithoutLearningInput = {
     name?: StringFieldUpdateOperationsInput | string
-    address?: XOR<AddressNullableUpdateEnvelopeInput, AddressCreateInput> | null
+    street?: StringFieldUpdateOperationsInput | string
+    address?: XOR<AddressUpdateEnvelopeInput, AddressCreateInput>
     contact?: XOR<ContactDudiUpdateEnvelopeInput, ContactDudiCreateInput>
     collabs?: DudiUpdatecollabsInput | Enumerable<string>
     timework?: XOR<DudiTimeWorkUpdateEnvelopeInput, DudiTimeWorkCreateInput>
@@ -72850,7 +72886,8 @@ export namespace Prisma {
 
   export type DudiUncheckedUpdateWithoutLearningInput = {
     name?: StringFieldUpdateOperationsInput | string
-    address?: XOR<AddressNullableUpdateEnvelopeInput, AddressCreateInput> | null
+    street?: StringFieldUpdateOperationsInput | string
+    address?: XOR<AddressUpdateEnvelopeInput, AddressCreateInput>
     instansiId?: StringFieldUpdateOperationsInput | string
     majorId?: StringFieldUpdateOperationsInput | string
     contact?: XOR<ContactDudiUpdateEnvelopeInput, ContactDudiCreateInput>
@@ -73033,7 +73070,8 @@ export namespace Prisma {
   export type DudiCreateManyInstansiInput = {
     id?: string
     name: string
-    address?: XOR<AddressNullableCreateEnvelopeInput, AddressCreateInput> | null
+    street: string
+    address: XOR<AddressCreateEnvelopeInput, AddressCreateInput>
     majorId: string
     contact: XOR<ContactDudiCreateEnvelopeInput, ContactDudiCreateInput>
     collabs?: DudiCreatecollabsInput | Enumerable<string>
@@ -73555,7 +73593,8 @@ export namespace Prisma {
 
   export type DudiUpdateWithoutInstansiInput = {
     name?: StringFieldUpdateOperationsInput | string
-    address?: XOR<AddressNullableUpdateEnvelopeInput, AddressCreateInput> | null
+    street?: StringFieldUpdateOperationsInput | string
+    address?: XOR<AddressUpdateEnvelopeInput, AddressCreateInput>
     contact?: XOR<ContactDudiUpdateEnvelopeInput, ContactDudiCreateInput>
     collabs?: DudiUpdatecollabsInput | Enumerable<string>
     timework?: XOR<DudiTimeWorkUpdateEnvelopeInput, DudiTimeWorkCreateInput>
@@ -73567,7 +73606,8 @@ export namespace Prisma {
 
   export type DudiUncheckedUpdateWithoutInstansiInput = {
     name?: StringFieldUpdateOperationsInput | string
-    address?: XOR<AddressNullableUpdateEnvelopeInput, AddressCreateInput> | null
+    street?: StringFieldUpdateOperationsInput | string
+    address?: XOR<AddressUpdateEnvelopeInput, AddressCreateInput>
     majorId?: StringFieldUpdateOperationsInput | string
     contact?: XOR<ContactDudiUpdateEnvelopeInput, ContactDudiCreateInput>
     collabs?: DudiUpdatecollabsInput | Enumerable<string>
@@ -73579,7 +73619,8 @@ export namespace Prisma {
 
   export type DudiUncheckedUpdateManyWithoutDudiInput = {
     name?: StringFieldUpdateOperationsInput | string
-    address?: XOR<AddressNullableUpdateEnvelopeInput, AddressCreateInput> | null
+    street?: StringFieldUpdateOperationsInput | string
+    address?: XOR<AddressUpdateEnvelopeInput, AddressCreateInput>
     majorId?: StringFieldUpdateOperationsInput | string
     contact?: XOR<ContactDudiUpdateEnvelopeInput, ContactDudiCreateInput>
     collabs?: DudiUpdatecollabsInput | Enumerable<string>
@@ -74606,7 +74647,8 @@ export namespace Prisma {
   export type DudiCreateManyMajorInput = {
     id?: string
     name: string
-    address?: XOR<AddressNullableCreateEnvelopeInput, AddressCreateInput> | null
+    street: string
+    address: XOR<AddressCreateEnvelopeInput, AddressCreateInput>
     instansiId: string
     contact: XOR<ContactDudiCreateEnvelopeInput, ContactDudiCreateInput>
     collabs?: DudiCreatecollabsInput | Enumerable<string>
@@ -74824,7 +74866,8 @@ export namespace Prisma {
 
   export type DudiUpdateWithoutMajorInput = {
     name?: StringFieldUpdateOperationsInput | string
-    address?: XOR<AddressNullableUpdateEnvelopeInput, AddressCreateInput> | null
+    street?: StringFieldUpdateOperationsInput | string
+    address?: XOR<AddressUpdateEnvelopeInput, AddressCreateInput>
     contact?: XOR<ContactDudiUpdateEnvelopeInput, ContactDudiCreateInput>
     collabs?: DudiUpdatecollabsInput | Enumerable<string>
     timework?: XOR<DudiTimeWorkUpdateEnvelopeInput, DudiTimeWorkCreateInput>
@@ -74836,7 +74879,8 @@ export namespace Prisma {
 
   export type DudiUncheckedUpdateWithoutMajorInput = {
     name?: StringFieldUpdateOperationsInput | string
-    address?: XOR<AddressNullableUpdateEnvelopeInput, AddressCreateInput> | null
+    street?: StringFieldUpdateOperationsInput | string
+    address?: XOR<AddressUpdateEnvelopeInput, AddressCreateInput>
     instansiId?: StringFieldUpdateOperationsInput | string
     contact?: XOR<ContactDudiUpdateEnvelopeInput, ContactDudiCreateInput>
     collabs?: DudiUpdatecollabsInput | Enumerable<string>

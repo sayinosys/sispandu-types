@@ -154,6 +154,7 @@ exports.Prisma.DudiLearningScalarFieldEnum = {
 exports.Prisma.DudiScalarFieldEnum = {
   id: 'id',
   name: 'name',
+  street: 'street',
   instansiId: 'instansiId',
   majorId: 'majorId',
   collabs: 'collabs',

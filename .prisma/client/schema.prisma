@@ -968,7 +968,8 @@ type DudiTimeWork {
 model Dudi {
   id         String              @id @default(auto()) @map("_id") @db.ObjectId
   name       String
-  address    Address?
+  street     String
+  address    Address
   instansi   Instansi            @relation(fields: [instansiId], references: [id])
   instansiId String              @db.ObjectId
   major      KonsentrasiKeahlian @relation(fields: [majorId], references: [id])
