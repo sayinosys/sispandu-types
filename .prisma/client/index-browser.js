@@ -143,6 +143,23 @@ exports.Prisma.ClassRoomScalarFieldEnum = {
   tDeviceIds: 'tDeviceIds'
 };
 
+exports.Prisma.DudiLearningScalarFieldEnum = {
+  id: 'id',
+  no: 'no',
+  refId: 'refId',
+  code: 'code',
+  name: 'name'
+};
+
+exports.Prisma.DudiScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  instansiId: 'instansiId',
+  majorId: 'majorId',
+  collabs: 'collabs',
+  disable: 'disable'
+};
+
 exports.Prisma.ElementScalarFieldEnum = {
   id: 'id',
   no: 'no',
@@ -406,7 +423,7 @@ exports.Prisma.TeachingScalarFieldEnum = {
   id: 'id',
   refId: 'refId',
   hours: 'hours',
-  isEven: 'isEven',
+  semester: 'semester',
   teacherId: 'teacherId',
   classRoomIds: 'classRoomIds',
   elemenIds: 'elemenIds',
@@ -435,7 +452,8 @@ exports.Prisma.TrackerScalarFieldEnum = {
   mengajarId: 'mengajarId',
   tujuanId: 'tujuanId',
   perangkatId: 'perangkatId',
-  kalenderId: 'kalenderId'
+  kalenderId: 'kalenderId',
+  dudiId: 'dudiId'
 };
 
 exports.Prisma.UploadScalarFieldEnum = {
@@ -549,7 +567,8 @@ exports.PointTracker = {
   asp: 'asp',
   a_asesmen: 'a_asesmen',
   perangkat: 'perangkat',
-  kalender: 'kalender'
+  kalender: 'kalender',
+  dudi: 'dudi'
 };
 
 exports.Religion = {
@@ -566,6 +585,12 @@ exports.Roles = {
   GURU: 'GURU',
   STAF: 'STAF',
   SISWA: 'SISWA'
+};
+
+exports.Semester = {
+  GA: 'GA',
+  GE: 'GE',
+  GG: 'GG'
 };
 
 exports.Taksonomi = {
@@ -636,7 +661,9 @@ exports.Prisma.ModelName = {
   Book: 'Book',
   TDevice: 'TDevice',
   TDeviceData: 'TDeviceData',
-  Calendar: 'Calendar'
+  Calendar: 'Calendar',
+  Dudi: 'Dudi',
+  DudiLearning: 'DudiLearning'
 };
 
 /**

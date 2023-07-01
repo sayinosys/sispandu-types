@@ -264,6 +264,38 @@ export type TDeviceProps = {
 }
 
 /**
+ * Model ContactDudi
+ * 
+ */
+export type ContactDudi = {
+  name: string
+  position: string
+  email: string
+  phone: string
+}
+
+/**
+ * Model DudiTimeWork
+ * 
+ */
+export type DudiTimeWork = {
+  holidays: string[]
+  timeIn: string
+  timeOut: string
+  actifity: boolean
+}
+
+/**
+ * Model DudiIndicator
+ * 
+ */
+export type DudiIndicator = {
+  no: number
+  code: string
+  name: string
+}
+
+/**
  * Model Tracker
  * 
  */
@@ -290,6 +322,7 @@ export type Tracker = {
   tujuanId: string | null
   perangkatId: string | null
   kalenderId: string | null
+  dudiId: string | null
 }
 
 /**
@@ -594,7 +627,7 @@ export type Teaching = {
   id: string
   refId: string
   hours: number
-  isEven: boolean
+  semester: Semester
   teacherId: string
   classRoomIds: string[]
   elemenIds: string[]
@@ -781,6 +814,35 @@ export type Calendar = {
   disable: boolean
 }
 
+/**
+ * Model Dudi
+ * 
+ */
+export type Dudi = {
+  id: string
+  name: string
+  address: Address | null
+  instansiId: string
+  majorId: string
+  contact: ContactDudi
+  collabs: string[]
+  timework: DudiTimeWork
+  disable: boolean
+}
+
+/**
+ * Model DudiLearning
+ * 
+ */
+export type DudiLearning = {
+  id: string
+  no: number
+  refId: string
+  code: string
+  name: string
+  indicator: DudiIndicator[]
+}
+
 
 /**
  * Enums
@@ -905,7 +967,8 @@ export const PointTracker: {
   asp: 'asp',
   a_asesmen: 'a_asesmen',
   perangkat: 'perangkat',
-  kalender: 'kalender'
+  kalender: 'kalender',
+  dudi: 'dudi'
 };
 
 export type PointTracker = (typeof PointTracker)[keyof typeof PointTracker]
@@ -931,6 +994,15 @@ export const Roles: {
 };
 
 export type Roles = (typeof Roles)[keyof typeof Roles]
+
+
+export const Semester: {
+  GA: 'GA',
+  GE: 'GE',
+  GG: 'GG'
+};
+
+export type Semester = (typeof Semester)[keyof typeof Semester]
 
 
 export const Taksonomi: {
@@ -1395,6 +1467,26 @@ export class PrismaClient<
     * ```
     */
   get calendar(): Prisma.CalendarDelegate<GlobalReject>;
+
+  /**
+   * `prisma.dudi`: Exposes CRUD operations for the **Dudi** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Dudis
+    * const dudis = await prisma.dudi.findMany()
+    * ```
+    */
+  get dudi(): Prisma.DudiDelegate<GlobalReject>;
+
+  /**
+   * `prisma.dudiLearning`: Exposes CRUD operations for the **DudiLearning** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more DudiLearnings
+    * const dudiLearnings = await prisma.dudiLearning.findMany()
+    * ```
+    */
+  get dudiLearning(): Prisma.DudiLearningDelegate<GlobalReject>;
 }
 
 export namespace Prisma {
@@ -1896,7 +1988,9 @@ export namespace Prisma {
     Book: 'Book',
     TDevice: 'TDevice',
     TDeviceData: 'TDeviceData',
-    Calendar: 'Calendar'
+    Calendar: 'Calendar',
+    Dudi: 'Dudi',
+    DudiLearning: 'DudiLearning'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -2073,6 +2167,7 @@ export namespace Prisma {
     unikMapels: number
     tDevice: number
     objective: number
+    dudi: number
   }
 
   export type InstansiCountOutputTypeSelect = {
@@ -2086,6 +2181,7 @@ export namespace Prisma {
     unikMapels?: boolean
     tDevice?: boolean
     objective?: boolean
+    dudi?: boolean
   }
 
   export type InstansiCountOutputTypeGetPayload<S extends boolean | null | undefined | InstansiCountOutputTypeArgs> =
@@ -2366,6 +2462,7 @@ export namespace Prisma {
     classRoom: number
     tracker: number
     mapel: number
+    dudi: number
   }
 
   export type KonsentrasiKeahlianCountOutputTypeSelect = {
@@ -2374,6 +2471,7 @@ export namespace Prisma {
     classRoom?: boolean
     tracker?: boolean
     mapel?: boolean
+    dudi?: boolean
   }
 
   export type KonsentrasiKeahlianCountOutputTypeGetPayload<S extends boolean | null | undefined | KonsentrasiKeahlianCountOutputTypeArgs> =
@@ -3180,6 +3278,51 @@ export namespace Prisma {
      * Select specific fields to fetch from the CalendarCountOutputType
      */
     select?: CalendarCountOutputTypeSelect | null
+  }
+
+
+
+  /**
+   * Count Type DudiCountOutputType
+   */
+
+
+  export type DudiCountOutputType = {
+    learning: number
+    tracker: number
+  }
+
+  export type DudiCountOutputTypeSelect = {
+    learning?: boolean
+    tracker?: boolean
+  }
+
+  export type DudiCountOutputTypeGetPayload<S extends boolean | null | undefined | DudiCountOutputTypeArgs> =
+    S extends { select: any, include: any } ? 'Please either choose `select` or `include`' :
+    S extends true ? DudiCountOutputType :
+    S extends undefined ? never :
+    S extends { include: any } & (DudiCountOutputTypeArgs)
+    ? DudiCountOutputType 
+    : S extends { select: any } & (DudiCountOutputTypeArgs)
+      ? {
+    [P in TruthyKeys<S['select']>]:
+    P extends keyof DudiCountOutputType ? DudiCountOutputType[P] : never
+  } 
+      : DudiCountOutputType
+
+
+
+
+  // Custom InputTypes
+
+  /**
+   * DudiCountOutputType without action
+   */
+  export type DudiCountOutputTypeArgs = {
+    /**
+     * Select specific fields to fetch from the DudiCountOutputType
+     */
+    select?: DudiCountOutputTypeSelect | null
   }
 
 
@@ -5449,6 +5592,311 @@ export namespace Prisma {
 
 
   /**
+   * Model ContactDudi
+   */
+
+
+
+
+
+  export type ContactDudiSelect = {
+    name?: boolean
+    position?: boolean
+    email?: boolean
+    phone?: boolean
+  }
+
+
+  export type ContactDudiGetPayload<S extends boolean | null | undefined | ContactDudiArgs> =
+    S extends { select: any, include: any } ? 'Please either choose `select` or `include`' :
+    S extends true ? ContactDudi :
+    S extends undefined ? never :
+    S extends { include: any } & (ContactDudiArgs)
+    ? ContactDudi 
+    : S extends { select: any } & (ContactDudiArgs)
+      ? {
+    [P in TruthyKeys<S['select']>]:
+    P extends keyof ContactDudi ? ContactDudi[P] : never
+  } 
+      : ContactDudi
+
+
+
+  export interface ContactDudiDelegate<GlobalRejectSettings extends Prisma.RejectOnNotFound | Prisma.RejectPerOperation | false | undefined> {
+
+
+
+
+
+
+
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for ContactDudi.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export class Prisma__ContactDudiClient<T, Null = never> implements Prisma.PrismaPromise<T> {
+    private readonly _dmmf;
+    private readonly _queryType;
+    private readonly _rootField;
+    private readonly _clientMethod;
+    private readonly _args;
+    private readonly _dataPath;
+    private readonly _errorFormat;
+    private readonly _measurePerformance?;
+    private _isList;
+    private _callsite;
+    private _requestPromise?;
+    readonly [Symbol.toStringTag]: 'PrismaPromise';
+    constructor(_dmmf: runtime.DMMFClass, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
+
+
+    private get _document();
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): Promise<TResult1 | TResult2>;
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): Promise<T | TResult>;
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): Promise<T>;
+  }
+
+
+
+  // Custom InputTypes
+
+  /**
+   * ContactDudi without action
+   */
+  export type ContactDudiArgs = {
+    /**
+     * Select specific fields to fetch from the ContactDudi
+     */
+    select?: ContactDudiSelect | null
+  }
+
+
+
+  /**
+   * Model DudiTimeWork
+   */
+
+
+
+
+
+  export type DudiTimeWorkSelect = {
+    holidays?: boolean
+    timeIn?: boolean
+    timeOut?: boolean
+    actifity?: boolean
+  }
+
+
+  export type DudiTimeWorkGetPayload<S extends boolean | null | undefined | DudiTimeWorkArgs> =
+    S extends { select: any, include: any } ? 'Please either choose `select` or `include`' :
+    S extends true ? DudiTimeWork :
+    S extends undefined ? never :
+    S extends { include: any } & (DudiTimeWorkArgs)
+    ? DudiTimeWork 
+    : S extends { select: any } & (DudiTimeWorkArgs)
+      ? {
+    [P in TruthyKeys<S['select']>]:
+    P extends keyof DudiTimeWork ? DudiTimeWork[P] : never
+  } 
+      : DudiTimeWork
+
+
+
+  export interface DudiTimeWorkDelegate<GlobalRejectSettings extends Prisma.RejectOnNotFound | Prisma.RejectPerOperation | false | undefined> {
+
+
+
+
+
+
+
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for DudiTimeWork.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export class Prisma__DudiTimeWorkClient<T, Null = never> implements Prisma.PrismaPromise<T> {
+    private readonly _dmmf;
+    private readonly _queryType;
+    private readonly _rootField;
+    private readonly _clientMethod;
+    private readonly _args;
+    private readonly _dataPath;
+    private readonly _errorFormat;
+    private readonly _measurePerformance?;
+    private _isList;
+    private _callsite;
+    private _requestPromise?;
+    readonly [Symbol.toStringTag]: 'PrismaPromise';
+    constructor(_dmmf: runtime.DMMFClass, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
+
+
+    private get _document();
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): Promise<TResult1 | TResult2>;
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): Promise<T | TResult>;
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): Promise<T>;
+  }
+
+
+
+  // Custom InputTypes
+
+  /**
+   * DudiTimeWork without action
+   */
+  export type DudiTimeWorkArgs = {
+    /**
+     * Select specific fields to fetch from the DudiTimeWork
+     */
+    select?: DudiTimeWorkSelect | null
+  }
+
+
+
+  /**
+   * Model DudiIndicator
+   */
+
+
+
+
+
+  export type DudiIndicatorSelect = {
+    no?: boolean
+    code?: boolean
+    name?: boolean
+  }
+
+
+  export type DudiIndicatorGetPayload<S extends boolean | null | undefined | DudiIndicatorArgs> =
+    S extends { select: any, include: any } ? 'Please either choose `select` or `include`' :
+    S extends true ? DudiIndicator :
+    S extends undefined ? never :
+    S extends { include: any } & (DudiIndicatorArgs)
+    ? DudiIndicator 
+    : S extends { select: any } & (DudiIndicatorArgs)
+      ? {
+    [P in TruthyKeys<S['select']>]:
+    P extends keyof DudiIndicator ? DudiIndicator[P] : never
+  } 
+      : DudiIndicator
+
+
+
+  export interface DudiIndicatorDelegate<GlobalRejectSettings extends Prisma.RejectOnNotFound | Prisma.RejectPerOperation | false | undefined> {
+
+
+
+
+
+
+
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for DudiIndicator.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export class Prisma__DudiIndicatorClient<T, Null = never> implements Prisma.PrismaPromise<T> {
+    private readonly _dmmf;
+    private readonly _queryType;
+    private readonly _rootField;
+    private readonly _clientMethod;
+    private readonly _args;
+    private readonly _dataPath;
+    private readonly _errorFormat;
+    private readonly _measurePerformance?;
+    private _isList;
+    private _callsite;
+    private _requestPromise?;
+    readonly [Symbol.toStringTag]: 'PrismaPromise';
+    constructor(_dmmf: runtime.DMMFClass, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
+
+
+    private get _document();
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): Promise<TResult1 | TResult2>;
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): Promise<T | TResult>;
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): Promise<T>;
+  }
+
+
+
+  // Custom InputTypes
+
+  /**
+   * DudiIndicator without action
+   */
+  export type DudiIndicatorArgs = {
+    /**
+     * Select specific fields to fetch from the DudiIndicator
+     */
+    select?: DudiIndicatorSelect | null
+  }
+
+
+
+  /**
    * Model Tracker
    */
 
@@ -5482,6 +5930,7 @@ export namespace Prisma {
     tujuanId: string | null
     perangkatId: string | null
     kalenderId: string | null
+    dudiId: string | null
   }
 
   export type TrackerMaxAggregateOutputType = {
@@ -5507,6 +5956,7 @@ export namespace Prisma {
     tujuanId: string | null
     perangkatId: string | null
     kalenderId: string | null
+    dudiId: string | null
   }
 
   export type TrackerCountAggregateOutputType = {
@@ -5532,6 +5982,7 @@ export namespace Prisma {
     tujuanId: number
     perangkatId: number
     kalenderId: number
+    dudiId: number
     _all: number
   }
 
@@ -5559,6 +6010,7 @@ export namespace Prisma {
     tujuanId?: true
     perangkatId?: true
     kalenderId?: true
+    dudiId?: true
   }
 
   export type TrackerMaxAggregateInputType = {
@@ -5584,6 +6036,7 @@ export namespace Prisma {
     tujuanId?: true
     perangkatId?: true
     kalenderId?: true
+    dudiId?: true
   }
 
   export type TrackerCountAggregateInputType = {
@@ -5609,6 +6062,7 @@ export namespace Prisma {
     tujuanId?: true
     perangkatId?: true
     kalenderId?: true
+    dudiId?: true
     _all?: true
   }
 
@@ -5708,6 +6162,7 @@ export namespace Prisma {
     tujuanId: string | null
     perangkatId: string | null
     kalenderId: string | null
+    dudiId: string | null
     _count: TrackerCountAggregateOutputType | null
     _min: TrackerMinAggregateOutputType | null
     _max: TrackerMaxAggregateOutputType | null
@@ -5750,6 +6205,7 @@ export namespace Prisma {
     tujuanId?: boolean
     perangkatId?: boolean
     kalenderId?: boolean
+    dudiId?: boolean
     user?: boolean | UserArgs
     ref?: boolean | InstansiArgs
     instansi?: boolean | InstansiArgs
@@ -5768,6 +6224,7 @@ export namespace Prisma {
     tujuan?: boolean | ObjectiveArgs
     perangkat?: boolean | TDeviceArgs
     kalender?: boolean | CalendarArgs
+    dudi?: boolean | DudiArgs
   }
 
 
@@ -5790,6 +6247,7 @@ export namespace Prisma {
     tujuan?: boolean | ObjectiveArgs
     perangkat?: boolean | TDeviceArgs
     kalender?: boolean | CalendarArgs
+    dudi?: boolean | DudiArgs
   }
 
   export type TrackerGetPayload<S extends boolean | null | undefined | TrackerArgs> =
@@ -5816,7 +6274,8 @@ export namespace Prisma {
         P extends 'mengajar' ? TeachingGetPayload<S['include'][P]> | null :
         P extends 'tujuan' ? ObjectiveGetPayload<S['include'][P]> | null :
         P extends 'perangkat' ? TDeviceGetPayload<S['include'][P]> | null :
-        P extends 'kalender' ? CalendarGetPayload<S['include'][P]> | null :  never
+        P extends 'kalender' ? CalendarGetPayload<S['include'][P]> | null :
+        P extends 'dudi' ? DudiGetPayload<S['include'][P]> | null :  never
   } 
     : S extends { select: any } & (TrackerArgs | TrackerFindManyArgs)
       ? {
@@ -5838,7 +6297,8 @@ export namespace Prisma {
         P extends 'mengajar' ? TeachingGetPayload<S['select'][P]> | null :
         P extends 'tujuan' ? ObjectiveGetPayload<S['select'][P]> | null :
         P extends 'perangkat' ? TDeviceGetPayload<S['select'][P]> | null :
-        P extends 'kalender' ? CalendarGetPayload<S['select'][P]> | null :  P extends keyof Tracker ? Tracker[P] : never
+        P extends 'kalender' ? CalendarGetPayload<S['select'][P]> | null :
+        P extends 'dudi' ? DudiGetPayload<S['select'][P]> | null :  P extends keyof Tracker ? Tracker[P] : never
   } 
       : Tracker
 
@@ -6272,6 +6732,8 @@ export namespace Prisma {
     perangkat<T extends TDeviceArgs= {}>(args?: Subset<T, TDeviceArgs>): Prisma__TDeviceClient<TDeviceGetPayload<T> | Null>;
 
     kalender<T extends CalendarArgs= {}>(args?: Subset<T, CalendarArgs>): Prisma__CalendarClient<CalendarGetPayload<T> | Null>;
+
+    dudi<T extends DudiArgs= {}>(args?: Subset<T, DudiArgs>): Prisma__DudiClient<DudiGetPayload<T> | Null>;
 
     private get _document();
     /**
@@ -6878,6 +7340,7 @@ export namespace Prisma {
     unikMapels?: boolean | Instansi$unikMapelsArgs
     tDevice?: boolean | Instansi$tDeviceArgs
     objective?: boolean | Instansi$objectiveArgs
+    dudi?: boolean | Instansi$dudiArgs
     _count?: boolean | InstansiCountOutputTypeArgs
   }
 
@@ -6893,6 +7356,7 @@ export namespace Prisma {
     unikMapels?: boolean | Instansi$unikMapelsArgs
     tDevice?: boolean | Instansi$tDeviceArgs
     objective?: boolean | Instansi$objectiveArgs
+    dudi?: boolean | Instansi$dudiArgs
     _count?: boolean | InstansiCountOutputTypeArgs
   }
 
@@ -6913,6 +7377,7 @@ export namespace Prisma {
         P extends 'unikMapels' ? Array < MataPelajaranGetPayload<S['include'][P]>>  :
         P extends 'tDevice' ? Array < TDeviceGetPayload<S['include'][P]>>  :
         P extends 'objective' ? Array < ObjectiveGetPayload<S['include'][P]>>  :
+        P extends 'dudi' ? Array < DudiGetPayload<S['include'][P]>>  :
         P extends '_count' ? InstansiCountOutputTypeGetPayload<S['include'][P]> :  never
   } 
     : S extends { select: any } & (InstansiArgs | InstansiFindManyArgs)
@@ -6929,6 +7394,7 @@ export namespace Prisma {
         P extends 'unikMapels' ? Array < MataPelajaranGetPayload<S['select'][P]>>  :
         P extends 'tDevice' ? Array < TDeviceGetPayload<S['select'][P]>>  :
         P extends 'objective' ? Array < ObjectiveGetPayload<S['select'][P]>>  :
+        P extends 'dudi' ? Array < DudiGetPayload<S['select'][P]>>  :
         P extends '_count' ? InstansiCountOutputTypeGetPayload<S['select'][P]> :  P extends keyof Instansi ? Instansi[P] : never
   } 
       : Instansi
@@ -7349,6 +7815,8 @@ export namespace Prisma {
     tDevice<T extends Instansi$tDeviceArgs= {}>(args?: Subset<T, Instansi$tDeviceArgs>): Prisma.PrismaPromise<Array<TDeviceGetPayload<T>>| Null>;
 
     objective<T extends Instansi$objectiveArgs= {}>(args?: Subset<T, Instansi$objectiveArgs>): Prisma.PrismaPromise<Array<ObjectiveGetPayload<T>>| Null>;
+
+    dudi<T extends Instansi$dudiArgs= {}>(args?: Subset<T, Instansi$dudiArgs>): Prisma.PrismaPromise<Array<DudiGetPayload<T>>| Null>;
 
     private get _document();
     /**
@@ -7941,6 +8409,27 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: Enumerable<ObjectiveScalarFieldEnum>
+  }
+
+
+  /**
+   * Instansi.dudi
+   */
+  export type Instansi$dudiArgs = {
+    /**
+     * Select specific fields to fetch from the Dudi
+     */
+    select?: DudiSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: DudiInclude | null
+    where?: DudiWhereInput
+    orderBy?: Enumerable<DudiOrderByWithRelationInput>
+    cursor?: DudiWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: Enumerable<DudiScalarFieldEnum>
   }
 
 
@@ -13699,6 +14188,7 @@ export namespace Prisma {
     classRoom?: boolean | KonsentrasiKeahlian$classRoomArgs
     tracker?: boolean | KonsentrasiKeahlian$trackerArgs
     mapel?: boolean | KonsentrasiKeahlian$mapelArgs
+    dudi?: boolean | KonsentrasiKeahlian$dudiArgs
     _count?: boolean | KonsentrasiKeahlianCountOutputTypeArgs
   }
 
@@ -13710,6 +14200,7 @@ export namespace Prisma {
     classRoom?: boolean | KonsentrasiKeahlian$classRoomArgs
     tracker?: boolean | KonsentrasiKeahlian$trackerArgs
     mapel?: boolean | KonsentrasiKeahlian$mapelArgs
+    dudi?: boolean | KonsentrasiKeahlian$dudiArgs
     _count?: boolean | KonsentrasiKeahlianCountOutputTypeArgs
   }
 
@@ -13726,6 +14217,7 @@ export namespace Prisma {
         P extends 'classRoom' ? Array < ClassRoomGetPayload<S['include'][P]>>  :
         P extends 'tracker' ? Array < TrackerGetPayload<S['include'][P]>>  :
         P extends 'mapel' ? Array < MataPelajaranGetPayload<S['include'][P]>>  :
+        P extends 'dudi' ? Array < DudiGetPayload<S['include'][P]>>  :
         P extends '_count' ? KonsentrasiKeahlianCountOutputTypeGetPayload<S['include'][P]> :  never
   } 
     : S extends { select: any } & (KonsentrasiKeahlianArgs | KonsentrasiKeahlianFindManyArgs)
@@ -13737,6 +14229,7 @@ export namespace Prisma {
         P extends 'classRoom' ? Array < ClassRoomGetPayload<S['select'][P]>>  :
         P extends 'tracker' ? Array < TrackerGetPayload<S['select'][P]>>  :
         P extends 'mapel' ? Array < MataPelajaranGetPayload<S['select'][P]>>  :
+        P extends 'dudi' ? Array < DudiGetPayload<S['select'][P]>>  :
         P extends '_count' ? KonsentrasiKeahlianCountOutputTypeGetPayload<S['select'][P]> :  P extends keyof KonsentrasiKeahlian ? KonsentrasiKeahlian[P] : never
   } 
       : KonsentrasiKeahlian
@@ -14147,6 +14640,8 @@ export namespace Prisma {
     tracker<T extends KonsentrasiKeahlian$trackerArgs= {}>(args?: Subset<T, KonsentrasiKeahlian$trackerArgs>): Prisma.PrismaPromise<Array<TrackerGetPayload<T>>| Null>;
 
     mapel<T extends KonsentrasiKeahlian$mapelArgs= {}>(args?: Subset<T, KonsentrasiKeahlian$mapelArgs>): Prisma.PrismaPromise<Array<MataPelajaranGetPayload<T>>| Null>;
+
+    dudi<T extends KonsentrasiKeahlian$dudiArgs= {}>(args?: Subset<T, KonsentrasiKeahlian$dudiArgs>): Prisma.PrismaPromise<Array<DudiGetPayload<T>>| Null>;
 
     private get _document();
     /**
@@ -14634,6 +15129,27 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: Enumerable<MataPelajaranScalarFieldEnum>
+  }
+
+
+  /**
+   * KonsentrasiKeahlian.dudi
+   */
+  export type KonsentrasiKeahlian$dudiArgs = {
+    /**
+     * Select specific fields to fetch from the Dudi
+     */
+    select?: DudiSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: DudiInclude | null
+    where?: DudiWhereInput
+    orderBy?: Enumerable<DudiOrderByWithRelationInput>
+    cursor?: DudiWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: Enumerable<DudiScalarFieldEnum>
   }
 
 
@@ -27882,7 +28398,7 @@ export namespace Prisma {
     id: string | null
     refId: string | null
     hours: number | null
-    isEven: boolean | null
+    semester: Semester | null
     teacherId: string | null
     disable: boolean | null
   }
@@ -27891,7 +28407,7 @@ export namespace Prisma {
     id: string | null
     refId: string | null
     hours: number | null
-    isEven: boolean | null
+    semester: Semester | null
     teacherId: string | null
     disable: boolean | null
   }
@@ -27900,7 +28416,7 @@ export namespace Prisma {
     id: number
     refId: number
     hours: number
-    isEven: number
+    semester: number
     teacherId: number
     classRoomIds: number
     elemenIds: number
@@ -27921,7 +28437,7 @@ export namespace Prisma {
     id?: true
     refId?: true
     hours?: true
-    isEven?: true
+    semester?: true
     teacherId?: true
     disable?: true
   }
@@ -27930,7 +28446,7 @@ export namespace Prisma {
     id?: true
     refId?: true
     hours?: true
-    isEven?: true
+    semester?: true
     teacherId?: true
     disable?: true
   }
@@ -27939,7 +28455,7 @@ export namespace Prisma {
     id?: true
     refId?: true
     hours?: true
-    isEven?: true
+    semester?: true
     teacherId?: true
     classRoomIds?: true
     elemenIds?: true
@@ -28038,7 +28554,7 @@ export namespace Prisma {
     id: string
     refId: string
     hours: number
-    isEven: boolean
+    semester: Semester
     teacherId: string
     classRoomIds: string[]
     elemenIds: string[]
@@ -28068,7 +28584,7 @@ export namespace Prisma {
     id?: boolean
     refId?: boolean
     hours?: boolean
-    isEven?: boolean
+    semester?: boolean
     teacherId?: boolean
     classRoomIds?: boolean
     elemenIds?: boolean
@@ -41936,6 +42452,2098 @@ export namespace Prisma {
 
 
   /**
+   * Model Dudi
+   */
+
+
+  export type AggregateDudi = {
+    _count: DudiCountAggregateOutputType | null
+    _min: DudiMinAggregateOutputType | null
+    _max: DudiMaxAggregateOutputType | null
+  }
+
+  export type DudiMinAggregateOutputType = {
+    id: string | null
+    name: string | null
+    instansiId: string | null
+    majorId: string | null
+    disable: boolean | null
+  }
+
+  export type DudiMaxAggregateOutputType = {
+    id: string | null
+    name: string | null
+    instansiId: string | null
+    majorId: string | null
+    disable: boolean | null
+  }
+
+  export type DudiCountAggregateOutputType = {
+    id: number
+    name: number
+    instansiId: number
+    majorId: number
+    collabs: number
+    disable: number
+    _all: number
+  }
+
+
+  export type DudiMinAggregateInputType = {
+    id?: true
+    name?: true
+    instansiId?: true
+    majorId?: true
+    disable?: true
+  }
+
+  export type DudiMaxAggregateInputType = {
+    id?: true
+    name?: true
+    instansiId?: true
+    majorId?: true
+    disable?: true
+  }
+
+  export type DudiCountAggregateInputType = {
+    id?: true
+    name?: true
+    instansiId?: true
+    majorId?: true
+    collabs?: true
+    disable?: true
+    _all?: true
+  }
+
+  export type DudiAggregateArgs = {
+    /**
+     * Filter which Dudi to aggregate.
+     */
+    where?: DudiWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Dudis to fetch.
+     */
+    orderBy?: Enumerable<DudiOrderByWithRelationInput>
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: DudiWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Dudis from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Dudis.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Dudis
+    **/
+    _count?: true | DudiCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: DudiMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: DudiMaxAggregateInputType
+  }
+
+  export type GetDudiAggregateType<T extends DudiAggregateArgs> = {
+        [P in keyof T & keyof AggregateDudi]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateDudi[P]>
+      : GetScalarType<T[P], AggregateDudi[P]>
+  }
+
+
+
+
+  export type DudiGroupByArgs = {
+    where?: DudiWhereInput
+    orderBy?: Enumerable<DudiOrderByWithAggregationInput>
+    by: DudiScalarFieldEnum[]
+    having?: DudiScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: DudiCountAggregateInputType | true
+    _min?: DudiMinAggregateInputType
+    _max?: DudiMaxAggregateInputType
+  }
+
+
+  export type DudiGroupByOutputType = {
+    id: string
+    name: string
+    instansiId: string
+    majorId: string
+    collabs: string[]
+    disable: boolean
+    _count: DudiCountAggregateOutputType | null
+    _min: DudiMinAggregateOutputType | null
+    _max: DudiMaxAggregateOutputType | null
+  }
+
+  type GetDudiGroupByPayload<T extends DudiGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickArray<DudiGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof DudiGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], DudiGroupByOutputType[P]>
+            : GetScalarType<T[P], DudiGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type DudiSelect = {
+    id?: boolean
+    name?: boolean
+    address?: boolean | AddressArgs
+    instansiId?: boolean
+    majorId?: boolean
+    contact?: boolean | ContactDudiArgs
+    collabs?: boolean
+    timework?: boolean | DudiTimeWorkArgs
+    disable?: boolean
+    instansi?: boolean | InstansiArgs
+    major?: boolean | KonsentrasiKeahlianArgs
+    learning?: boolean | Dudi$learningArgs
+    tracker?: boolean | Dudi$trackerArgs
+    _count?: boolean | DudiCountOutputTypeArgs
+  }
+
+
+  export type DudiInclude = {
+    instansi?: boolean | InstansiArgs
+    major?: boolean | KonsentrasiKeahlianArgs
+    learning?: boolean | Dudi$learningArgs
+    tracker?: boolean | Dudi$trackerArgs
+    _count?: boolean | DudiCountOutputTypeArgs
+  }
+
+  export type DudiGetPayload<S extends boolean | null | undefined | DudiArgs> =
+    S extends { select: any, include: any } ? 'Please either choose `select` or `include`' :
+    S extends true ? Dudi :
+    S extends undefined ? never :
+    S extends { include: any } & (DudiArgs | DudiFindManyArgs)
+    ? Dudi  & {
+    [P in TruthyKeys<S['include']>]:
+        P extends 'instansi' ? InstansiGetPayload<S['include'][P]> :
+        P extends 'major' ? KonsentrasiKeahlianGetPayload<S['include'][P]> :
+        P extends 'learning' ? Array < DudiLearningGetPayload<S['include'][P]>>  :
+        P extends 'tracker' ? Array < TrackerGetPayload<S['include'][P]>>  :
+        P extends '_count' ? DudiCountOutputTypeGetPayload<S['include'][P]> :  never
+  } 
+    : S extends { select: any } & (DudiArgs | DudiFindManyArgs)
+      ? {
+    [P in TruthyKeys<S['select']>]:
+        P extends 'address' ? AddressGetPayload<S['select'][P]> | null :
+        P extends 'contact' ? ContactDudiGetPayload<S['select'][P]> :
+        P extends 'timework' ? DudiTimeWorkGetPayload<S['select'][P]> :
+        P extends 'instansi' ? InstansiGetPayload<S['select'][P]> :
+        P extends 'major' ? KonsentrasiKeahlianGetPayload<S['select'][P]> :
+        P extends 'learning' ? Array < DudiLearningGetPayload<S['select'][P]>>  :
+        P extends 'tracker' ? Array < TrackerGetPayload<S['select'][P]>>  :
+        P extends '_count' ? DudiCountOutputTypeGetPayload<S['select'][P]> :  P extends keyof Dudi ? Dudi[P] : never
+  } 
+      : Dudi
+
+
+  type DudiCountArgs = 
+    Omit<DudiFindManyArgs, 'select' | 'include'> & {
+      select?: DudiCountAggregateInputType | true
+    }
+
+  export interface DudiDelegate<GlobalRejectSettings extends Prisma.RejectOnNotFound | Prisma.RejectPerOperation | false | undefined> {
+
+    /**
+     * Find zero or one Dudi that matches the filter.
+     * @param {DudiFindUniqueArgs} args - Arguments to find a Dudi
+     * @example
+     * // Get one Dudi
+     * const dudi = await prisma.dudi.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findUnique<T extends DudiFindUniqueArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
+      args: SelectSubset<T, DudiFindUniqueArgs>
+    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findUnique', 'Dudi'> extends True ? Prisma__DudiClient<DudiGetPayload<T>> : Prisma__DudiClient<DudiGetPayload<T> | null, null>
+
+    /**
+     * Find one Dudi that matches the filter or throw an error  with `error.code='P2025'` 
+     *     if no matches were found.
+     * @param {DudiFindUniqueOrThrowArgs} args - Arguments to find a Dudi
+     * @example
+     * // Get one Dudi
+     * const dudi = await prisma.dudi.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findUniqueOrThrow<T extends DudiFindUniqueOrThrowArgs>(
+      args?: SelectSubset<T, DudiFindUniqueOrThrowArgs>
+    ): Prisma__DudiClient<DudiGetPayload<T>>
+
+    /**
+     * Find the first Dudi that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DudiFindFirstArgs} args - Arguments to find a Dudi
+     * @example
+     * // Get one Dudi
+     * const dudi = await prisma.dudi.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findFirst<T extends DudiFindFirstArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
+      args?: SelectSubset<T, DudiFindFirstArgs>
+    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findFirst', 'Dudi'> extends True ? Prisma__DudiClient<DudiGetPayload<T>> : Prisma__DudiClient<DudiGetPayload<T> | null, null>
+
+    /**
+     * Find the first Dudi that matches the filter or
+     * throw `NotFoundError` if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DudiFindFirstOrThrowArgs} args - Arguments to find a Dudi
+     * @example
+     * // Get one Dudi
+     * const dudi = await prisma.dudi.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findFirstOrThrow<T extends DudiFindFirstOrThrowArgs>(
+      args?: SelectSubset<T, DudiFindFirstOrThrowArgs>
+    ): Prisma__DudiClient<DudiGetPayload<T>>
+
+    /**
+     * Find zero or more Dudis that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DudiFindManyArgs=} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Dudis
+     * const dudis = await prisma.dudi.findMany()
+     * 
+     * // Get first 10 Dudis
+     * const dudis = await prisma.dudi.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const dudiWithIdOnly = await prisma.dudi.findMany({ select: { id: true } })
+     * 
+    **/
+    findMany<T extends DudiFindManyArgs>(
+      args?: SelectSubset<T, DudiFindManyArgs>
+    ): Prisma.PrismaPromise<Array<DudiGetPayload<T>>>
+
+    /**
+     * Create a Dudi.
+     * @param {DudiCreateArgs} args - Arguments to create a Dudi.
+     * @example
+     * // Create one Dudi
+     * const Dudi = await prisma.dudi.create({
+     *   data: {
+     *     // ... data to create a Dudi
+     *   }
+     * })
+     * 
+    **/
+    create<T extends DudiCreateArgs>(
+      args: SelectSubset<T, DudiCreateArgs>
+    ): Prisma__DudiClient<DudiGetPayload<T>>
+
+    /**
+     * Create many Dudis.
+     *     @param {DudiCreateManyArgs} args - Arguments to create many Dudis.
+     *     @example
+     *     // Create many Dudis
+     *     const dudi = await prisma.dudi.createMany({
+     *       data: {
+     *         // ... provide data here
+     *       }
+     *     })
+     *     
+    **/
+    createMany<T extends DudiCreateManyArgs>(
+      args?: SelectSubset<T, DudiCreateManyArgs>
+    ): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Delete a Dudi.
+     * @param {DudiDeleteArgs} args - Arguments to delete one Dudi.
+     * @example
+     * // Delete one Dudi
+     * const Dudi = await prisma.dudi.delete({
+     *   where: {
+     *     // ... filter to delete one Dudi
+     *   }
+     * })
+     * 
+    **/
+    delete<T extends DudiDeleteArgs>(
+      args: SelectSubset<T, DudiDeleteArgs>
+    ): Prisma__DudiClient<DudiGetPayload<T>>
+
+    /**
+     * Update one Dudi.
+     * @param {DudiUpdateArgs} args - Arguments to update one Dudi.
+     * @example
+     * // Update one Dudi
+     * const dudi = await prisma.dudi.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+    **/
+    update<T extends DudiUpdateArgs>(
+      args: SelectSubset<T, DudiUpdateArgs>
+    ): Prisma__DudiClient<DudiGetPayload<T>>
+
+    /**
+     * Delete zero or more Dudis.
+     * @param {DudiDeleteManyArgs} args - Arguments to filter Dudis to delete.
+     * @example
+     * // Delete a few Dudis
+     * const { count } = await prisma.dudi.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+    **/
+    deleteMany<T extends DudiDeleteManyArgs>(
+      args?: SelectSubset<T, DudiDeleteManyArgs>
+    ): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Dudis.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DudiUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Dudis
+     * const dudi = await prisma.dudi.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+    **/
+    updateMany<T extends DudiUpdateManyArgs>(
+      args: SelectSubset<T, DudiUpdateManyArgs>
+    ): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one Dudi.
+     * @param {DudiUpsertArgs} args - Arguments to update or create a Dudi.
+     * @example
+     * // Update or create a Dudi
+     * const dudi = await prisma.dudi.upsert({
+     *   create: {
+     *     // ... data to create a Dudi
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Dudi we want to update
+     *   }
+     * })
+    **/
+    upsert<T extends DudiUpsertArgs>(
+      args: SelectSubset<T, DudiUpsertArgs>
+    ): Prisma__DudiClient<DudiGetPayload<T>>
+
+    /**
+     * Find zero or more Dudis that matches the filter.
+     * @param {DudiFindRawArgs} args - Select which filters you would like to apply.
+     * @example
+     * const dudi = await prisma.dudi.findRaw({
+     *   filter: { age: { $gt: 25 } } 
+     * })
+    **/
+    findRaw(
+      args?: DudiFindRawArgs
+    ): Prisma.PrismaPromise<JsonObject>
+
+    /**
+     * Perform aggregation operations on a Dudi.
+     * @param {DudiAggregateRawArgs} args - Select which aggregations you would like to apply.
+     * @example
+     * const dudi = await prisma.dudi.aggregateRaw({
+     *   pipeline: [
+     *     { $match: { status: "registered" } },
+     *     { $group: { _id: "$country", total: { $sum: 1 } } }
+     *   ]
+     * })
+    **/
+    aggregateRaw(
+      args?: DudiAggregateRawArgs
+    ): Prisma.PrismaPromise<JsonObject>
+
+    /**
+     * Count the number of Dudis.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DudiCountArgs} args - Arguments to filter Dudis to count.
+     * @example
+     * // Count the number of Dudis
+     * const count = await prisma.dudi.count({
+     *   where: {
+     *     // ... the filter for the Dudis we want to count
+     *   }
+     * })
+    **/
+    count<T extends DudiCountArgs>(
+      args?: Subset<T, DudiCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends _Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], DudiCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Dudi.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DudiAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends DudiAggregateArgs>(args: Subset<T, DudiAggregateArgs>): Prisma.PrismaPromise<GetDudiAggregateType<T>>
+
+    /**
+     * Group by Dudi.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DudiGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends DudiGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: DudiGroupByArgs['orderBy'] }
+        : { orderBy?: DudiGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends TupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, DudiGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetDudiGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Dudi.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export class Prisma__DudiClient<T, Null = never> implements Prisma.PrismaPromise<T> {
+    private readonly _dmmf;
+    private readonly _queryType;
+    private readonly _rootField;
+    private readonly _clientMethod;
+    private readonly _args;
+    private readonly _dataPath;
+    private readonly _errorFormat;
+    private readonly _measurePerformance?;
+    private _isList;
+    private _callsite;
+    private _requestPromise?;
+    readonly [Symbol.toStringTag]: 'PrismaPromise';
+    constructor(_dmmf: runtime.DMMFClass, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
+
+    address<T extends AddressArgs= {}>(args?: Subset<T, AddressArgs>): Prisma__AddressClient<AddressGetPayload<T> | Null>;
+
+    contact<T extends ContactDudiArgs= {}>(args?: Subset<T, ContactDudiArgs>): Prisma__ContactDudiClient<ContactDudiGetPayload<T> | Null>;
+
+    timework<T extends DudiTimeWorkArgs= {}>(args?: Subset<T, DudiTimeWorkArgs>): Prisma__DudiTimeWorkClient<DudiTimeWorkGetPayload<T> | Null>;
+
+    instansi<T extends InstansiArgs= {}>(args?: Subset<T, InstansiArgs>): Prisma__InstansiClient<InstansiGetPayload<T> | Null>;
+
+    major<T extends KonsentrasiKeahlianArgs= {}>(args?: Subset<T, KonsentrasiKeahlianArgs>): Prisma__KonsentrasiKeahlianClient<KonsentrasiKeahlianGetPayload<T> | Null>;
+
+    learning<T extends Dudi$learningArgs= {}>(args?: Subset<T, Dudi$learningArgs>): Prisma.PrismaPromise<Array<DudiLearningGetPayload<T>>| Null>;
+
+    tracker<T extends Dudi$trackerArgs= {}>(args?: Subset<T, Dudi$trackerArgs>): Prisma.PrismaPromise<Array<TrackerGetPayload<T>>| Null>;
+
+    private get _document();
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): Promise<TResult1 | TResult2>;
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): Promise<T | TResult>;
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): Promise<T>;
+  }
+
+
+
+  // Custom InputTypes
+
+  /**
+   * Dudi base type for findUnique actions
+   */
+  export type DudiFindUniqueArgsBase = {
+    /**
+     * Select specific fields to fetch from the Dudi
+     */
+    select?: DudiSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: DudiInclude | null
+    /**
+     * Filter, which Dudi to fetch.
+     */
+    where: DudiWhereUniqueInput
+  }
+
+  /**
+   * Dudi findUnique
+   */
+  export interface DudiFindUniqueArgs extends DudiFindUniqueArgsBase {
+   /**
+    * Throw an Error if query returns no results
+    * @deprecated since 4.0.0: use `findUniqueOrThrow` method instead
+    */
+    rejectOnNotFound?: RejectOnNotFound
+  }
+      
+
+  /**
+   * Dudi findUniqueOrThrow
+   */
+  export type DudiFindUniqueOrThrowArgs = {
+    /**
+     * Select specific fields to fetch from the Dudi
+     */
+    select?: DudiSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: DudiInclude | null
+    /**
+     * Filter, which Dudi to fetch.
+     */
+    where: DudiWhereUniqueInput
+  }
+
+
+  /**
+   * Dudi base type for findFirst actions
+   */
+  export type DudiFindFirstArgsBase = {
+    /**
+     * Select specific fields to fetch from the Dudi
+     */
+    select?: DudiSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: DudiInclude | null
+    /**
+     * Filter, which Dudi to fetch.
+     */
+    where?: DudiWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Dudis to fetch.
+     */
+    orderBy?: Enumerable<DudiOrderByWithRelationInput>
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Dudis.
+     */
+    cursor?: DudiWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Dudis from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Dudis.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Dudis.
+     */
+    distinct?: Enumerable<DudiScalarFieldEnum>
+  }
+
+  /**
+   * Dudi findFirst
+   */
+  export interface DudiFindFirstArgs extends DudiFindFirstArgsBase {
+   /**
+    * Throw an Error if query returns no results
+    * @deprecated since 4.0.0: use `findFirstOrThrow` method instead
+    */
+    rejectOnNotFound?: RejectOnNotFound
+  }
+      
+
+  /**
+   * Dudi findFirstOrThrow
+   */
+  export type DudiFindFirstOrThrowArgs = {
+    /**
+     * Select specific fields to fetch from the Dudi
+     */
+    select?: DudiSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: DudiInclude | null
+    /**
+     * Filter, which Dudi to fetch.
+     */
+    where?: DudiWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Dudis to fetch.
+     */
+    orderBy?: Enumerable<DudiOrderByWithRelationInput>
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Dudis.
+     */
+    cursor?: DudiWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Dudis from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Dudis.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Dudis.
+     */
+    distinct?: Enumerable<DudiScalarFieldEnum>
+  }
+
+
+  /**
+   * Dudi findMany
+   */
+  export type DudiFindManyArgs = {
+    /**
+     * Select specific fields to fetch from the Dudi
+     */
+    select?: DudiSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: DudiInclude | null
+    /**
+     * Filter, which Dudis to fetch.
+     */
+    where?: DudiWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Dudis to fetch.
+     */
+    orderBy?: Enumerable<DudiOrderByWithRelationInput>
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Dudis.
+     */
+    cursor?: DudiWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Dudis from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Dudis.
+     */
+    skip?: number
+    distinct?: Enumerable<DudiScalarFieldEnum>
+  }
+
+
+  /**
+   * Dudi create
+   */
+  export type DudiCreateArgs = {
+    /**
+     * Select specific fields to fetch from the Dudi
+     */
+    select?: DudiSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: DudiInclude | null
+    /**
+     * The data needed to create a Dudi.
+     */
+    data: XOR<DudiCreateInput, DudiUncheckedCreateInput>
+  }
+
+
+  /**
+   * Dudi createMany
+   */
+  export type DudiCreateManyArgs = {
+    /**
+     * The data used to create many Dudis.
+     */
+    data: Enumerable<DudiCreateManyInput>
+  }
+
+
+  /**
+   * Dudi update
+   */
+  export type DudiUpdateArgs = {
+    /**
+     * Select specific fields to fetch from the Dudi
+     */
+    select?: DudiSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: DudiInclude | null
+    /**
+     * The data needed to update a Dudi.
+     */
+    data: XOR<DudiUpdateInput, DudiUncheckedUpdateInput>
+    /**
+     * Choose, which Dudi to update.
+     */
+    where: DudiWhereUniqueInput
+  }
+
+
+  /**
+   * Dudi updateMany
+   */
+  export type DudiUpdateManyArgs = {
+    /**
+     * The data used to update Dudis.
+     */
+    data: XOR<DudiUpdateManyMutationInput, DudiUncheckedUpdateManyInput>
+    /**
+     * Filter which Dudis to update
+     */
+    where?: DudiWhereInput
+  }
+
+
+  /**
+   * Dudi upsert
+   */
+  export type DudiUpsertArgs = {
+    /**
+     * Select specific fields to fetch from the Dudi
+     */
+    select?: DudiSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: DudiInclude | null
+    /**
+     * The filter to search for the Dudi to update in case it exists.
+     */
+    where: DudiWhereUniqueInput
+    /**
+     * In case the Dudi found by the `where` argument doesn't exist, create a new Dudi with this data.
+     */
+    create: XOR<DudiCreateInput, DudiUncheckedCreateInput>
+    /**
+     * In case the Dudi was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<DudiUpdateInput, DudiUncheckedUpdateInput>
+  }
+
+
+  /**
+   * Dudi delete
+   */
+  export type DudiDeleteArgs = {
+    /**
+     * Select specific fields to fetch from the Dudi
+     */
+    select?: DudiSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: DudiInclude | null
+    /**
+     * Filter which Dudi to delete.
+     */
+    where: DudiWhereUniqueInput
+  }
+
+
+  /**
+   * Dudi deleteMany
+   */
+  export type DudiDeleteManyArgs = {
+    /**
+     * Filter which Dudis to delete
+     */
+    where?: DudiWhereInput
+  }
+
+
+  /**
+   * Dudi findRaw
+   */
+  export type DudiFindRawArgs = {
+    /**
+     * The query predicate filter. If unspecified, then all documents in the collection will match the predicate. ${@link https://docs.mongodb.com/manual/reference/operator/query MongoDB Docs}.
+     */
+    filter?: InputJsonValue
+    /**
+     * Additional options to pass to the `find` command ${@link https://docs.mongodb.com/manual/reference/command/find/#command-fields MongoDB Docs}.
+     */
+    options?: InputJsonValue
+  }
+
+
+  /**
+   * Dudi aggregateRaw
+   */
+  export type DudiAggregateRawArgs = {
+    /**
+     * An array of aggregation stages to process and transform the document stream via the aggregation pipeline. ${@link https://docs.mongodb.com/manual/reference/operator/aggregation-pipeline MongoDB Docs}.
+     */
+    pipeline?: InputJsonValue[]
+    /**
+     * Additional options to pass to the `aggregate` command ${@link https://docs.mongodb.com/manual/reference/command/aggregate/#command-fields MongoDB Docs}.
+     */
+    options?: InputJsonValue
+  }
+
+
+  /**
+   * Dudi.learning
+   */
+  export type Dudi$learningArgs = {
+    /**
+     * Select specific fields to fetch from the DudiLearning
+     */
+    select?: DudiLearningSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: DudiLearningInclude | null
+    where?: DudiLearningWhereInput
+    orderBy?: Enumerable<DudiLearningOrderByWithRelationInput>
+    cursor?: DudiLearningWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: Enumerable<DudiLearningScalarFieldEnum>
+  }
+
+
+  /**
+   * Dudi.tracker
+   */
+  export type Dudi$trackerArgs = {
+    /**
+     * Select specific fields to fetch from the Tracker
+     */
+    select?: TrackerSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: TrackerInclude | null
+    where?: TrackerWhereInput
+    orderBy?: Enumerable<TrackerOrderByWithRelationInput>
+    cursor?: TrackerWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: Enumerable<TrackerScalarFieldEnum>
+  }
+
+
+  /**
+   * Dudi without action
+   */
+  export type DudiArgs = {
+    /**
+     * Select specific fields to fetch from the Dudi
+     */
+    select?: DudiSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: DudiInclude | null
+  }
+
+
+
+  /**
+   * Model DudiLearning
+   */
+
+
+  export type AggregateDudiLearning = {
+    _count: DudiLearningCountAggregateOutputType | null
+    _avg: DudiLearningAvgAggregateOutputType | null
+    _sum: DudiLearningSumAggregateOutputType | null
+    _min: DudiLearningMinAggregateOutputType | null
+    _max: DudiLearningMaxAggregateOutputType | null
+  }
+
+  export type DudiLearningAvgAggregateOutputType = {
+    no: number | null
+  }
+
+  export type DudiLearningSumAggregateOutputType = {
+    no: number | null
+  }
+
+  export type DudiLearningMinAggregateOutputType = {
+    id: string | null
+    no: number | null
+    refId: string | null
+    code: string | null
+    name: string | null
+  }
+
+  export type DudiLearningMaxAggregateOutputType = {
+    id: string | null
+    no: number | null
+    refId: string | null
+    code: string | null
+    name: string | null
+  }
+
+  export type DudiLearningCountAggregateOutputType = {
+    id: number
+    no: number
+    refId: number
+    code: number
+    name: number
+    _all: number
+  }
+
+
+  export type DudiLearningAvgAggregateInputType = {
+    no?: true
+  }
+
+  export type DudiLearningSumAggregateInputType = {
+    no?: true
+  }
+
+  export type DudiLearningMinAggregateInputType = {
+    id?: true
+    no?: true
+    refId?: true
+    code?: true
+    name?: true
+  }
+
+  export type DudiLearningMaxAggregateInputType = {
+    id?: true
+    no?: true
+    refId?: true
+    code?: true
+    name?: true
+  }
+
+  export type DudiLearningCountAggregateInputType = {
+    id?: true
+    no?: true
+    refId?: true
+    code?: true
+    name?: true
+    _all?: true
+  }
+
+  export type DudiLearningAggregateArgs = {
+    /**
+     * Filter which DudiLearning to aggregate.
+     */
+    where?: DudiLearningWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of DudiLearnings to fetch.
+     */
+    orderBy?: Enumerable<DudiLearningOrderByWithRelationInput>
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: DudiLearningWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` DudiLearnings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` DudiLearnings.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned DudiLearnings
+    **/
+    _count?: true | DudiLearningCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: DudiLearningAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: DudiLearningSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: DudiLearningMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: DudiLearningMaxAggregateInputType
+  }
+
+  export type GetDudiLearningAggregateType<T extends DudiLearningAggregateArgs> = {
+        [P in keyof T & keyof AggregateDudiLearning]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateDudiLearning[P]>
+      : GetScalarType<T[P], AggregateDudiLearning[P]>
+  }
+
+
+
+
+  export type DudiLearningGroupByArgs = {
+    where?: DudiLearningWhereInput
+    orderBy?: Enumerable<DudiLearningOrderByWithAggregationInput>
+    by: DudiLearningScalarFieldEnum[]
+    having?: DudiLearningScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: DudiLearningCountAggregateInputType | true
+    _avg?: DudiLearningAvgAggregateInputType
+    _sum?: DudiLearningSumAggregateInputType
+    _min?: DudiLearningMinAggregateInputType
+    _max?: DudiLearningMaxAggregateInputType
+  }
+
+
+  export type DudiLearningGroupByOutputType = {
+    id: string
+    no: number
+    refId: string
+    code: string
+    name: string
+    _count: DudiLearningCountAggregateOutputType | null
+    _avg: DudiLearningAvgAggregateOutputType | null
+    _sum: DudiLearningSumAggregateOutputType | null
+    _min: DudiLearningMinAggregateOutputType | null
+    _max: DudiLearningMaxAggregateOutputType | null
+  }
+
+  type GetDudiLearningGroupByPayload<T extends DudiLearningGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickArray<DudiLearningGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof DudiLearningGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], DudiLearningGroupByOutputType[P]>
+            : GetScalarType<T[P], DudiLearningGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type DudiLearningSelect = {
+    id?: boolean
+    no?: boolean
+    refId?: boolean
+    code?: boolean
+    name?: boolean
+    indicator?: boolean | DudiIndicatorArgs
+    ref?: boolean | DudiArgs
+  }
+
+
+  export type DudiLearningInclude = {
+    ref?: boolean | DudiArgs
+  }
+
+  export type DudiLearningGetPayload<S extends boolean | null | undefined | DudiLearningArgs> =
+    S extends { select: any, include: any } ? 'Please either choose `select` or `include`' :
+    S extends true ? DudiLearning :
+    S extends undefined ? never :
+    S extends { include: any } & (DudiLearningArgs | DudiLearningFindManyArgs)
+    ? DudiLearning  & {
+    [P in TruthyKeys<S['include']>]:
+        P extends 'ref' ? DudiGetPayload<S['include'][P]> :  never
+  } 
+    : S extends { select: any } & (DudiLearningArgs | DudiLearningFindManyArgs)
+      ? {
+    [P in TruthyKeys<S['select']>]:
+        P extends 'indicator' ? Array < DudiIndicatorGetPayload<S['select'][P]>>  :
+        P extends 'ref' ? DudiGetPayload<S['select'][P]> :  P extends keyof DudiLearning ? DudiLearning[P] : never
+  } 
+      : DudiLearning
+
+
+  type DudiLearningCountArgs = 
+    Omit<DudiLearningFindManyArgs, 'select' | 'include'> & {
+      select?: DudiLearningCountAggregateInputType | true
+    }
+
+  export interface DudiLearningDelegate<GlobalRejectSettings extends Prisma.RejectOnNotFound | Prisma.RejectPerOperation | false | undefined> {
+
+    /**
+     * Find zero or one DudiLearning that matches the filter.
+     * @param {DudiLearningFindUniqueArgs} args - Arguments to find a DudiLearning
+     * @example
+     * // Get one DudiLearning
+     * const dudiLearning = await prisma.dudiLearning.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findUnique<T extends DudiLearningFindUniqueArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
+      args: SelectSubset<T, DudiLearningFindUniqueArgs>
+    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findUnique', 'DudiLearning'> extends True ? Prisma__DudiLearningClient<DudiLearningGetPayload<T>> : Prisma__DudiLearningClient<DudiLearningGetPayload<T> | null, null>
+
+    /**
+     * Find one DudiLearning that matches the filter or throw an error  with `error.code='P2025'` 
+     *     if no matches were found.
+     * @param {DudiLearningFindUniqueOrThrowArgs} args - Arguments to find a DudiLearning
+     * @example
+     * // Get one DudiLearning
+     * const dudiLearning = await prisma.dudiLearning.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findUniqueOrThrow<T extends DudiLearningFindUniqueOrThrowArgs>(
+      args?: SelectSubset<T, DudiLearningFindUniqueOrThrowArgs>
+    ): Prisma__DudiLearningClient<DudiLearningGetPayload<T>>
+
+    /**
+     * Find the first DudiLearning that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DudiLearningFindFirstArgs} args - Arguments to find a DudiLearning
+     * @example
+     * // Get one DudiLearning
+     * const dudiLearning = await prisma.dudiLearning.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findFirst<T extends DudiLearningFindFirstArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
+      args?: SelectSubset<T, DudiLearningFindFirstArgs>
+    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findFirst', 'DudiLearning'> extends True ? Prisma__DudiLearningClient<DudiLearningGetPayload<T>> : Prisma__DudiLearningClient<DudiLearningGetPayload<T> | null, null>
+
+    /**
+     * Find the first DudiLearning that matches the filter or
+     * throw `NotFoundError` if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DudiLearningFindFirstOrThrowArgs} args - Arguments to find a DudiLearning
+     * @example
+     * // Get one DudiLearning
+     * const dudiLearning = await prisma.dudiLearning.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findFirstOrThrow<T extends DudiLearningFindFirstOrThrowArgs>(
+      args?: SelectSubset<T, DudiLearningFindFirstOrThrowArgs>
+    ): Prisma__DudiLearningClient<DudiLearningGetPayload<T>>
+
+    /**
+     * Find zero or more DudiLearnings that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DudiLearningFindManyArgs=} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all DudiLearnings
+     * const dudiLearnings = await prisma.dudiLearning.findMany()
+     * 
+     * // Get first 10 DudiLearnings
+     * const dudiLearnings = await prisma.dudiLearning.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const dudiLearningWithIdOnly = await prisma.dudiLearning.findMany({ select: { id: true } })
+     * 
+    **/
+    findMany<T extends DudiLearningFindManyArgs>(
+      args?: SelectSubset<T, DudiLearningFindManyArgs>
+    ): Prisma.PrismaPromise<Array<DudiLearningGetPayload<T>>>
+
+    /**
+     * Create a DudiLearning.
+     * @param {DudiLearningCreateArgs} args - Arguments to create a DudiLearning.
+     * @example
+     * // Create one DudiLearning
+     * const DudiLearning = await prisma.dudiLearning.create({
+     *   data: {
+     *     // ... data to create a DudiLearning
+     *   }
+     * })
+     * 
+    **/
+    create<T extends DudiLearningCreateArgs>(
+      args: SelectSubset<T, DudiLearningCreateArgs>
+    ): Prisma__DudiLearningClient<DudiLearningGetPayload<T>>
+
+    /**
+     * Create many DudiLearnings.
+     *     @param {DudiLearningCreateManyArgs} args - Arguments to create many DudiLearnings.
+     *     @example
+     *     // Create many DudiLearnings
+     *     const dudiLearning = await prisma.dudiLearning.createMany({
+     *       data: {
+     *         // ... provide data here
+     *       }
+     *     })
+     *     
+    **/
+    createMany<T extends DudiLearningCreateManyArgs>(
+      args?: SelectSubset<T, DudiLearningCreateManyArgs>
+    ): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Delete a DudiLearning.
+     * @param {DudiLearningDeleteArgs} args - Arguments to delete one DudiLearning.
+     * @example
+     * // Delete one DudiLearning
+     * const DudiLearning = await prisma.dudiLearning.delete({
+     *   where: {
+     *     // ... filter to delete one DudiLearning
+     *   }
+     * })
+     * 
+    **/
+    delete<T extends DudiLearningDeleteArgs>(
+      args: SelectSubset<T, DudiLearningDeleteArgs>
+    ): Prisma__DudiLearningClient<DudiLearningGetPayload<T>>
+
+    /**
+     * Update one DudiLearning.
+     * @param {DudiLearningUpdateArgs} args - Arguments to update one DudiLearning.
+     * @example
+     * // Update one DudiLearning
+     * const dudiLearning = await prisma.dudiLearning.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+    **/
+    update<T extends DudiLearningUpdateArgs>(
+      args: SelectSubset<T, DudiLearningUpdateArgs>
+    ): Prisma__DudiLearningClient<DudiLearningGetPayload<T>>
+
+    /**
+     * Delete zero or more DudiLearnings.
+     * @param {DudiLearningDeleteManyArgs} args - Arguments to filter DudiLearnings to delete.
+     * @example
+     * // Delete a few DudiLearnings
+     * const { count } = await prisma.dudiLearning.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+    **/
+    deleteMany<T extends DudiLearningDeleteManyArgs>(
+      args?: SelectSubset<T, DudiLearningDeleteManyArgs>
+    ): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more DudiLearnings.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DudiLearningUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many DudiLearnings
+     * const dudiLearning = await prisma.dudiLearning.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+    **/
+    updateMany<T extends DudiLearningUpdateManyArgs>(
+      args: SelectSubset<T, DudiLearningUpdateManyArgs>
+    ): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one DudiLearning.
+     * @param {DudiLearningUpsertArgs} args - Arguments to update or create a DudiLearning.
+     * @example
+     * // Update or create a DudiLearning
+     * const dudiLearning = await prisma.dudiLearning.upsert({
+     *   create: {
+     *     // ... data to create a DudiLearning
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the DudiLearning we want to update
+     *   }
+     * })
+    **/
+    upsert<T extends DudiLearningUpsertArgs>(
+      args: SelectSubset<T, DudiLearningUpsertArgs>
+    ): Prisma__DudiLearningClient<DudiLearningGetPayload<T>>
+
+    /**
+     * Find zero or more DudiLearnings that matches the filter.
+     * @param {DudiLearningFindRawArgs} args - Select which filters you would like to apply.
+     * @example
+     * const dudiLearning = await prisma.dudiLearning.findRaw({
+     *   filter: { age: { $gt: 25 } } 
+     * })
+    **/
+    findRaw(
+      args?: DudiLearningFindRawArgs
+    ): Prisma.PrismaPromise<JsonObject>
+
+    /**
+     * Perform aggregation operations on a DudiLearning.
+     * @param {DudiLearningAggregateRawArgs} args - Select which aggregations you would like to apply.
+     * @example
+     * const dudiLearning = await prisma.dudiLearning.aggregateRaw({
+     *   pipeline: [
+     *     { $match: { status: "registered" } },
+     *     { $group: { _id: "$country", total: { $sum: 1 } } }
+     *   ]
+     * })
+    **/
+    aggregateRaw(
+      args?: DudiLearningAggregateRawArgs
+    ): Prisma.PrismaPromise<JsonObject>
+
+    /**
+     * Count the number of DudiLearnings.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DudiLearningCountArgs} args - Arguments to filter DudiLearnings to count.
+     * @example
+     * // Count the number of DudiLearnings
+     * const count = await prisma.dudiLearning.count({
+     *   where: {
+     *     // ... the filter for the DudiLearnings we want to count
+     *   }
+     * })
+    **/
+    count<T extends DudiLearningCountArgs>(
+      args?: Subset<T, DudiLearningCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends _Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], DudiLearningCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a DudiLearning.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DudiLearningAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends DudiLearningAggregateArgs>(args: Subset<T, DudiLearningAggregateArgs>): Prisma.PrismaPromise<GetDudiLearningAggregateType<T>>
+
+    /**
+     * Group by DudiLearning.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DudiLearningGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends DudiLearningGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: DudiLearningGroupByArgs['orderBy'] }
+        : { orderBy?: DudiLearningGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends TupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, DudiLearningGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetDudiLearningGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for DudiLearning.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export class Prisma__DudiLearningClient<T, Null = never> implements Prisma.PrismaPromise<T> {
+    private readonly _dmmf;
+    private readonly _queryType;
+    private readonly _rootField;
+    private readonly _clientMethod;
+    private readonly _args;
+    private readonly _dataPath;
+    private readonly _errorFormat;
+    private readonly _measurePerformance?;
+    private _isList;
+    private _callsite;
+    private _requestPromise?;
+    readonly [Symbol.toStringTag]: 'PrismaPromise';
+    constructor(_dmmf: runtime.DMMFClass, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
+
+    indicator<T extends DudiIndicatorArgs= {}>(args?: Subset<T, DudiIndicatorArgs>): Prisma.PrismaPromise<Array<DudiIndicatorGetPayload<T>>| Null>;
+
+    ref<T extends DudiArgs= {}>(args?: Subset<T, DudiArgs>): Prisma__DudiClient<DudiGetPayload<T> | Null>;
+
+    private get _document();
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): Promise<TResult1 | TResult2>;
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): Promise<T | TResult>;
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): Promise<T>;
+  }
+
+
+
+  // Custom InputTypes
+
+  /**
+   * DudiLearning base type for findUnique actions
+   */
+  export type DudiLearningFindUniqueArgsBase = {
+    /**
+     * Select specific fields to fetch from the DudiLearning
+     */
+    select?: DudiLearningSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: DudiLearningInclude | null
+    /**
+     * Filter, which DudiLearning to fetch.
+     */
+    where: DudiLearningWhereUniqueInput
+  }
+
+  /**
+   * DudiLearning findUnique
+   */
+  export interface DudiLearningFindUniqueArgs extends DudiLearningFindUniqueArgsBase {
+   /**
+    * Throw an Error if query returns no results
+    * @deprecated since 4.0.0: use `findUniqueOrThrow` method instead
+    */
+    rejectOnNotFound?: RejectOnNotFound
+  }
+      
+
+  /**
+   * DudiLearning findUniqueOrThrow
+   */
+  export type DudiLearningFindUniqueOrThrowArgs = {
+    /**
+     * Select specific fields to fetch from the DudiLearning
+     */
+    select?: DudiLearningSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: DudiLearningInclude | null
+    /**
+     * Filter, which DudiLearning to fetch.
+     */
+    where: DudiLearningWhereUniqueInput
+  }
+
+
+  /**
+   * DudiLearning base type for findFirst actions
+   */
+  export type DudiLearningFindFirstArgsBase = {
+    /**
+     * Select specific fields to fetch from the DudiLearning
+     */
+    select?: DudiLearningSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: DudiLearningInclude | null
+    /**
+     * Filter, which DudiLearning to fetch.
+     */
+    where?: DudiLearningWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of DudiLearnings to fetch.
+     */
+    orderBy?: Enumerable<DudiLearningOrderByWithRelationInput>
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for DudiLearnings.
+     */
+    cursor?: DudiLearningWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` DudiLearnings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` DudiLearnings.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of DudiLearnings.
+     */
+    distinct?: Enumerable<DudiLearningScalarFieldEnum>
+  }
+
+  /**
+   * DudiLearning findFirst
+   */
+  export interface DudiLearningFindFirstArgs extends DudiLearningFindFirstArgsBase {
+   /**
+    * Throw an Error if query returns no results
+    * @deprecated since 4.0.0: use `findFirstOrThrow` method instead
+    */
+    rejectOnNotFound?: RejectOnNotFound
+  }
+      
+
+  /**
+   * DudiLearning findFirstOrThrow
+   */
+  export type DudiLearningFindFirstOrThrowArgs = {
+    /**
+     * Select specific fields to fetch from the DudiLearning
+     */
+    select?: DudiLearningSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: DudiLearningInclude | null
+    /**
+     * Filter, which DudiLearning to fetch.
+     */
+    where?: DudiLearningWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of DudiLearnings to fetch.
+     */
+    orderBy?: Enumerable<DudiLearningOrderByWithRelationInput>
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for DudiLearnings.
+     */
+    cursor?: DudiLearningWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` DudiLearnings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` DudiLearnings.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of DudiLearnings.
+     */
+    distinct?: Enumerable<DudiLearningScalarFieldEnum>
+  }
+
+
+  /**
+   * DudiLearning findMany
+   */
+  export type DudiLearningFindManyArgs = {
+    /**
+     * Select specific fields to fetch from the DudiLearning
+     */
+    select?: DudiLearningSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: DudiLearningInclude | null
+    /**
+     * Filter, which DudiLearnings to fetch.
+     */
+    where?: DudiLearningWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of DudiLearnings to fetch.
+     */
+    orderBy?: Enumerable<DudiLearningOrderByWithRelationInput>
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing DudiLearnings.
+     */
+    cursor?: DudiLearningWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` DudiLearnings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` DudiLearnings.
+     */
+    skip?: number
+    distinct?: Enumerable<DudiLearningScalarFieldEnum>
+  }
+
+
+  /**
+   * DudiLearning create
+   */
+  export type DudiLearningCreateArgs = {
+    /**
+     * Select specific fields to fetch from the DudiLearning
+     */
+    select?: DudiLearningSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: DudiLearningInclude | null
+    /**
+     * The data needed to create a DudiLearning.
+     */
+    data: XOR<DudiLearningCreateInput, DudiLearningUncheckedCreateInput>
+  }
+
+
+  /**
+   * DudiLearning createMany
+   */
+  export type DudiLearningCreateManyArgs = {
+    /**
+     * The data used to create many DudiLearnings.
+     */
+    data: Enumerable<DudiLearningCreateManyInput>
+  }
+
+
+  /**
+   * DudiLearning update
+   */
+  export type DudiLearningUpdateArgs = {
+    /**
+     * Select specific fields to fetch from the DudiLearning
+     */
+    select?: DudiLearningSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: DudiLearningInclude | null
+    /**
+     * The data needed to update a DudiLearning.
+     */
+    data: XOR<DudiLearningUpdateInput, DudiLearningUncheckedUpdateInput>
+    /**
+     * Choose, which DudiLearning to update.
+     */
+    where: DudiLearningWhereUniqueInput
+  }
+
+
+  /**
+   * DudiLearning updateMany
+   */
+  export type DudiLearningUpdateManyArgs = {
+    /**
+     * The data used to update DudiLearnings.
+     */
+    data: XOR<DudiLearningUpdateManyMutationInput, DudiLearningUncheckedUpdateManyInput>
+    /**
+     * Filter which DudiLearnings to update
+     */
+    where?: DudiLearningWhereInput
+  }
+
+
+  /**
+   * DudiLearning upsert
+   */
+  export type DudiLearningUpsertArgs = {
+    /**
+     * Select specific fields to fetch from the DudiLearning
+     */
+    select?: DudiLearningSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: DudiLearningInclude | null
+    /**
+     * The filter to search for the DudiLearning to update in case it exists.
+     */
+    where: DudiLearningWhereUniqueInput
+    /**
+     * In case the DudiLearning found by the `where` argument doesn't exist, create a new DudiLearning with this data.
+     */
+    create: XOR<DudiLearningCreateInput, DudiLearningUncheckedCreateInput>
+    /**
+     * In case the DudiLearning was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<DudiLearningUpdateInput, DudiLearningUncheckedUpdateInput>
+  }
+
+
+  /**
+   * DudiLearning delete
+   */
+  export type DudiLearningDeleteArgs = {
+    /**
+     * Select specific fields to fetch from the DudiLearning
+     */
+    select?: DudiLearningSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: DudiLearningInclude | null
+    /**
+     * Filter which DudiLearning to delete.
+     */
+    where: DudiLearningWhereUniqueInput
+  }
+
+
+  /**
+   * DudiLearning deleteMany
+   */
+  export type DudiLearningDeleteManyArgs = {
+    /**
+     * Filter which DudiLearnings to delete
+     */
+    where?: DudiLearningWhereInput
+  }
+
+
+  /**
+   * DudiLearning findRaw
+   */
+  export type DudiLearningFindRawArgs = {
+    /**
+     * The query predicate filter. If unspecified, then all documents in the collection will match the predicate. ${@link https://docs.mongodb.com/manual/reference/operator/query MongoDB Docs}.
+     */
+    filter?: InputJsonValue
+    /**
+     * Additional options to pass to the `find` command ${@link https://docs.mongodb.com/manual/reference/command/find/#command-fields MongoDB Docs}.
+     */
+    options?: InputJsonValue
+  }
+
+
+  /**
+   * DudiLearning aggregateRaw
+   */
+  export type DudiLearningAggregateRawArgs = {
+    /**
+     * An array of aggregation stages to process and transform the document stream via the aggregation pipeline. ${@link https://docs.mongodb.com/manual/reference/operator/aggregation-pipeline MongoDB Docs}.
+     */
+    pipeline?: InputJsonValue[]
+    /**
+     * Additional options to pass to the `aggregate` command ${@link https://docs.mongodb.com/manual/reference/command/aggregate/#command-fields MongoDB Docs}.
+     */
+    options?: InputJsonValue
+  }
+
+
+  /**
+   * DudiLearning without action
+   */
+  export type DudiLearningArgs = {
+    /**
+     * Select specific fields to fetch from the DudiLearning
+     */
+    select?: DudiLearningSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: DudiLearningInclude | null
+  }
+
+
+
+  /**
    * Enums
    */
 
@@ -42012,6 +44620,29 @@ export namespace Prisma {
   };
 
   export type ClassRoomScalarFieldEnum = (typeof ClassRoomScalarFieldEnum)[keyof typeof ClassRoomScalarFieldEnum]
+
+
+  export const DudiLearningScalarFieldEnum: {
+    id: 'id',
+    no: 'no',
+    refId: 'refId',
+    code: 'code',
+    name: 'name'
+  };
+
+  export type DudiLearningScalarFieldEnum = (typeof DudiLearningScalarFieldEnum)[keyof typeof DudiLearningScalarFieldEnum]
+
+
+  export const DudiScalarFieldEnum: {
+    id: 'id',
+    name: 'name',
+    instansiId: 'instansiId',
+    majorId: 'majorId',
+    collabs: 'collabs',
+    disable: 'disable'
+  };
+
+  export type DudiScalarFieldEnum = (typeof DudiScalarFieldEnum)[keyof typeof DudiScalarFieldEnum]
 
 
   export const ElementScalarFieldEnum: {
@@ -42352,7 +44983,7 @@ export namespace Prisma {
     id: 'id',
     refId: 'refId',
     hours: 'hours',
-    isEven: 'isEven',
+    semester: 'semester',
     teacherId: 'teacherId',
     classRoomIds: 'classRoomIds',
     elemenIds: 'elemenIds',
@@ -42384,7 +45015,8 @@ export namespace Prisma {
     mengajarId: 'mengajarId',
     tujuanId: 'tujuanId',
     perangkatId: 'perangkatId',
-    kalenderId: 'kalenderId'
+    kalenderId: 'kalenderId',
+    dudiId: 'dudiId'
   };
 
   export type TrackerScalarFieldEnum = (typeof TrackerScalarFieldEnum)[keyof typeof TrackerScalarFieldEnum]
@@ -42447,6 +45079,7 @@ export namespace Prisma {
     tujuanId?: StringNullableFilter | string | null
     perangkatId?: StringNullableFilter | string | null
     kalenderId?: StringNullableFilter | string | null
+    dudiId?: StringNullableFilter | string | null
     user?: XOR<UserRelationFilter, UserWhereInput>
     ref?: XOR<InstansiRelationFilter, InstansiWhereInput>
     instansi?: XOR<InstansiRelationFilter, InstansiWhereInput> | null
@@ -42465,6 +45098,7 @@ export namespace Prisma {
     tujuan?: XOR<ObjectiveRelationFilter, ObjectiveWhereInput> | null
     perangkat?: XOR<TDeviceRelationFilter, TDeviceWhereInput> | null
     kalender?: XOR<CalendarRelationFilter, CalendarWhereInput> | null
+    dudi?: XOR<DudiRelationFilter, DudiWhereInput> | null
   }
 
   export type TrackerOrderByWithRelationInput = {
@@ -42490,6 +45124,7 @@ export namespace Prisma {
     tujuanId?: SortOrder
     perangkatId?: SortOrder
     kalenderId?: SortOrder
+    dudiId?: SortOrder
     user?: UserOrderByWithRelationInput
     ref?: InstansiOrderByWithRelationInput
     instansi?: InstansiOrderByWithRelationInput
@@ -42508,6 +45143,7 @@ export namespace Prisma {
     tujuan?: ObjectiveOrderByWithRelationInput
     perangkat?: TDeviceOrderByWithRelationInput
     kalender?: CalendarOrderByWithRelationInput
+    dudi?: DudiOrderByWithRelationInput
   }
 
   export type TrackerWhereUniqueInput = {
@@ -42537,6 +45173,7 @@ export namespace Prisma {
     tujuanId?: SortOrder
     perangkatId?: SortOrder
     kalenderId?: SortOrder
+    dudiId?: SortOrder
     _count?: TrackerCountOrderByAggregateInput
     _max?: TrackerMaxOrderByAggregateInput
     _min?: TrackerMinOrderByAggregateInput
@@ -42568,6 +45205,7 @@ export namespace Prisma {
     tujuanId?: StringNullableWithAggregatesFilter | string | null
     perangkatId?: StringNullableWithAggregatesFilter | string | null
     kalenderId?: StringNullableWithAggregatesFilter | string | null
+    dudiId?: StringNullableWithAggregatesFilter | string | null
   }
 
   export type InstansiWhereInput = {
@@ -42594,6 +45232,7 @@ export namespace Prisma {
     unikMapels?: MataPelajaranListRelationFilter
     tDevice?: TDeviceListRelationFilter
     objective?: ObjectiveListRelationFilter
+    dudi?: DudiListRelationFilter
   }
 
   export type InstansiOrderByWithRelationInput = {
@@ -42617,6 +45256,7 @@ export namespace Prisma {
     unikMapels?: MataPelajaranOrderByRelationAggregateInput
     tDevice?: TDeviceOrderByRelationAggregateInput
     objective?: ObjectiveOrderByRelationAggregateInput
+    dudi?: DudiOrderByRelationAggregateInput
   }
 
   export type InstansiWhereUniqueInput = {
@@ -42981,6 +45621,7 @@ export namespace Prisma {
     classRoom?: ClassRoomListRelationFilter
     tracker?: TrackerListRelationFilter
     mapel?: MataPelajaranListRelationFilter
+    dudi?: DudiListRelationFilter
   }
 
   export type KonsentrasiKeahlianOrderByWithRelationInput = {
@@ -42997,6 +45638,7 @@ export namespace Prisma {
     classRoom?: ClassRoomOrderByRelationAggregateInput
     tracker?: TrackerOrderByRelationAggregateInput
     mapel?: MataPelajaranOrderByRelationAggregateInput
+    dudi?: DudiOrderByRelationAggregateInput
   }
 
   export type KonsentrasiKeahlianWhereUniqueInput = {
@@ -43876,7 +46518,7 @@ export namespace Prisma {
     id?: StringFilter | string
     refId?: StringFilter | string
     hours?: IntFilter | number
-    isEven?: BoolFilter | boolean
+    semester?: EnumSemesterFilter | Semester
     teacherId?: StringFilter | string
     classRoomIds?: StringNullableListFilter
     elemenIds?: StringNullableListFilter
@@ -43893,7 +46535,7 @@ export namespace Prisma {
     id?: SortOrder
     refId?: SortOrder
     hours?: SortOrder
-    isEven?: SortOrder
+    semester?: SortOrder
     teacherId?: SortOrder
     classRoomIds?: SortOrder
     elemenIds?: SortOrder
@@ -43908,14 +46550,14 @@ export namespace Prisma {
 
   export type TeachingWhereUniqueInput = {
     id?: string
-    isEven_refId_teacherId?: TeachingIsEvenRefIdTeacherIdCompoundUniqueInput
+    semester_refId_teacherId?: TeachingSemesterRefIdTeacherIdCompoundUniqueInput
   }
 
   export type TeachingOrderByWithAggregationInput = {
     id?: SortOrder
     refId?: SortOrder
     hours?: SortOrder
-    isEven?: SortOrder
+    semester?: SortOrder
     teacherId?: SortOrder
     classRoomIds?: SortOrder
     elemenIds?: SortOrder
@@ -43934,7 +46576,7 @@ export namespace Prisma {
     id?: StringWithAggregatesFilter | string
     refId?: StringWithAggregatesFilter | string
     hours?: IntWithAggregatesFilter | number
-    isEven?: BoolWithAggregatesFilter | boolean
+    semester?: EnumSemesterWithAggregatesFilter | Semester
     teacherId?: StringWithAggregatesFilter | string
     classRoomIds?: StringNullableListFilter
     elemenIds?: StringNullableListFilter
@@ -44727,6 +47369,120 @@ export namespace Prisma {
     disable?: BoolWithAggregatesFilter | boolean
   }
 
+  export type DudiWhereInput = {
+    AND?: Enumerable<DudiWhereInput>
+    OR?: Enumerable<DudiWhereInput>
+    NOT?: Enumerable<DudiWhereInput>
+    id?: StringFilter | string
+    name?: StringFilter | string
+    address?: XOR<AddressNullableCompositeFilter, AddressObjectEqualityInput> | null
+    instansiId?: StringFilter | string
+    majorId?: StringFilter | string
+    contact?: XOR<ContactDudiCompositeFilter, ContactDudiObjectEqualityInput>
+    collabs?: StringNullableListFilter
+    timework?: XOR<DudiTimeWorkCompositeFilter, DudiTimeWorkObjectEqualityInput>
+    disable?: BoolFilter | boolean
+    instansi?: XOR<InstansiRelationFilter, InstansiWhereInput>
+    major?: XOR<KonsentrasiKeahlianRelationFilter, KonsentrasiKeahlianWhereInput>
+    learning?: DudiLearningListRelationFilter
+    tracker?: TrackerListRelationFilter
+  }
+
+  export type DudiOrderByWithRelationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    address?: AddressOrderByInput
+    instansiId?: SortOrder
+    majorId?: SortOrder
+    contact?: ContactDudiOrderByInput
+    collabs?: SortOrder
+    timework?: DudiTimeWorkOrderByInput
+    disable?: SortOrder
+    instansi?: InstansiOrderByWithRelationInput
+    major?: KonsentrasiKeahlianOrderByWithRelationInput
+    learning?: DudiLearningOrderByRelationAggregateInput
+    tracker?: TrackerOrderByRelationAggregateInput
+  }
+
+  export type DudiWhereUniqueInput = {
+    id?: string
+  }
+
+  export type DudiOrderByWithAggregationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    instansiId?: SortOrder
+    majorId?: SortOrder
+    collabs?: SortOrder
+    disable?: SortOrder
+    _count?: DudiCountOrderByAggregateInput
+    _max?: DudiMaxOrderByAggregateInput
+    _min?: DudiMinOrderByAggregateInput
+  }
+
+  export type DudiScalarWhereWithAggregatesInput = {
+    AND?: Enumerable<DudiScalarWhereWithAggregatesInput>
+    OR?: Enumerable<DudiScalarWhereWithAggregatesInput>
+    NOT?: Enumerable<DudiScalarWhereWithAggregatesInput>
+    id?: StringWithAggregatesFilter | string
+    name?: StringWithAggregatesFilter | string
+    instansiId?: StringWithAggregatesFilter | string
+    majorId?: StringWithAggregatesFilter | string
+    collabs?: StringNullableListFilter
+    disable?: BoolWithAggregatesFilter | boolean
+  }
+
+  export type DudiLearningWhereInput = {
+    AND?: Enumerable<DudiLearningWhereInput>
+    OR?: Enumerable<DudiLearningWhereInput>
+    NOT?: Enumerable<DudiLearningWhereInput>
+    id?: StringFilter | string
+    no?: IntFilter | number
+    refId?: StringFilter | string
+    code?: StringFilter | string
+    name?: StringFilter | string
+    indicator?: XOR<DudiIndicatorCompositeListFilter, Enumerable<DudiIndicatorObjectEqualityInput>>
+    ref?: XOR<DudiRelationFilter, DudiWhereInput>
+  }
+
+  export type DudiLearningOrderByWithRelationInput = {
+    id?: SortOrder
+    no?: SortOrder
+    refId?: SortOrder
+    code?: SortOrder
+    name?: SortOrder
+    indicator?: DudiIndicatorOrderByCompositeAggregateInput
+    ref?: DudiOrderByWithRelationInput
+  }
+
+  export type DudiLearningWhereUniqueInput = {
+    id?: string
+  }
+
+  export type DudiLearningOrderByWithAggregationInput = {
+    id?: SortOrder
+    no?: SortOrder
+    refId?: SortOrder
+    code?: SortOrder
+    name?: SortOrder
+    _count?: DudiLearningCountOrderByAggregateInput
+    _avg?: DudiLearningAvgOrderByAggregateInput
+    _max?: DudiLearningMaxOrderByAggregateInput
+    _min?: DudiLearningMinOrderByAggregateInput
+    _sum?: DudiLearningSumOrderByAggregateInput
+  }
+
+  export type DudiLearningScalarWhereWithAggregatesInput = {
+    AND?: Enumerable<DudiLearningScalarWhereWithAggregatesInput>
+    OR?: Enumerable<DudiLearningScalarWhereWithAggregatesInput>
+    NOT?: Enumerable<DudiLearningScalarWhereWithAggregatesInput>
+    id?: StringWithAggregatesFilter | string
+    no?: IntWithAggregatesFilter | number
+    refId?: StringWithAggregatesFilter | string
+    code?: StringWithAggregatesFilter | string
+    name?: StringWithAggregatesFilter | string
+  }
+
   export type TrackerCreateInput = {
     id?: string
     point: PointTracker
@@ -44750,6 +47506,7 @@ export namespace Prisma {
     tujuan?: ObjectiveCreateNestedOneWithoutTrackerInput
     perangkat?: TDeviceCreateNestedOneWithoutTrackerInput
     kalender?: CalendarCreateNestedOneWithoutTrackerInput
+    dudi?: DudiCreateNestedOneWithoutTrackerInput
   }
 
   export type TrackerUncheckedCreateInput = {
@@ -44775,6 +47532,7 @@ export namespace Prisma {
     tujuanId?: string | null
     perangkatId?: string | null
     kalenderId?: string | null
+    dudiId?: string | null
   }
 
   export type TrackerUpdateInput = {
@@ -44799,6 +47557,7 @@ export namespace Prisma {
     tujuan?: ObjectiveUpdateOneWithoutTrackerNestedInput
     perangkat?: TDeviceUpdateOneWithoutTrackerNestedInput
     kalender?: CalendarUpdateOneWithoutTrackerNestedInput
+    dudi?: DudiUpdateOneWithoutTrackerNestedInput
   }
 
   export type TrackerUncheckedUpdateInput = {
@@ -44823,6 +47582,7 @@ export namespace Prisma {
     tujuanId?: NullableStringFieldUpdateOperationsInput | string | null
     perangkatId?: NullableStringFieldUpdateOperationsInput | string | null
     kalenderId?: NullableStringFieldUpdateOperationsInput | string | null
+    dudiId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type TrackerCreateManyInput = {
@@ -44848,6 +47608,7 @@ export namespace Prisma {
     tujuanId?: string | null
     perangkatId?: string | null
     kalenderId?: string | null
+    dudiId?: string | null
   }
 
   export type TrackerUpdateManyMutationInput = {
@@ -44878,6 +47639,7 @@ export namespace Prisma {
     tujuanId?: NullableStringFieldUpdateOperationsInput | string | null
     perangkatId?: NullableStringFieldUpdateOperationsInput | string | null
     kalenderId?: NullableStringFieldUpdateOperationsInput | string | null
+    dudiId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type InstansiCreateInput = {
@@ -44900,6 +47662,7 @@ export namespace Prisma {
     unikMapels?: MataPelajaranCreateNestedManyWithoutInstansiInput
     tDevice?: TDeviceCreateNestedManyWithoutInstansiInput
     objective?: ObjectiveCreateNestedManyWithoutInstansiInput
+    dudi?: DudiCreateNestedManyWithoutInstansiInput
   }
 
   export type InstansiUncheckedCreateInput = {
@@ -44923,6 +47686,7 @@ export namespace Prisma {
     unikMapels?: MataPelajaranUncheckedCreateNestedManyWithoutInstansiInput
     tDevice?: TDeviceUncheckedCreateNestedManyWithoutInstansiInput
     objective?: ObjectiveUncheckedCreateNestedManyWithoutInstansiInput
+    dudi?: DudiUncheckedCreateNestedManyWithoutInstansiInput
   }
 
   export type InstansiUpdateInput = {
@@ -44944,6 +47708,7 @@ export namespace Prisma {
     unikMapels?: MataPelajaranUpdateManyWithoutInstansiNestedInput
     tDevice?: TDeviceUpdateManyWithoutInstansiNestedInput
     objective?: ObjectiveUpdateManyWithoutInstansiNestedInput
+    dudi?: DudiUpdateManyWithoutInstansiNestedInput
   }
 
   export type InstansiUncheckedUpdateInput = {
@@ -44966,6 +47731,7 @@ export namespace Prisma {
     unikMapels?: MataPelajaranUncheckedUpdateManyWithoutInstansiNestedInput
     tDevice?: TDeviceUncheckedUpdateManyWithoutInstansiNestedInput
     objective?: ObjectiveUncheckedUpdateManyWithoutInstansiNestedInput
+    dudi?: DudiUncheckedUpdateManyWithoutInstansiNestedInput
   }
 
   export type InstansiCreateManyInput = {
@@ -45387,6 +48153,7 @@ export namespace Prisma {
     classRoom?: ClassRoomCreateNestedManyWithoutMajorInput
     tracker?: TrackerCreateNestedManyWithoutKonsentrasiInput
     mapel?: MataPelajaranCreateNestedManyWithoutKeahlianInput
+    dudi?: DudiCreateNestedManyWithoutMajorInput
   }
 
   export type KonsentrasiKeahlianUncheckedCreateInput = {
@@ -45402,6 +48169,7 @@ export namespace Prisma {
     classRoom?: ClassRoomUncheckedCreateNestedManyWithoutMajorInput
     tracker?: TrackerUncheckedCreateNestedManyWithoutKonsentrasiInput
     mapel?: MataPelajaranUncheckedCreateNestedManyWithoutKeahlianInput
+    dudi?: DudiUncheckedCreateNestedManyWithoutMajorInput
   }
 
   export type KonsentrasiKeahlianUpdateInput = {
@@ -45415,6 +48183,7 @@ export namespace Prisma {
     classRoom?: ClassRoomUpdateManyWithoutMajorNestedInput
     tracker?: TrackerUpdateManyWithoutKonsentrasiNestedInput
     mapel?: MataPelajaranUpdateManyWithoutKeahlianNestedInput
+    dudi?: DudiUpdateManyWithoutMajorNestedInput
   }
 
   export type KonsentrasiKeahlianUncheckedUpdateInput = {
@@ -45429,6 +48198,7 @@ export namespace Prisma {
     classRoom?: ClassRoomUncheckedUpdateManyWithoutMajorNestedInput
     tracker?: TrackerUncheckedUpdateManyWithoutKonsentrasiNestedInput
     mapel?: MataPelajaranUncheckedUpdateManyWithoutKeahlianNestedInput
+    dudi?: DudiUncheckedUpdateManyWithoutMajorNestedInput
   }
 
   export type KonsentrasiKeahlianCreateManyInput = {
@@ -46543,7 +49313,7 @@ export namespace Prisma {
   export type TeachingCreateInput = {
     id?: string
     hours: number
-    isEven: boolean
+    semester: Semester
     disable?: boolean
     ref: ScheduleCreateNestedOneWithoutTeachingInput
     teacher: TeacherCreateNestedOneWithoutTeachingInput
@@ -46557,7 +49327,7 @@ export namespace Prisma {
     id?: string
     refId: string
     hours: number
-    isEven: boolean
+    semester: Semester
     teacherId: string
     classRoomIds?: TeachingCreateclassRoomIdsInput | Enumerable<string>
     elemenIds?: TeachingCreateelemenIdsInput | Enumerable<string>
@@ -46570,7 +49340,7 @@ export namespace Prisma {
 
   export type TeachingUpdateInput = {
     hours?: IntFieldUpdateOperationsInput | number
-    isEven?: BoolFieldUpdateOperationsInput | boolean
+    semester?: EnumSemesterFieldUpdateOperationsInput | Semester
     disable?: BoolFieldUpdateOperationsInput | boolean
     ref?: ScheduleUpdateOneRequiredWithoutTeachingNestedInput
     teacher?: TeacherUpdateOneRequiredWithoutTeachingNestedInput
@@ -46583,7 +49353,7 @@ export namespace Prisma {
   export type TeachingUncheckedUpdateInput = {
     refId?: StringFieldUpdateOperationsInput | string
     hours?: IntFieldUpdateOperationsInput | number
-    isEven?: BoolFieldUpdateOperationsInput | boolean
+    semester?: EnumSemesterFieldUpdateOperationsInput | Semester
     teacherId?: StringFieldUpdateOperationsInput | string
     classRoomIds?: TeachingUpdateclassRoomIdsInput | Enumerable<string>
     elemenIds?: TeachingUpdateelemenIdsInput | Enumerable<string>
@@ -46598,7 +49368,7 @@ export namespace Prisma {
     id?: string
     refId: string
     hours: number
-    isEven: boolean
+    semester: Semester
     teacherId: string
     classRoomIds?: TeachingCreateclassRoomIdsInput | Enumerable<string>
     elemenIds?: TeachingCreateelemenIdsInput | Enumerable<string>
@@ -46607,14 +49377,14 @@ export namespace Prisma {
 
   export type TeachingUpdateManyMutationInput = {
     hours?: IntFieldUpdateOperationsInput | number
-    isEven?: BoolFieldUpdateOperationsInput | boolean
+    semester?: EnumSemesterFieldUpdateOperationsInput | Semester
     disable?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type TeachingUncheckedUpdateManyInput = {
     refId?: StringFieldUpdateOperationsInput | string
     hours?: IntFieldUpdateOperationsInput | number
-    isEven?: BoolFieldUpdateOperationsInput | boolean
+    semester?: EnumSemesterFieldUpdateOperationsInput | Semester
     teacherId?: StringFieldUpdateOperationsInput | string
     classRoomIds?: TeachingUpdateclassRoomIdsInput | Enumerable<string>
     elemenIds?: TeachingUpdateelemenIdsInput | Enumerable<string>
@@ -47535,6 +50305,150 @@ export namespace Prisma {
     disable?: BoolFieldUpdateOperationsInput | boolean
   }
 
+  export type DudiCreateInput = {
+    id?: string
+    name: string
+    address?: XOR<AddressNullableCreateEnvelopeInput, AddressCreateInput> | null
+    contact: XOR<ContactDudiCreateEnvelopeInput, ContactDudiCreateInput>
+    collabs?: DudiCreatecollabsInput | Enumerable<string>
+    timework: XOR<DudiTimeWorkCreateEnvelopeInput, DudiTimeWorkCreateInput>
+    disable?: boolean
+    instansi: InstansiCreateNestedOneWithoutDudiInput
+    major: KonsentrasiKeahlianCreateNestedOneWithoutDudiInput
+    learning?: DudiLearningCreateNestedManyWithoutRefInput
+    tracker?: TrackerCreateNestedManyWithoutDudiInput
+  }
+
+  export type DudiUncheckedCreateInput = {
+    id?: string
+    name: string
+    address?: XOR<AddressNullableCreateEnvelopeInput, AddressCreateInput> | null
+    instansiId: string
+    majorId: string
+    contact: XOR<ContactDudiCreateEnvelopeInput, ContactDudiCreateInput>
+    collabs?: DudiCreatecollabsInput | Enumerable<string>
+    timework: XOR<DudiTimeWorkCreateEnvelopeInput, DudiTimeWorkCreateInput>
+    disable?: boolean
+    learning?: DudiLearningUncheckedCreateNestedManyWithoutRefInput
+    tracker?: TrackerUncheckedCreateNestedManyWithoutDudiInput
+  }
+
+  export type DudiUpdateInput = {
+    name?: StringFieldUpdateOperationsInput | string
+    address?: XOR<AddressNullableUpdateEnvelopeInput, AddressCreateInput> | null
+    contact?: XOR<ContactDudiUpdateEnvelopeInput, ContactDudiCreateInput>
+    collabs?: DudiUpdatecollabsInput | Enumerable<string>
+    timework?: XOR<DudiTimeWorkUpdateEnvelopeInput, DudiTimeWorkCreateInput>
+    disable?: BoolFieldUpdateOperationsInput | boolean
+    instansi?: InstansiUpdateOneRequiredWithoutDudiNestedInput
+    major?: KonsentrasiKeahlianUpdateOneRequiredWithoutDudiNestedInput
+    learning?: DudiLearningUpdateManyWithoutRefNestedInput
+    tracker?: TrackerUpdateManyWithoutDudiNestedInput
+  }
+
+  export type DudiUncheckedUpdateInput = {
+    name?: StringFieldUpdateOperationsInput | string
+    address?: XOR<AddressNullableUpdateEnvelopeInput, AddressCreateInput> | null
+    instansiId?: StringFieldUpdateOperationsInput | string
+    majorId?: StringFieldUpdateOperationsInput | string
+    contact?: XOR<ContactDudiUpdateEnvelopeInput, ContactDudiCreateInput>
+    collabs?: DudiUpdatecollabsInput | Enumerable<string>
+    timework?: XOR<DudiTimeWorkUpdateEnvelopeInput, DudiTimeWorkCreateInput>
+    disable?: BoolFieldUpdateOperationsInput | boolean
+    learning?: DudiLearningUncheckedUpdateManyWithoutRefNestedInput
+    tracker?: TrackerUncheckedUpdateManyWithoutDudiNestedInput
+  }
+
+  export type DudiCreateManyInput = {
+    id?: string
+    name: string
+    address?: XOR<AddressNullableCreateEnvelopeInput, AddressCreateInput> | null
+    instansiId: string
+    majorId: string
+    contact: XOR<ContactDudiCreateEnvelopeInput, ContactDudiCreateInput>
+    collabs?: DudiCreatecollabsInput | Enumerable<string>
+    timework: XOR<DudiTimeWorkCreateEnvelopeInput, DudiTimeWorkCreateInput>
+    disable?: boolean
+  }
+
+  export type DudiUpdateManyMutationInput = {
+    name?: StringFieldUpdateOperationsInput | string
+    address?: XOR<AddressNullableUpdateEnvelopeInput, AddressCreateInput> | null
+    contact?: XOR<ContactDudiUpdateEnvelopeInput, ContactDudiCreateInput>
+    collabs?: DudiUpdatecollabsInput | Enumerable<string>
+    timework?: XOR<DudiTimeWorkUpdateEnvelopeInput, DudiTimeWorkCreateInput>
+    disable?: BoolFieldUpdateOperationsInput | boolean
+  }
+
+  export type DudiUncheckedUpdateManyInput = {
+    name?: StringFieldUpdateOperationsInput | string
+    address?: XOR<AddressNullableUpdateEnvelopeInput, AddressCreateInput> | null
+    instansiId?: StringFieldUpdateOperationsInput | string
+    majorId?: StringFieldUpdateOperationsInput | string
+    contact?: XOR<ContactDudiUpdateEnvelopeInput, ContactDudiCreateInput>
+    collabs?: DudiUpdatecollabsInput | Enumerable<string>
+    timework?: XOR<DudiTimeWorkUpdateEnvelopeInput, DudiTimeWorkCreateInput>
+    disable?: BoolFieldUpdateOperationsInput | boolean
+  }
+
+  export type DudiLearningCreateInput = {
+    id?: string
+    no: number
+    code: string
+    name: string
+    indicator?: XOR<DudiIndicatorListCreateEnvelopeInput, Enumerable<DudiIndicatorCreateInput>>
+    ref: DudiCreateNestedOneWithoutLearningInput
+  }
+
+  export type DudiLearningUncheckedCreateInput = {
+    id?: string
+    no: number
+    refId: string
+    code: string
+    name: string
+    indicator?: XOR<DudiIndicatorListCreateEnvelopeInput, Enumerable<DudiIndicatorCreateInput>>
+  }
+
+  export type DudiLearningUpdateInput = {
+    no?: IntFieldUpdateOperationsInput | number
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    indicator?: XOR<DudiIndicatorListUpdateEnvelopeInput, Enumerable<DudiIndicatorCreateInput>>
+    ref?: DudiUpdateOneRequiredWithoutLearningNestedInput
+  }
+
+  export type DudiLearningUncheckedUpdateInput = {
+    no?: IntFieldUpdateOperationsInput | number
+    refId?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    indicator?: XOR<DudiIndicatorListUpdateEnvelopeInput, Enumerable<DudiIndicatorCreateInput>>
+  }
+
+  export type DudiLearningCreateManyInput = {
+    id?: string
+    no: number
+    refId: string
+    code: string
+    name: string
+    indicator?: XOR<DudiIndicatorListCreateEnvelopeInput, Enumerable<DudiIndicatorCreateInput>>
+  }
+
+  export type DudiLearningUpdateManyMutationInput = {
+    no?: IntFieldUpdateOperationsInput | number
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    indicator?: XOR<DudiIndicatorListUpdateEnvelopeInput, Enumerable<DudiIndicatorCreateInput>>
+  }
+
+  export type DudiLearningUncheckedUpdateManyInput = {
+    no?: IntFieldUpdateOperationsInput | number
+    refId?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    indicator?: XOR<DudiIndicatorListUpdateEnvelopeInput, Enumerable<DudiIndicatorCreateInput>>
+  }
+
   export type StringFilter = {
     equals?: string
     in?: Enumerable<string> | string
@@ -47676,6 +50590,11 @@ export namespace Prisma {
     isNot?: CalendarWhereInput | null
   }
 
+  export type DudiRelationFilter = {
+    is?: DudiWhereInput
+    isNot?: DudiWhereInput
+  }
+
   export type TrackerCountOrderByAggregateInput = {
     id?: SortOrder
     point?: SortOrder
@@ -47699,6 +50618,7 @@ export namespace Prisma {
     tujuanId?: SortOrder
     perangkatId?: SortOrder
     kalenderId?: SortOrder
+    dudiId?: SortOrder
   }
 
   export type TrackerMaxOrderByAggregateInput = {
@@ -47724,6 +50644,7 @@ export namespace Prisma {
     tujuanId?: SortOrder
     perangkatId?: SortOrder
     kalenderId?: SortOrder
+    dudiId?: SortOrder
   }
 
   export type TrackerMinOrderByAggregateInput = {
@@ -47749,6 +50670,7 @@ export namespace Prisma {
     tujuanId?: SortOrder
     perangkatId?: SortOrder
     kalenderId?: SortOrder
+    dudiId?: SortOrder
   }
 
   export type StringWithAggregatesFilter = {
@@ -47925,6 +50847,12 @@ export namespace Prisma {
     none?: ObjectiveWhereInput
   }
 
+  export type DudiListRelationFilter = {
+    every?: DudiWhereInput
+    some?: DudiWhereInput
+    none?: DudiWhereInput
+  }
+
   export type AddressOrderByInput = {
     provinsi?: SortOrder
     kabupaten?: SortOrder
@@ -47967,6 +50895,10 @@ export namespace Prisma {
   }
 
   export type ObjectiveOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type DudiOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -49417,8 +52349,15 @@ export namespace Prisma {
     disable?: SortOrder
   }
 
-  export type TeachingIsEvenRefIdTeacherIdCompoundUniqueInput = {
-    isEven: boolean
+  export type EnumSemesterFilter = {
+    equals?: Semester
+    in?: Enumerable<Semester>
+    notIn?: Enumerable<Semester>
+    not?: NestedEnumSemesterFilter | Semester
+  }
+
+  export type TeachingSemesterRefIdTeacherIdCompoundUniqueInput = {
+    semester: Semester
     refId: string
     teacherId: string
   }
@@ -49427,7 +52366,7 @@ export namespace Prisma {
     id?: SortOrder
     refId?: SortOrder
     hours?: SortOrder
-    isEven?: SortOrder
+    semester?: SortOrder
     teacherId?: SortOrder
     classRoomIds?: SortOrder
     elemenIds?: SortOrder
@@ -49442,7 +52381,7 @@ export namespace Prisma {
     id?: SortOrder
     refId?: SortOrder
     hours?: SortOrder
-    isEven?: SortOrder
+    semester?: SortOrder
     teacherId?: SortOrder
     disable?: SortOrder
   }
@@ -49451,13 +52390,23 @@ export namespace Prisma {
     id?: SortOrder
     refId?: SortOrder
     hours?: SortOrder
-    isEven?: SortOrder
+    semester?: SortOrder
     teacherId?: SortOrder
     disable?: SortOrder
   }
 
   export type TeachingSumOrderByAggregateInput = {
     hours?: SortOrder
+  }
+
+  export type EnumSemesterWithAggregatesFilter = {
+    equals?: Semester
+    in?: Enumerable<Semester>
+    notIn?: Enumerable<Semester>
+    not?: NestedEnumSemesterWithAggregatesFilter | Semester
+    _count?: NestedIntFilter
+    _min?: NestedEnumSemesterFilter
+    _max?: NestedEnumSemesterFilter
   }
 
   export type IntNullableFilter = {
@@ -50107,6 +53056,132 @@ export namespace Prisma {
     disable?: SortOrder
   }
 
+  export type ContactDudiCompositeFilter = {
+    equals?: ContactDudiObjectEqualityInput
+    is?: ContactDudiWhereInput
+    isNot?: ContactDudiWhereInput
+  }
+
+  export type ContactDudiObjectEqualityInput = {
+    name: string
+    position: string
+    email: string
+    phone: string
+  }
+
+  export type DudiTimeWorkCompositeFilter = {
+    equals?: DudiTimeWorkObjectEqualityInput
+    is?: DudiTimeWorkWhereInput
+    isNot?: DudiTimeWorkWhereInput
+  }
+
+  export type DudiTimeWorkObjectEqualityInput = {
+    holidays?: Enumerable<string>
+    timeIn: string
+    timeOut: string
+    actifity: boolean
+  }
+
+  export type DudiLearningListRelationFilter = {
+    every?: DudiLearningWhereInput
+    some?: DudiLearningWhereInput
+    none?: DudiLearningWhereInput
+  }
+
+  export type ContactDudiOrderByInput = {
+    name?: SortOrder
+    position?: SortOrder
+    email?: SortOrder
+    phone?: SortOrder
+  }
+
+  export type DudiTimeWorkOrderByInput = {
+    holidays?: SortOrder
+    timeIn?: SortOrder
+    timeOut?: SortOrder
+    actifity?: SortOrder
+  }
+
+  export type DudiLearningOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type DudiCountOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    instansiId?: SortOrder
+    majorId?: SortOrder
+    collabs?: SortOrder
+    disable?: SortOrder
+  }
+
+  export type DudiMaxOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    instansiId?: SortOrder
+    majorId?: SortOrder
+    disable?: SortOrder
+  }
+
+  export type DudiMinOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    instansiId?: SortOrder
+    majorId?: SortOrder
+    disable?: SortOrder
+  }
+
+  export type DudiIndicatorCompositeListFilter = {
+    equals?: Enumerable<DudiIndicatorObjectEqualityInput>
+    every?: DudiIndicatorWhereInput
+    some?: DudiIndicatorWhereInput
+    none?: DudiIndicatorWhereInput
+    isEmpty?: boolean
+    isSet?: boolean
+  }
+
+  export type DudiIndicatorObjectEqualityInput = {
+    no: number
+    code: string
+    name: string
+  }
+
+  export type DudiIndicatorOrderByCompositeAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type DudiLearningCountOrderByAggregateInput = {
+    id?: SortOrder
+    no?: SortOrder
+    refId?: SortOrder
+    code?: SortOrder
+    name?: SortOrder
+  }
+
+  export type DudiLearningAvgOrderByAggregateInput = {
+    no?: SortOrder
+  }
+
+  export type DudiLearningMaxOrderByAggregateInput = {
+    id?: SortOrder
+    no?: SortOrder
+    refId?: SortOrder
+    code?: SortOrder
+    name?: SortOrder
+  }
+
+  export type DudiLearningMinOrderByAggregateInput = {
+    id?: SortOrder
+    no?: SortOrder
+    refId?: SortOrder
+    code?: SortOrder
+    name?: SortOrder
+  }
+
+  export type DudiLearningSumOrderByAggregateInput = {
+    no?: SortOrder
+  }
+
   export type UserCreateNestedOneWithoutTrackerInput = {
     create?: XOR<UserCreateWithoutTrackerInput, UserUncheckedCreateWithoutTrackerInput>
     connectOrCreate?: UserCreateOrConnectWithoutTrackerInput
@@ -50213,6 +53288,12 @@ export namespace Prisma {
     create?: XOR<CalendarCreateWithoutTrackerInput, CalendarUncheckedCreateWithoutTrackerInput>
     connectOrCreate?: CalendarCreateOrConnectWithoutTrackerInput
     connect?: CalendarWhereUniqueInput
+  }
+
+  export type DudiCreateNestedOneWithoutTrackerInput = {
+    create?: XOR<DudiCreateWithoutTrackerInput, DudiUncheckedCreateWithoutTrackerInput>
+    connectOrCreate?: DudiCreateOrConnectWithoutTrackerInput
+    connect?: DudiWhereUniqueInput
   }
 
   export type EnumPointTrackerFieldUpdateOperationsInput = {
@@ -50403,6 +53484,16 @@ export namespace Prisma {
     update?: XOR<CalendarUpdateWithoutTrackerInput, CalendarUncheckedUpdateWithoutTrackerInput>
   }
 
+  export type DudiUpdateOneWithoutTrackerNestedInput = {
+    create?: XOR<DudiCreateWithoutTrackerInput, DudiUncheckedCreateWithoutTrackerInput>
+    connectOrCreate?: DudiCreateOrConnectWithoutTrackerInput
+    upsert?: DudiUpsertWithoutTrackerInput
+    disconnect?: boolean
+    delete?: boolean
+    connect?: DudiWhereUniqueInput
+    update?: XOR<DudiUpdateWithoutTrackerInput, DudiUncheckedUpdateWithoutTrackerInput>
+  }
+
   export type StringFieldUpdateOperationsInput = {
     set?: string
   }
@@ -50494,6 +53585,13 @@ export namespace Prisma {
     connect?: Enumerable<ObjectiveWhereUniqueInput>
   }
 
+  export type DudiCreateNestedManyWithoutInstansiInput = {
+    create?: XOR<Enumerable<DudiCreateWithoutInstansiInput>, Enumerable<DudiUncheckedCreateWithoutInstansiInput>>
+    connectOrCreate?: Enumerable<DudiCreateOrConnectWithoutInstansiInput>
+    createMany?: DudiCreateManyInstansiInputEnvelope
+    connect?: Enumerable<DudiWhereUniqueInput>
+  }
+
   export type InstansiCreatemajorIdsInput = {
     set: Enumerable<string>
   }
@@ -50565,6 +53663,13 @@ export namespace Prisma {
     connectOrCreate?: Enumerable<ObjectiveCreateOrConnectWithoutInstansiInput>
     createMany?: ObjectiveCreateManyInstansiInputEnvelope
     connect?: Enumerable<ObjectiveWhereUniqueInput>
+  }
+
+  export type DudiUncheckedCreateNestedManyWithoutInstansiInput = {
+    create?: XOR<Enumerable<DudiCreateWithoutInstansiInput>, Enumerable<DudiUncheckedCreateWithoutInstansiInput>>
+    connectOrCreate?: Enumerable<DudiCreateOrConnectWithoutInstansiInput>
+    createMany?: DudiCreateManyInstansiInputEnvelope
+    connect?: Enumerable<DudiWhereUniqueInput>
   }
 
   export type BoolFieldUpdateOperationsInput = {
@@ -50729,6 +53834,20 @@ export namespace Prisma {
     deleteMany?: Enumerable<ObjectiveScalarWhereInput>
   }
 
+  export type DudiUpdateManyWithoutInstansiNestedInput = {
+    create?: XOR<Enumerable<DudiCreateWithoutInstansiInput>, Enumerable<DudiUncheckedCreateWithoutInstansiInput>>
+    connectOrCreate?: Enumerable<DudiCreateOrConnectWithoutInstansiInput>
+    upsert?: Enumerable<DudiUpsertWithWhereUniqueWithoutInstansiInput>
+    createMany?: DudiCreateManyInstansiInputEnvelope
+    set?: Enumerable<DudiWhereUniqueInput>
+    disconnect?: Enumerable<DudiWhereUniqueInput>
+    delete?: Enumerable<DudiWhereUniqueInput>
+    connect?: Enumerable<DudiWhereUniqueInput>
+    update?: Enumerable<DudiUpdateWithWhereUniqueWithoutInstansiInput>
+    updateMany?: Enumerable<DudiUpdateManyWithWhereWithoutInstansiInput>
+    deleteMany?: Enumerable<DudiScalarWhereInput>
+  }
+
   export type InstansiUpdatemajorIdsInput = {
     set?: Enumerable<string>
     push?: string | Enumerable<string>
@@ -50871,6 +53990,20 @@ export namespace Prisma {
     update?: Enumerable<ObjectiveUpdateWithWhereUniqueWithoutInstansiInput>
     updateMany?: Enumerable<ObjectiveUpdateManyWithWhereWithoutInstansiInput>
     deleteMany?: Enumerable<ObjectiveScalarWhereInput>
+  }
+
+  export type DudiUncheckedUpdateManyWithoutInstansiNestedInput = {
+    create?: XOR<Enumerable<DudiCreateWithoutInstansiInput>, Enumerable<DudiUncheckedCreateWithoutInstansiInput>>
+    connectOrCreate?: Enumerable<DudiCreateOrConnectWithoutInstansiInput>
+    upsert?: Enumerable<DudiUpsertWithWhereUniqueWithoutInstansiInput>
+    createMany?: DudiCreateManyInstansiInputEnvelope
+    set?: Enumerable<DudiWhereUniqueInput>
+    disconnect?: Enumerable<DudiWhereUniqueInput>
+    delete?: Enumerable<DudiWhereUniqueInput>
+    connect?: Enumerable<DudiWhereUniqueInput>
+    update?: Enumerable<DudiUpdateWithWhereUniqueWithoutInstansiInput>
+    updateMany?: Enumerable<DudiUpdateManyWithWhereWithoutInstansiInput>
+    deleteMany?: Enumerable<DudiScalarWhereInput>
   }
 
   export type ProgramKeahlianCreateNestedOneWithoutMapelInput = {
@@ -51701,6 +54834,13 @@ export namespace Prisma {
     connect?: Enumerable<MataPelajaranWhereUniqueInput>
   }
 
+  export type DudiCreateNestedManyWithoutMajorInput = {
+    create?: XOR<Enumerable<DudiCreateWithoutMajorInput>, Enumerable<DudiUncheckedCreateWithoutMajorInput>>
+    connectOrCreate?: Enumerable<DudiCreateOrConnectWithoutMajorInput>
+    createMany?: DudiCreateManyMajorInputEnvelope
+    connect?: Enumerable<DudiWhereUniqueInput>
+  }
+
   export type KonsentrasiKeahlianCreateinstansiIdsInput = {
     set: Enumerable<string>
   }
@@ -51737,6 +54877,13 @@ export namespace Prisma {
     connectOrCreate?: Enumerable<MataPelajaranCreateOrConnectWithoutKeahlianInput>
     createMany?: MataPelajaranCreateManyKeahlianInputEnvelope
     connect?: Enumerable<MataPelajaranWhereUniqueInput>
+  }
+
+  export type DudiUncheckedCreateNestedManyWithoutMajorInput = {
+    create?: XOR<Enumerable<DudiCreateWithoutMajorInput>, Enumerable<DudiUncheckedCreateWithoutMajorInput>>
+    connectOrCreate?: Enumerable<DudiCreateOrConnectWithoutMajorInput>
+    createMany?: DudiCreateManyMajorInputEnvelope
+    connect?: Enumerable<DudiWhereUniqueInput>
   }
 
   export type ProgramKeahlianUpdateOneRequiredWithoutKonsentrasiNestedInput = {
@@ -51816,6 +54963,20 @@ export namespace Prisma {
     deleteMany?: Enumerable<MataPelajaranScalarWhereInput>
   }
 
+  export type DudiUpdateManyWithoutMajorNestedInput = {
+    create?: XOR<Enumerable<DudiCreateWithoutMajorInput>, Enumerable<DudiUncheckedCreateWithoutMajorInput>>
+    connectOrCreate?: Enumerable<DudiCreateOrConnectWithoutMajorInput>
+    upsert?: Enumerable<DudiUpsertWithWhereUniqueWithoutMajorInput>
+    createMany?: DudiCreateManyMajorInputEnvelope
+    set?: Enumerable<DudiWhereUniqueInput>
+    disconnect?: Enumerable<DudiWhereUniqueInput>
+    delete?: Enumerable<DudiWhereUniqueInput>
+    connect?: Enumerable<DudiWhereUniqueInput>
+    update?: Enumerable<DudiUpdateWithWhereUniqueWithoutMajorInput>
+    updateMany?: Enumerable<DudiUpdateManyWithWhereWithoutMajorInput>
+    deleteMany?: Enumerable<DudiScalarWhereInput>
+  }
+
   export type KonsentrasiKeahlianUpdateinstansiIdsInput = {
     set?: Enumerable<string>
     push?: string | Enumerable<string>
@@ -51888,6 +55049,20 @@ export namespace Prisma {
     update?: Enumerable<MataPelajaranUpdateWithWhereUniqueWithoutKeahlianInput>
     updateMany?: Enumerable<MataPelajaranUpdateManyWithWhereWithoutKeahlianInput>
     deleteMany?: Enumerable<MataPelajaranScalarWhereInput>
+  }
+
+  export type DudiUncheckedUpdateManyWithoutMajorNestedInput = {
+    create?: XOR<Enumerable<DudiCreateWithoutMajorInput>, Enumerable<DudiUncheckedCreateWithoutMajorInput>>
+    connectOrCreate?: Enumerable<DudiCreateOrConnectWithoutMajorInput>
+    upsert?: Enumerable<DudiUpsertWithWhereUniqueWithoutMajorInput>
+    createMany?: DudiCreateManyMajorInputEnvelope
+    set?: Enumerable<DudiWhereUniqueInput>
+    disconnect?: Enumerable<DudiWhereUniqueInput>
+    delete?: Enumerable<DudiWhereUniqueInput>
+    connect?: Enumerable<DudiWhereUniqueInput>
+    update?: Enumerable<DudiUpdateWithWhereUniqueWithoutMajorInput>
+    updateMany?: Enumerable<DudiUpdateManyWithWhereWithoutMajorInput>
+    deleteMany?: Enumerable<DudiScalarWhereInput>
   }
 
   export type InstansiCreateNestedOneWithoutRoleInput = {
@@ -54174,6 +57349,10 @@ export namespace Prisma {
     connect?: Enumerable<TDeviceWhereUniqueInput>
   }
 
+  export type EnumSemesterFieldUpdateOperationsInput = {
+    set?: Semester
+  }
+
   export type ScheduleUpdateOneRequiredWithoutTeachingNestedInput = {
     create?: XOR<ScheduleCreateWithoutTeachingInput, ScheduleUncheckedCreateWithoutTeachingInput>
     connectOrCreate?: ScheduleCreateOrConnectWithoutTeachingInput
@@ -55794,6 +58973,190 @@ export namespace Prisma {
     deleteMany?: Enumerable<TrackerScalarWhereInput>
   }
 
+  export type ContactDudiCreateEnvelopeInput = {
+    set?: ContactDudiCreateInput
+  }
+
+  export type ContactDudiCreateInput = {
+    name: string
+    position: string
+    email: string
+    phone: string
+  }
+
+  export type DudiCreatecollabsInput = {
+    set: Enumerable<string>
+  }
+
+  export type DudiTimeWorkCreateEnvelopeInput = {
+    set?: DudiTimeWorkCreateInput
+  }
+
+  export type DudiTimeWorkCreateInput = {
+    holidays?: DudiTimeWorkCreateholidaysInput | Enumerable<string>
+    timeIn: string
+    timeOut: string
+    actifity: boolean
+  }
+
+  export type InstansiCreateNestedOneWithoutDudiInput = {
+    create?: XOR<InstansiCreateWithoutDudiInput, InstansiUncheckedCreateWithoutDudiInput>
+    connectOrCreate?: InstansiCreateOrConnectWithoutDudiInput
+    connect?: InstansiWhereUniqueInput
+  }
+
+  export type KonsentrasiKeahlianCreateNestedOneWithoutDudiInput = {
+    create?: XOR<KonsentrasiKeahlianCreateWithoutDudiInput, KonsentrasiKeahlianUncheckedCreateWithoutDudiInput>
+    connectOrCreate?: KonsentrasiKeahlianCreateOrConnectWithoutDudiInput
+    connect?: KonsentrasiKeahlianWhereUniqueInput
+  }
+
+  export type DudiLearningCreateNestedManyWithoutRefInput = {
+    create?: XOR<Enumerable<DudiLearningCreateWithoutRefInput>, Enumerable<DudiLearningUncheckedCreateWithoutRefInput>>
+    connectOrCreate?: Enumerable<DudiLearningCreateOrConnectWithoutRefInput>
+    createMany?: DudiLearningCreateManyRefInputEnvelope
+    connect?: Enumerable<DudiLearningWhereUniqueInput>
+  }
+
+  export type TrackerCreateNestedManyWithoutDudiInput = {
+    create?: XOR<Enumerable<TrackerCreateWithoutDudiInput>, Enumerable<TrackerUncheckedCreateWithoutDudiInput>>
+    connectOrCreate?: Enumerable<TrackerCreateOrConnectWithoutDudiInput>
+    createMany?: TrackerCreateManyDudiInputEnvelope
+    connect?: Enumerable<TrackerWhereUniqueInput>
+  }
+
+  export type DudiLearningUncheckedCreateNestedManyWithoutRefInput = {
+    create?: XOR<Enumerable<DudiLearningCreateWithoutRefInput>, Enumerable<DudiLearningUncheckedCreateWithoutRefInput>>
+    connectOrCreate?: Enumerable<DudiLearningCreateOrConnectWithoutRefInput>
+    createMany?: DudiLearningCreateManyRefInputEnvelope
+    connect?: Enumerable<DudiLearningWhereUniqueInput>
+  }
+
+  export type TrackerUncheckedCreateNestedManyWithoutDudiInput = {
+    create?: XOR<Enumerable<TrackerCreateWithoutDudiInput>, Enumerable<TrackerUncheckedCreateWithoutDudiInput>>
+    connectOrCreate?: Enumerable<TrackerCreateOrConnectWithoutDudiInput>
+    createMany?: TrackerCreateManyDudiInputEnvelope
+    connect?: Enumerable<TrackerWhereUniqueInput>
+  }
+
+  export type ContactDudiUpdateEnvelopeInput = {
+    set?: ContactDudiCreateInput
+    update?: ContactDudiUpdateInput
+  }
+
+  export type DudiUpdatecollabsInput = {
+    set?: Enumerable<string>
+    push?: string | Enumerable<string>
+  }
+
+  export type DudiTimeWorkUpdateEnvelopeInput = {
+    set?: DudiTimeWorkCreateInput
+    update?: DudiTimeWorkUpdateInput
+  }
+
+  export type InstansiUpdateOneRequiredWithoutDudiNestedInput = {
+    create?: XOR<InstansiCreateWithoutDudiInput, InstansiUncheckedCreateWithoutDudiInput>
+    connectOrCreate?: InstansiCreateOrConnectWithoutDudiInput
+    upsert?: InstansiUpsertWithoutDudiInput
+    connect?: InstansiWhereUniqueInput
+    update?: XOR<InstansiUpdateWithoutDudiInput, InstansiUncheckedUpdateWithoutDudiInput>
+  }
+
+  export type KonsentrasiKeahlianUpdateOneRequiredWithoutDudiNestedInput = {
+    create?: XOR<KonsentrasiKeahlianCreateWithoutDudiInput, KonsentrasiKeahlianUncheckedCreateWithoutDudiInput>
+    connectOrCreate?: KonsentrasiKeahlianCreateOrConnectWithoutDudiInput
+    upsert?: KonsentrasiKeahlianUpsertWithoutDudiInput
+    connect?: KonsentrasiKeahlianWhereUniqueInput
+    update?: XOR<KonsentrasiKeahlianUpdateWithoutDudiInput, KonsentrasiKeahlianUncheckedUpdateWithoutDudiInput>
+  }
+
+  export type DudiLearningUpdateManyWithoutRefNestedInput = {
+    create?: XOR<Enumerable<DudiLearningCreateWithoutRefInput>, Enumerable<DudiLearningUncheckedCreateWithoutRefInput>>
+    connectOrCreate?: Enumerable<DudiLearningCreateOrConnectWithoutRefInput>
+    upsert?: Enumerable<DudiLearningUpsertWithWhereUniqueWithoutRefInput>
+    createMany?: DudiLearningCreateManyRefInputEnvelope
+    set?: Enumerable<DudiLearningWhereUniqueInput>
+    disconnect?: Enumerable<DudiLearningWhereUniqueInput>
+    delete?: Enumerable<DudiLearningWhereUniqueInput>
+    connect?: Enumerable<DudiLearningWhereUniqueInput>
+    update?: Enumerable<DudiLearningUpdateWithWhereUniqueWithoutRefInput>
+    updateMany?: Enumerable<DudiLearningUpdateManyWithWhereWithoutRefInput>
+    deleteMany?: Enumerable<DudiLearningScalarWhereInput>
+  }
+
+  export type TrackerUpdateManyWithoutDudiNestedInput = {
+    create?: XOR<Enumerable<TrackerCreateWithoutDudiInput>, Enumerable<TrackerUncheckedCreateWithoutDudiInput>>
+    connectOrCreate?: Enumerable<TrackerCreateOrConnectWithoutDudiInput>
+    upsert?: Enumerable<TrackerUpsertWithWhereUniqueWithoutDudiInput>
+    createMany?: TrackerCreateManyDudiInputEnvelope
+    set?: Enumerable<TrackerWhereUniqueInput>
+    disconnect?: Enumerable<TrackerWhereUniqueInput>
+    delete?: Enumerable<TrackerWhereUniqueInput>
+    connect?: Enumerable<TrackerWhereUniqueInput>
+    update?: Enumerable<TrackerUpdateWithWhereUniqueWithoutDudiInput>
+    updateMany?: Enumerable<TrackerUpdateManyWithWhereWithoutDudiInput>
+    deleteMany?: Enumerable<TrackerScalarWhereInput>
+  }
+
+  export type DudiLearningUncheckedUpdateManyWithoutRefNestedInput = {
+    create?: XOR<Enumerable<DudiLearningCreateWithoutRefInput>, Enumerable<DudiLearningUncheckedCreateWithoutRefInput>>
+    connectOrCreate?: Enumerable<DudiLearningCreateOrConnectWithoutRefInput>
+    upsert?: Enumerable<DudiLearningUpsertWithWhereUniqueWithoutRefInput>
+    createMany?: DudiLearningCreateManyRefInputEnvelope
+    set?: Enumerable<DudiLearningWhereUniqueInput>
+    disconnect?: Enumerable<DudiLearningWhereUniqueInput>
+    delete?: Enumerable<DudiLearningWhereUniqueInput>
+    connect?: Enumerable<DudiLearningWhereUniqueInput>
+    update?: Enumerable<DudiLearningUpdateWithWhereUniqueWithoutRefInput>
+    updateMany?: Enumerable<DudiLearningUpdateManyWithWhereWithoutRefInput>
+    deleteMany?: Enumerable<DudiLearningScalarWhereInput>
+  }
+
+  export type TrackerUncheckedUpdateManyWithoutDudiNestedInput = {
+    create?: XOR<Enumerable<TrackerCreateWithoutDudiInput>, Enumerable<TrackerUncheckedCreateWithoutDudiInput>>
+    connectOrCreate?: Enumerable<TrackerCreateOrConnectWithoutDudiInput>
+    upsert?: Enumerable<TrackerUpsertWithWhereUniqueWithoutDudiInput>
+    createMany?: TrackerCreateManyDudiInputEnvelope
+    set?: Enumerable<TrackerWhereUniqueInput>
+    disconnect?: Enumerable<TrackerWhereUniqueInput>
+    delete?: Enumerable<TrackerWhereUniqueInput>
+    connect?: Enumerable<TrackerWhereUniqueInput>
+    update?: Enumerable<TrackerUpdateWithWhereUniqueWithoutDudiInput>
+    updateMany?: Enumerable<TrackerUpdateManyWithWhereWithoutDudiInput>
+    deleteMany?: Enumerable<TrackerScalarWhereInput>
+  }
+
+  export type DudiIndicatorListCreateEnvelopeInput = {
+    set?: Enumerable<DudiIndicatorCreateInput>
+  }
+
+  export type DudiIndicatorCreateInput = {
+    no: number
+    code: string
+    name: string
+  }
+
+  export type DudiCreateNestedOneWithoutLearningInput = {
+    create?: XOR<DudiCreateWithoutLearningInput, DudiUncheckedCreateWithoutLearningInput>
+    connectOrCreate?: DudiCreateOrConnectWithoutLearningInput
+    connect?: DudiWhereUniqueInput
+  }
+
+  export type DudiIndicatorListUpdateEnvelopeInput = {
+    set?: Enumerable<DudiIndicatorCreateInput>
+    push?: Enumerable<DudiIndicatorCreateInput>
+    updateMany?: DudiIndicatorUpdateManyInput
+    deleteMany?: DudiIndicatorDeleteManyInput
+  }
+
+  export type DudiUpdateOneRequiredWithoutLearningNestedInput = {
+    create?: XOR<DudiCreateWithoutLearningInput, DudiUncheckedCreateWithoutLearningInput>
+    connectOrCreate?: DudiCreateOrConnectWithoutLearningInput
+    upsert?: DudiUpsertWithoutLearningInput
+    connect?: DudiWhereUniqueInput
+    update?: XOR<DudiUpdateWithoutLearningInput, DudiUncheckedUpdateWithoutLearningInput>
+  }
+
   export type NestedStringFilter = {
     equals?: string
     in?: Enumerable<string> | string
@@ -56422,6 +59785,23 @@ export namespace Prisma {
     pkl?: BoolNullableFilter | boolean | null
   }
 
+  export type NestedEnumSemesterFilter = {
+    equals?: Semester
+    in?: Enumerable<Semester>
+    notIn?: Enumerable<Semester>
+    not?: NestedEnumSemesterFilter | Semester
+  }
+
+  export type NestedEnumSemesterWithAggregatesFilter = {
+    equals?: Semester
+    in?: Enumerable<Semester>
+    notIn?: Enumerable<Semester>
+    not?: NestedEnumSemesterWithAggregatesFilter | Semester
+    _count?: NestedIntFilter
+    _min?: NestedEnumSemesterFilter
+    _max?: NestedEnumSemesterFilter
+  }
+
   export type NestedIntNullableWithAggregatesFilter = {
     equals?: number | null
     in?: Enumerable<number> | number | null
@@ -56541,6 +59921,35 @@ export namespace Prisma {
     active?: BoolFilter | boolean
   }
 
+  export type ContactDudiWhereInput = {
+    AND?: Enumerable<ContactDudiWhereInput>
+    OR?: Enumerable<ContactDudiWhereInput>
+    NOT?: Enumerable<ContactDudiWhereInput>
+    name?: StringFilter | string
+    position?: StringFilter | string
+    email?: StringFilter | string
+    phone?: StringFilter | string
+  }
+
+  export type DudiTimeWorkWhereInput = {
+    AND?: Enumerable<DudiTimeWorkWhereInput>
+    OR?: Enumerable<DudiTimeWorkWhereInput>
+    NOT?: Enumerable<DudiTimeWorkWhereInput>
+    holidays?: StringNullableListFilter
+    timeIn?: StringFilter | string
+    timeOut?: StringFilter | string
+    actifity?: BoolFilter | boolean
+  }
+
+  export type DudiIndicatorWhereInput = {
+    AND?: Enumerable<DudiIndicatorWhereInput>
+    OR?: Enumerable<DudiIndicatorWhereInput>
+    NOT?: Enumerable<DudiIndicatorWhereInput>
+    no?: IntFilter | number
+    code?: StringFilter | string
+    name?: StringFilter | string
+  }
+
   export type UserCreateWithoutTrackerInput = {
     id?: string
     name: string
@@ -56601,6 +60010,7 @@ export namespace Prisma {
     unikMapels?: MataPelajaranCreateNestedManyWithoutInstansiInput
     tDevice?: TDeviceCreateNestedManyWithoutInstansiInput
     objective?: ObjectiveCreateNestedManyWithoutInstansiInput
+    dudi?: DudiCreateNestedManyWithoutInstansiInput
   }
 
   export type InstansiUncheckedCreateWithoutHistoryInput = {
@@ -56623,6 +60033,7 @@ export namespace Prisma {
     unikMapels?: MataPelajaranUncheckedCreateNestedManyWithoutInstansiInput
     tDevice?: TDeviceUncheckedCreateNestedManyWithoutInstansiInput
     objective?: ObjectiveUncheckedCreateNestedManyWithoutInstansiInput
+    dudi?: DudiUncheckedCreateNestedManyWithoutInstansiInput
   }
 
   export type InstansiCreateOrConnectWithoutHistoryInput = {
@@ -56649,6 +60060,7 @@ export namespace Prisma {
     unikMapels?: MataPelajaranCreateNestedManyWithoutInstansiInput
     tDevice?: TDeviceCreateNestedManyWithoutInstansiInput
     objective?: ObjectiveCreateNestedManyWithoutInstansiInput
+    dudi?: DudiCreateNestedManyWithoutInstansiInput
   }
 
   export type InstansiUncheckedCreateWithoutTrackerInput = {
@@ -56671,6 +60083,7 @@ export namespace Prisma {
     unikMapels?: MataPelajaranUncheckedCreateNestedManyWithoutInstansiInput
     tDevice?: TDeviceUncheckedCreateNestedManyWithoutInstansiInput
     objective?: ObjectiveUncheckedCreateNestedManyWithoutInstansiInput
+    dudi?: DudiUncheckedCreateNestedManyWithoutInstansiInput
   }
 
   export type InstansiCreateOrConnectWithoutTrackerInput = {
@@ -56831,6 +60244,7 @@ export namespace Prisma {
     instansi?: InstansiCreateNestedManyWithoutMajorsInput
     classRoom?: ClassRoomCreateNestedManyWithoutMajorInput
     mapel?: MataPelajaranCreateNestedManyWithoutKeahlianInput
+    dudi?: DudiCreateNestedManyWithoutMajorInput
   }
 
   export type KonsentrasiKeahlianUncheckedCreateWithoutTrackerInput = {
@@ -56845,6 +60259,7 @@ export namespace Prisma {
     instansi?: InstansiUncheckedCreateNestedManyWithoutMajorsInput
     classRoom?: ClassRoomUncheckedCreateNestedManyWithoutMajorInput
     mapel?: MataPelajaranUncheckedCreateNestedManyWithoutKeahlianInput
+    dudi?: DudiUncheckedCreateNestedManyWithoutMajorInput
   }
 
   export type KonsentrasiKeahlianCreateOrConnectWithoutTrackerInput = {
@@ -57027,7 +60442,7 @@ export namespace Prisma {
   export type TeachingCreateWithoutTrackerInput = {
     id?: string
     hours: number
-    isEven: boolean
+    semester: Semester
     disable?: boolean
     ref: ScheduleCreateNestedOneWithoutTeachingInput
     teacher: TeacherCreateNestedOneWithoutTeachingInput
@@ -57040,7 +60455,7 @@ export namespace Prisma {
     id?: string
     refId: string
     hours: number
-    isEven: boolean
+    semester: Semester
     teacherId: string
     classRoomIds?: TeachingCreateclassRoomIdsInput | Enumerable<string>
     elemenIds?: TeachingCreateelemenIdsInput | Enumerable<string>
@@ -57204,6 +60619,37 @@ export namespace Prisma {
     create: XOR<CalendarCreateWithoutTrackerInput, CalendarUncheckedCreateWithoutTrackerInput>
   }
 
+  export type DudiCreateWithoutTrackerInput = {
+    id?: string
+    name: string
+    address?: XOR<AddressNullableCreateEnvelopeInput, AddressCreateInput> | null
+    contact: XOR<ContactDudiCreateEnvelopeInput, ContactDudiCreateInput>
+    collabs?: DudiCreatecollabsInput | Enumerable<string>
+    timework: XOR<DudiTimeWorkCreateEnvelopeInput, DudiTimeWorkCreateInput>
+    disable?: boolean
+    instansi: InstansiCreateNestedOneWithoutDudiInput
+    major: KonsentrasiKeahlianCreateNestedOneWithoutDudiInput
+    learning?: DudiLearningCreateNestedManyWithoutRefInput
+  }
+
+  export type DudiUncheckedCreateWithoutTrackerInput = {
+    id?: string
+    name: string
+    address?: XOR<AddressNullableCreateEnvelopeInput, AddressCreateInput> | null
+    instansiId: string
+    majorId: string
+    contact: XOR<ContactDudiCreateEnvelopeInput, ContactDudiCreateInput>
+    collabs?: DudiCreatecollabsInput | Enumerable<string>
+    timework: XOR<DudiTimeWorkCreateEnvelopeInput, DudiTimeWorkCreateInput>
+    disable?: boolean
+    learning?: DudiLearningUncheckedCreateNestedManyWithoutRefInput
+  }
+
+  export type DudiCreateOrConnectWithoutTrackerInput = {
+    where: DudiWhereUniqueInput
+    create: XOR<DudiCreateWithoutTrackerInput, DudiUncheckedCreateWithoutTrackerInput>
+  }
+
   export type UserUpsertWithoutTrackerInput = {
     update: XOR<UserUpdateWithoutTrackerInput, UserUncheckedUpdateWithoutTrackerInput>
     create: XOR<UserCreateWithoutTrackerInput, UserUncheckedCreateWithoutTrackerInput>
@@ -57266,6 +60712,7 @@ export namespace Prisma {
     unikMapels?: MataPelajaranUpdateManyWithoutInstansiNestedInput
     tDevice?: TDeviceUpdateManyWithoutInstansiNestedInput
     objective?: ObjectiveUpdateManyWithoutInstansiNestedInput
+    dudi?: DudiUpdateManyWithoutInstansiNestedInput
   }
 
   export type InstansiUncheckedUpdateWithoutHistoryInput = {
@@ -57287,6 +60734,7 @@ export namespace Prisma {
     unikMapels?: MataPelajaranUncheckedUpdateManyWithoutInstansiNestedInput
     tDevice?: TDeviceUncheckedUpdateManyWithoutInstansiNestedInput
     objective?: ObjectiveUncheckedUpdateManyWithoutInstansiNestedInput
+    dudi?: DudiUncheckedUpdateManyWithoutInstansiNestedInput
   }
 
   export type InstansiUpsertWithoutTrackerInput = {
@@ -57312,6 +60760,7 @@ export namespace Prisma {
     unikMapels?: MataPelajaranUpdateManyWithoutInstansiNestedInput
     tDevice?: TDeviceUpdateManyWithoutInstansiNestedInput
     objective?: ObjectiveUpdateManyWithoutInstansiNestedInput
+    dudi?: DudiUpdateManyWithoutInstansiNestedInput
   }
 
   export type InstansiUncheckedUpdateWithoutTrackerInput = {
@@ -57333,6 +60782,7 @@ export namespace Prisma {
     unikMapels?: MataPelajaranUncheckedUpdateManyWithoutInstansiNestedInput
     tDevice?: TDeviceUncheckedUpdateManyWithoutInstansiNestedInput
     objective?: ObjectiveUncheckedUpdateManyWithoutInstansiNestedInput
+    dudi?: DudiUncheckedUpdateManyWithoutInstansiNestedInput
   }
 
   export type MataPelajaranUpsertWithoutTrackerInput = {
@@ -57482,6 +60932,7 @@ export namespace Prisma {
     instansi?: InstansiUpdateManyWithoutMajorsNestedInput
     classRoom?: ClassRoomUpdateManyWithoutMajorNestedInput
     mapel?: MataPelajaranUpdateManyWithoutKeahlianNestedInput
+    dudi?: DudiUpdateManyWithoutMajorNestedInput
   }
 
   export type KonsentrasiKeahlianUncheckedUpdateWithoutTrackerInput = {
@@ -57495,6 +60946,7 @@ export namespace Prisma {
     instansi?: InstansiUncheckedUpdateManyWithoutMajorsNestedInput
     classRoom?: ClassRoomUncheckedUpdateManyWithoutMajorNestedInput
     mapel?: MataPelajaranUncheckedUpdateManyWithoutKeahlianNestedInput
+    dudi?: DudiUncheckedUpdateManyWithoutMajorNestedInput
   }
 
   export type SchoolYearUpsertWithoutTrackerInput = {
@@ -57666,7 +61118,7 @@ export namespace Prisma {
 
   export type TeachingUpdateWithoutTrackerInput = {
     hours?: IntFieldUpdateOperationsInput | number
-    isEven?: BoolFieldUpdateOperationsInput | boolean
+    semester?: EnumSemesterFieldUpdateOperationsInput | Semester
     disable?: BoolFieldUpdateOperationsInput | boolean
     ref?: ScheduleUpdateOneRequiredWithoutTeachingNestedInput
     teacher?: TeacherUpdateOneRequiredWithoutTeachingNestedInput
@@ -57678,7 +61130,7 @@ export namespace Prisma {
   export type TeachingUncheckedUpdateWithoutTrackerInput = {
     refId?: StringFieldUpdateOperationsInput | string
     hours?: IntFieldUpdateOperationsInput | number
-    isEven?: BoolFieldUpdateOperationsInput | boolean
+    semester?: EnumSemesterFieldUpdateOperationsInput | Semester
     teacherId?: StringFieldUpdateOperationsInput | string
     classRoomIds?: TeachingUpdateclassRoomIdsInput | Enumerable<string>
     elemenIds?: TeachingUpdateelemenIdsInput | Enumerable<string>
@@ -57831,6 +61283,35 @@ export namespace Prisma {
     teacher?: TeacherUncheckedUpdateManyWithoutEventNestedInput
   }
 
+  export type DudiUpsertWithoutTrackerInput = {
+    update: XOR<DudiUpdateWithoutTrackerInput, DudiUncheckedUpdateWithoutTrackerInput>
+    create: XOR<DudiCreateWithoutTrackerInput, DudiUncheckedCreateWithoutTrackerInput>
+  }
+
+  export type DudiUpdateWithoutTrackerInput = {
+    name?: StringFieldUpdateOperationsInput | string
+    address?: XOR<AddressNullableUpdateEnvelopeInput, AddressCreateInput> | null
+    contact?: XOR<ContactDudiUpdateEnvelopeInput, ContactDudiCreateInput>
+    collabs?: DudiUpdatecollabsInput | Enumerable<string>
+    timework?: XOR<DudiTimeWorkUpdateEnvelopeInput, DudiTimeWorkCreateInput>
+    disable?: BoolFieldUpdateOperationsInput | boolean
+    instansi?: InstansiUpdateOneRequiredWithoutDudiNestedInput
+    major?: KonsentrasiKeahlianUpdateOneRequiredWithoutDudiNestedInput
+    learning?: DudiLearningUpdateManyWithoutRefNestedInput
+  }
+
+  export type DudiUncheckedUpdateWithoutTrackerInput = {
+    name?: StringFieldUpdateOperationsInput | string
+    address?: XOR<AddressNullableUpdateEnvelopeInput, AddressCreateInput> | null
+    instansiId?: StringFieldUpdateOperationsInput | string
+    majorId?: StringFieldUpdateOperationsInput | string
+    contact?: XOR<ContactDudiUpdateEnvelopeInput, ContactDudiCreateInput>
+    collabs?: DudiUpdatecollabsInput | Enumerable<string>
+    timework?: XOR<DudiTimeWorkUpdateEnvelopeInput, DudiTimeWorkCreateInput>
+    disable?: BoolFieldUpdateOperationsInput | boolean
+    learning?: DudiLearningUncheckedUpdateManyWithoutRefNestedInput
+  }
+
   export type CoordinateCreateInput = {
     longitude: number
     latitude: number
@@ -57847,6 +61328,7 @@ export namespace Prisma {
     classRoom?: ClassRoomCreateNestedManyWithoutMajorInput
     tracker?: TrackerCreateNestedManyWithoutKonsentrasiInput
     mapel?: MataPelajaranCreateNestedManyWithoutKeahlianInput
+    dudi?: DudiCreateNestedManyWithoutMajorInput
   }
 
   export type KonsentrasiKeahlianUncheckedCreateWithoutInstansiInput = {
@@ -57861,6 +61343,7 @@ export namespace Prisma {
     classRoom?: ClassRoomUncheckedCreateNestedManyWithoutMajorInput
     tracker?: TrackerUncheckedCreateNestedManyWithoutKonsentrasiInput
     mapel?: MataPelajaranUncheckedCreateNestedManyWithoutKeahlianInput
+    dudi?: DudiUncheckedCreateNestedManyWithoutMajorInput
   }
 
   export type KonsentrasiKeahlianCreateOrConnectWithoutInstansiInput = {
@@ -58039,6 +61522,7 @@ export namespace Prisma {
     tujuan?: ObjectiveCreateNestedOneWithoutTrackerInput
     perangkat?: TDeviceCreateNestedOneWithoutTrackerInput
     kalender?: CalendarCreateNestedOneWithoutTrackerInput
+    dudi?: DudiCreateNestedOneWithoutTrackerInput
   }
 
   export type TrackerUncheckedCreateWithoutInstansiInput = {
@@ -58063,6 +61547,7 @@ export namespace Prisma {
     tujuanId?: string | null
     perangkatId?: string | null
     kalenderId?: string | null
+    dudiId?: string | null
   }
 
   export type TrackerCreateOrConnectWithoutInstansiInput = {
@@ -58096,6 +61581,7 @@ export namespace Prisma {
     tujuan?: ObjectiveCreateNestedOneWithoutTrackerInput
     perangkat?: TDeviceCreateNestedOneWithoutTrackerInput
     kalender?: CalendarCreateNestedOneWithoutTrackerInput
+    dudi?: DudiCreateNestedOneWithoutTrackerInput
   }
 
   export type TrackerUncheckedCreateWithoutRefInput = {
@@ -58120,6 +61606,7 @@ export namespace Prisma {
     tujuanId?: string | null
     perangkatId?: string | null
     kalenderId?: string | null
+    dudiId?: string | null
   }
 
   export type TrackerCreateOrConnectWithoutRefInput = {
@@ -58295,6 +61782,41 @@ export namespace Prisma {
 
   export type ObjectiveCreateManyInstansiInputEnvelope = {
     data: Enumerable<ObjectiveCreateManyInstansiInput>
+  }
+
+  export type DudiCreateWithoutInstansiInput = {
+    id?: string
+    name: string
+    address?: XOR<AddressNullableCreateEnvelopeInput, AddressCreateInput> | null
+    contact: XOR<ContactDudiCreateEnvelopeInput, ContactDudiCreateInput>
+    collabs?: DudiCreatecollabsInput | Enumerable<string>
+    timework: XOR<DudiTimeWorkCreateEnvelopeInput, DudiTimeWorkCreateInput>
+    disable?: boolean
+    major: KonsentrasiKeahlianCreateNestedOneWithoutDudiInput
+    learning?: DudiLearningCreateNestedManyWithoutRefInput
+    tracker?: TrackerCreateNestedManyWithoutDudiInput
+  }
+
+  export type DudiUncheckedCreateWithoutInstansiInput = {
+    id?: string
+    name: string
+    address?: XOR<AddressNullableCreateEnvelopeInput, AddressCreateInput> | null
+    majorId: string
+    contact: XOR<ContactDudiCreateEnvelopeInput, ContactDudiCreateInput>
+    collabs?: DudiCreatecollabsInput | Enumerable<string>
+    timework: XOR<DudiTimeWorkCreateEnvelopeInput, DudiTimeWorkCreateInput>
+    disable?: boolean
+    learning?: DudiLearningUncheckedCreateNestedManyWithoutRefInput
+    tracker?: TrackerUncheckedCreateNestedManyWithoutDudiInput
+  }
+
+  export type DudiCreateOrConnectWithoutInstansiInput = {
+    where: DudiWhereUniqueInput
+    create: XOR<DudiCreateWithoutInstansiInput, DudiUncheckedCreateWithoutInstansiInput>
+  }
+
+  export type DudiCreateManyInstansiInputEnvelope = {
+    data: Enumerable<DudiCreateManyInstansiInput>
   }
 
   export type AddressUpdateInput = {
@@ -58499,6 +62021,7 @@ export namespace Prisma {
     tujuanId?: StringNullableFilter | string | null
     perangkatId?: StringNullableFilter | string | null
     kalenderId?: StringNullableFilter | string | null
+    dudiId?: StringNullableFilter | string | null
   }
 
   export type TrackerUpsertWithWhereUniqueWithoutRefInput = {
@@ -58628,6 +62151,34 @@ export namespace Prisma {
     mediaIds?: StringNullableListFilter
   }
 
+  export type DudiUpsertWithWhereUniqueWithoutInstansiInput = {
+    where: DudiWhereUniqueInput
+    update: XOR<DudiUpdateWithoutInstansiInput, DudiUncheckedUpdateWithoutInstansiInput>
+    create: XOR<DudiCreateWithoutInstansiInput, DudiUncheckedCreateWithoutInstansiInput>
+  }
+
+  export type DudiUpdateWithWhereUniqueWithoutInstansiInput = {
+    where: DudiWhereUniqueInput
+    data: XOR<DudiUpdateWithoutInstansiInput, DudiUncheckedUpdateWithoutInstansiInput>
+  }
+
+  export type DudiUpdateManyWithWhereWithoutInstansiInput = {
+    where: DudiScalarWhereInput
+    data: XOR<DudiUpdateManyMutationInput, DudiUncheckedUpdateManyWithoutDudiInput>
+  }
+
+  export type DudiScalarWhereInput = {
+    AND?: Enumerable<DudiScalarWhereInput>
+    OR?: Enumerable<DudiScalarWhereInput>
+    NOT?: Enumerable<DudiScalarWhereInput>
+    id?: StringFilter | string
+    name?: StringFilter | string
+    instansiId?: StringFilter | string
+    majorId?: StringFilter | string
+    collabs?: StringNullableListFilter
+    disable?: BoolFilter | boolean
+  }
+
   export type ProgramKeahlianCreateWithoutMapelInput = {
     id?: string
     code: string
@@ -58664,6 +62215,7 @@ export namespace Prisma {
     instansi?: InstansiCreateNestedManyWithoutMajorsInput
     classRoom?: ClassRoomCreateNestedManyWithoutMajorInput
     tracker?: TrackerCreateNestedManyWithoutKonsentrasiInput
+    dudi?: DudiCreateNestedManyWithoutMajorInput
   }
 
   export type KonsentrasiKeahlianUncheckedCreateWithoutMapelInput = {
@@ -58678,6 +62230,7 @@ export namespace Prisma {
     instansi?: InstansiUncheckedCreateNestedManyWithoutMajorsInput
     classRoom?: ClassRoomUncheckedCreateNestedManyWithoutMajorInput
     tracker?: TrackerUncheckedCreateNestedManyWithoutKonsentrasiInput
+    dudi?: DudiUncheckedCreateNestedManyWithoutMajorInput
   }
 
   export type KonsentrasiKeahlianCreateOrConnectWithoutMapelInput = {
@@ -58704,6 +62257,7 @@ export namespace Prisma {
     history?: TrackerCreateNestedManyWithoutRefInput
     tDevice?: TDeviceCreateNestedManyWithoutInstansiInput
     objective?: ObjectiveCreateNestedManyWithoutInstansiInput
+    dudi?: DudiCreateNestedManyWithoutInstansiInput
   }
 
   export type InstansiUncheckedCreateWithoutUnikMapelsInput = {
@@ -58726,6 +62280,7 @@ export namespace Prisma {
     history?: TrackerUncheckedCreateNestedManyWithoutRefInput
     tDevice?: TDeviceUncheckedCreateNestedManyWithoutInstansiInput
     objective?: ObjectiveUncheckedCreateNestedManyWithoutInstansiInput
+    dudi?: DudiUncheckedCreateNestedManyWithoutInstansiInput
   }
 
   export type InstansiCreateOrConnectWithoutUnikMapelsInput = {
@@ -58814,6 +62369,7 @@ export namespace Prisma {
     tujuan?: ObjectiveCreateNestedOneWithoutTrackerInput
     perangkat?: TDeviceCreateNestedOneWithoutTrackerInput
     kalender?: CalendarCreateNestedOneWithoutTrackerInput
+    dudi?: DudiCreateNestedOneWithoutTrackerInput
   }
 
   export type TrackerUncheckedCreateWithoutMapelInput = {
@@ -58838,6 +62394,7 @@ export namespace Prisma {
     tujuanId?: string | null
     perangkatId?: string | null
     kalenderId?: string | null
+    dudiId?: string | null
   }
 
   export type TrackerCreateOrConnectWithoutMapelInput = {
@@ -59008,6 +62565,7 @@ export namespace Prisma {
     instansi?: InstansiUpdateManyWithoutMajorsNestedInput
     classRoom?: ClassRoomUpdateManyWithoutMajorNestedInput
     tracker?: TrackerUpdateManyWithoutKonsentrasiNestedInput
+    dudi?: DudiUpdateManyWithoutMajorNestedInput
   }
 
   export type KonsentrasiKeahlianUncheckedUpdateWithoutMapelInput = {
@@ -59021,6 +62579,7 @@ export namespace Prisma {
     instansi?: InstansiUncheckedUpdateManyWithoutMajorsNestedInput
     classRoom?: ClassRoomUncheckedUpdateManyWithoutMajorNestedInput
     tracker?: TrackerUncheckedUpdateManyWithoutKonsentrasiNestedInput
+    dudi?: DudiUncheckedUpdateManyWithoutMajorNestedInput
   }
 
   export type InstansiUpsertWithoutUnikMapelsInput = {
@@ -59046,6 +62605,7 @@ export namespace Prisma {
     history?: TrackerUpdateManyWithoutRefNestedInput
     tDevice?: TDeviceUpdateManyWithoutInstansiNestedInput
     objective?: ObjectiveUpdateManyWithoutInstansiNestedInput
+    dudi?: DudiUpdateManyWithoutInstansiNestedInput
   }
 
   export type InstansiUncheckedUpdateWithoutUnikMapelsInput = {
@@ -59067,6 +62627,7 @@ export namespace Prisma {
     history?: TrackerUncheckedUpdateManyWithoutRefNestedInput
     tDevice?: TDeviceUncheckedUpdateManyWithoutInstansiNestedInput
     objective?: ObjectiveUncheckedUpdateManyWithoutInstansiNestedInput
+    dudi?: DudiUncheckedUpdateManyWithoutInstansiNestedInput
   }
 
   export type ElementUpsertWithWhereUniqueWithoutMapelInput = {
@@ -59264,6 +62825,7 @@ export namespace Prisma {
     tujuan?: ObjectiveCreateNestedOneWithoutTrackerInput
     perangkat?: TDeviceCreateNestedOneWithoutTrackerInput
     kalender?: CalendarCreateNestedOneWithoutTrackerInput
+    dudi?: DudiCreateNestedOneWithoutTrackerInput
   }
 
   export type TrackerUncheckedCreateWithoutElemenInput = {
@@ -59288,6 +62850,7 @@ export namespace Prisma {
     tujuanId?: string | null
     perangkatId?: string | null
     kalenderId?: string | null
+    dudiId?: string | null
   }
 
   export type TrackerCreateOrConnectWithoutElemenInput = {
@@ -59302,7 +62865,7 @@ export namespace Prisma {
   export type TeachingCreateWithoutElemenInput = {
     id?: string
     hours: number
-    isEven: boolean
+    semester: Semester
     disable?: boolean
     ref: ScheduleCreateNestedOneWithoutTeachingInput
     teacher: TeacherCreateNestedOneWithoutTeachingInput
@@ -59315,7 +62878,7 @@ export namespace Prisma {
     id?: string
     refId: string
     hours: number
-    isEven: boolean
+    semester: Semester
     teacherId: string
     classRoomIds?: TeachingCreateclassRoomIdsInput | Enumerable<string>
     elemenIds?: TeachingCreateelemenIdsInput | Enumerable<string>
@@ -59507,7 +63070,7 @@ export namespace Prisma {
     id?: StringFilter | string
     refId?: StringFilter | string
     hours?: IntFilter | number
-    isEven?: BoolFilter | boolean
+    semester?: EnumSemesterFilter | Semester
     teacherId?: StringFilter | string
     classRoomIds?: StringNullableListFilter
     elemenIds?: StringNullableListFilter
@@ -59653,6 +63216,7 @@ export namespace Prisma {
     tujuan?: ObjectiveCreateNestedOneWithoutTrackerInput
     perangkat?: TDeviceCreateNestedOneWithoutTrackerInput
     kalender?: CalendarCreateNestedOneWithoutTrackerInput
+    dudi?: DudiCreateNestedOneWithoutTrackerInput
   }
 
   export type TrackerUncheckedCreateWithoutCpInput = {
@@ -59677,6 +63241,7 @@ export namespace Prisma {
     tujuanId?: string | null
     perangkatId?: string | null
     kalenderId?: string | null
+    dudiId?: string | null
   }
 
   export type TrackerCreateOrConnectWithoutCpInput = {
@@ -59799,6 +63364,7 @@ export namespace Prisma {
     tujuan?: ObjectiveCreateNestedOneWithoutTrackerInput
     perangkat?: TDeviceCreateNestedOneWithoutTrackerInput
     kalender?: CalendarCreateNestedOneWithoutTrackerInput
+    dudi?: DudiCreateNestedOneWithoutTrackerInput
   }
 
   export type TrackerUncheckedCreateWithoutBidangInput = {
@@ -59823,6 +63389,7 @@ export namespace Prisma {
     tujuanId?: string | null
     perangkatId?: string | null
     kalenderId?: string | null
+    dudiId?: string | null
   }
 
   export type TrackerCreateOrConnectWithoutBidangInput = {
@@ -59909,6 +63476,7 @@ export namespace Prisma {
     classRoom?: ClassRoomCreateNestedManyWithoutMajorInput
     tracker?: TrackerCreateNestedManyWithoutKonsentrasiInput
     mapel?: MataPelajaranCreateNestedManyWithoutKeahlianInput
+    dudi?: DudiCreateNestedManyWithoutMajorInput
   }
 
   export type KonsentrasiKeahlianUncheckedCreateWithoutProgramInput = {
@@ -59923,6 +63491,7 @@ export namespace Prisma {
     classRoom?: ClassRoomUncheckedCreateNestedManyWithoutMajorInput
     tracker?: TrackerUncheckedCreateNestedManyWithoutKonsentrasiInput
     mapel?: MataPelajaranUncheckedCreateNestedManyWithoutKeahlianInput
+    dudi?: DudiUncheckedCreateNestedManyWithoutMajorInput
   }
 
   export type KonsentrasiKeahlianCreateOrConnectWithoutProgramInput = {
@@ -59956,6 +63525,7 @@ export namespace Prisma {
     tujuan?: ObjectiveCreateNestedOneWithoutTrackerInput
     perangkat?: TDeviceCreateNestedOneWithoutTrackerInput
     kalender?: CalendarCreateNestedOneWithoutTrackerInput
+    dudi?: DudiCreateNestedOneWithoutTrackerInput
   }
 
   export type TrackerUncheckedCreateWithoutProgramInput = {
@@ -59980,6 +63550,7 @@ export namespace Prisma {
     tujuanId?: string | null
     perangkatId?: string | null
     kalenderId?: string | null
+    dudiId?: string | null
   }
 
   export type TrackerCreateOrConnectWithoutProgramInput = {
@@ -60184,6 +63755,7 @@ export namespace Prisma {
     unikMapels?: MataPelajaranCreateNestedManyWithoutInstansiInput
     tDevice?: TDeviceCreateNestedManyWithoutInstansiInput
     objective?: ObjectiveCreateNestedManyWithoutInstansiInput
+    dudi?: DudiCreateNestedManyWithoutInstansiInput
   }
 
   export type InstansiUncheckedCreateWithoutMajorsInput = {
@@ -60206,6 +63778,7 @@ export namespace Prisma {
     unikMapels?: MataPelajaranUncheckedCreateNestedManyWithoutInstansiInput
     tDevice?: TDeviceUncheckedCreateNestedManyWithoutInstansiInput
     objective?: ObjectiveUncheckedCreateNestedManyWithoutInstansiInput
+    dudi?: DudiUncheckedCreateNestedManyWithoutInstansiInput
   }
 
   export type InstansiCreateOrConnectWithoutMajorsInput = {
@@ -60278,6 +63851,7 @@ export namespace Prisma {
     tujuan?: ObjectiveCreateNestedOneWithoutTrackerInput
     perangkat?: TDeviceCreateNestedOneWithoutTrackerInput
     kalender?: CalendarCreateNestedOneWithoutTrackerInput
+    dudi?: DudiCreateNestedOneWithoutTrackerInput
   }
 
   export type TrackerUncheckedCreateWithoutKonsentrasiInput = {
@@ -60302,6 +63876,7 @@ export namespace Prisma {
     tujuanId?: string | null
     perangkatId?: string | null
     kalenderId?: string | null
+    dudiId?: string | null
   }
 
   export type TrackerCreateOrConnectWithoutKonsentrasiInput = {
@@ -60356,6 +63931,41 @@ export namespace Prisma {
 
   export type MataPelajaranCreateManyKeahlianInputEnvelope = {
     data: Enumerable<MataPelajaranCreateManyKeahlianInput>
+  }
+
+  export type DudiCreateWithoutMajorInput = {
+    id?: string
+    name: string
+    address?: XOR<AddressNullableCreateEnvelopeInput, AddressCreateInput> | null
+    contact: XOR<ContactDudiCreateEnvelopeInput, ContactDudiCreateInput>
+    collabs?: DudiCreatecollabsInput | Enumerable<string>
+    timework: XOR<DudiTimeWorkCreateEnvelopeInput, DudiTimeWorkCreateInput>
+    disable?: boolean
+    instansi: InstansiCreateNestedOneWithoutDudiInput
+    learning?: DudiLearningCreateNestedManyWithoutRefInput
+    tracker?: TrackerCreateNestedManyWithoutDudiInput
+  }
+
+  export type DudiUncheckedCreateWithoutMajorInput = {
+    id?: string
+    name: string
+    address?: XOR<AddressNullableCreateEnvelopeInput, AddressCreateInput> | null
+    instansiId: string
+    contact: XOR<ContactDudiCreateEnvelopeInput, ContactDudiCreateInput>
+    collabs?: DudiCreatecollabsInput | Enumerable<string>
+    timework: XOR<DudiTimeWorkCreateEnvelopeInput, DudiTimeWorkCreateInput>
+    disable?: boolean
+    learning?: DudiLearningUncheckedCreateNestedManyWithoutRefInput
+    tracker?: TrackerUncheckedCreateNestedManyWithoutDudiInput
+  }
+
+  export type DudiCreateOrConnectWithoutMajorInput = {
+    where: DudiWhereUniqueInput
+    create: XOR<DudiCreateWithoutMajorInput, DudiUncheckedCreateWithoutMajorInput>
+  }
+
+  export type DudiCreateManyMajorInputEnvelope = {
+    data: Enumerable<DudiCreateManyMajorInput>
   }
 
   export type ProgramKeahlianUpsertWithoutKonsentrasiInput = {
@@ -60493,6 +64103,22 @@ export namespace Prisma {
     data: XOR<MataPelajaranUpdateManyMutationInput, MataPelajaranUncheckedUpdateManyWithoutMapelInput>
   }
 
+  export type DudiUpsertWithWhereUniqueWithoutMajorInput = {
+    where: DudiWhereUniqueInput
+    update: XOR<DudiUpdateWithoutMajorInput, DudiUncheckedUpdateWithoutMajorInput>
+    create: XOR<DudiCreateWithoutMajorInput, DudiUncheckedCreateWithoutMajorInput>
+  }
+
+  export type DudiUpdateWithWhereUniqueWithoutMajorInput = {
+    where: DudiWhereUniqueInput
+    data: XOR<DudiUpdateWithoutMajorInput, DudiUncheckedUpdateWithoutMajorInput>
+  }
+
+  export type DudiUpdateManyWithWhereWithoutMajorInput = {
+    where: DudiScalarWhereInput
+    data: XOR<DudiUpdateManyMutationInput, DudiUncheckedUpdateManyWithoutDudiInput>
+  }
+
   export type InstansiCreateWithoutRoleInput = {
     id?: string
     npsn: string
@@ -60512,6 +64138,7 @@ export namespace Prisma {
     unikMapels?: MataPelajaranCreateNestedManyWithoutInstansiInput
     tDevice?: TDeviceCreateNestedManyWithoutInstansiInput
     objective?: ObjectiveCreateNestedManyWithoutInstansiInput
+    dudi?: DudiCreateNestedManyWithoutInstansiInput
   }
 
   export type InstansiUncheckedCreateWithoutRoleInput = {
@@ -60534,6 +64161,7 @@ export namespace Prisma {
     unikMapels?: MataPelajaranUncheckedCreateNestedManyWithoutInstansiInput
     tDevice?: TDeviceUncheckedCreateNestedManyWithoutInstansiInput
     objective?: ObjectiveUncheckedCreateNestedManyWithoutInstansiInput
+    dudi?: DudiUncheckedCreateNestedManyWithoutInstansiInput
   }
 
   export type InstansiCreateOrConnectWithoutRoleInput = {
@@ -60609,6 +64237,7 @@ export namespace Prisma {
     unikMapels?: MataPelajaranUpdateManyWithoutInstansiNestedInput
     tDevice?: TDeviceUpdateManyWithoutInstansiNestedInput
     objective?: ObjectiveUpdateManyWithoutInstansiNestedInput
+    dudi?: DudiUpdateManyWithoutInstansiNestedInput
   }
 
   export type InstansiUncheckedUpdateWithoutRoleInput = {
@@ -60630,6 +64259,7 @@ export namespace Prisma {
     unikMapels?: MataPelajaranUncheckedUpdateManyWithoutInstansiNestedInput
     tDevice?: TDeviceUncheckedUpdateManyWithoutInstansiNestedInput
     objective?: ObjectiveUncheckedUpdateManyWithoutInstansiNestedInput
+    dudi?: DudiUncheckedUpdateManyWithoutInstansiNestedInput
   }
 
   export type UserUpsertWithWhereUniqueWithoutRoleInput = {
@@ -60726,6 +64356,7 @@ export namespace Prisma {
     tujuan?: ObjectiveCreateNestedOneWithoutTrackerInput
     perangkat?: TDeviceCreateNestedOneWithoutTrackerInput
     kalender?: CalendarCreateNestedOneWithoutTrackerInput
+    dudi?: DudiCreateNestedOneWithoutTrackerInput
   }
 
   export type TrackerUncheckedCreateWithoutUserInput = {
@@ -60750,6 +64381,7 @@ export namespace Prisma {
     tujuanId?: string | null
     perangkatId?: string | null
     kalenderId?: string | null
+    dudiId?: string | null
   }
 
   export type TrackerCreateOrConnectWithoutUserInput = {
@@ -62748,6 +66380,7 @@ export namespace Prisma {
     unikMapels?: MataPelajaranCreateNestedManyWithoutInstansiInput
     tDevice?: TDeviceCreateNestedManyWithoutInstansiInput
     objective?: ObjectiveCreateNestedManyWithoutInstansiInput
+    dudi?: DudiCreateNestedManyWithoutInstansiInput
   }
 
   export type InstansiUncheckedCreateWithoutSchoolYearInput = {
@@ -62770,6 +66403,7 @@ export namespace Prisma {
     unikMapels?: MataPelajaranUncheckedCreateNestedManyWithoutInstansiInput
     tDevice?: TDeviceUncheckedCreateNestedManyWithoutInstansiInput
     objective?: ObjectiveUncheckedCreateNestedManyWithoutInstansiInput
+    dudi?: DudiUncheckedCreateNestedManyWithoutInstansiInput
   }
 
   export type InstansiCreateOrConnectWithoutSchoolYearInput = {
@@ -63015,6 +66649,7 @@ export namespace Prisma {
     tujuan?: ObjectiveCreateNestedOneWithoutTrackerInput
     perangkat?: TDeviceCreateNestedOneWithoutTrackerInput
     kalender?: CalendarCreateNestedOneWithoutTrackerInput
+    dudi?: DudiCreateNestedOneWithoutTrackerInput
   }
 
   export type TrackerUncheckedCreateWithoutTpInput = {
@@ -63039,6 +66674,7 @@ export namespace Prisma {
     tujuanId?: string | null
     perangkatId?: string | null
     kalenderId?: string | null
+    dudiId?: string | null
   }
 
   export type TrackerCreateOrConnectWithoutTpInput = {
@@ -63132,6 +66768,7 @@ export namespace Prisma {
     unikMapels?: MataPelajaranUpdateManyWithoutInstansiNestedInput
     tDevice?: TDeviceUpdateManyWithoutInstansiNestedInput
     objective?: ObjectiveUpdateManyWithoutInstansiNestedInput
+    dudi?: DudiUpdateManyWithoutInstansiNestedInput
   }
 
   export type InstansiUncheckedUpdateWithoutSchoolYearInput = {
@@ -63153,6 +66790,7 @@ export namespace Prisma {
     unikMapels?: MataPelajaranUncheckedUpdateManyWithoutInstansiNestedInput
     tDevice?: TDeviceUncheckedUpdateManyWithoutInstansiNestedInput
     objective?: ObjectiveUncheckedUpdateManyWithoutInstansiNestedInput
+    dudi?: DudiUncheckedUpdateManyWithoutInstansiNestedInput
   }
 
   export type ClassRoomUpsertWithWhereUniqueWithoutYearInput = {
@@ -63431,6 +67069,7 @@ export namespace Prisma {
     unikMapels?: MataPelajaranCreateNestedManyWithoutInstansiInput
     tDevice?: TDeviceCreateNestedManyWithoutInstansiInput
     objective?: ObjectiveCreateNestedManyWithoutInstansiInput
+    dudi?: DudiCreateNestedManyWithoutInstansiInput
   }
 
   export type InstansiUncheckedCreateWithoutTeacherInput = {
@@ -63453,6 +67092,7 @@ export namespace Prisma {
     unikMapels?: MataPelajaranUncheckedCreateNestedManyWithoutInstansiInput
     tDevice?: TDeviceUncheckedCreateNestedManyWithoutInstansiInput
     objective?: ObjectiveUncheckedCreateNestedManyWithoutInstansiInput
+    dudi?: DudiUncheckedCreateNestedManyWithoutInstansiInput
   }
 
   export type InstansiCreateOrConnectWithoutTeacherInput = {
@@ -63518,6 +67158,7 @@ export namespace Prisma {
     tujuan?: ObjectiveCreateNestedOneWithoutTrackerInput
     perangkat?: TDeviceCreateNestedOneWithoutTrackerInput
     kalender?: CalendarCreateNestedOneWithoutTrackerInput
+    dudi?: DudiCreateNestedOneWithoutTrackerInput
   }
 
   export type TrackerUncheckedCreateWithoutTeacherInput = {
@@ -63542,6 +67183,7 @@ export namespace Prisma {
     tujuanId?: string | null
     perangkatId?: string | null
     kalenderId?: string | null
+    dudiId?: string | null
   }
 
   export type TrackerCreateOrConnectWithoutTeacherInput = {
@@ -63556,7 +67198,7 @@ export namespace Prisma {
   export type TeachingCreateWithoutTeacherInput = {
     id?: string
     hours: number
-    isEven: boolean
+    semester: Semester
     disable?: boolean
     ref: ScheduleCreateNestedOneWithoutTeachingInput
     classRoom?: ClassRoomCreateNestedManyWithoutTeachingInput
@@ -63569,7 +67211,7 @@ export namespace Prisma {
     id?: string
     refId: string
     hours: number
-    isEven: boolean
+    semester: Semester
     classRoomIds?: TeachingCreateclassRoomIdsInput | Enumerable<string>
     elemenIds?: TeachingCreateelemenIdsInput | Enumerable<string>
     disable?: boolean
@@ -63710,6 +67352,7 @@ export namespace Prisma {
     unikMapels?: MataPelajaranUpdateManyWithoutInstansiNestedInput
     tDevice?: TDeviceUpdateManyWithoutInstansiNestedInput
     objective?: ObjectiveUpdateManyWithoutInstansiNestedInput
+    dudi?: DudiUpdateManyWithoutInstansiNestedInput
   }
 
   export type InstansiUncheckedUpdateWithoutTeacherInput = {
@@ -63731,6 +67374,7 @@ export namespace Prisma {
     unikMapels?: MataPelajaranUncheckedUpdateManyWithoutInstansiNestedInput
     tDevice?: TDeviceUncheckedUpdateManyWithoutInstansiNestedInput
     objective?: ObjectiveUncheckedUpdateManyWithoutInstansiNestedInput
+    dudi?: DudiUncheckedUpdateManyWithoutInstansiNestedInput
   }
 
   export type CalendarUpsertWithWhereUniqueWithoutTeacherInput = {
@@ -63871,6 +67515,7 @@ export namespace Prisma {
     instansi?: InstansiCreateNestedManyWithoutMajorsInput
     tracker?: TrackerCreateNestedManyWithoutKonsentrasiInput
     mapel?: MataPelajaranCreateNestedManyWithoutKeahlianInput
+    dudi?: DudiCreateNestedManyWithoutMajorInput
   }
 
   export type KonsentrasiKeahlianUncheckedCreateWithoutClassRoomInput = {
@@ -63885,6 +67530,7 @@ export namespace Prisma {
     instansi?: InstansiUncheckedCreateNestedManyWithoutMajorsInput
     tracker?: TrackerUncheckedCreateNestedManyWithoutKonsentrasiInput
     mapel?: MataPelajaranUncheckedCreateNestedManyWithoutKeahlianInput
+    dudi?: DudiUncheckedCreateNestedManyWithoutMajorInput
   }
 
   export type KonsentrasiKeahlianCreateOrConnectWithoutClassRoomInput = {
@@ -63983,6 +67629,7 @@ export namespace Prisma {
     tujuan?: ObjectiveCreateNestedOneWithoutTrackerInput
     perangkat?: TDeviceCreateNestedOneWithoutTrackerInput
     kalender?: CalendarCreateNestedOneWithoutTrackerInput
+    dudi?: DudiCreateNestedOneWithoutTrackerInput
   }
 
   export type TrackerUncheckedCreateWithoutKelasInput = {
@@ -64007,6 +67654,7 @@ export namespace Prisma {
     tujuanId?: string | null
     perangkatId?: string | null
     kalenderId?: string | null
+    dudiId?: string | null
   }
 
   export type TrackerCreateOrConnectWithoutKelasInput = {
@@ -64021,7 +67669,7 @@ export namespace Prisma {
   export type TeachingCreateWithoutClassRoomInput = {
     id?: string
     hours: number
-    isEven: boolean
+    semester: Semester
     disable?: boolean
     ref: ScheduleCreateNestedOneWithoutTeachingInput
     teacher: TeacherCreateNestedOneWithoutTeachingInput
@@ -64034,7 +67682,7 @@ export namespace Prisma {
     id?: string
     refId: string
     hours: number
-    isEven: boolean
+    semester: Semester
     teacherId: string
     classRoomIds?: TeachingCreateclassRoomIdsInput | Enumerable<string>
     elemenIds?: TeachingCreateelemenIdsInput | Enumerable<string>
@@ -64190,6 +67838,7 @@ export namespace Prisma {
     instansi?: InstansiUpdateManyWithoutMajorsNestedInput
     tracker?: TrackerUpdateManyWithoutKonsentrasiNestedInput
     mapel?: MataPelajaranUpdateManyWithoutKeahlianNestedInput
+    dudi?: DudiUpdateManyWithoutMajorNestedInput
   }
 
   export type KonsentrasiKeahlianUncheckedUpdateWithoutClassRoomInput = {
@@ -64203,6 +67852,7 @@ export namespace Prisma {
     instansi?: InstansiUncheckedUpdateManyWithoutMajorsNestedInput
     tracker?: TrackerUncheckedUpdateManyWithoutKonsentrasiNestedInput
     mapel?: MataPelajaranUncheckedUpdateManyWithoutKeahlianNestedInput
+    dudi?: DudiUncheckedUpdateManyWithoutMajorNestedInput
   }
 
   export type StudentUpsertWithWhereUniqueWithoutClassRoomInput = {
@@ -64381,6 +68031,7 @@ export namespace Prisma {
     classRoom?: ClassRoomCreateNestedManyWithoutMajorInput
     tracker?: TrackerCreateNestedManyWithoutKonsentrasiInput
     mapel?: MataPelajaranCreateNestedManyWithoutKeahlianInput
+    dudi?: DudiCreateNestedManyWithoutMajorInput
   }
 
   export type KonsentrasiKeahlianUncheckedCreateWithoutStudentInput = {
@@ -64395,6 +68046,7 @@ export namespace Prisma {
     classRoom?: ClassRoomUncheckedCreateNestedManyWithoutMajorInput
     tracker?: TrackerUncheckedCreateNestedManyWithoutKonsentrasiInput
     mapel?: MataPelajaranUncheckedCreateNestedManyWithoutKeahlianInput
+    dudi?: DudiUncheckedCreateNestedManyWithoutMajorInput
   }
 
   export type KonsentrasiKeahlianCreateOrConnectWithoutStudentInput = {
@@ -64495,6 +68147,7 @@ export namespace Prisma {
     unikMapels?: MataPelajaranCreateNestedManyWithoutInstansiInput
     tDevice?: TDeviceCreateNestedManyWithoutInstansiInput
     objective?: ObjectiveCreateNestedManyWithoutInstansiInput
+    dudi?: DudiCreateNestedManyWithoutInstansiInput
   }
 
   export type InstansiUncheckedCreateWithoutStudentInput = {
@@ -64517,6 +68170,7 @@ export namespace Prisma {
     unikMapels?: MataPelajaranUncheckedCreateNestedManyWithoutInstansiInput
     tDevice?: TDeviceUncheckedCreateNestedManyWithoutInstansiInput
     objective?: ObjectiveUncheckedCreateNestedManyWithoutInstansiInput
+    dudi?: DudiUncheckedCreateNestedManyWithoutInstansiInput
   }
 
   export type InstansiCreateOrConnectWithoutStudentInput = {
@@ -64582,6 +68236,7 @@ export namespace Prisma {
     tujuan?: ObjectiveCreateNestedOneWithoutTrackerInput
     perangkat?: TDeviceCreateNestedOneWithoutTrackerInput
     kalender?: CalendarCreateNestedOneWithoutTrackerInput
+    dudi?: DudiCreateNestedOneWithoutTrackerInput
   }
 
   export type TrackerUncheckedCreateWithoutMuridInput = {
@@ -64606,6 +68261,7 @@ export namespace Prisma {
     tujuanId?: string | null
     perangkatId?: string | null
     kalenderId?: string | null
+    dudiId?: string | null
   }
 
   export type TrackerCreateOrConnectWithoutMuridInput = {
@@ -64715,6 +68371,7 @@ export namespace Prisma {
     classRoom?: ClassRoomUpdateManyWithoutMajorNestedInput
     tracker?: TrackerUpdateManyWithoutKonsentrasiNestedInput
     mapel?: MataPelajaranUpdateManyWithoutKeahlianNestedInput
+    dudi?: DudiUpdateManyWithoutMajorNestedInput
   }
 
   export type KonsentrasiKeahlianUncheckedUpdateWithoutStudentInput = {
@@ -64728,6 +68385,7 @@ export namespace Prisma {
     classRoom?: ClassRoomUncheckedUpdateManyWithoutMajorNestedInput
     tracker?: TrackerUncheckedUpdateManyWithoutKonsentrasiNestedInput
     mapel?: MataPelajaranUncheckedUpdateManyWithoutKeahlianNestedInput
+    dudi?: DudiUncheckedUpdateManyWithoutMajorNestedInput
   }
 
   export type ClassRoomUpsertWithWhereUniqueWithoutStudentsInput = {
@@ -64802,6 +68460,7 @@ export namespace Prisma {
     unikMapels?: MataPelajaranUpdateManyWithoutInstansiNestedInput
     tDevice?: TDeviceUpdateManyWithoutInstansiNestedInput
     objective?: ObjectiveUpdateManyWithoutInstansiNestedInput
+    dudi?: DudiUpdateManyWithoutInstansiNestedInput
   }
 
   export type InstansiUncheckedUpdateWithoutStudentInput = {
@@ -64823,6 +68482,7 @@ export namespace Prisma {
     unikMapels?: MataPelajaranUncheckedUpdateManyWithoutInstansiNestedInput
     tDevice?: TDeviceUncheckedUpdateManyWithoutInstansiNestedInput
     objective?: ObjectiveUncheckedUpdateManyWithoutInstansiNestedInput
+    dudi?: DudiUncheckedUpdateManyWithoutInstansiNestedInput
   }
 
   export type CalendarUpsertWithWhereUniqueWithoutStudentInput = {
@@ -64955,6 +68615,7 @@ export namespace Prisma {
     tujuan?: ObjectiveCreateNestedOneWithoutTrackerInput
     perangkat?: TDeviceCreateNestedOneWithoutTrackerInput
     kalender?: CalendarCreateNestedOneWithoutTrackerInput
+    dudi?: DudiCreateNestedOneWithoutTrackerInput
   }
 
   export type TrackerUncheckedCreateWithoutJadwalInput = {
@@ -64979,6 +68640,7 @@ export namespace Prisma {
     tujuanId?: string | null
     perangkatId?: string | null
     kalenderId?: string | null
+    dudiId?: string | null
   }
 
   export type TrackerCreateOrConnectWithoutJadwalInput = {
@@ -64993,7 +68655,7 @@ export namespace Prisma {
   export type TeachingCreateWithoutRefInput = {
     id?: string
     hours: number
-    isEven: boolean
+    semester: Semester
     disable?: boolean
     teacher: TeacherCreateNestedOneWithoutTeachingInput
     classRoom?: ClassRoomCreateNestedManyWithoutTeachingInput
@@ -65005,7 +68667,7 @@ export namespace Prisma {
   export type TeachingUncheckedCreateWithoutRefInput = {
     id?: string
     hours: number
-    isEven: boolean
+    semester: Semester
     teacherId: string
     classRoomIds?: TeachingCreateclassRoomIdsInput | Enumerable<string>
     elemenIds?: TeachingCreateelemenIdsInput | Enumerable<string>
@@ -65285,6 +68947,7 @@ export namespace Prisma {
     tujuan?: ObjectiveCreateNestedOneWithoutTrackerInput
     perangkat?: TDeviceCreateNestedOneWithoutTrackerInput
     kalender?: CalendarCreateNestedOneWithoutTrackerInput
+    dudi?: DudiCreateNestedOneWithoutTrackerInput
   }
 
   export type TrackerUncheckedCreateWithoutMengajarInput = {
@@ -65309,6 +68972,7 @@ export namespace Prisma {
     tujuanId?: string | null
     perangkatId?: string | null
     kalenderId?: string | null
+    dudiId?: string | null
   }
 
   export type TrackerCreateOrConnectWithoutMengajarInput = {
@@ -65817,6 +69481,7 @@ export namespace Prisma {
     history?: TrackerCreateNestedManyWithoutRefInput
     unikMapels?: MataPelajaranCreateNestedManyWithoutInstansiInput
     tDevice?: TDeviceCreateNestedManyWithoutInstansiInput
+    dudi?: DudiCreateNestedManyWithoutInstansiInput
   }
 
   export type InstansiUncheckedCreateWithoutObjectiveInput = {
@@ -65839,6 +69504,7 @@ export namespace Prisma {
     history?: TrackerUncheckedCreateNestedManyWithoutRefInput
     unikMapels?: MataPelajaranUncheckedCreateNestedManyWithoutInstansiInput
     tDevice?: TDeviceUncheckedCreateNestedManyWithoutInstansiInput
+    dudi?: DudiUncheckedCreateNestedManyWithoutInstansiInput
   }
 
   export type InstansiCreateOrConnectWithoutObjectiveInput = {
@@ -66024,6 +69690,7 @@ export namespace Prisma {
     mengajar?: TeachingCreateNestedOneWithoutTrackerInput
     perangkat?: TDeviceCreateNestedOneWithoutTrackerInput
     kalender?: CalendarCreateNestedOneWithoutTrackerInput
+    dudi?: DudiCreateNestedOneWithoutTrackerInput
   }
 
   export type TrackerUncheckedCreateWithoutTujuanInput = {
@@ -66048,6 +69715,7 @@ export namespace Prisma {
     mengajarId?: string | null
     perangkatId?: string | null
     kalenderId?: string | null
+    dudiId?: string | null
   }
 
   export type TrackerCreateOrConnectWithoutTujuanInput = {
@@ -66315,6 +69983,7 @@ export namespace Prisma {
     history?: TrackerUpdateManyWithoutRefNestedInput
     unikMapels?: MataPelajaranUpdateManyWithoutInstansiNestedInput
     tDevice?: TDeviceUpdateManyWithoutInstansiNestedInput
+    dudi?: DudiUpdateManyWithoutInstansiNestedInput
   }
 
   export type InstansiUncheckedUpdateWithoutObjectiveInput = {
@@ -66336,6 +70005,7 @@ export namespace Prisma {
     history?: TrackerUncheckedUpdateManyWithoutRefNestedInput
     unikMapels?: MataPelajaranUncheckedUpdateManyWithoutInstansiNestedInput
     tDevice?: TDeviceUncheckedUpdateManyWithoutInstansiNestedInput
+    dudi?: DudiUncheckedUpdateManyWithoutInstansiNestedInput
   }
 
   export type SchoolYearUpsertWithoutObjectiveInput = {
@@ -67558,7 +71228,7 @@ export namespace Prisma {
   export type TeachingCreateWithoutTDeviceInput = {
     id?: string
     hours: number
-    isEven: boolean
+    semester: Semester
     disable?: boolean
     ref: ScheduleCreateNestedOneWithoutTeachingInput
     teacher: TeacherCreateNestedOneWithoutTeachingInput
@@ -67571,7 +71241,7 @@ export namespace Prisma {
     id?: string
     refId: string
     hours: number
-    isEven: boolean
+    semester: Semester
     teacherId: string
     classRoomIds?: TeachingCreateclassRoomIdsInput | Enumerable<string>
     elemenIds?: TeachingCreateelemenIdsInput | Enumerable<string>
@@ -67681,6 +71351,7 @@ export namespace Prisma {
     history?: TrackerCreateNestedManyWithoutRefInput
     unikMapels?: MataPelajaranCreateNestedManyWithoutInstansiInput
     objective?: ObjectiveCreateNestedManyWithoutInstansiInput
+    dudi?: DudiCreateNestedManyWithoutInstansiInput
   }
 
   export type InstansiUncheckedCreateWithoutTDeviceInput = {
@@ -67703,6 +71374,7 @@ export namespace Prisma {
     history?: TrackerUncheckedCreateNestedManyWithoutRefInput
     unikMapels?: MataPelajaranUncheckedCreateNestedManyWithoutInstansiInput
     objective?: ObjectiveUncheckedCreateNestedManyWithoutInstansiInput
+    dudi?: DudiUncheckedCreateNestedManyWithoutInstansiInput
   }
 
   export type InstansiCreateOrConnectWithoutTDeviceInput = {
@@ -67812,6 +71484,7 @@ export namespace Prisma {
     mengajar?: TeachingCreateNestedOneWithoutTrackerInput
     tujuan?: ObjectiveCreateNestedOneWithoutTrackerInput
     kalender?: CalendarCreateNestedOneWithoutTrackerInput
+    dudi?: DudiCreateNestedOneWithoutTrackerInput
   }
 
   export type TrackerUncheckedCreateWithoutPerangkatInput = {
@@ -67836,6 +71509,7 @@ export namespace Prisma {
     mengajarId?: string | null
     tujuanId?: string | null
     kalenderId?: string | null
+    dudiId?: string | null
   }
 
   export type TrackerCreateOrConnectWithoutPerangkatInput = {
@@ -67990,7 +71664,7 @@ export namespace Prisma {
 
   export type TeachingUpdateWithoutTDeviceInput = {
     hours?: IntFieldUpdateOperationsInput | number
-    isEven?: BoolFieldUpdateOperationsInput | boolean
+    semester?: EnumSemesterFieldUpdateOperationsInput | Semester
     disable?: BoolFieldUpdateOperationsInput | boolean
     ref?: ScheduleUpdateOneRequiredWithoutTeachingNestedInput
     teacher?: TeacherUpdateOneRequiredWithoutTeachingNestedInput
@@ -68002,7 +71676,7 @@ export namespace Prisma {
   export type TeachingUncheckedUpdateWithoutTDeviceInput = {
     refId?: StringFieldUpdateOperationsInput | string
     hours?: IntFieldUpdateOperationsInput | number
-    isEven?: BoolFieldUpdateOperationsInput | boolean
+    semester?: EnumSemesterFieldUpdateOperationsInput | Semester
     teacherId?: StringFieldUpdateOperationsInput | string
     classRoomIds?: TeachingUpdateclassRoomIdsInput | Enumerable<string>
     elemenIds?: TeachingUpdateelemenIdsInput | Enumerable<string>
@@ -68107,6 +71781,7 @@ export namespace Prisma {
     history?: TrackerUpdateManyWithoutRefNestedInput
     unikMapels?: MataPelajaranUpdateManyWithoutInstansiNestedInput
     objective?: ObjectiveUpdateManyWithoutInstansiNestedInput
+    dudi?: DudiUpdateManyWithoutInstansiNestedInput
   }
 
   export type InstansiUncheckedUpdateWithoutTDeviceInput = {
@@ -68128,6 +71803,7 @@ export namespace Prisma {
     history?: TrackerUncheckedUpdateManyWithoutRefNestedInput
     unikMapels?: MataPelajaranUncheckedUpdateManyWithoutInstansiNestedInput
     objective?: ObjectiveUncheckedUpdateManyWithoutInstansiNestedInput
+    dudi?: DudiUncheckedUpdateManyWithoutInstansiNestedInput
   }
 
   export type MataPelajaranUpsertWithoutDeviceInput = {
@@ -68672,6 +72348,7 @@ export namespace Prisma {
     mengajar?: TeachingCreateNestedOneWithoutTrackerInput
     tujuan?: ObjectiveCreateNestedOneWithoutTrackerInput
     perangkat?: TDeviceCreateNestedOneWithoutTrackerInput
+    dudi?: DudiCreateNestedOneWithoutTrackerInput
   }
 
   export type TrackerUncheckedCreateWithoutKalenderInput = {
@@ -68696,6 +72373,7 @@ export namespace Prisma {
     mengajarId?: string | null
     tujuanId?: string | null
     perangkatId?: string | null
+    dudiId?: string | null
   }
 
   export type TrackerCreateOrConnectWithoutKalenderInput = {
@@ -68804,6 +72482,384 @@ export namespace Prisma {
     data: XOR<TrackerUpdateManyMutationInput, TrackerUncheckedUpdateManyWithoutTrackerInput>
   }
 
+  export type DudiTimeWorkCreateholidaysInput = {
+    set: Enumerable<string>
+  }
+
+  export type InstansiCreateWithoutDudiInput = {
+    id?: string
+    npsn: string
+    name: string
+    isPrivate: boolean
+    address: XOR<AddressCreateEnvelopeInput, AddressCreateInput>
+    level: Level
+    religion?: Religion | null
+    major?: boolean | null
+    disable?: boolean
+    majors?: KonsentrasiKeahlianCreateNestedManyWithoutInstansiInput
+    role?: RoleCreateNestedManyWithoutInstansiInput
+    schoolYear?: SchoolYearCreateNestedManyWithoutInstansiInput
+    teacher?: TeacherCreateNestedManyWithoutInstansiInput
+    student?: StudentCreateNestedManyWithoutInstansiInput
+    tracker?: TrackerCreateNestedManyWithoutInstansiInput
+    history?: TrackerCreateNestedManyWithoutRefInput
+    unikMapels?: MataPelajaranCreateNestedManyWithoutInstansiInput
+    tDevice?: TDeviceCreateNestedManyWithoutInstansiInput
+    objective?: ObjectiveCreateNestedManyWithoutInstansiInput
+  }
+
+  export type InstansiUncheckedCreateWithoutDudiInput = {
+    id?: string
+    npsn: string
+    name: string
+    isPrivate: boolean
+    address: XOR<AddressCreateEnvelopeInput, AddressCreateInput>
+    level: Level
+    religion?: Religion | null
+    major?: boolean | null
+    majorIds?: InstansiCreatemajorIdsInput | Enumerable<string>
+    disable?: boolean
+    majors?: KonsentrasiKeahlianUncheckedCreateNestedManyWithoutInstansiInput
+    role?: RoleUncheckedCreateNestedManyWithoutInstansiInput
+    schoolYear?: SchoolYearUncheckedCreateNestedManyWithoutInstansiInput
+    teacher?: TeacherUncheckedCreateNestedManyWithoutInstansiInput
+    student?: StudentUncheckedCreateNestedManyWithoutInstansiInput
+    tracker?: TrackerUncheckedCreateNestedManyWithoutInstansiInput
+    history?: TrackerUncheckedCreateNestedManyWithoutRefInput
+    unikMapels?: MataPelajaranUncheckedCreateNestedManyWithoutInstansiInput
+    tDevice?: TDeviceUncheckedCreateNestedManyWithoutInstansiInput
+    objective?: ObjectiveUncheckedCreateNestedManyWithoutInstansiInput
+  }
+
+  export type InstansiCreateOrConnectWithoutDudiInput = {
+    where: InstansiWhereUniqueInput
+    create: XOR<InstansiCreateWithoutDudiInput, InstansiUncheckedCreateWithoutDudiInput>
+  }
+
+  export type KonsentrasiKeahlianCreateWithoutDudiInput = {
+    id?: string
+    code: string
+    name: string
+    tahun: number
+    disable?: boolean
+    program: ProgramKeahlianCreateNestedOneWithoutKonsentrasiInput
+    student?: StudentCreateNestedManyWithoutMajorInput
+    instansi?: InstansiCreateNestedManyWithoutMajorsInput
+    classRoom?: ClassRoomCreateNestedManyWithoutMajorInput
+    tracker?: TrackerCreateNestedManyWithoutKonsentrasiInput
+    mapel?: MataPelajaranCreateNestedManyWithoutKeahlianInput
+  }
+
+  export type KonsentrasiKeahlianUncheckedCreateWithoutDudiInput = {
+    id?: string
+    code: string
+    name: string
+    programId: string
+    tahun: number
+    instansiIds?: KonsentrasiKeahlianCreateinstansiIdsInput | Enumerable<string>
+    disable?: boolean
+    student?: StudentUncheckedCreateNestedManyWithoutMajorInput
+    instansi?: InstansiUncheckedCreateNestedManyWithoutMajorsInput
+    classRoom?: ClassRoomUncheckedCreateNestedManyWithoutMajorInput
+    tracker?: TrackerUncheckedCreateNestedManyWithoutKonsentrasiInput
+    mapel?: MataPelajaranUncheckedCreateNestedManyWithoutKeahlianInput
+  }
+
+  export type KonsentrasiKeahlianCreateOrConnectWithoutDudiInput = {
+    where: KonsentrasiKeahlianWhereUniqueInput
+    create: XOR<KonsentrasiKeahlianCreateWithoutDudiInput, KonsentrasiKeahlianUncheckedCreateWithoutDudiInput>
+  }
+
+  export type DudiLearningCreateWithoutRefInput = {
+    id?: string
+    no: number
+    code: string
+    name: string
+    indicator?: XOR<DudiIndicatorListCreateEnvelopeInput, Enumerable<DudiIndicatorCreateInput>>
+  }
+
+  export type DudiLearningUncheckedCreateWithoutRefInput = {
+    id?: string
+    no: number
+    code: string
+    name: string
+    indicator?: XOR<DudiIndicatorListCreateEnvelopeInput, Enumerable<DudiIndicatorCreateInput>>
+  }
+
+  export type DudiLearningCreateOrConnectWithoutRefInput = {
+    where: DudiLearningWhereUniqueInput
+    create: XOR<DudiLearningCreateWithoutRefInput, DudiLearningUncheckedCreateWithoutRefInput>
+  }
+
+  export type DudiLearningCreateManyRefInputEnvelope = {
+    data: Enumerable<DudiLearningCreateManyRefInput>
+  }
+
+  export type TrackerCreateWithoutDudiInput = {
+    id?: string
+    point: PointTracker
+    type: TypeTracker
+    createdAt?: Date | string
+    user: UserCreateNestedOneWithoutTrackerInput
+    ref: InstansiCreateNestedOneWithoutHistoryInput
+    instansi?: InstansiCreateNestedOneWithoutTrackerInput
+    mapel?: MataPelajaranCreateNestedOneWithoutTrackerInput
+    elemen?: ElementCreateNestedOneWithoutTrackerInput
+    cp?: AchievementCreateNestedOneWithoutTrackerInput
+    bidang?: BidangKeahlianCreateNestedOneWithoutTrackerInput
+    program?: ProgramKeahlianCreateNestedOneWithoutTrackerInput
+    konsentrasi?: KonsentrasiKeahlianCreateNestedOneWithoutTrackerInput
+    tp?: SchoolYearCreateNestedOneWithoutTrackerInput
+    teacher?: TeacherCreateNestedOneWithoutTrackerInput
+    kelas?: ClassRoomCreateNestedOneWithoutTrackerInput
+    murid?: StudentCreateNestedOneWithoutTrackerInput
+    jadwal?: ScheduleCreateNestedOneWithoutTrackerInput
+    mengajar?: TeachingCreateNestedOneWithoutTrackerInput
+    tujuan?: ObjectiveCreateNestedOneWithoutTrackerInput
+    perangkat?: TDeviceCreateNestedOneWithoutTrackerInput
+    kalender?: CalendarCreateNestedOneWithoutTrackerInput
+  }
+
+  export type TrackerUncheckedCreateWithoutDudiInput = {
+    id?: string
+    point: PointTracker
+    type: TypeTracker
+    userId: string
+    refId: string
+    instansiId?: string | null
+    createdAt?: Date | string
+    mapelId?: string | null
+    elementId?: string | null
+    cpId?: string | null
+    bidangId?: string | null
+    programId?: string | null
+    konsentrasiId?: string | null
+    tpId?: string | null
+    teacherId?: string | null
+    kelasId?: string | null
+    muridId?: string | null
+    jadwalId?: string | null
+    mengajarId?: string | null
+    tujuanId?: string | null
+    perangkatId?: string | null
+    kalenderId?: string | null
+  }
+
+  export type TrackerCreateOrConnectWithoutDudiInput = {
+    where: TrackerWhereUniqueInput
+    create: XOR<TrackerCreateWithoutDudiInput, TrackerUncheckedCreateWithoutDudiInput>
+  }
+
+  export type TrackerCreateManyDudiInputEnvelope = {
+    data: Enumerable<TrackerCreateManyDudiInput>
+  }
+
+  export type ContactDudiUpdateInput = {
+    name?: StringFieldUpdateOperationsInput | string
+    position?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    phone?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type DudiTimeWorkUpdateInput = {
+    holidays?: DudiTimeWorkUpdateholidaysInput | Enumerable<string>
+    timeIn?: StringFieldUpdateOperationsInput | string
+    timeOut?: StringFieldUpdateOperationsInput | string
+    actifity?: BoolFieldUpdateOperationsInput | boolean
+  }
+
+  export type InstansiUpsertWithoutDudiInput = {
+    update: XOR<InstansiUpdateWithoutDudiInput, InstansiUncheckedUpdateWithoutDudiInput>
+    create: XOR<InstansiCreateWithoutDudiInput, InstansiUncheckedCreateWithoutDudiInput>
+  }
+
+  export type InstansiUpdateWithoutDudiInput = {
+    npsn?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    isPrivate?: BoolFieldUpdateOperationsInput | boolean
+    address?: XOR<AddressUpdateEnvelopeInput, AddressCreateInput>
+    level?: EnumLevelFieldUpdateOperationsInput | Level
+    religion?: NullableEnumReligionFieldUpdateOperationsInput | Religion | null
+    major?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    disable?: BoolFieldUpdateOperationsInput | boolean
+    majors?: KonsentrasiKeahlianUpdateManyWithoutInstansiNestedInput
+    role?: RoleUpdateManyWithoutInstansiNestedInput
+    schoolYear?: SchoolYearUpdateManyWithoutInstansiNestedInput
+    teacher?: TeacherUpdateManyWithoutInstansiNestedInput
+    student?: StudentUpdateManyWithoutInstansiNestedInput
+    tracker?: TrackerUpdateManyWithoutInstansiNestedInput
+    history?: TrackerUpdateManyWithoutRefNestedInput
+    unikMapels?: MataPelajaranUpdateManyWithoutInstansiNestedInput
+    tDevice?: TDeviceUpdateManyWithoutInstansiNestedInput
+    objective?: ObjectiveUpdateManyWithoutInstansiNestedInput
+  }
+
+  export type InstansiUncheckedUpdateWithoutDudiInput = {
+    npsn?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    isPrivate?: BoolFieldUpdateOperationsInput | boolean
+    address?: XOR<AddressUpdateEnvelopeInput, AddressCreateInput>
+    level?: EnumLevelFieldUpdateOperationsInput | Level
+    religion?: NullableEnumReligionFieldUpdateOperationsInput | Religion | null
+    major?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    majorIds?: InstansiUpdatemajorIdsInput | Enumerable<string>
+    disable?: BoolFieldUpdateOperationsInput | boolean
+    majors?: KonsentrasiKeahlianUncheckedUpdateManyWithoutInstansiNestedInput
+    role?: RoleUncheckedUpdateManyWithoutInstansiNestedInput
+    schoolYear?: SchoolYearUncheckedUpdateManyWithoutInstansiNestedInput
+    teacher?: TeacherUncheckedUpdateManyWithoutInstansiNestedInput
+    student?: StudentUncheckedUpdateManyWithoutInstansiNestedInput
+    tracker?: TrackerUncheckedUpdateManyWithoutInstansiNestedInput
+    history?: TrackerUncheckedUpdateManyWithoutRefNestedInput
+    unikMapels?: MataPelajaranUncheckedUpdateManyWithoutInstansiNestedInput
+    tDevice?: TDeviceUncheckedUpdateManyWithoutInstansiNestedInput
+    objective?: ObjectiveUncheckedUpdateManyWithoutInstansiNestedInput
+  }
+
+  export type KonsentrasiKeahlianUpsertWithoutDudiInput = {
+    update: XOR<KonsentrasiKeahlianUpdateWithoutDudiInput, KonsentrasiKeahlianUncheckedUpdateWithoutDudiInput>
+    create: XOR<KonsentrasiKeahlianCreateWithoutDudiInput, KonsentrasiKeahlianUncheckedCreateWithoutDudiInput>
+  }
+
+  export type KonsentrasiKeahlianUpdateWithoutDudiInput = {
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    tahun?: IntFieldUpdateOperationsInput | number
+    disable?: BoolFieldUpdateOperationsInput | boolean
+    program?: ProgramKeahlianUpdateOneRequiredWithoutKonsentrasiNestedInput
+    student?: StudentUpdateManyWithoutMajorNestedInput
+    instansi?: InstansiUpdateManyWithoutMajorsNestedInput
+    classRoom?: ClassRoomUpdateManyWithoutMajorNestedInput
+    tracker?: TrackerUpdateManyWithoutKonsentrasiNestedInput
+    mapel?: MataPelajaranUpdateManyWithoutKeahlianNestedInput
+  }
+
+  export type KonsentrasiKeahlianUncheckedUpdateWithoutDudiInput = {
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    programId?: StringFieldUpdateOperationsInput | string
+    tahun?: IntFieldUpdateOperationsInput | number
+    instansiIds?: KonsentrasiKeahlianUpdateinstansiIdsInput | Enumerable<string>
+    disable?: BoolFieldUpdateOperationsInput | boolean
+    student?: StudentUncheckedUpdateManyWithoutMajorNestedInput
+    instansi?: InstansiUncheckedUpdateManyWithoutMajorsNestedInput
+    classRoom?: ClassRoomUncheckedUpdateManyWithoutMajorNestedInput
+    tracker?: TrackerUncheckedUpdateManyWithoutKonsentrasiNestedInput
+    mapel?: MataPelajaranUncheckedUpdateManyWithoutKeahlianNestedInput
+  }
+
+  export type DudiLearningUpsertWithWhereUniqueWithoutRefInput = {
+    where: DudiLearningWhereUniqueInput
+    update: XOR<DudiLearningUpdateWithoutRefInput, DudiLearningUncheckedUpdateWithoutRefInput>
+    create: XOR<DudiLearningCreateWithoutRefInput, DudiLearningUncheckedCreateWithoutRefInput>
+  }
+
+  export type DudiLearningUpdateWithWhereUniqueWithoutRefInput = {
+    where: DudiLearningWhereUniqueInput
+    data: XOR<DudiLearningUpdateWithoutRefInput, DudiLearningUncheckedUpdateWithoutRefInput>
+  }
+
+  export type DudiLearningUpdateManyWithWhereWithoutRefInput = {
+    where: DudiLearningScalarWhereInput
+    data: XOR<DudiLearningUpdateManyMutationInput, DudiLearningUncheckedUpdateManyWithoutLearningInput>
+  }
+
+  export type DudiLearningScalarWhereInput = {
+    AND?: Enumerable<DudiLearningScalarWhereInput>
+    OR?: Enumerable<DudiLearningScalarWhereInput>
+    NOT?: Enumerable<DudiLearningScalarWhereInput>
+    id?: StringFilter | string
+    no?: IntFilter | number
+    refId?: StringFilter | string
+    code?: StringFilter | string
+    name?: StringFilter | string
+  }
+
+  export type TrackerUpsertWithWhereUniqueWithoutDudiInput = {
+    where: TrackerWhereUniqueInput
+    update: XOR<TrackerUpdateWithoutDudiInput, TrackerUncheckedUpdateWithoutDudiInput>
+    create: XOR<TrackerCreateWithoutDudiInput, TrackerUncheckedCreateWithoutDudiInput>
+  }
+
+  export type TrackerUpdateWithWhereUniqueWithoutDudiInput = {
+    where: TrackerWhereUniqueInput
+    data: XOR<TrackerUpdateWithoutDudiInput, TrackerUncheckedUpdateWithoutDudiInput>
+  }
+
+  export type TrackerUpdateManyWithWhereWithoutDudiInput = {
+    where: TrackerScalarWhereInput
+    data: XOR<TrackerUpdateManyMutationInput, TrackerUncheckedUpdateManyWithoutTrackerInput>
+  }
+
+  export type DudiCreateWithoutLearningInput = {
+    id?: string
+    name: string
+    address?: XOR<AddressNullableCreateEnvelopeInput, AddressCreateInput> | null
+    contact: XOR<ContactDudiCreateEnvelopeInput, ContactDudiCreateInput>
+    collabs?: DudiCreatecollabsInput | Enumerable<string>
+    timework: XOR<DudiTimeWorkCreateEnvelopeInput, DudiTimeWorkCreateInput>
+    disable?: boolean
+    instansi: InstansiCreateNestedOneWithoutDudiInput
+    major: KonsentrasiKeahlianCreateNestedOneWithoutDudiInput
+    tracker?: TrackerCreateNestedManyWithoutDudiInput
+  }
+
+  export type DudiUncheckedCreateWithoutLearningInput = {
+    id?: string
+    name: string
+    address?: XOR<AddressNullableCreateEnvelopeInput, AddressCreateInput> | null
+    instansiId: string
+    majorId: string
+    contact: XOR<ContactDudiCreateEnvelopeInput, ContactDudiCreateInput>
+    collabs?: DudiCreatecollabsInput | Enumerable<string>
+    timework: XOR<DudiTimeWorkCreateEnvelopeInput, DudiTimeWorkCreateInput>
+    disable?: boolean
+    tracker?: TrackerUncheckedCreateNestedManyWithoutDudiInput
+  }
+
+  export type DudiCreateOrConnectWithoutLearningInput = {
+    where: DudiWhereUniqueInput
+    create: XOR<DudiCreateWithoutLearningInput, DudiUncheckedCreateWithoutLearningInput>
+  }
+
+  export type DudiIndicatorUpdateManyInput = {
+    where: DudiIndicatorWhereInput
+    data: DudiIndicatorUpdateInput
+  }
+
+  export type DudiIndicatorDeleteManyInput = {
+    where: DudiIndicatorWhereInput
+  }
+
+  export type DudiUpsertWithoutLearningInput = {
+    update: XOR<DudiUpdateWithoutLearningInput, DudiUncheckedUpdateWithoutLearningInput>
+    create: XOR<DudiCreateWithoutLearningInput, DudiUncheckedCreateWithoutLearningInput>
+  }
+
+  export type DudiUpdateWithoutLearningInput = {
+    name?: StringFieldUpdateOperationsInput | string
+    address?: XOR<AddressNullableUpdateEnvelopeInput, AddressCreateInput> | null
+    contact?: XOR<ContactDudiUpdateEnvelopeInput, ContactDudiCreateInput>
+    collabs?: DudiUpdatecollabsInput | Enumerable<string>
+    timework?: XOR<DudiTimeWorkUpdateEnvelopeInput, DudiTimeWorkCreateInput>
+    disable?: BoolFieldUpdateOperationsInput | boolean
+    instansi?: InstansiUpdateOneRequiredWithoutDudiNestedInput
+    major?: KonsentrasiKeahlianUpdateOneRequiredWithoutDudiNestedInput
+    tracker?: TrackerUpdateManyWithoutDudiNestedInput
+  }
+
+  export type DudiUncheckedUpdateWithoutLearningInput = {
+    name?: StringFieldUpdateOperationsInput | string
+    address?: XOR<AddressNullableUpdateEnvelopeInput, AddressCreateInput> | null
+    instansiId?: StringFieldUpdateOperationsInput | string
+    majorId?: StringFieldUpdateOperationsInput | string
+    contact?: XOR<ContactDudiUpdateEnvelopeInput, ContactDudiCreateInput>
+    collabs?: DudiUpdatecollabsInput | Enumerable<string>
+    timework?: XOR<DudiTimeWorkUpdateEnvelopeInput, DudiTimeWorkCreateInput>
+    disable?: BoolFieldUpdateOperationsInput | boolean
+    tracker?: TrackerUncheckedUpdateManyWithoutDudiNestedInput
+  }
+
   export type CoordinateCompositeFilter = {
     equals?: CoordinateObjectEqualityInput
     is?: CoordinateWhereInput
@@ -68893,6 +72949,7 @@ export namespace Prisma {
     tujuanId?: string | null
     perangkatId?: string | null
     kalenderId?: string | null
+    dudiId?: string | null
   }
 
   export type TrackerCreateManyRefInput = {
@@ -68917,6 +72974,7 @@ export namespace Prisma {
     tujuanId?: string | null
     perangkatId?: string | null
     kalenderId?: string | null
+    dudiId?: string | null
   }
 
   export type MataPelajaranCreateManyInstansiInput = {
@@ -68972,6 +73030,17 @@ export namespace Prisma {
     mediaIds?: ObjectiveCreatemediaIdsInput | Enumerable<string>
   }
 
+  export type DudiCreateManyInstansiInput = {
+    id?: string
+    name: string
+    address?: XOR<AddressNullableCreateEnvelopeInput, AddressCreateInput> | null
+    majorId: string
+    contact: XOR<ContactDudiCreateEnvelopeInput, ContactDudiCreateInput>
+    collabs?: DudiCreatecollabsInput | Enumerable<string>
+    timework: XOR<DudiTimeWorkCreateEnvelopeInput, DudiTimeWorkCreateInput>
+    disable?: boolean
+  }
+
   export type CoordinateUpdateEnvelopeInput = {
     set?: CoordinateCreateInput
     update?: CoordinateUpdateInput
@@ -68987,6 +73056,7 @@ export namespace Prisma {
     classRoom?: ClassRoomUpdateManyWithoutMajorNestedInput
     tracker?: TrackerUpdateManyWithoutKonsentrasiNestedInput
     mapel?: MataPelajaranUpdateManyWithoutKeahlianNestedInput
+    dudi?: DudiUpdateManyWithoutMajorNestedInput
   }
 
   export type KonsentrasiKeahlianUncheckedUpdateWithoutInstansiInput = {
@@ -69000,6 +73070,7 @@ export namespace Prisma {
     classRoom?: ClassRoomUncheckedUpdateManyWithoutMajorNestedInput
     tracker?: TrackerUncheckedUpdateManyWithoutKonsentrasiNestedInput
     mapel?: MataPelajaranUncheckedUpdateManyWithoutKeahlianNestedInput
+    dudi?: DudiUncheckedUpdateManyWithoutMajorNestedInput
   }
 
   export type KonsentrasiKeahlianUncheckedUpdateManyWithoutMajorsInput = {
@@ -69176,6 +73247,7 @@ export namespace Prisma {
     tujuan?: ObjectiveUpdateOneWithoutTrackerNestedInput
     perangkat?: TDeviceUpdateOneWithoutTrackerNestedInput
     kalender?: CalendarUpdateOneWithoutTrackerNestedInput
+    dudi?: DudiUpdateOneWithoutTrackerNestedInput
   }
 
   export type TrackerUncheckedUpdateWithoutInstansiInput = {
@@ -69199,6 +73271,7 @@ export namespace Prisma {
     tujuanId?: NullableStringFieldUpdateOperationsInput | string | null
     perangkatId?: NullableStringFieldUpdateOperationsInput | string | null
     kalenderId?: NullableStringFieldUpdateOperationsInput | string | null
+    dudiId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type TrackerUncheckedUpdateManyWithoutTrackerInput = {
@@ -69222,6 +73295,7 @@ export namespace Prisma {
     tujuanId?: NullableStringFieldUpdateOperationsInput | string | null
     perangkatId?: NullableStringFieldUpdateOperationsInput | string | null
     kalenderId?: NullableStringFieldUpdateOperationsInput | string | null
+    dudiId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type TrackerUpdateWithoutRefInput = {
@@ -69245,6 +73319,7 @@ export namespace Prisma {
     tujuan?: ObjectiveUpdateOneWithoutTrackerNestedInput
     perangkat?: TDeviceUpdateOneWithoutTrackerNestedInput
     kalender?: CalendarUpdateOneWithoutTrackerNestedInput
+    dudi?: DudiUpdateOneWithoutTrackerNestedInput
   }
 
   export type TrackerUncheckedUpdateWithoutRefInput = {
@@ -69268,6 +73343,7 @@ export namespace Prisma {
     tujuanId?: NullableStringFieldUpdateOperationsInput | string | null
     perangkatId?: NullableStringFieldUpdateOperationsInput | string | null
     kalenderId?: NullableStringFieldUpdateOperationsInput | string | null
+    dudiId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type TrackerUncheckedUpdateManyWithoutHistoryInput = {
@@ -69291,6 +73367,7 @@ export namespace Prisma {
     tujuanId?: NullableStringFieldUpdateOperationsInput | string | null
     perangkatId?: NullableStringFieldUpdateOperationsInput | string | null
     kalenderId?: NullableStringFieldUpdateOperationsInput | string | null
+    dudiId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type MataPelajaranUpdateWithoutInstansiInput = {
@@ -69476,6 +73553,40 @@ export namespace Prisma {
     mediaIds?: ObjectiveUpdatemediaIdsInput | Enumerable<string>
   }
 
+  export type DudiUpdateWithoutInstansiInput = {
+    name?: StringFieldUpdateOperationsInput | string
+    address?: XOR<AddressNullableUpdateEnvelopeInput, AddressCreateInput> | null
+    contact?: XOR<ContactDudiUpdateEnvelopeInput, ContactDudiCreateInput>
+    collabs?: DudiUpdatecollabsInput | Enumerable<string>
+    timework?: XOR<DudiTimeWorkUpdateEnvelopeInput, DudiTimeWorkCreateInput>
+    disable?: BoolFieldUpdateOperationsInput | boolean
+    major?: KonsentrasiKeahlianUpdateOneRequiredWithoutDudiNestedInput
+    learning?: DudiLearningUpdateManyWithoutRefNestedInput
+    tracker?: TrackerUpdateManyWithoutDudiNestedInput
+  }
+
+  export type DudiUncheckedUpdateWithoutInstansiInput = {
+    name?: StringFieldUpdateOperationsInput | string
+    address?: XOR<AddressNullableUpdateEnvelopeInput, AddressCreateInput> | null
+    majorId?: StringFieldUpdateOperationsInput | string
+    contact?: XOR<ContactDudiUpdateEnvelopeInput, ContactDudiCreateInput>
+    collabs?: DudiUpdatecollabsInput | Enumerable<string>
+    timework?: XOR<DudiTimeWorkUpdateEnvelopeInput, DudiTimeWorkCreateInput>
+    disable?: BoolFieldUpdateOperationsInput | boolean
+    learning?: DudiLearningUncheckedUpdateManyWithoutRefNestedInput
+    tracker?: TrackerUncheckedUpdateManyWithoutDudiNestedInput
+  }
+
+  export type DudiUncheckedUpdateManyWithoutDudiInput = {
+    name?: StringFieldUpdateOperationsInput | string
+    address?: XOR<AddressNullableUpdateEnvelopeInput, AddressCreateInput> | null
+    majorId?: StringFieldUpdateOperationsInput | string
+    contact?: XOR<ContactDudiUpdateEnvelopeInput, ContactDudiCreateInput>
+    collabs?: DudiUpdatecollabsInput | Enumerable<string>
+    timework?: XOR<DudiTimeWorkUpdateEnvelopeInput, DudiTimeWorkCreateInput>
+    disable?: BoolFieldUpdateOperationsInput | boolean
+  }
+
   export type ElementCreateManyMapelInput = {
     id?: string
     no: number
@@ -69513,6 +73624,7 @@ export namespace Prisma {
     tujuanId?: string | null
     perangkatId?: string | null
     kalenderId?: string | null
+    dudiId?: string | null
   }
 
   export type ObjectiveCreateManyMapelInput = {
@@ -69626,6 +73738,7 @@ export namespace Prisma {
     tujuan?: ObjectiveUpdateOneWithoutTrackerNestedInput
     perangkat?: TDeviceUpdateOneWithoutTrackerNestedInput
     kalender?: CalendarUpdateOneWithoutTrackerNestedInput
+    dudi?: DudiUpdateOneWithoutTrackerNestedInput
   }
 
   export type TrackerUncheckedUpdateWithoutMapelInput = {
@@ -69649,6 +73762,7 @@ export namespace Prisma {
     tujuanId?: NullableStringFieldUpdateOperationsInput | string | null
     perangkatId?: NullableStringFieldUpdateOperationsInput | string | null
     kalenderId?: NullableStringFieldUpdateOperationsInput | string | null
+    dudiId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type ObjectiveUpdateWithoutMapelInput = {
@@ -69796,6 +73910,7 @@ export namespace Prisma {
     tujuanId?: string | null
     perangkatId?: string | null
     kalenderId?: string | null
+    dudiId?: string | null
   }
 
   export type ObjectiveCreateManyElemenInput = {
@@ -69867,6 +73982,7 @@ export namespace Prisma {
     tujuan?: ObjectiveUpdateOneWithoutTrackerNestedInput
     perangkat?: TDeviceUpdateOneWithoutTrackerNestedInput
     kalender?: CalendarUpdateOneWithoutTrackerNestedInput
+    dudi?: DudiUpdateOneWithoutTrackerNestedInput
   }
 
   export type TrackerUncheckedUpdateWithoutElemenInput = {
@@ -69890,11 +74006,12 @@ export namespace Prisma {
     tujuanId?: NullableStringFieldUpdateOperationsInput | string | null
     perangkatId?: NullableStringFieldUpdateOperationsInput | string | null
     kalenderId?: NullableStringFieldUpdateOperationsInput | string | null
+    dudiId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type TeachingUpdateWithoutElemenInput = {
     hours?: IntFieldUpdateOperationsInput | number
-    isEven?: BoolFieldUpdateOperationsInput | boolean
+    semester?: EnumSemesterFieldUpdateOperationsInput | Semester
     disable?: BoolFieldUpdateOperationsInput | boolean
     ref?: ScheduleUpdateOneRequiredWithoutTeachingNestedInput
     teacher?: TeacherUpdateOneRequiredWithoutTeachingNestedInput
@@ -69906,7 +74023,7 @@ export namespace Prisma {
   export type TeachingUncheckedUpdateWithoutElemenInput = {
     refId?: StringFieldUpdateOperationsInput | string
     hours?: IntFieldUpdateOperationsInput | number
-    isEven?: BoolFieldUpdateOperationsInput | boolean
+    semester?: EnumSemesterFieldUpdateOperationsInput | Semester
     teacherId?: StringFieldUpdateOperationsInput | string
     classRoomIds?: TeachingUpdateclassRoomIdsInput | Enumerable<string>
     elemenIds?: TeachingUpdateelemenIdsInput | Enumerable<string>
@@ -69919,7 +74036,7 @@ export namespace Prisma {
   export type TeachingUncheckedUpdateManyWithoutScheduleClassInput = {
     refId?: StringFieldUpdateOperationsInput | string
     hours?: IntFieldUpdateOperationsInput | number
-    isEven?: BoolFieldUpdateOperationsInput | boolean
+    semester?: EnumSemesterFieldUpdateOperationsInput | Semester
     teacherId?: StringFieldUpdateOperationsInput | string
     classRoomIds?: TeachingUpdateclassRoomIdsInput | Enumerable<string>
     elemenIds?: TeachingUpdateelemenIdsInput | Enumerable<string>
@@ -70031,6 +74148,7 @@ export namespace Prisma {
     tujuanId?: string | null
     perangkatId?: string | null
     kalenderId?: string | null
+    dudiId?: string | null
   }
 
   export type ObjectiveUpdateWithoutAchievementInput = {
@@ -70114,6 +74232,7 @@ export namespace Prisma {
     tujuan?: ObjectiveUpdateOneWithoutTrackerNestedInput
     perangkat?: TDeviceUpdateOneWithoutTrackerNestedInput
     kalender?: CalendarUpdateOneWithoutTrackerNestedInput
+    dudi?: DudiUpdateOneWithoutTrackerNestedInput
   }
 
   export type TrackerUncheckedUpdateWithoutCpInput = {
@@ -70137,6 +74256,7 @@ export namespace Prisma {
     tujuanId?: NullableStringFieldUpdateOperationsInput | string | null
     perangkatId?: NullableStringFieldUpdateOperationsInput | string | null
     kalenderId?: NullableStringFieldUpdateOperationsInput | string | null
+    dudiId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type ProgramKeahlianCreateManyBidangInput = {
@@ -70168,6 +74288,7 @@ export namespace Prisma {
     tujuanId?: string | null
     perangkatId?: string | null
     kalenderId?: string | null
+    dudiId?: string | null
   }
 
   export type ProgramKeahlianUpdateWithoutBidangInput = {
@@ -70215,6 +74336,7 @@ export namespace Prisma {
     tujuan?: ObjectiveUpdateOneWithoutTrackerNestedInput
     perangkat?: TDeviceUpdateOneWithoutTrackerNestedInput
     kalender?: CalendarUpdateOneWithoutTrackerNestedInput
+    dudi?: DudiUpdateOneWithoutTrackerNestedInput
   }
 
   export type TrackerUncheckedUpdateWithoutBidangInput = {
@@ -70238,6 +74360,7 @@ export namespace Prisma {
     tujuanId?: NullableStringFieldUpdateOperationsInput | string | null
     perangkatId?: NullableStringFieldUpdateOperationsInput | string | null
     kalenderId?: NullableStringFieldUpdateOperationsInput | string | null
+    dudiId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type KonsentrasiKeahlianCreateManyProgramInput = {
@@ -70271,6 +74394,7 @@ export namespace Prisma {
     tujuanId?: string | null
     perangkatId?: string | null
     kalenderId?: string | null
+    dudiId?: string | null
   }
 
   export type MataPelajaranCreateManyProgramInput = {
@@ -70296,6 +74420,7 @@ export namespace Prisma {
     classRoom?: ClassRoomUpdateManyWithoutMajorNestedInput
     tracker?: TrackerUpdateManyWithoutKonsentrasiNestedInput
     mapel?: MataPelajaranUpdateManyWithoutKeahlianNestedInput
+    dudi?: DudiUpdateManyWithoutMajorNestedInput
   }
 
   export type KonsentrasiKeahlianUncheckedUpdateWithoutProgramInput = {
@@ -70309,6 +74434,7 @@ export namespace Prisma {
     classRoom?: ClassRoomUncheckedUpdateManyWithoutMajorNestedInput
     tracker?: TrackerUncheckedUpdateManyWithoutKonsentrasiNestedInput
     mapel?: MataPelajaranUncheckedUpdateManyWithoutKeahlianNestedInput
+    dudi?: DudiUncheckedUpdateManyWithoutMajorNestedInput
   }
 
   export type KonsentrasiKeahlianUncheckedUpdateManyWithoutKonsentrasiInput = {
@@ -70340,6 +74466,7 @@ export namespace Prisma {
     tujuan?: ObjectiveUpdateOneWithoutTrackerNestedInput
     perangkat?: TDeviceUpdateOneWithoutTrackerNestedInput
     kalender?: CalendarUpdateOneWithoutTrackerNestedInput
+    dudi?: DudiUpdateOneWithoutTrackerNestedInput
   }
 
   export type TrackerUncheckedUpdateWithoutProgramInput = {
@@ -70363,6 +74490,7 @@ export namespace Prisma {
     tujuanId?: NullableStringFieldUpdateOperationsInput | string | null
     perangkatId?: NullableStringFieldUpdateOperationsInput | string | null
     kalenderId?: NullableStringFieldUpdateOperationsInput | string | null
+    dudiId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type MataPelajaranUpdateWithoutProgramInput = {
@@ -70459,6 +74587,7 @@ export namespace Prisma {
     tujuanId?: string | null
     perangkatId?: string | null
     kalenderId?: string | null
+    dudiId?: string | null
   }
 
   export type MataPelajaranCreateManyKeahlianInput = {
@@ -70471,6 +74600,17 @@ export namespace Prisma {
     religion?: Religion | null
     programId?: string | null
     instansiId?: string | null
+    disable?: boolean
+  }
+
+  export type DudiCreateManyMajorInput = {
+    id?: string
+    name: string
+    address?: XOR<AddressNullableCreateEnvelopeInput, AddressCreateInput> | null
+    instansiId: string
+    contact: XOR<ContactDudiCreateEnvelopeInput, ContactDudiCreateInput>
+    collabs?: DudiCreatecollabsInput | Enumerable<string>
+    timework: XOR<DudiTimeWorkCreateEnvelopeInput, DudiTimeWorkCreateInput>
     disable?: boolean
   }
 
@@ -70518,6 +74658,7 @@ export namespace Prisma {
     unikMapels?: MataPelajaranUpdateManyWithoutInstansiNestedInput
     tDevice?: TDeviceUpdateManyWithoutInstansiNestedInput
     objective?: ObjectiveUpdateManyWithoutInstansiNestedInput
+    dudi?: DudiUpdateManyWithoutInstansiNestedInput
   }
 
   export type InstansiUncheckedUpdateWithoutMajorsInput = {
@@ -70539,6 +74680,7 @@ export namespace Prisma {
     unikMapels?: MataPelajaranUncheckedUpdateManyWithoutInstansiNestedInput
     tDevice?: TDeviceUncheckedUpdateManyWithoutInstansiNestedInput
     objective?: ObjectiveUncheckedUpdateManyWithoutInstansiNestedInput
+    dudi?: DudiUncheckedUpdateManyWithoutInstansiNestedInput
   }
 
   export type InstansiUncheckedUpdateManyWithoutInstansiInput = {
@@ -70619,6 +74761,7 @@ export namespace Prisma {
     tujuan?: ObjectiveUpdateOneWithoutTrackerNestedInput
     perangkat?: TDeviceUpdateOneWithoutTrackerNestedInput
     kalender?: CalendarUpdateOneWithoutTrackerNestedInput
+    dudi?: DudiUpdateOneWithoutTrackerNestedInput
   }
 
   export type TrackerUncheckedUpdateWithoutKonsentrasiInput = {
@@ -70642,6 +74785,7 @@ export namespace Prisma {
     tujuanId?: NullableStringFieldUpdateOperationsInput | string | null
     perangkatId?: NullableStringFieldUpdateOperationsInput | string | null
     kalenderId?: NullableStringFieldUpdateOperationsInput | string | null
+    dudiId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type MataPelajaranUpdateWithoutKeahlianInput = {
@@ -70676,6 +74820,30 @@ export namespace Prisma {
     tracker?: TrackerUncheckedUpdateManyWithoutMapelNestedInput
     objective?: ObjectiveUncheckedUpdateManyWithoutMapelNestedInput
     device?: TDeviceUncheckedUpdateManyWithoutMapelNestedInput
+  }
+
+  export type DudiUpdateWithoutMajorInput = {
+    name?: StringFieldUpdateOperationsInput | string
+    address?: XOR<AddressNullableUpdateEnvelopeInput, AddressCreateInput> | null
+    contact?: XOR<ContactDudiUpdateEnvelopeInput, ContactDudiCreateInput>
+    collabs?: DudiUpdatecollabsInput | Enumerable<string>
+    timework?: XOR<DudiTimeWorkUpdateEnvelopeInput, DudiTimeWorkCreateInput>
+    disable?: BoolFieldUpdateOperationsInput | boolean
+    instansi?: InstansiUpdateOneRequiredWithoutDudiNestedInput
+    learning?: DudiLearningUpdateManyWithoutRefNestedInput
+    tracker?: TrackerUpdateManyWithoutDudiNestedInput
+  }
+
+  export type DudiUncheckedUpdateWithoutMajorInput = {
+    name?: StringFieldUpdateOperationsInput | string
+    address?: XOR<AddressNullableUpdateEnvelopeInput, AddressCreateInput> | null
+    instansiId?: StringFieldUpdateOperationsInput | string
+    contact?: XOR<ContactDudiUpdateEnvelopeInput, ContactDudiCreateInput>
+    collabs?: DudiUpdatecollabsInput | Enumerable<string>
+    timework?: XOR<DudiTimeWorkUpdateEnvelopeInput, DudiTimeWorkCreateInput>
+    disable?: BoolFieldUpdateOperationsInput | boolean
+    learning?: DudiLearningUncheckedUpdateManyWithoutRefNestedInput
+    tracker?: TrackerUncheckedUpdateManyWithoutDudiNestedInput
   }
 
   export type UserCreateManyRoleInput = {
@@ -70759,6 +74927,7 @@ export namespace Prisma {
     tujuanId?: string | null
     perangkatId?: string | null
     kalenderId?: string | null
+    dudiId?: string | null
   }
 
   export type ObjectiveCreateManyUserInput = {
@@ -70841,6 +75010,7 @@ export namespace Prisma {
     tujuan?: ObjectiveUpdateOneWithoutTrackerNestedInput
     perangkat?: TDeviceUpdateOneWithoutTrackerNestedInput
     kalender?: CalendarUpdateOneWithoutTrackerNestedInput
+    dudi?: DudiUpdateOneWithoutTrackerNestedInput
   }
 
   export type TrackerUncheckedUpdateWithoutUserInput = {
@@ -70864,6 +75034,7 @@ export namespace Prisma {
     tujuanId?: NullableStringFieldUpdateOperationsInput | string | null
     perangkatId?: NullableStringFieldUpdateOperationsInput | string | null
     kalenderId?: NullableStringFieldUpdateOperationsInput | string | null
+    dudiId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type ObjectiveUpdateWithoutUserInput = {
@@ -71454,6 +75625,7 @@ export namespace Prisma {
     tujuanId?: string | null
     perangkatId?: string | null
     kalenderId?: string | null
+    dudiId?: string | null
   }
 
   export type TDeviceCreateManyYearInput = {
@@ -71678,6 +75850,7 @@ export namespace Prisma {
     tujuan?: ObjectiveUpdateOneWithoutTrackerNestedInput
     perangkat?: TDeviceUpdateOneWithoutTrackerNestedInput
     kalender?: CalendarUpdateOneWithoutTrackerNestedInput
+    dudi?: DudiUpdateOneWithoutTrackerNestedInput
   }
 
   export type TrackerUncheckedUpdateWithoutTpInput = {
@@ -71701,6 +75874,7 @@ export namespace Prisma {
     tujuanId?: NullableStringFieldUpdateOperationsInput | string | null
     perangkatId?: NullableStringFieldUpdateOperationsInput | string | null
     kalenderId?: NullableStringFieldUpdateOperationsInput | string | null
+    dudiId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type TDeviceUpdateWithoutYearInput = {
@@ -71778,13 +75952,14 @@ export namespace Prisma {
     tujuanId?: string | null
     perangkatId?: string | null
     kalenderId?: string | null
+    dudiId?: string | null
   }
 
   export type TeachingCreateManyTeacherInput = {
     id?: string
     refId: string
     hours: number
-    isEven: boolean
+    semester: Semester
     classRoomIds?: TeachingCreateclassRoomIdsInput | Enumerable<string>
     elemenIds?: TeachingCreateelemenIdsInput | Enumerable<string>
     disable?: boolean
@@ -71885,6 +76060,7 @@ export namespace Prisma {
     tujuan?: ObjectiveUpdateOneWithoutTrackerNestedInput
     perangkat?: TDeviceUpdateOneWithoutTrackerNestedInput
     kalender?: CalendarUpdateOneWithoutTrackerNestedInput
+    dudi?: DudiUpdateOneWithoutTrackerNestedInput
   }
 
   export type TrackerUncheckedUpdateWithoutTeacherInput = {
@@ -71908,11 +76084,12 @@ export namespace Prisma {
     tujuanId?: NullableStringFieldUpdateOperationsInput | string | null
     perangkatId?: NullableStringFieldUpdateOperationsInput | string | null
     kalenderId?: NullableStringFieldUpdateOperationsInput | string | null
+    dudiId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type TeachingUpdateWithoutTeacherInput = {
     hours?: IntFieldUpdateOperationsInput | number
-    isEven?: BoolFieldUpdateOperationsInput | boolean
+    semester?: EnumSemesterFieldUpdateOperationsInput | Semester
     disable?: BoolFieldUpdateOperationsInput | boolean
     ref?: ScheduleUpdateOneRequiredWithoutTeachingNestedInput
     classRoom?: ClassRoomUpdateManyWithoutTeachingNestedInput
@@ -71924,7 +76101,7 @@ export namespace Prisma {
   export type TeachingUncheckedUpdateWithoutTeacherInput = {
     refId?: StringFieldUpdateOperationsInput | string
     hours?: IntFieldUpdateOperationsInput | number
-    isEven?: BoolFieldUpdateOperationsInput | boolean
+    semester?: EnumSemesterFieldUpdateOperationsInput | Semester
     classRoomIds?: TeachingUpdateclassRoomIdsInput | Enumerable<string>
     elemenIds?: TeachingUpdateelemenIdsInput | Enumerable<string>
     disable?: BoolFieldUpdateOperationsInput | boolean
@@ -71937,7 +76114,7 @@ export namespace Prisma {
   export type TeachingUncheckedUpdateManyWithoutTeachingInput = {
     refId?: StringFieldUpdateOperationsInput | string
     hours?: IntFieldUpdateOperationsInput | number
-    isEven?: BoolFieldUpdateOperationsInput | boolean
+    semester?: EnumSemesterFieldUpdateOperationsInput | Semester
     classRoomIds?: TeachingUpdateclassRoomIdsInput | Enumerable<string>
     elemenIds?: TeachingUpdateelemenIdsInput | Enumerable<string>
     disable?: BoolFieldUpdateOperationsInput | boolean
@@ -71965,6 +76142,7 @@ export namespace Prisma {
     tujuanId?: string | null
     perangkatId?: string | null
     kalenderId?: string | null
+    dudiId?: string | null
   }
 
   export type RoomPropertyUpdateInput = {
@@ -72047,6 +76225,7 @@ export namespace Prisma {
     tujuan?: ObjectiveUpdateOneWithoutTrackerNestedInput
     perangkat?: TDeviceUpdateOneWithoutTrackerNestedInput
     kalender?: CalendarUpdateOneWithoutTrackerNestedInput
+    dudi?: DudiUpdateOneWithoutTrackerNestedInput
   }
 
   export type TrackerUncheckedUpdateWithoutKelasInput = {
@@ -72070,11 +76249,12 @@ export namespace Prisma {
     tujuanId?: NullableStringFieldUpdateOperationsInput | string | null
     perangkatId?: NullableStringFieldUpdateOperationsInput | string | null
     kalenderId?: NullableStringFieldUpdateOperationsInput | string | null
+    dudiId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type TeachingUpdateWithoutClassRoomInput = {
     hours?: IntFieldUpdateOperationsInput | number
-    isEven?: BoolFieldUpdateOperationsInput | boolean
+    semester?: EnumSemesterFieldUpdateOperationsInput | Semester
     disable?: BoolFieldUpdateOperationsInput | boolean
     ref?: ScheduleUpdateOneRequiredWithoutTeachingNestedInput
     teacher?: TeacherUpdateOneRequiredWithoutTeachingNestedInput
@@ -72086,7 +76266,7 @@ export namespace Prisma {
   export type TeachingUncheckedUpdateWithoutClassRoomInput = {
     refId?: StringFieldUpdateOperationsInput | string
     hours?: IntFieldUpdateOperationsInput | number
-    isEven?: BoolFieldUpdateOperationsInput | boolean
+    semester?: EnumSemesterFieldUpdateOperationsInput | Semester
     teacherId?: StringFieldUpdateOperationsInput | string
     classRoomIds?: TeachingUpdateclassRoomIdsInput | Enumerable<string>
     elemenIds?: TeachingUpdateelemenIdsInput | Enumerable<string>
@@ -72157,6 +76337,7 @@ export namespace Prisma {
     tujuanId?: string | null
     perangkatId?: string | null
     kalenderId?: string | null
+    dudiId?: string | null
   }
 
   export type ClassRoomUpdateWithoutStudentsInput = {
@@ -72241,6 +76422,7 @@ export namespace Prisma {
     tujuan?: ObjectiveUpdateOneWithoutTrackerNestedInput
     perangkat?: TDeviceUpdateOneWithoutTrackerNestedInput
     kalender?: CalendarUpdateOneWithoutTrackerNestedInput
+    dudi?: DudiUpdateOneWithoutTrackerNestedInput
   }
 
   export type TrackerUncheckedUpdateWithoutMuridInput = {
@@ -72264,6 +76446,7 @@ export namespace Prisma {
     tujuanId?: NullableStringFieldUpdateOperationsInput | string | null
     perangkatId?: NullableStringFieldUpdateOperationsInput | string | null
     kalenderId?: NullableStringFieldUpdateOperationsInput | string | null
+    dudiId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type TrackerCreateManyJadwalInput = {
@@ -72288,12 +76471,13 @@ export namespace Prisma {
     tujuanId?: string | null
     perangkatId?: string | null
     kalenderId?: string | null
+    dudiId?: string | null
   }
 
   export type TeachingCreateManyRefInput = {
     id?: string
     hours: number
-    isEven: boolean
+    semester: Semester
     teacherId: string
     classRoomIds?: TeachingCreateclassRoomIdsInput | Enumerable<string>
     elemenIds?: TeachingCreateelemenIdsInput | Enumerable<string>
@@ -72321,6 +76505,7 @@ export namespace Prisma {
     tujuan?: ObjectiveUpdateOneWithoutTrackerNestedInput
     perangkat?: TDeviceUpdateOneWithoutTrackerNestedInput
     kalender?: CalendarUpdateOneWithoutTrackerNestedInput
+    dudi?: DudiUpdateOneWithoutTrackerNestedInput
   }
 
   export type TrackerUncheckedUpdateWithoutJadwalInput = {
@@ -72344,11 +76529,12 @@ export namespace Prisma {
     tujuanId?: NullableStringFieldUpdateOperationsInput | string | null
     perangkatId?: NullableStringFieldUpdateOperationsInput | string | null
     kalenderId?: NullableStringFieldUpdateOperationsInput | string | null
+    dudiId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type TeachingUpdateWithoutRefInput = {
     hours?: IntFieldUpdateOperationsInput | number
-    isEven?: BoolFieldUpdateOperationsInput | boolean
+    semester?: EnumSemesterFieldUpdateOperationsInput | Semester
     disable?: BoolFieldUpdateOperationsInput | boolean
     teacher?: TeacherUpdateOneRequiredWithoutTeachingNestedInput
     classRoom?: ClassRoomUpdateManyWithoutTeachingNestedInput
@@ -72359,7 +76545,7 @@ export namespace Prisma {
 
   export type TeachingUncheckedUpdateWithoutRefInput = {
     hours?: IntFieldUpdateOperationsInput | number
-    isEven?: BoolFieldUpdateOperationsInput | boolean
+    semester?: EnumSemesterFieldUpdateOperationsInput | Semester
     teacherId?: StringFieldUpdateOperationsInput | string
     classRoomIds?: TeachingUpdateclassRoomIdsInput | Enumerable<string>
     elemenIds?: TeachingUpdateelemenIdsInput | Enumerable<string>
@@ -72392,6 +76578,7 @@ export namespace Prisma {
     tujuanId?: string | null
     perangkatId?: string | null
     kalenderId?: string | null
+    dudiId?: string | null
   }
 
   export type TDeviceCreateManyTeachingInput = {
@@ -72496,6 +76683,7 @@ export namespace Prisma {
     tujuan?: ObjectiveUpdateOneWithoutTrackerNestedInput
     perangkat?: TDeviceUpdateOneWithoutTrackerNestedInput
     kalender?: CalendarUpdateOneWithoutTrackerNestedInput
+    dudi?: DudiUpdateOneWithoutTrackerNestedInput
   }
 
   export type TrackerUncheckedUpdateWithoutMengajarInput = {
@@ -72519,6 +76707,7 @@ export namespace Prisma {
     tujuanId?: NullableStringFieldUpdateOperationsInput | string | null
     perangkatId?: NullableStringFieldUpdateOperationsInput | string | null
     kalenderId?: NullableStringFieldUpdateOperationsInput | string | null
+    dudiId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type TDeviceUpdateWithoutTeachingInput = {
@@ -72614,6 +76803,7 @@ export namespace Prisma {
     mengajarId?: string | null
     perangkatId?: string | null
     kalenderId?: string | null
+    dudiId?: string | null
   }
 
   export type OresourceCreateManyRefInput = {
@@ -72682,6 +76872,7 @@ export namespace Prisma {
     mengajar?: TeachingUpdateOneWithoutTrackerNestedInput
     perangkat?: TDeviceUpdateOneWithoutTrackerNestedInput
     kalender?: CalendarUpdateOneWithoutTrackerNestedInput
+    dudi?: DudiUpdateOneWithoutTrackerNestedInput
   }
 
   export type TrackerUncheckedUpdateWithoutTujuanInput = {
@@ -72705,6 +76896,7 @@ export namespace Prisma {
     mengajarId?: NullableStringFieldUpdateOperationsInput | string | null
     perangkatId?: NullableStringFieldUpdateOperationsInput | string | null
     kalenderId?: NullableStringFieldUpdateOperationsInput | string | null
+    dudiId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type OresourceUpdateWithoutRefInput = {
@@ -73269,6 +77461,7 @@ export namespace Prisma {
     mengajarId?: string | null
     tujuanId?: string | null
     kalenderId?: string | null
+    dudiId?: string | null
   }
 
   export type TDeviceDataCreateManyRefInput = {
@@ -73353,6 +77546,7 @@ export namespace Prisma {
     mengajar?: TeachingUpdateOneWithoutTrackerNestedInput
     tujuan?: ObjectiveUpdateOneWithoutTrackerNestedInput
     kalender?: CalendarUpdateOneWithoutTrackerNestedInput
+    dudi?: DudiUpdateOneWithoutTrackerNestedInput
   }
 
   export type TrackerUncheckedUpdateWithoutPerangkatInput = {
@@ -73376,6 +77570,7 @@ export namespace Prisma {
     mengajarId?: NullableStringFieldUpdateOperationsInput | string | null
     tujuanId?: NullableStringFieldUpdateOperationsInput | string | null
     kalenderId?: NullableStringFieldUpdateOperationsInput | string | null
+    dudiId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type TDeviceDataUpdateWithoutRefInput = {
@@ -73470,6 +77665,7 @@ export namespace Prisma {
     mengajarId?: string | null
     tujuanId?: string | null
     perangkatId?: string | null
+    dudiId?: string | null
   }
 
   export type ClassRoomUpdateWithoutEventInput = {
@@ -73588,6 +77784,7 @@ export namespace Prisma {
     mengajar?: TeachingUpdateOneWithoutTrackerNestedInput
     tujuan?: ObjectiveUpdateOneWithoutTrackerNestedInput
     perangkat?: TDeviceUpdateOneWithoutTrackerNestedInput
+    dudi?: DudiUpdateOneWithoutTrackerNestedInput
   }
 
   export type TrackerUncheckedUpdateWithoutKalenderInput = {
@@ -73611,6 +77808,120 @@ export namespace Prisma {
     mengajarId?: NullableStringFieldUpdateOperationsInput | string | null
     tujuanId?: NullableStringFieldUpdateOperationsInput | string | null
     perangkatId?: NullableStringFieldUpdateOperationsInput | string | null
+    dudiId?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type DudiLearningCreateManyRefInput = {
+    id?: string
+    no: number
+    code: string
+    name: string
+    indicator?: XOR<DudiIndicatorListCreateEnvelopeInput, Enumerable<DudiIndicatorCreateInput>>
+  }
+
+  export type TrackerCreateManyDudiInput = {
+    id?: string
+    point: PointTracker
+    type: TypeTracker
+    userId: string
+    refId: string
+    instansiId?: string | null
+    createdAt?: Date | string
+    mapelId?: string | null
+    elementId?: string | null
+    cpId?: string | null
+    bidangId?: string | null
+    programId?: string | null
+    konsentrasiId?: string | null
+    tpId?: string | null
+    teacherId?: string | null
+    kelasId?: string | null
+    muridId?: string | null
+    jadwalId?: string | null
+    mengajarId?: string | null
+    tujuanId?: string | null
+    perangkatId?: string | null
+    kalenderId?: string | null
+  }
+
+  export type DudiTimeWorkUpdateholidaysInput = {
+    set?: Enumerable<string>
+    push?: string | Enumerable<string>
+  }
+
+  export type DudiLearningUpdateWithoutRefInput = {
+    no?: IntFieldUpdateOperationsInput | number
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    indicator?: XOR<DudiIndicatorListUpdateEnvelopeInput, Enumerable<DudiIndicatorCreateInput>>
+  }
+
+  export type DudiLearningUncheckedUpdateWithoutRefInput = {
+    no?: IntFieldUpdateOperationsInput | number
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    indicator?: XOR<DudiIndicatorListUpdateEnvelopeInput, Enumerable<DudiIndicatorCreateInput>>
+  }
+
+  export type DudiLearningUncheckedUpdateManyWithoutLearningInput = {
+    no?: IntFieldUpdateOperationsInput | number
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    indicator?: XOR<DudiIndicatorListUpdateEnvelopeInput, Enumerable<DudiIndicatorCreateInput>>
+  }
+
+  export type TrackerUpdateWithoutDudiInput = {
+    point?: EnumPointTrackerFieldUpdateOperationsInput | PointTracker
+    type?: EnumTypeTrackerFieldUpdateOperationsInput | TypeTracker
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutTrackerNestedInput
+    ref?: InstansiUpdateOneRequiredWithoutHistoryNestedInput
+    instansi?: InstansiUpdateOneWithoutTrackerNestedInput
+    mapel?: MataPelajaranUpdateOneWithoutTrackerNestedInput
+    elemen?: ElementUpdateOneWithoutTrackerNestedInput
+    cp?: AchievementUpdateOneWithoutTrackerNestedInput
+    bidang?: BidangKeahlianUpdateOneWithoutTrackerNestedInput
+    program?: ProgramKeahlianUpdateOneWithoutTrackerNestedInput
+    konsentrasi?: KonsentrasiKeahlianUpdateOneWithoutTrackerNestedInput
+    tp?: SchoolYearUpdateOneWithoutTrackerNestedInput
+    teacher?: TeacherUpdateOneWithoutTrackerNestedInput
+    kelas?: ClassRoomUpdateOneWithoutTrackerNestedInput
+    murid?: StudentUpdateOneWithoutTrackerNestedInput
+    jadwal?: ScheduleUpdateOneWithoutTrackerNestedInput
+    mengajar?: TeachingUpdateOneWithoutTrackerNestedInput
+    tujuan?: ObjectiveUpdateOneWithoutTrackerNestedInput
+    perangkat?: TDeviceUpdateOneWithoutTrackerNestedInput
+    kalender?: CalendarUpdateOneWithoutTrackerNestedInput
+  }
+
+  export type TrackerUncheckedUpdateWithoutDudiInput = {
+    point?: EnumPointTrackerFieldUpdateOperationsInput | PointTracker
+    type?: EnumTypeTrackerFieldUpdateOperationsInput | TypeTracker
+    userId?: StringFieldUpdateOperationsInput | string
+    refId?: StringFieldUpdateOperationsInput | string
+    instansiId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    mapelId?: NullableStringFieldUpdateOperationsInput | string | null
+    elementId?: NullableStringFieldUpdateOperationsInput | string | null
+    cpId?: NullableStringFieldUpdateOperationsInput | string | null
+    bidangId?: NullableStringFieldUpdateOperationsInput | string | null
+    programId?: NullableStringFieldUpdateOperationsInput | string | null
+    konsentrasiId?: NullableStringFieldUpdateOperationsInput | string | null
+    tpId?: NullableStringFieldUpdateOperationsInput | string | null
+    teacherId?: NullableStringFieldUpdateOperationsInput | string | null
+    kelasId?: NullableStringFieldUpdateOperationsInput | string | null
+    muridId?: NullableStringFieldUpdateOperationsInput | string | null
+    jadwalId?: NullableStringFieldUpdateOperationsInput | string | null
+    mengajarId?: NullableStringFieldUpdateOperationsInput | string | null
+    tujuanId?: NullableStringFieldUpdateOperationsInput | string | null
+    perangkatId?: NullableStringFieldUpdateOperationsInput | string | null
+    kalenderId?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type DudiIndicatorUpdateInput = {
+    no?: IntFieldUpdateOperationsInput | number
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
   }
 
   export type CoordinateWhereInput = {
