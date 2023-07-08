@@ -423,6 +423,7 @@ exports.Prisma.TeacherScalarFieldEnum = {
 exports.Prisma.TeachingScalarFieldEnum = {
   id: 'id',
   refId: 'refId',
+  level: 'level',
   hours: 'hours',
   semester: 'semester',
   teacherId: 'teacherId',

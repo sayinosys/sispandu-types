@@ -696,6 +696,7 @@ model Teaching {
   id           String      @id @default(auto()) @map("_id") @db.ObjectId
   ref          Schedule    @relation(fields: [refId], references: [id])
   refId        String      @db.ObjectId
+  level        Int
   hours        Int
   semester     Semester
   teacher      Teacher     @relation(fields: [teacherId], references: [id])
@@ -708,7 +709,7 @@ model Teaching {
   tracker      Tracker[]
   tDevice      TDevice[]
 
-  @@unique([semester, refId, teacherId])
+  @@unique([level, semester, refId, teacherId])
 }
 
 model Link {

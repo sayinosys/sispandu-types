@@ -626,6 +626,7 @@ export type Schedule = {
 export type Teaching = {
   id: string
   refId: string
+  level: number
   hours: number
   semester: Semester
   teacherId: string
@@ -28388,16 +28389,19 @@ export namespace Prisma {
   }
 
   export type TeachingAvgAggregateOutputType = {
+    level: number | null
     hours: number | null
   }
 
   export type TeachingSumAggregateOutputType = {
+    level: number | null
     hours: number | null
   }
 
   export type TeachingMinAggregateOutputType = {
     id: string | null
     refId: string | null
+    level: number | null
     hours: number | null
     semester: Semester | null
     teacherId: string | null
@@ -28407,6 +28411,7 @@ export namespace Prisma {
   export type TeachingMaxAggregateOutputType = {
     id: string | null
     refId: string | null
+    level: number | null
     hours: number | null
     semester: Semester | null
     teacherId: string | null
@@ -28416,6 +28421,7 @@ export namespace Prisma {
   export type TeachingCountAggregateOutputType = {
     id: number
     refId: number
+    level: number
     hours: number
     semester: number
     teacherId: number
@@ -28427,16 +28433,19 @@ export namespace Prisma {
 
 
   export type TeachingAvgAggregateInputType = {
+    level?: true
     hours?: true
   }
 
   export type TeachingSumAggregateInputType = {
+    level?: true
     hours?: true
   }
 
   export type TeachingMinAggregateInputType = {
     id?: true
     refId?: true
+    level?: true
     hours?: true
     semester?: true
     teacherId?: true
@@ -28446,6 +28455,7 @@ export namespace Prisma {
   export type TeachingMaxAggregateInputType = {
     id?: true
     refId?: true
+    level?: true
     hours?: true
     semester?: true
     teacherId?: true
@@ -28455,6 +28465,7 @@ export namespace Prisma {
   export type TeachingCountAggregateInputType = {
     id?: true
     refId?: true
+    level?: true
     hours?: true
     semester?: true
     teacherId?: true
@@ -28554,6 +28565,7 @@ export namespace Prisma {
   export type TeachingGroupByOutputType = {
     id: string
     refId: string
+    level: number
     hours: number
     semester: Semester
     teacherId: string
@@ -28584,6 +28596,7 @@ export namespace Prisma {
   export type TeachingSelect = {
     id?: boolean
     refId?: boolean
+    level?: boolean
     hours?: boolean
     semester?: boolean
     teacherId?: boolean
@@ -44992,6 +45005,7 @@ export namespace Prisma {
   export const TeachingScalarFieldEnum: {
     id: 'id',
     refId: 'refId',
+    level: 'level',
     hours: 'hours',
     semester: 'semester',
     teacherId: 'teacherId',
@@ -46527,6 +46541,7 @@ export namespace Prisma {
     NOT?: Enumerable<TeachingWhereInput>
     id?: StringFilter | string
     refId?: StringFilter | string
+    level?: IntFilter | number
     hours?: IntFilter | number
     semester?: EnumSemesterFilter | Semester
     teacherId?: StringFilter | string
@@ -46544,6 +46559,7 @@ export namespace Prisma {
   export type TeachingOrderByWithRelationInput = {
     id?: SortOrder
     refId?: SortOrder
+    level?: SortOrder
     hours?: SortOrder
     semester?: SortOrder
     teacherId?: SortOrder
@@ -46560,12 +46576,13 @@ export namespace Prisma {
 
   export type TeachingWhereUniqueInput = {
     id?: string
-    semester_refId_teacherId?: TeachingSemesterRefIdTeacherIdCompoundUniqueInput
+    level_semester_refId_teacherId?: TeachingLevelSemesterRefIdTeacherIdCompoundUniqueInput
   }
 
   export type TeachingOrderByWithAggregationInput = {
     id?: SortOrder
     refId?: SortOrder
+    level?: SortOrder
     hours?: SortOrder
     semester?: SortOrder
     teacherId?: SortOrder
@@ -46585,6 +46602,7 @@ export namespace Prisma {
     NOT?: Enumerable<TeachingScalarWhereWithAggregatesInput>
     id?: StringWithAggregatesFilter | string
     refId?: StringWithAggregatesFilter | string
+    level?: IntWithAggregatesFilter | number
     hours?: IntWithAggregatesFilter | number
     semester?: EnumSemesterWithAggregatesFilter | Semester
     teacherId?: StringWithAggregatesFilter | string
@@ -49326,6 +49344,7 @@ export namespace Prisma {
 
   export type TeachingCreateInput = {
     id?: string
+    level: number
     hours: number
     semester: Semester
     disable?: boolean
@@ -49340,6 +49359,7 @@ export namespace Prisma {
   export type TeachingUncheckedCreateInput = {
     id?: string
     refId: string
+    level: number
     hours: number
     semester: Semester
     teacherId: string
@@ -49353,6 +49373,7 @@ export namespace Prisma {
   }
 
   export type TeachingUpdateInput = {
+    level?: IntFieldUpdateOperationsInput | number
     hours?: IntFieldUpdateOperationsInput | number
     semester?: EnumSemesterFieldUpdateOperationsInput | Semester
     disable?: BoolFieldUpdateOperationsInput | boolean
@@ -49366,6 +49387,7 @@ export namespace Prisma {
 
   export type TeachingUncheckedUpdateInput = {
     refId?: StringFieldUpdateOperationsInput | string
+    level?: IntFieldUpdateOperationsInput | number
     hours?: IntFieldUpdateOperationsInput | number
     semester?: EnumSemesterFieldUpdateOperationsInput | Semester
     teacherId?: StringFieldUpdateOperationsInput | string
@@ -49381,6 +49403,7 @@ export namespace Prisma {
   export type TeachingCreateManyInput = {
     id?: string
     refId: string
+    level: number
     hours: number
     semester: Semester
     teacherId: string
@@ -49390,6 +49413,7 @@ export namespace Prisma {
   }
 
   export type TeachingUpdateManyMutationInput = {
+    level?: IntFieldUpdateOperationsInput | number
     hours?: IntFieldUpdateOperationsInput | number
     semester?: EnumSemesterFieldUpdateOperationsInput | Semester
     disable?: BoolFieldUpdateOperationsInput | boolean
@@ -49397,6 +49421,7 @@ export namespace Prisma {
 
   export type TeachingUncheckedUpdateManyInput = {
     refId?: StringFieldUpdateOperationsInput | string
+    level?: IntFieldUpdateOperationsInput | number
     hours?: IntFieldUpdateOperationsInput | number
     semester?: EnumSemesterFieldUpdateOperationsInput | Semester
     teacherId?: StringFieldUpdateOperationsInput | string
@@ -52377,7 +52402,8 @@ export namespace Prisma {
     not?: NestedEnumSemesterFilter | Semester
   }
 
-  export type TeachingSemesterRefIdTeacherIdCompoundUniqueInput = {
+  export type TeachingLevelSemesterRefIdTeacherIdCompoundUniqueInput = {
+    level: number
     semester: Semester
     refId: string
     teacherId: string
@@ -52386,6 +52412,7 @@ export namespace Prisma {
   export type TeachingCountOrderByAggregateInput = {
     id?: SortOrder
     refId?: SortOrder
+    level?: SortOrder
     hours?: SortOrder
     semester?: SortOrder
     teacherId?: SortOrder
@@ -52395,12 +52422,14 @@ export namespace Prisma {
   }
 
   export type TeachingAvgOrderByAggregateInput = {
+    level?: SortOrder
     hours?: SortOrder
   }
 
   export type TeachingMaxOrderByAggregateInput = {
     id?: SortOrder
     refId?: SortOrder
+    level?: SortOrder
     hours?: SortOrder
     semester?: SortOrder
     teacherId?: SortOrder
@@ -52410,6 +52439,7 @@ export namespace Prisma {
   export type TeachingMinOrderByAggregateInput = {
     id?: SortOrder
     refId?: SortOrder
+    level?: SortOrder
     hours?: SortOrder
     semester?: SortOrder
     teacherId?: SortOrder
@@ -52417,6 +52447,7 @@ export namespace Prisma {
   }
 
   export type TeachingSumOrderByAggregateInput = {
+    level?: SortOrder
     hours?: SortOrder
   }
 
@@ -60465,6 +60496,7 @@ export namespace Prisma {
 
   export type TeachingCreateWithoutTrackerInput = {
     id?: string
+    level: number
     hours: number
     semester: Semester
     disable?: boolean
@@ -60478,6 +60510,7 @@ export namespace Prisma {
   export type TeachingUncheckedCreateWithoutTrackerInput = {
     id?: string
     refId: string
+    level: number
     hours: number
     semester: Semester
     teacherId: string
@@ -61143,6 +61176,7 @@ export namespace Prisma {
   }
 
   export type TeachingUpdateWithoutTrackerInput = {
+    level?: IntFieldUpdateOperationsInput | number
     hours?: IntFieldUpdateOperationsInput | number
     semester?: EnumSemesterFieldUpdateOperationsInput | Semester
     disable?: BoolFieldUpdateOperationsInput | boolean
@@ -61155,6 +61189,7 @@ export namespace Prisma {
 
   export type TeachingUncheckedUpdateWithoutTrackerInput = {
     refId?: StringFieldUpdateOperationsInput | string
+    level?: IntFieldUpdateOperationsInput | number
     hours?: IntFieldUpdateOperationsInput | number
     semester?: EnumSemesterFieldUpdateOperationsInput | Semester
     teacherId?: StringFieldUpdateOperationsInput | string
@@ -62895,6 +62930,7 @@ export namespace Prisma {
 
   export type TeachingCreateWithoutElemenInput = {
     id?: string
+    level: number
     hours: number
     semester: Semester
     disable?: boolean
@@ -62908,6 +62944,7 @@ export namespace Prisma {
   export type TeachingUncheckedCreateWithoutElemenInput = {
     id?: string
     refId: string
+    level: number
     hours: number
     semester: Semester
     teacherId: string
@@ -63100,6 +63137,7 @@ export namespace Prisma {
     NOT?: Enumerable<TeachingScalarWhereInput>
     id?: StringFilter | string
     refId?: StringFilter | string
+    level?: IntFilter | number
     hours?: IntFilter | number
     semester?: EnumSemesterFilter | Semester
     teacherId?: StringFilter | string
@@ -67230,6 +67268,7 @@ export namespace Prisma {
 
   export type TeachingCreateWithoutTeacherInput = {
     id?: string
+    level: number
     hours: number
     semester: Semester
     disable?: boolean
@@ -67243,6 +67282,7 @@ export namespace Prisma {
   export type TeachingUncheckedCreateWithoutTeacherInput = {
     id?: string
     refId: string
+    level: number
     hours: number
     semester: Semester
     classRoomIds?: TeachingCreateclassRoomIdsInput | Enumerable<string>
@@ -67701,6 +67741,7 @@ export namespace Prisma {
 
   export type TeachingCreateWithoutClassRoomInput = {
     id?: string
+    level: number
     hours: number
     semester: Semester
     disable?: boolean
@@ -67714,6 +67755,7 @@ export namespace Prisma {
   export type TeachingUncheckedCreateWithoutClassRoomInput = {
     id?: string
     refId: string
+    level: number
     hours: number
     semester: Semester
     teacherId: string
@@ -68687,6 +68729,7 @@ export namespace Prisma {
 
   export type TeachingCreateWithoutRefInput = {
     id?: string
+    level: number
     hours: number
     semester: Semester
     disable?: boolean
@@ -68699,6 +68742,7 @@ export namespace Prisma {
 
   export type TeachingUncheckedCreateWithoutRefInput = {
     id?: string
+    level: number
     hours: number
     semester: Semester
     teacherId: string
@@ -71260,6 +71304,7 @@ export namespace Prisma {
 
   export type TeachingCreateWithoutTDeviceInput = {
     id?: string
+    level: number
     hours: number
     semester: Semester
     disable?: boolean
@@ -71273,6 +71318,7 @@ export namespace Prisma {
   export type TeachingUncheckedCreateWithoutTDeviceInput = {
     id?: string
     refId: string
+    level: number
     hours: number
     semester: Semester
     teacherId: string
@@ -71696,6 +71742,7 @@ export namespace Prisma {
   }
 
   export type TeachingUpdateWithoutTDeviceInput = {
+    level?: IntFieldUpdateOperationsInput | number
     hours?: IntFieldUpdateOperationsInput | number
     semester?: EnumSemesterFieldUpdateOperationsInput | Semester
     disable?: BoolFieldUpdateOperationsInput | boolean
@@ -71708,6 +71755,7 @@ export namespace Prisma {
 
   export type TeachingUncheckedUpdateWithoutTDeviceInput = {
     refId?: StringFieldUpdateOperationsInput | string
+    level?: IntFieldUpdateOperationsInput | number
     hours?: IntFieldUpdateOperationsInput | number
     semester?: EnumSemesterFieldUpdateOperationsInput | Semester
     teacherId?: StringFieldUpdateOperationsInput | string
@@ -74051,6 +74099,7 @@ export namespace Prisma {
   }
 
   export type TeachingUpdateWithoutElemenInput = {
+    level?: IntFieldUpdateOperationsInput | number
     hours?: IntFieldUpdateOperationsInput | number
     semester?: EnumSemesterFieldUpdateOperationsInput | Semester
     disable?: BoolFieldUpdateOperationsInput | boolean
@@ -74063,6 +74112,7 @@ export namespace Prisma {
 
   export type TeachingUncheckedUpdateWithoutElemenInput = {
     refId?: StringFieldUpdateOperationsInput | string
+    level?: IntFieldUpdateOperationsInput | number
     hours?: IntFieldUpdateOperationsInput | number
     semester?: EnumSemesterFieldUpdateOperationsInput | Semester
     teacherId?: StringFieldUpdateOperationsInput | string
@@ -74076,6 +74126,7 @@ export namespace Prisma {
 
   export type TeachingUncheckedUpdateManyWithoutScheduleClassInput = {
     refId?: StringFieldUpdateOperationsInput | string
+    level?: IntFieldUpdateOperationsInput | number
     hours?: IntFieldUpdateOperationsInput | number
     semester?: EnumSemesterFieldUpdateOperationsInput | Semester
     teacherId?: StringFieldUpdateOperationsInput | string
@@ -76002,6 +76053,7 @@ export namespace Prisma {
   export type TeachingCreateManyTeacherInput = {
     id?: string
     refId: string
+    level: number
     hours: number
     semester: Semester
     classRoomIds?: TeachingCreateclassRoomIdsInput | Enumerable<string>
@@ -76132,6 +76184,7 @@ export namespace Prisma {
   }
 
   export type TeachingUpdateWithoutTeacherInput = {
+    level?: IntFieldUpdateOperationsInput | number
     hours?: IntFieldUpdateOperationsInput | number
     semester?: EnumSemesterFieldUpdateOperationsInput | Semester
     disable?: BoolFieldUpdateOperationsInput | boolean
@@ -76144,6 +76197,7 @@ export namespace Prisma {
 
   export type TeachingUncheckedUpdateWithoutTeacherInput = {
     refId?: StringFieldUpdateOperationsInput | string
+    level?: IntFieldUpdateOperationsInput | number
     hours?: IntFieldUpdateOperationsInput | number
     semester?: EnumSemesterFieldUpdateOperationsInput | Semester
     classRoomIds?: TeachingUpdateclassRoomIdsInput | Enumerable<string>
@@ -76157,6 +76211,7 @@ export namespace Prisma {
 
   export type TeachingUncheckedUpdateManyWithoutTeachingInput = {
     refId?: StringFieldUpdateOperationsInput | string
+    level?: IntFieldUpdateOperationsInput | number
     hours?: IntFieldUpdateOperationsInput | number
     semester?: EnumSemesterFieldUpdateOperationsInput | Semester
     classRoomIds?: TeachingUpdateclassRoomIdsInput | Enumerable<string>
@@ -76297,6 +76352,7 @@ export namespace Prisma {
   }
 
   export type TeachingUpdateWithoutClassRoomInput = {
+    level?: IntFieldUpdateOperationsInput | number
     hours?: IntFieldUpdateOperationsInput | number
     semester?: EnumSemesterFieldUpdateOperationsInput | Semester
     disable?: BoolFieldUpdateOperationsInput | boolean
@@ -76309,6 +76365,7 @@ export namespace Prisma {
 
   export type TeachingUncheckedUpdateWithoutClassRoomInput = {
     refId?: StringFieldUpdateOperationsInput | string
+    level?: IntFieldUpdateOperationsInput | number
     hours?: IntFieldUpdateOperationsInput | number
     semester?: EnumSemesterFieldUpdateOperationsInput | Semester
     teacherId?: StringFieldUpdateOperationsInput | string
@@ -76520,6 +76577,7 @@ export namespace Prisma {
 
   export type TeachingCreateManyRefInput = {
     id?: string
+    level: number
     hours: number
     semester: Semester
     teacherId: string
@@ -76577,6 +76635,7 @@ export namespace Prisma {
   }
 
   export type TeachingUpdateWithoutRefInput = {
+    level?: IntFieldUpdateOperationsInput | number
     hours?: IntFieldUpdateOperationsInput | number
     semester?: EnumSemesterFieldUpdateOperationsInput | Semester
     disable?: BoolFieldUpdateOperationsInput | boolean
@@ -76588,6 +76647,7 @@ export namespace Prisma {
   }
 
   export type TeachingUncheckedUpdateWithoutRefInput = {
+    level?: IntFieldUpdateOperationsInput | number
     hours?: IntFieldUpdateOperationsInput | number
     semester?: EnumSemesterFieldUpdateOperationsInput | Semester
     teacherId?: StringFieldUpdateOperationsInput | string
