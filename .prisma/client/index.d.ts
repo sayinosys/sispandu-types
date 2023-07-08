@@ -323,6 +323,7 @@ export type Tracker = {
   perangkatId: string | null
   kalenderId: string | null
   dudiId: string | null
+  kkniId: string | null
 }
 
 /**
@@ -830,6 +831,7 @@ export type Dudi = {
   collabs: string[]
   timework: DudiTimeWork
   disable: boolean
+  kkniId: string | null
 }
 
 /**
@@ -843,6 +845,20 @@ export type DudiLearning = {
   code: string
   name: string
   indicator: DudiIndicator[]
+}
+
+/**
+ * Model Kkni
+ * 
+ */
+export type Kkni = {
+  id: string
+  konsentrasiId: string
+  no: number
+  code: string
+  name: string
+  description: string | null
+  disable: boolean
 }
 
 
@@ -970,7 +986,8 @@ export const PointTracker: {
   a_asesmen: 'a_asesmen',
   perangkat: 'perangkat',
   kalender: 'kalender',
-  dudi: 'dudi'
+  dudi: 'dudi',
+  kkni: 'kkni'
 };
 
 export type PointTracker = (typeof PointTracker)[keyof typeof PointTracker]
@@ -1489,6 +1506,16 @@ export class PrismaClient<
     * ```
     */
   get dudiLearning(): Prisma.DudiLearningDelegate<GlobalReject>;
+
+  /**
+   * `prisma.kkni`: Exposes CRUD operations for the **Kkni** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Kknis
+    * const kknis = await prisma.kkni.findMany()
+    * ```
+    */
+  get kkni(): Prisma.KkniDelegate<GlobalReject>;
 }
 
 export namespace Prisma {
@@ -1992,7 +2019,8 @@ export namespace Prisma {
     TDeviceData: 'TDeviceData',
     Calendar: 'Calendar',
     Dudi: 'Dudi',
-    DudiLearning: 'DudiLearning'
+    DudiLearning: 'DudiLearning',
+    Kkni: 'Kkni'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -2465,6 +2493,7 @@ export namespace Prisma {
     tracker: number
     mapel: number
     dudi: number
+    kkni: number
   }
 
   export type KonsentrasiKeahlianCountOutputTypeSelect = {
@@ -2474,6 +2503,7 @@ export namespace Prisma {
     tracker?: boolean
     mapel?: boolean
     dudi?: boolean
+    kkni?: boolean
   }
 
   export type KonsentrasiKeahlianCountOutputTypeGetPayload<S extends boolean | null | undefined | KonsentrasiKeahlianCountOutputTypeArgs> =
@@ -3325,6 +3355,51 @@ export namespace Prisma {
      * Select specific fields to fetch from the DudiCountOutputType
      */
     select?: DudiCountOutputTypeSelect | null
+  }
+
+
+
+  /**
+   * Count Type KkniCountOutputType
+   */
+
+
+  export type KkniCountOutputType = {
+    dudi: number
+    tracker: number
+  }
+
+  export type KkniCountOutputTypeSelect = {
+    dudi?: boolean
+    tracker?: boolean
+  }
+
+  export type KkniCountOutputTypeGetPayload<S extends boolean | null | undefined | KkniCountOutputTypeArgs> =
+    S extends { select: any, include: any } ? 'Please either choose `select` or `include`' :
+    S extends true ? KkniCountOutputType :
+    S extends undefined ? never :
+    S extends { include: any } & (KkniCountOutputTypeArgs)
+    ? KkniCountOutputType 
+    : S extends { select: any } & (KkniCountOutputTypeArgs)
+      ? {
+    [P in TruthyKeys<S['select']>]:
+    P extends keyof KkniCountOutputType ? KkniCountOutputType[P] : never
+  } 
+      : KkniCountOutputType
+
+
+
+
+  // Custom InputTypes
+
+  /**
+   * KkniCountOutputType without action
+   */
+  export type KkniCountOutputTypeArgs = {
+    /**
+     * Select specific fields to fetch from the KkniCountOutputType
+     */
+    select?: KkniCountOutputTypeSelect | null
   }
 
 
@@ -5933,6 +6008,7 @@ export namespace Prisma {
     perangkatId: string | null
     kalenderId: string | null
     dudiId: string | null
+    kkniId: string | null
   }
 
   export type TrackerMaxAggregateOutputType = {
@@ -5959,6 +6035,7 @@ export namespace Prisma {
     perangkatId: string | null
     kalenderId: string | null
     dudiId: string | null
+    kkniId: string | null
   }
 
   export type TrackerCountAggregateOutputType = {
@@ -5985,6 +6062,7 @@ export namespace Prisma {
     perangkatId: number
     kalenderId: number
     dudiId: number
+    kkniId: number
     _all: number
   }
 
@@ -6013,6 +6091,7 @@ export namespace Prisma {
     perangkatId?: true
     kalenderId?: true
     dudiId?: true
+    kkniId?: true
   }
 
   export type TrackerMaxAggregateInputType = {
@@ -6039,6 +6118,7 @@ export namespace Prisma {
     perangkatId?: true
     kalenderId?: true
     dudiId?: true
+    kkniId?: true
   }
 
   export type TrackerCountAggregateInputType = {
@@ -6065,6 +6145,7 @@ export namespace Prisma {
     perangkatId?: true
     kalenderId?: true
     dudiId?: true
+    kkniId?: true
     _all?: true
   }
 
@@ -6165,6 +6246,7 @@ export namespace Prisma {
     perangkatId: string | null
     kalenderId: string | null
     dudiId: string | null
+    kkniId: string | null
     _count: TrackerCountAggregateOutputType | null
     _min: TrackerMinAggregateOutputType | null
     _max: TrackerMaxAggregateOutputType | null
@@ -6208,6 +6290,7 @@ export namespace Prisma {
     perangkatId?: boolean
     kalenderId?: boolean
     dudiId?: boolean
+    kkniId?: boolean
     user?: boolean | UserArgs
     ref?: boolean | InstansiArgs
     instansi?: boolean | InstansiArgs
@@ -6227,6 +6310,7 @@ export namespace Prisma {
     perangkat?: boolean | TDeviceArgs
     kalender?: boolean | CalendarArgs
     dudi?: boolean | DudiArgs
+    kkni?: boolean | KkniArgs
   }
 
 
@@ -6250,6 +6334,7 @@ export namespace Prisma {
     perangkat?: boolean | TDeviceArgs
     kalender?: boolean | CalendarArgs
     dudi?: boolean | DudiArgs
+    kkni?: boolean | KkniArgs
   }
 
   export type TrackerGetPayload<S extends boolean | null | undefined | TrackerArgs> =
@@ -6277,7 +6362,8 @@ export namespace Prisma {
         P extends 'tujuan' ? ObjectiveGetPayload<S['include'][P]> | null :
         P extends 'perangkat' ? TDeviceGetPayload<S['include'][P]> | null :
         P extends 'kalender' ? CalendarGetPayload<S['include'][P]> | null :
-        P extends 'dudi' ? DudiGetPayload<S['include'][P]> | null :  never
+        P extends 'dudi' ? DudiGetPayload<S['include'][P]> | null :
+        P extends 'kkni' ? KkniGetPayload<S['include'][P]> | null :  never
   } 
     : S extends { select: any } & (TrackerArgs | TrackerFindManyArgs)
       ? {
@@ -6300,7 +6386,8 @@ export namespace Prisma {
         P extends 'tujuan' ? ObjectiveGetPayload<S['select'][P]> | null :
         P extends 'perangkat' ? TDeviceGetPayload<S['select'][P]> | null :
         P extends 'kalender' ? CalendarGetPayload<S['select'][P]> | null :
-        P extends 'dudi' ? DudiGetPayload<S['select'][P]> | null :  P extends keyof Tracker ? Tracker[P] : never
+        P extends 'dudi' ? DudiGetPayload<S['select'][P]> | null :
+        P extends 'kkni' ? KkniGetPayload<S['select'][P]> | null :  P extends keyof Tracker ? Tracker[P] : never
   } 
       : Tracker
 
@@ -6736,6 +6823,8 @@ export namespace Prisma {
     kalender<T extends CalendarArgs= {}>(args?: Subset<T, CalendarArgs>): Prisma__CalendarClient<CalendarGetPayload<T> | Null>;
 
     dudi<T extends DudiArgs= {}>(args?: Subset<T, DudiArgs>): Prisma__DudiClient<DudiGetPayload<T> | Null>;
+
+    kkni<T extends KkniArgs= {}>(args?: Subset<T, KkniArgs>): Prisma__KkniClient<KkniGetPayload<T> | Null>;
 
     private get _document();
     /**
@@ -14191,6 +14280,7 @@ export namespace Prisma {
     tracker?: boolean | KonsentrasiKeahlian$trackerArgs
     mapel?: boolean | KonsentrasiKeahlian$mapelArgs
     dudi?: boolean | KonsentrasiKeahlian$dudiArgs
+    kkni?: boolean | KonsentrasiKeahlian$kkniArgs
     _count?: boolean | KonsentrasiKeahlianCountOutputTypeArgs
   }
 
@@ -14203,6 +14293,7 @@ export namespace Prisma {
     tracker?: boolean | KonsentrasiKeahlian$trackerArgs
     mapel?: boolean | KonsentrasiKeahlian$mapelArgs
     dudi?: boolean | KonsentrasiKeahlian$dudiArgs
+    kkni?: boolean | KonsentrasiKeahlian$kkniArgs
     _count?: boolean | KonsentrasiKeahlianCountOutputTypeArgs
   }
 
@@ -14220,6 +14311,7 @@ export namespace Prisma {
         P extends 'tracker' ? Array < TrackerGetPayload<S['include'][P]>>  :
         P extends 'mapel' ? Array < MataPelajaranGetPayload<S['include'][P]>>  :
         P extends 'dudi' ? Array < DudiGetPayload<S['include'][P]>>  :
+        P extends 'kkni' ? Array < KkniGetPayload<S['include'][P]>>  :
         P extends '_count' ? KonsentrasiKeahlianCountOutputTypeGetPayload<S['include'][P]> :  never
   } 
     : S extends { select: any } & (KonsentrasiKeahlianArgs | KonsentrasiKeahlianFindManyArgs)
@@ -14232,6 +14324,7 @@ export namespace Prisma {
         P extends 'tracker' ? Array < TrackerGetPayload<S['select'][P]>>  :
         P extends 'mapel' ? Array < MataPelajaranGetPayload<S['select'][P]>>  :
         P extends 'dudi' ? Array < DudiGetPayload<S['select'][P]>>  :
+        P extends 'kkni' ? Array < KkniGetPayload<S['select'][P]>>  :
         P extends '_count' ? KonsentrasiKeahlianCountOutputTypeGetPayload<S['select'][P]> :  P extends keyof KonsentrasiKeahlian ? KonsentrasiKeahlian[P] : never
   } 
       : KonsentrasiKeahlian
@@ -14644,6 +14737,8 @@ export namespace Prisma {
     mapel<T extends KonsentrasiKeahlian$mapelArgs= {}>(args?: Subset<T, KonsentrasiKeahlian$mapelArgs>): Prisma.PrismaPromise<Array<MataPelajaranGetPayload<T>>| Null>;
 
     dudi<T extends KonsentrasiKeahlian$dudiArgs= {}>(args?: Subset<T, KonsentrasiKeahlian$dudiArgs>): Prisma.PrismaPromise<Array<DudiGetPayload<T>>| Null>;
+
+    kkni<T extends KonsentrasiKeahlian$kkniArgs= {}>(args?: Subset<T, KonsentrasiKeahlian$kkniArgs>): Prisma.PrismaPromise<Array<KkniGetPayload<T>>| Null>;
 
     private get _document();
     /**
@@ -15152,6 +15247,27 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: Enumerable<DudiScalarFieldEnum>
+  }
+
+
+  /**
+   * KonsentrasiKeahlian.kkni
+   */
+  export type KonsentrasiKeahlian$kkniArgs = {
+    /**
+     * Select specific fields to fetch from the Kkni
+     */
+    select?: KkniSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: KkniInclude | null
+    where?: KkniWhereInput
+    orderBy?: Enumerable<KkniOrderByWithRelationInput>
+    cursor?: KkniWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: Enumerable<KkniScalarFieldEnum>
   }
 
 
@@ -42483,6 +42599,7 @@ export namespace Prisma {
     instansiId: string | null
     majorId: string | null
     disable: boolean | null
+    kkniId: string | null
   }
 
   export type DudiMaxAggregateOutputType = {
@@ -42492,6 +42609,7 @@ export namespace Prisma {
     instansiId: string | null
     majorId: string | null
     disable: boolean | null
+    kkniId: string | null
   }
 
   export type DudiCountAggregateOutputType = {
@@ -42502,6 +42620,7 @@ export namespace Prisma {
     majorId: number
     collabs: number
     disable: number
+    kkniId: number
     _all: number
   }
 
@@ -42513,6 +42632,7 @@ export namespace Prisma {
     instansiId?: true
     majorId?: true
     disable?: true
+    kkniId?: true
   }
 
   export type DudiMaxAggregateInputType = {
@@ -42522,6 +42642,7 @@ export namespace Prisma {
     instansiId?: true
     majorId?: true
     disable?: true
+    kkniId?: true
   }
 
   export type DudiCountAggregateInputType = {
@@ -42532,6 +42653,7 @@ export namespace Prisma {
     majorId?: true
     collabs?: true
     disable?: true
+    kkniId?: true
     _all?: true
   }
 
@@ -42616,6 +42738,7 @@ export namespace Prisma {
     majorId: string
     collabs: string[]
     disable: boolean
+    kkniId: string | null
     _count: DudiCountAggregateOutputType | null
     _min: DudiMinAggregateOutputType | null
     _max: DudiMaxAggregateOutputType | null
@@ -42646,10 +42769,12 @@ export namespace Prisma {
     collabs?: boolean
     timework?: boolean | DudiTimeWorkArgs
     disable?: boolean
+    kkniId?: boolean
     instansi?: boolean | InstansiArgs
     major?: boolean | KonsentrasiKeahlianArgs
     learning?: boolean | Dudi$learningArgs
     tracker?: boolean | Dudi$trackerArgs
+    kkni?: boolean | KkniArgs
     _count?: boolean | DudiCountOutputTypeArgs
   }
 
@@ -42659,6 +42784,7 @@ export namespace Prisma {
     major?: boolean | KonsentrasiKeahlianArgs
     learning?: boolean | Dudi$learningArgs
     tracker?: boolean | Dudi$trackerArgs
+    kkni?: boolean | KkniArgs
     _count?: boolean | DudiCountOutputTypeArgs
   }
 
@@ -42673,6 +42799,7 @@ export namespace Prisma {
         P extends 'major' ? KonsentrasiKeahlianGetPayload<S['include'][P]> :
         P extends 'learning' ? Array < DudiLearningGetPayload<S['include'][P]>>  :
         P extends 'tracker' ? Array < TrackerGetPayload<S['include'][P]>>  :
+        P extends 'kkni' ? KkniGetPayload<S['include'][P]> | null :
         P extends '_count' ? DudiCountOutputTypeGetPayload<S['include'][P]> :  never
   } 
     : S extends { select: any } & (DudiArgs | DudiFindManyArgs)
@@ -42685,6 +42812,7 @@ export namespace Prisma {
         P extends 'major' ? KonsentrasiKeahlianGetPayload<S['select'][P]> :
         P extends 'learning' ? Array < DudiLearningGetPayload<S['select'][P]>>  :
         P extends 'tracker' ? Array < TrackerGetPayload<S['select'][P]>>  :
+        P extends 'kkni' ? KkniGetPayload<S['select'][P]> | null :
         P extends '_count' ? DudiCountOutputTypeGetPayload<S['select'][P]> :  P extends keyof Dudi ? Dudi[P] : never
   } 
       : Dudi
@@ -43097,6 +43225,8 @@ export namespace Prisma {
     learning<T extends Dudi$learningArgs= {}>(args?: Subset<T, Dudi$learningArgs>): Prisma.PrismaPromise<Array<DudiLearningGetPayload<T>>| Null>;
 
     tracker<T extends Dudi$trackerArgs= {}>(args?: Subset<T, Dudi$trackerArgs>): Prisma.PrismaPromise<Array<TrackerGetPayload<T>>| Null>;
+
+    kkni<T extends KkniArgs= {}>(args?: Subset<T, KkniArgs>): Prisma__KkniClient<KkniGetPayload<T> | Null>;
 
     private get _document();
     /**
@@ -44566,6 +44696,1101 @@ export namespace Prisma {
 
 
   /**
+   * Model Kkni
+   */
+
+
+  export type AggregateKkni = {
+    _count: KkniCountAggregateOutputType | null
+    _avg: KkniAvgAggregateOutputType | null
+    _sum: KkniSumAggregateOutputType | null
+    _min: KkniMinAggregateOutputType | null
+    _max: KkniMaxAggregateOutputType | null
+  }
+
+  export type KkniAvgAggregateOutputType = {
+    no: number | null
+  }
+
+  export type KkniSumAggregateOutputType = {
+    no: number | null
+  }
+
+  export type KkniMinAggregateOutputType = {
+    id: string | null
+    konsentrasiId: string | null
+    no: number | null
+    code: string | null
+    name: string | null
+    description: string | null
+    disable: boolean | null
+  }
+
+  export type KkniMaxAggregateOutputType = {
+    id: string | null
+    konsentrasiId: string | null
+    no: number | null
+    code: string | null
+    name: string | null
+    description: string | null
+    disable: boolean | null
+  }
+
+  export type KkniCountAggregateOutputType = {
+    id: number
+    konsentrasiId: number
+    no: number
+    code: number
+    name: number
+    description: number
+    disable: number
+    _all: number
+  }
+
+
+  export type KkniAvgAggregateInputType = {
+    no?: true
+  }
+
+  export type KkniSumAggregateInputType = {
+    no?: true
+  }
+
+  export type KkniMinAggregateInputType = {
+    id?: true
+    konsentrasiId?: true
+    no?: true
+    code?: true
+    name?: true
+    description?: true
+    disable?: true
+  }
+
+  export type KkniMaxAggregateInputType = {
+    id?: true
+    konsentrasiId?: true
+    no?: true
+    code?: true
+    name?: true
+    description?: true
+    disable?: true
+  }
+
+  export type KkniCountAggregateInputType = {
+    id?: true
+    konsentrasiId?: true
+    no?: true
+    code?: true
+    name?: true
+    description?: true
+    disable?: true
+    _all?: true
+  }
+
+  export type KkniAggregateArgs = {
+    /**
+     * Filter which Kkni to aggregate.
+     */
+    where?: KkniWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Kknis to fetch.
+     */
+    orderBy?: Enumerable<KkniOrderByWithRelationInput>
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: KkniWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Kknis from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Kknis.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Kknis
+    **/
+    _count?: true | KkniCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: KkniAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: KkniSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: KkniMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: KkniMaxAggregateInputType
+  }
+
+  export type GetKkniAggregateType<T extends KkniAggregateArgs> = {
+        [P in keyof T & keyof AggregateKkni]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateKkni[P]>
+      : GetScalarType<T[P], AggregateKkni[P]>
+  }
+
+
+
+
+  export type KkniGroupByArgs = {
+    where?: KkniWhereInput
+    orderBy?: Enumerable<KkniOrderByWithAggregationInput>
+    by: KkniScalarFieldEnum[]
+    having?: KkniScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: KkniCountAggregateInputType | true
+    _avg?: KkniAvgAggregateInputType
+    _sum?: KkniSumAggregateInputType
+    _min?: KkniMinAggregateInputType
+    _max?: KkniMaxAggregateInputType
+  }
+
+
+  export type KkniGroupByOutputType = {
+    id: string
+    konsentrasiId: string
+    no: number
+    code: string
+    name: string
+    description: string | null
+    disable: boolean
+    _count: KkniCountAggregateOutputType | null
+    _avg: KkniAvgAggregateOutputType | null
+    _sum: KkniSumAggregateOutputType | null
+    _min: KkniMinAggregateOutputType | null
+    _max: KkniMaxAggregateOutputType | null
+  }
+
+  type GetKkniGroupByPayload<T extends KkniGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickArray<KkniGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof KkniGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], KkniGroupByOutputType[P]>
+            : GetScalarType<T[P], KkniGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type KkniSelect = {
+    id?: boolean
+    konsentrasiId?: boolean
+    no?: boolean
+    code?: boolean
+    name?: boolean
+    description?: boolean
+    disable?: boolean
+    konsentrasi?: boolean | KonsentrasiKeahlianArgs
+    dudi?: boolean | Kkni$dudiArgs
+    tracker?: boolean | Kkni$trackerArgs
+    _count?: boolean | KkniCountOutputTypeArgs
+  }
+
+
+  export type KkniInclude = {
+    konsentrasi?: boolean | KonsentrasiKeahlianArgs
+    dudi?: boolean | Kkni$dudiArgs
+    tracker?: boolean | Kkni$trackerArgs
+    _count?: boolean | KkniCountOutputTypeArgs
+  }
+
+  export type KkniGetPayload<S extends boolean | null | undefined | KkniArgs> =
+    S extends { select: any, include: any } ? 'Please either choose `select` or `include`' :
+    S extends true ? Kkni :
+    S extends undefined ? never :
+    S extends { include: any } & (KkniArgs | KkniFindManyArgs)
+    ? Kkni  & {
+    [P in TruthyKeys<S['include']>]:
+        P extends 'konsentrasi' ? KonsentrasiKeahlianGetPayload<S['include'][P]> :
+        P extends 'dudi' ? Array < DudiGetPayload<S['include'][P]>>  :
+        P extends 'tracker' ? Array < TrackerGetPayload<S['include'][P]>>  :
+        P extends '_count' ? KkniCountOutputTypeGetPayload<S['include'][P]> :  never
+  } 
+    : S extends { select: any } & (KkniArgs | KkniFindManyArgs)
+      ? {
+    [P in TruthyKeys<S['select']>]:
+        P extends 'konsentrasi' ? KonsentrasiKeahlianGetPayload<S['select'][P]> :
+        P extends 'dudi' ? Array < DudiGetPayload<S['select'][P]>>  :
+        P extends 'tracker' ? Array < TrackerGetPayload<S['select'][P]>>  :
+        P extends '_count' ? KkniCountOutputTypeGetPayload<S['select'][P]> :  P extends keyof Kkni ? Kkni[P] : never
+  } 
+      : Kkni
+
+
+  type KkniCountArgs = 
+    Omit<KkniFindManyArgs, 'select' | 'include'> & {
+      select?: KkniCountAggregateInputType | true
+    }
+
+  export interface KkniDelegate<GlobalRejectSettings extends Prisma.RejectOnNotFound | Prisma.RejectPerOperation | false | undefined> {
+
+    /**
+     * Find zero or one Kkni that matches the filter.
+     * @param {KkniFindUniqueArgs} args - Arguments to find a Kkni
+     * @example
+     * // Get one Kkni
+     * const kkni = await prisma.kkni.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findUnique<T extends KkniFindUniqueArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
+      args: SelectSubset<T, KkniFindUniqueArgs>
+    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findUnique', 'Kkni'> extends True ? Prisma__KkniClient<KkniGetPayload<T>> : Prisma__KkniClient<KkniGetPayload<T> | null, null>
+
+    /**
+     * Find one Kkni that matches the filter or throw an error  with `error.code='P2025'` 
+     *     if no matches were found.
+     * @param {KkniFindUniqueOrThrowArgs} args - Arguments to find a Kkni
+     * @example
+     * // Get one Kkni
+     * const kkni = await prisma.kkni.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findUniqueOrThrow<T extends KkniFindUniqueOrThrowArgs>(
+      args?: SelectSubset<T, KkniFindUniqueOrThrowArgs>
+    ): Prisma__KkniClient<KkniGetPayload<T>>
+
+    /**
+     * Find the first Kkni that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {KkniFindFirstArgs} args - Arguments to find a Kkni
+     * @example
+     * // Get one Kkni
+     * const kkni = await prisma.kkni.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findFirst<T extends KkniFindFirstArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
+      args?: SelectSubset<T, KkniFindFirstArgs>
+    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findFirst', 'Kkni'> extends True ? Prisma__KkniClient<KkniGetPayload<T>> : Prisma__KkniClient<KkniGetPayload<T> | null, null>
+
+    /**
+     * Find the first Kkni that matches the filter or
+     * throw `NotFoundError` if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {KkniFindFirstOrThrowArgs} args - Arguments to find a Kkni
+     * @example
+     * // Get one Kkni
+     * const kkni = await prisma.kkni.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findFirstOrThrow<T extends KkniFindFirstOrThrowArgs>(
+      args?: SelectSubset<T, KkniFindFirstOrThrowArgs>
+    ): Prisma__KkniClient<KkniGetPayload<T>>
+
+    /**
+     * Find zero or more Kknis that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {KkniFindManyArgs=} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Kknis
+     * const kknis = await prisma.kkni.findMany()
+     * 
+     * // Get first 10 Kknis
+     * const kknis = await prisma.kkni.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const kkniWithIdOnly = await prisma.kkni.findMany({ select: { id: true } })
+     * 
+    **/
+    findMany<T extends KkniFindManyArgs>(
+      args?: SelectSubset<T, KkniFindManyArgs>
+    ): Prisma.PrismaPromise<Array<KkniGetPayload<T>>>
+
+    /**
+     * Create a Kkni.
+     * @param {KkniCreateArgs} args - Arguments to create a Kkni.
+     * @example
+     * // Create one Kkni
+     * const Kkni = await prisma.kkni.create({
+     *   data: {
+     *     // ... data to create a Kkni
+     *   }
+     * })
+     * 
+    **/
+    create<T extends KkniCreateArgs>(
+      args: SelectSubset<T, KkniCreateArgs>
+    ): Prisma__KkniClient<KkniGetPayload<T>>
+
+    /**
+     * Create many Kknis.
+     *     @param {KkniCreateManyArgs} args - Arguments to create many Kknis.
+     *     @example
+     *     // Create many Kknis
+     *     const kkni = await prisma.kkni.createMany({
+     *       data: {
+     *         // ... provide data here
+     *       }
+     *     })
+     *     
+    **/
+    createMany<T extends KkniCreateManyArgs>(
+      args?: SelectSubset<T, KkniCreateManyArgs>
+    ): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Delete a Kkni.
+     * @param {KkniDeleteArgs} args - Arguments to delete one Kkni.
+     * @example
+     * // Delete one Kkni
+     * const Kkni = await prisma.kkni.delete({
+     *   where: {
+     *     // ... filter to delete one Kkni
+     *   }
+     * })
+     * 
+    **/
+    delete<T extends KkniDeleteArgs>(
+      args: SelectSubset<T, KkniDeleteArgs>
+    ): Prisma__KkniClient<KkniGetPayload<T>>
+
+    /**
+     * Update one Kkni.
+     * @param {KkniUpdateArgs} args - Arguments to update one Kkni.
+     * @example
+     * // Update one Kkni
+     * const kkni = await prisma.kkni.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+    **/
+    update<T extends KkniUpdateArgs>(
+      args: SelectSubset<T, KkniUpdateArgs>
+    ): Prisma__KkniClient<KkniGetPayload<T>>
+
+    /**
+     * Delete zero or more Kknis.
+     * @param {KkniDeleteManyArgs} args - Arguments to filter Kknis to delete.
+     * @example
+     * // Delete a few Kknis
+     * const { count } = await prisma.kkni.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+    **/
+    deleteMany<T extends KkniDeleteManyArgs>(
+      args?: SelectSubset<T, KkniDeleteManyArgs>
+    ): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Kknis.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {KkniUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Kknis
+     * const kkni = await prisma.kkni.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+    **/
+    updateMany<T extends KkniUpdateManyArgs>(
+      args: SelectSubset<T, KkniUpdateManyArgs>
+    ): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one Kkni.
+     * @param {KkniUpsertArgs} args - Arguments to update or create a Kkni.
+     * @example
+     * // Update or create a Kkni
+     * const kkni = await prisma.kkni.upsert({
+     *   create: {
+     *     // ... data to create a Kkni
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Kkni we want to update
+     *   }
+     * })
+    **/
+    upsert<T extends KkniUpsertArgs>(
+      args: SelectSubset<T, KkniUpsertArgs>
+    ): Prisma__KkniClient<KkniGetPayload<T>>
+
+    /**
+     * Find zero or more Kknis that matches the filter.
+     * @param {KkniFindRawArgs} args - Select which filters you would like to apply.
+     * @example
+     * const kkni = await prisma.kkni.findRaw({
+     *   filter: { age: { $gt: 25 } } 
+     * })
+    **/
+    findRaw(
+      args?: KkniFindRawArgs
+    ): Prisma.PrismaPromise<JsonObject>
+
+    /**
+     * Perform aggregation operations on a Kkni.
+     * @param {KkniAggregateRawArgs} args - Select which aggregations you would like to apply.
+     * @example
+     * const kkni = await prisma.kkni.aggregateRaw({
+     *   pipeline: [
+     *     { $match: { status: "registered" } },
+     *     { $group: { _id: "$country", total: { $sum: 1 } } }
+     *   ]
+     * })
+    **/
+    aggregateRaw(
+      args?: KkniAggregateRawArgs
+    ): Prisma.PrismaPromise<JsonObject>
+
+    /**
+     * Count the number of Kknis.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {KkniCountArgs} args - Arguments to filter Kknis to count.
+     * @example
+     * // Count the number of Kknis
+     * const count = await prisma.kkni.count({
+     *   where: {
+     *     // ... the filter for the Kknis we want to count
+     *   }
+     * })
+    **/
+    count<T extends KkniCountArgs>(
+      args?: Subset<T, KkniCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends _Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], KkniCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Kkni.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {KkniAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends KkniAggregateArgs>(args: Subset<T, KkniAggregateArgs>): Prisma.PrismaPromise<GetKkniAggregateType<T>>
+
+    /**
+     * Group by Kkni.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {KkniGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends KkniGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: KkniGroupByArgs['orderBy'] }
+        : { orderBy?: KkniGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends TupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, KkniGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetKkniGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Kkni.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export class Prisma__KkniClient<T, Null = never> implements Prisma.PrismaPromise<T> {
+    private readonly _dmmf;
+    private readonly _queryType;
+    private readonly _rootField;
+    private readonly _clientMethod;
+    private readonly _args;
+    private readonly _dataPath;
+    private readonly _errorFormat;
+    private readonly _measurePerformance?;
+    private _isList;
+    private _callsite;
+    private _requestPromise?;
+    readonly [Symbol.toStringTag]: 'PrismaPromise';
+    constructor(_dmmf: runtime.DMMFClass, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
+
+    konsentrasi<T extends KonsentrasiKeahlianArgs= {}>(args?: Subset<T, KonsentrasiKeahlianArgs>): Prisma__KonsentrasiKeahlianClient<KonsentrasiKeahlianGetPayload<T> | Null>;
+
+    dudi<T extends Kkni$dudiArgs= {}>(args?: Subset<T, Kkni$dudiArgs>): Prisma.PrismaPromise<Array<DudiGetPayload<T>>| Null>;
+
+    tracker<T extends Kkni$trackerArgs= {}>(args?: Subset<T, Kkni$trackerArgs>): Prisma.PrismaPromise<Array<TrackerGetPayload<T>>| Null>;
+
+    private get _document();
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): Promise<TResult1 | TResult2>;
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): Promise<T | TResult>;
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): Promise<T>;
+  }
+
+
+
+  // Custom InputTypes
+
+  /**
+   * Kkni base type for findUnique actions
+   */
+  export type KkniFindUniqueArgsBase = {
+    /**
+     * Select specific fields to fetch from the Kkni
+     */
+    select?: KkniSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: KkniInclude | null
+    /**
+     * Filter, which Kkni to fetch.
+     */
+    where: KkniWhereUniqueInput
+  }
+
+  /**
+   * Kkni findUnique
+   */
+  export interface KkniFindUniqueArgs extends KkniFindUniqueArgsBase {
+   /**
+    * Throw an Error if query returns no results
+    * @deprecated since 4.0.0: use `findUniqueOrThrow` method instead
+    */
+    rejectOnNotFound?: RejectOnNotFound
+  }
+      
+
+  /**
+   * Kkni findUniqueOrThrow
+   */
+  export type KkniFindUniqueOrThrowArgs = {
+    /**
+     * Select specific fields to fetch from the Kkni
+     */
+    select?: KkniSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: KkniInclude | null
+    /**
+     * Filter, which Kkni to fetch.
+     */
+    where: KkniWhereUniqueInput
+  }
+
+
+  /**
+   * Kkni base type for findFirst actions
+   */
+  export type KkniFindFirstArgsBase = {
+    /**
+     * Select specific fields to fetch from the Kkni
+     */
+    select?: KkniSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: KkniInclude | null
+    /**
+     * Filter, which Kkni to fetch.
+     */
+    where?: KkniWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Kknis to fetch.
+     */
+    orderBy?: Enumerable<KkniOrderByWithRelationInput>
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Kknis.
+     */
+    cursor?: KkniWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Kknis from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Kknis.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Kknis.
+     */
+    distinct?: Enumerable<KkniScalarFieldEnum>
+  }
+
+  /**
+   * Kkni findFirst
+   */
+  export interface KkniFindFirstArgs extends KkniFindFirstArgsBase {
+   /**
+    * Throw an Error if query returns no results
+    * @deprecated since 4.0.0: use `findFirstOrThrow` method instead
+    */
+    rejectOnNotFound?: RejectOnNotFound
+  }
+      
+
+  /**
+   * Kkni findFirstOrThrow
+   */
+  export type KkniFindFirstOrThrowArgs = {
+    /**
+     * Select specific fields to fetch from the Kkni
+     */
+    select?: KkniSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: KkniInclude | null
+    /**
+     * Filter, which Kkni to fetch.
+     */
+    where?: KkniWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Kknis to fetch.
+     */
+    orderBy?: Enumerable<KkniOrderByWithRelationInput>
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Kknis.
+     */
+    cursor?: KkniWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Kknis from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Kknis.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Kknis.
+     */
+    distinct?: Enumerable<KkniScalarFieldEnum>
+  }
+
+
+  /**
+   * Kkni findMany
+   */
+  export type KkniFindManyArgs = {
+    /**
+     * Select specific fields to fetch from the Kkni
+     */
+    select?: KkniSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: KkniInclude | null
+    /**
+     * Filter, which Kknis to fetch.
+     */
+    where?: KkniWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Kknis to fetch.
+     */
+    orderBy?: Enumerable<KkniOrderByWithRelationInput>
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Kknis.
+     */
+    cursor?: KkniWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Kknis from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Kknis.
+     */
+    skip?: number
+    distinct?: Enumerable<KkniScalarFieldEnum>
+  }
+
+
+  /**
+   * Kkni create
+   */
+  export type KkniCreateArgs = {
+    /**
+     * Select specific fields to fetch from the Kkni
+     */
+    select?: KkniSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: KkniInclude | null
+    /**
+     * The data needed to create a Kkni.
+     */
+    data: XOR<KkniCreateInput, KkniUncheckedCreateInput>
+  }
+
+
+  /**
+   * Kkni createMany
+   */
+  export type KkniCreateManyArgs = {
+    /**
+     * The data used to create many Kknis.
+     */
+    data: Enumerable<KkniCreateManyInput>
+  }
+
+
+  /**
+   * Kkni update
+   */
+  export type KkniUpdateArgs = {
+    /**
+     * Select specific fields to fetch from the Kkni
+     */
+    select?: KkniSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: KkniInclude | null
+    /**
+     * The data needed to update a Kkni.
+     */
+    data: XOR<KkniUpdateInput, KkniUncheckedUpdateInput>
+    /**
+     * Choose, which Kkni to update.
+     */
+    where: KkniWhereUniqueInput
+  }
+
+
+  /**
+   * Kkni updateMany
+   */
+  export type KkniUpdateManyArgs = {
+    /**
+     * The data used to update Kknis.
+     */
+    data: XOR<KkniUpdateManyMutationInput, KkniUncheckedUpdateManyInput>
+    /**
+     * Filter which Kknis to update
+     */
+    where?: KkniWhereInput
+  }
+
+
+  /**
+   * Kkni upsert
+   */
+  export type KkniUpsertArgs = {
+    /**
+     * Select specific fields to fetch from the Kkni
+     */
+    select?: KkniSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: KkniInclude | null
+    /**
+     * The filter to search for the Kkni to update in case it exists.
+     */
+    where: KkniWhereUniqueInput
+    /**
+     * In case the Kkni found by the `where` argument doesn't exist, create a new Kkni with this data.
+     */
+    create: XOR<KkniCreateInput, KkniUncheckedCreateInput>
+    /**
+     * In case the Kkni was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<KkniUpdateInput, KkniUncheckedUpdateInput>
+  }
+
+
+  /**
+   * Kkni delete
+   */
+  export type KkniDeleteArgs = {
+    /**
+     * Select specific fields to fetch from the Kkni
+     */
+    select?: KkniSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: KkniInclude | null
+    /**
+     * Filter which Kkni to delete.
+     */
+    where: KkniWhereUniqueInput
+  }
+
+
+  /**
+   * Kkni deleteMany
+   */
+  export type KkniDeleteManyArgs = {
+    /**
+     * Filter which Kknis to delete
+     */
+    where?: KkniWhereInput
+  }
+
+
+  /**
+   * Kkni findRaw
+   */
+  export type KkniFindRawArgs = {
+    /**
+     * The query predicate filter. If unspecified, then all documents in the collection will match the predicate. ${@link https://docs.mongodb.com/manual/reference/operator/query MongoDB Docs}.
+     */
+    filter?: InputJsonValue
+    /**
+     * Additional options to pass to the `find` command ${@link https://docs.mongodb.com/manual/reference/command/find/#command-fields MongoDB Docs}.
+     */
+    options?: InputJsonValue
+  }
+
+
+  /**
+   * Kkni aggregateRaw
+   */
+  export type KkniAggregateRawArgs = {
+    /**
+     * An array of aggregation stages to process and transform the document stream via the aggregation pipeline. ${@link https://docs.mongodb.com/manual/reference/operator/aggregation-pipeline MongoDB Docs}.
+     */
+    pipeline?: InputJsonValue[]
+    /**
+     * Additional options to pass to the `aggregate` command ${@link https://docs.mongodb.com/manual/reference/command/aggregate/#command-fields MongoDB Docs}.
+     */
+    options?: InputJsonValue
+  }
+
+
+  /**
+   * Kkni.dudi
+   */
+  export type Kkni$dudiArgs = {
+    /**
+     * Select specific fields to fetch from the Dudi
+     */
+    select?: DudiSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: DudiInclude | null
+    where?: DudiWhereInput
+    orderBy?: Enumerable<DudiOrderByWithRelationInput>
+    cursor?: DudiWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: Enumerable<DudiScalarFieldEnum>
+  }
+
+
+  /**
+   * Kkni.tracker
+   */
+  export type Kkni$trackerArgs = {
+    /**
+     * Select specific fields to fetch from the Tracker
+     */
+    select?: TrackerSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: TrackerInclude | null
+    where?: TrackerWhereInput
+    orderBy?: Enumerable<TrackerOrderByWithRelationInput>
+    cursor?: TrackerWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: Enumerable<TrackerScalarFieldEnum>
+  }
+
+
+  /**
+   * Kkni without action
+   */
+  export type KkniArgs = {
+    /**
+     * Select specific fields to fetch from the Kkni
+     */
+    select?: KkniSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: KkniInclude | null
+  }
+
+
+
+  /**
    * Enums
    */
 
@@ -44662,7 +45887,8 @@ export namespace Prisma {
     instansiId: 'instansiId',
     majorId: 'majorId',
     collabs: 'collabs',
-    disable: 'disable'
+    disable: 'disable',
+    kkniId: 'kkniId'
   };
 
   export type DudiScalarFieldEnum = (typeof DudiScalarFieldEnum)[keyof typeof DudiScalarFieldEnum]
@@ -44717,6 +45943,19 @@ export namespace Prisma {
   };
 
   export type InstansiScalarFieldEnum = (typeof InstansiScalarFieldEnum)[keyof typeof InstansiScalarFieldEnum]
+
+
+  export const KkniScalarFieldEnum: {
+    id: 'id',
+    konsentrasiId: 'konsentrasiId',
+    no: 'no',
+    code: 'code',
+    name: 'name',
+    description: 'description',
+    disable: 'disable'
+  };
+
+  export type KkniScalarFieldEnum = (typeof KkniScalarFieldEnum)[keyof typeof KkniScalarFieldEnum]
 
 
   export const KonsentrasiKeahlianScalarFieldEnum: {
@@ -45040,7 +46279,8 @@ export namespace Prisma {
     tujuanId: 'tujuanId',
     perangkatId: 'perangkatId',
     kalenderId: 'kalenderId',
-    dudiId: 'dudiId'
+    dudiId: 'dudiId',
+    kkniId: 'kkniId'
   };
 
   export type TrackerScalarFieldEnum = (typeof TrackerScalarFieldEnum)[keyof typeof TrackerScalarFieldEnum]
@@ -45104,6 +46344,7 @@ export namespace Prisma {
     perangkatId?: StringNullableFilter | string | null
     kalenderId?: StringNullableFilter | string | null
     dudiId?: StringNullableFilter | string | null
+    kkniId?: StringNullableFilter | string | null
     user?: XOR<UserRelationFilter, UserWhereInput>
     ref?: XOR<InstansiRelationFilter, InstansiWhereInput>
     instansi?: XOR<InstansiRelationFilter, InstansiWhereInput> | null
@@ -45123,6 +46364,7 @@ export namespace Prisma {
     perangkat?: XOR<TDeviceRelationFilter, TDeviceWhereInput> | null
     kalender?: XOR<CalendarRelationFilter, CalendarWhereInput> | null
     dudi?: XOR<DudiRelationFilter, DudiWhereInput> | null
+    kkni?: XOR<KkniRelationFilter, KkniWhereInput> | null
   }
 
   export type TrackerOrderByWithRelationInput = {
@@ -45149,6 +46391,7 @@ export namespace Prisma {
     perangkatId?: SortOrder
     kalenderId?: SortOrder
     dudiId?: SortOrder
+    kkniId?: SortOrder
     user?: UserOrderByWithRelationInput
     ref?: InstansiOrderByWithRelationInput
     instansi?: InstansiOrderByWithRelationInput
@@ -45168,6 +46411,7 @@ export namespace Prisma {
     perangkat?: TDeviceOrderByWithRelationInput
     kalender?: CalendarOrderByWithRelationInput
     dudi?: DudiOrderByWithRelationInput
+    kkni?: KkniOrderByWithRelationInput
   }
 
   export type TrackerWhereUniqueInput = {
@@ -45198,6 +46442,7 @@ export namespace Prisma {
     perangkatId?: SortOrder
     kalenderId?: SortOrder
     dudiId?: SortOrder
+    kkniId?: SortOrder
     _count?: TrackerCountOrderByAggregateInput
     _max?: TrackerMaxOrderByAggregateInput
     _min?: TrackerMinOrderByAggregateInput
@@ -45230,6 +46475,7 @@ export namespace Prisma {
     perangkatId?: StringNullableWithAggregatesFilter | string | null
     kalenderId?: StringNullableWithAggregatesFilter | string | null
     dudiId?: StringNullableWithAggregatesFilter | string | null
+    kkniId?: StringNullableWithAggregatesFilter | string | null
   }
 
   export type InstansiWhereInput = {
@@ -45646,6 +46892,7 @@ export namespace Prisma {
     tracker?: TrackerListRelationFilter
     mapel?: MataPelajaranListRelationFilter
     dudi?: DudiListRelationFilter
+    kkni?: KkniListRelationFilter
   }
 
   export type KonsentrasiKeahlianOrderByWithRelationInput = {
@@ -45663,6 +46910,7 @@ export namespace Prisma {
     tracker?: TrackerOrderByRelationAggregateInput
     mapel?: MataPelajaranOrderByRelationAggregateInput
     dudi?: DudiOrderByRelationAggregateInput
+    kkni?: KkniOrderByRelationAggregateInput
   }
 
   export type KonsentrasiKeahlianWhereUniqueInput = {
@@ -47411,10 +48659,12 @@ export namespace Prisma {
     collabs?: StringNullableListFilter
     timework?: XOR<DudiTimeWorkCompositeFilter, DudiTimeWorkObjectEqualityInput>
     disable?: BoolFilter | boolean
+    kkniId?: StringNullableFilter | string | null
     instansi?: XOR<InstansiRelationFilter, InstansiWhereInput>
     major?: XOR<KonsentrasiKeahlianRelationFilter, KonsentrasiKeahlianWhereInput>
     learning?: DudiLearningListRelationFilter
     tracker?: TrackerListRelationFilter
+    kkni?: XOR<KkniRelationFilter, KkniWhereInput> | null
   }
 
   export type DudiOrderByWithRelationInput = {
@@ -47428,10 +48678,12 @@ export namespace Prisma {
     collabs?: SortOrder
     timework?: DudiTimeWorkOrderByInput
     disable?: SortOrder
+    kkniId?: SortOrder
     instansi?: InstansiOrderByWithRelationInput
     major?: KonsentrasiKeahlianOrderByWithRelationInput
     learning?: DudiLearningOrderByRelationAggregateInput
     tracker?: TrackerOrderByRelationAggregateInput
+    kkni?: KkniOrderByWithRelationInput
   }
 
   export type DudiWhereUniqueInput = {
@@ -47446,6 +48698,7 @@ export namespace Prisma {
     majorId?: SortOrder
     collabs?: SortOrder
     disable?: SortOrder
+    kkniId?: SortOrder
     _count?: DudiCountOrderByAggregateInput
     _max?: DudiMaxOrderByAggregateInput
     _min?: DudiMinOrderByAggregateInput
@@ -47462,6 +48715,7 @@ export namespace Prisma {
     majorId?: StringWithAggregatesFilter | string
     collabs?: StringNullableListFilter
     disable?: BoolWithAggregatesFilter | boolean
+    kkniId?: StringNullableWithAggregatesFilter | string | null
   }
 
   export type DudiLearningWhereInput = {
@@ -47515,6 +48769,67 @@ export namespace Prisma {
     name?: StringWithAggregatesFilter | string
   }
 
+  export type KkniWhereInput = {
+    AND?: Enumerable<KkniWhereInput>
+    OR?: Enumerable<KkniWhereInput>
+    NOT?: Enumerable<KkniWhereInput>
+    id?: StringFilter | string
+    konsentrasiId?: StringFilter | string
+    no?: IntFilter | number
+    code?: StringFilter | string
+    name?: StringFilter | string
+    description?: StringNullableFilter | string | null
+    disable?: BoolFilter | boolean
+    konsentrasi?: XOR<KonsentrasiKeahlianRelationFilter, KonsentrasiKeahlianWhereInput>
+    dudi?: DudiListRelationFilter
+    tracker?: TrackerListRelationFilter
+  }
+
+  export type KkniOrderByWithRelationInput = {
+    id?: SortOrder
+    konsentrasiId?: SortOrder
+    no?: SortOrder
+    code?: SortOrder
+    name?: SortOrder
+    description?: SortOrder
+    disable?: SortOrder
+    konsentrasi?: KonsentrasiKeahlianOrderByWithRelationInput
+    dudi?: DudiOrderByRelationAggregateInput
+    tracker?: TrackerOrderByRelationAggregateInput
+  }
+
+  export type KkniWhereUniqueInput = {
+    id?: string
+  }
+
+  export type KkniOrderByWithAggregationInput = {
+    id?: SortOrder
+    konsentrasiId?: SortOrder
+    no?: SortOrder
+    code?: SortOrder
+    name?: SortOrder
+    description?: SortOrder
+    disable?: SortOrder
+    _count?: KkniCountOrderByAggregateInput
+    _avg?: KkniAvgOrderByAggregateInput
+    _max?: KkniMaxOrderByAggregateInput
+    _min?: KkniMinOrderByAggregateInput
+    _sum?: KkniSumOrderByAggregateInput
+  }
+
+  export type KkniScalarWhereWithAggregatesInput = {
+    AND?: Enumerable<KkniScalarWhereWithAggregatesInput>
+    OR?: Enumerable<KkniScalarWhereWithAggregatesInput>
+    NOT?: Enumerable<KkniScalarWhereWithAggregatesInput>
+    id?: StringWithAggregatesFilter | string
+    konsentrasiId?: StringWithAggregatesFilter | string
+    no?: IntWithAggregatesFilter | number
+    code?: StringWithAggregatesFilter | string
+    name?: StringWithAggregatesFilter | string
+    description?: StringNullableWithAggregatesFilter | string | null
+    disable?: BoolWithAggregatesFilter | boolean
+  }
+
   export type TrackerCreateInput = {
     id?: string
     point: PointTracker
@@ -47539,6 +48854,7 @@ export namespace Prisma {
     perangkat?: TDeviceCreateNestedOneWithoutTrackerInput
     kalender?: CalendarCreateNestedOneWithoutTrackerInput
     dudi?: DudiCreateNestedOneWithoutTrackerInput
+    kkni?: KkniCreateNestedOneWithoutTrackerInput
   }
 
   export type TrackerUncheckedCreateInput = {
@@ -47565,6 +48881,7 @@ export namespace Prisma {
     perangkatId?: string | null
     kalenderId?: string | null
     dudiId?: string | null
+    kkniId?: string | null
   }
 
   export type TrackerUpdateInput = {
@@ -47590,6 +48907,7 @@ export namespace Prisma {
     perangkat?: TDeviceUpdateOneWithoutTrackerNestedInput
     kalender?: CalendarUpdateOneWithoutTrackerNestedInput
     dudi?: DudiUpdateOneWithoutTrackerNestedInput
+    kkni?: KkniUpdateOneWithoutTrackerNestedInput
   }
 
   export type TrackerUncheckedUpdateInput = {
@@ -47615,6 +48933,7 @@ export namespace Prisma {
     perangkatId?: NullableStringFieldUpdateOperationsInput | string | null
     kalenderId?: NullableStringFieldUpdateOperationsInput | string | null
     dudiId?: NullableStringFieldUpdateOperationsInput | string | null
+    kkniId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type TrackerCreateManyInput = {
@@ -47641,6 +48960,7 @@ export namespace Prisma {
     perangkatId?: string | null
     kalenderId?: string | null
     dudiId?: string | null
+    kkniId?: string | null
   }
 
   export type TrackerUpdateManyMutationInput = {
@@ -47672,6 +48992,7 @@ export namespace Prisma {
     perangkatId?: NullableStringFieldUpdateOperationsInput | string | null
     kalenderId?: NullableStringFieldUpdateOperationsInput | string | null
     dudiId?: NullableStringFieldUpdateOperationsInput | string | null
+    kkniId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type InstansiCreateInput = {
@@ -48186,6 +49507,7 @@ export namespace Prisma {
     tracker?: TrackerCreateNestedManyWithoutKonsentrasiInput
     mapel?: MataPelajaranCreateNestedManyWithoutKeahlianInput
     dudi?: DudiCreateNestedManyWithoutMajorInput
+    kkni?: KkniCreateNestedManyWithoutKonsentrasiInput
   }
 
   export type KonsentrasiKeahlianUncheckedCreateInput = {
@@ -48202,6 +49524,7 @@ export namespace Prisma {
     tracker?: TrackerUncheckedCreateNestedManyWithoutKonsentrasiInput
     mapel?: MataPelajaranUncheckedCreateNestedManyWithoutKeahlianInput
     dudi?: DudiUncheckedCreateNestedManyWithoutMajorInput
+    kkni?: KkniUncheckedCreateNestedManyWithoutKonsentrasiInput
   }
 
   export type KonsentrasiKeahlianUpdateInput = {
@@ -48216,6 +49539,7 @@ export namespace Prisma {
     tracker?: TrackerUpdateManyWithoutKonsentrasiNestedInput
     mapel?: MataPelajaranUpdateManyWithoutKeahlianNestedInput
     dudi?: DudiUpdateManyWithoutMajorNestedInput
+    kkni?: KkniUpdateManyWithoutKonsentrasiNestedInput
   }
 
   export type KonsentrasiKeahlianUncheckedUpdateInput = {
@@ -48231,6 +49555,7 @@ export namespace Prisma {
     tracker?: TrackerUncheckedUpdateManyWithoutKonsentrasiNestedInput
     mapel?: MataPelajaranUncheckedUpdateManyWithoutKeahlianNestedInput
     dudi?: DudiUncheckedUpdateManyWithoutMajorNestedInput
+    kkni?: KkniUncheckedUpdateManyWithoutKonsentrasiNestedInput
   }
 
   export type KonsentrasiKeahlianCreateManyInput = {
@@ -50357,6 +51682,7 @@ export namespace Prisma {
     major: KonsentrasiKeahlianCreateNestedOneWithoutDudiInput
     learning?: DudiLearningCreateNestedManyWithoutRefInput
     tracker?: TrackerCreateNestedManyWithoutDudiInput
+    kkni?: KkniCreateNestedOneWithoutDudiInput
   }
 
   export type DudiUncheckedCreateInput = {
@@ -50370,6 +51696,7 @@ export namespace Prisma {
     collabs?: DudiCreatecollabsInput | Enumerable<string>
     timework: XOR<DudiTimeWorkCreateEnvelopeInput, DudiTimeWorkCreateInput>
     disable?: boolean
+    kkniId?: string | null
     learning?: DudiLearningUncheckedCreateNestedManyWithoutRefInput
     tracker?: TrackerUncheckedCreateNestedManyWithoutDudiInput
   }
@@ -50386,6 +51713,7 @@ export namespace Prisma {
     major?: KonsentrasiKeahlianUpdateOneRequiredWithoutDudiNestedInput
     learning?: DudiLearningUpdateManyWithoutRefNestedInput
     tracker?: TrackerUpdateManyWithoutDudiNestedInput
+    kkni?: KkniUpdateOneWithoutDudiNestedInput
   }
 
   export type DudiUncheckedUpdateInput = {
@@ -50398,6 +51726,7 @@ export namespace Prisma {
     collabs?: DudiUpdatecollabsInput | Enumerable<string>
     timework?: XOR<DudiTimeWorkUpdateEnvelopeInput, DudiTimeWorkCreateInput>
     disable?: BoolFieldUpdateOperationsInput | boolean
+    kkniId?: NullableStringFieldUpdateOperationsInput | string | null
     learning?: DudiLearningUncheckedUpdateManyWithoutRefNestedInput
     tracker?: TrackerUncheckedUpdateManyWithoutDudiNestedInput
   }
@@ -50413,6 +51742,7 @@ export namespace Prisma {
     collabs?: DudiCreatecollabsInput | Enumerable<string>
     timework: XOR<DudiTimeWorkCreateEnvelopeInput, DudiTimeWorkCreateInput>
     disable?: boolean
+    kkniId?: string | null
   }
 
   export type DudiUpdateManyMutationInput = {
@@ -50435,6 +51765,7 @@ export namespace Prisma {
     collabs?: DudiUpdatecollabsInput | Enumerable<string>
     timework?: XOR<DudiTimeWorkUpdateEnvelopeInput, DudiTimeWorkCreateInput>
     disable?: BoolFieldUpdateOperationsInput | boolean
+    kkniId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type DudiLearningCreateInput = {
@@ -50493,6 +51824,79 @@ export namespace Prisma {
     code?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     indicator?: XOR<DudiIndicatorListUpdateEnvelopeInput, Enumerable<DudiIndicatorCreateInput>>
+  }
+
+  export type KkniCreateInput = {
+    id?: string
+    no: number
+    code: string
+    name: string
+    description?: string | null
+    disable?: boolean
+    konsentrasi: KonsentrasiKeahlianCreateNestedOneWithoutKkniInput
+    dudi?: DudiCreateNestedManyWithoutKkniInput
+    tracker?: TrackerCreateNestedManyWithoutKkniInput
+  }
+
+  export type KkniUncheckedCreateInput = {
+    id?: string
+    konsentrasiId: string
+    no: number
+    code: string
+    name: string
+    description?: string | null
+    disable?: boolean
+    dudi?: DudiUncheckedCreateNestedManyWithoutKkniInput
+    tracker?: TrackerUncheckedCreateNestedManyWithoutKkniInput
+  }
+
+  export type KkniUpdateInput = {
+    no?: IntFieldUpdateOperationsInput | number
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    disable?: BoolFieldUpdateOperationsInput | boolean
+    konsentrasi?: KonsentrasiKeahlianUpdateOneRequiredWithoutKkniNestedInput
+    dudi?: DudiUpdateManyWithoutKkniNestedInput
+    tracker?: TrackerUpdateManyWithoutKkniNestedInput
+  }
+
+  export type KkniUncheckedUpdateInput = {
+    konsentrasiId?: StringFieldUpdateOperationsInput | string
+    no?: IntFieldUpdateOperationsInput | number
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    disable?: BoolFieldUpdateOperationsInput | boolean
+    dudi?: DudiUncheckedUpdateManyWithoutKkniNestedInput
+    tracker?: TrackerUncheckedUpdateManyWithoutKkniNestedInput
+  }
+
+  export type KkniCreateManyInput = {
+    id?: string
+    konsentrasiId: string
+    no: number
+    code: string
+    name: string
+    description?: string | null
+    disable?: boolean
+  }
+
+  export type KkniUpdateManyMutationInput = {
+    no?: IntFieldUpdateOperationsInput | number
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    disable?: BoolFieldUpdateOperationsInput | boolean
+  }
+
+  export type KkniUncheckedUpdateManyInput = {
+    konsentrasiId?: StringFieldUpdateOperationsInput | string
+    no?: IntFieldUpdateOperationsInput | number
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    disable?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type StringFilter = {
@@ -50641,6 +52045,11 @@ export namespace Prisma {
     isNot?: DudiWhereInput
   }
 
+  export type KkniRelationFilter = {
+    is?: KkniWhereInput | null
+    isNot?: KkniWhereInput | null
+  }
+
   export type TrackerCountOrderByAggregateInput = {
     id?: SortOrder
     point?: SortOrder
@@ -50665,6 +52074,7 @@ export namespace Prisma {
     perangkatId?: SortOrder
     kalenderId?: SortOrder
     dudiId?: SortOrder
+    kkniId?: SortOrder
   }
 
   export type TrackerMaxOrderByAggregateInput = {
@@ -50691,6 +52101,7 @@ export namespace Prisma {
     perangkatId?: SortOrder
     kalenderId?: SortOrder
     dudiId?: SortOrder
+    kkniId?: SortOrder
   }
 
   export type TrackerMinOrderByAggregateInput = {
@@ -50717,6 +52128,7 @@ export namespace Prisma {
     perangkatId?: SortOrder
     kalenderId?: SortOrder
     dudiId?: SortOrder
+    kkniId?: SortOrder
   }
 
   export type StringWithAggregatesFilter = {
@@ -51345,11 +52757,21 @@ export namespace Prisma {
     none?: ClassRoomWhereInput
   }
 
+  export type KkniListRelationFilter = {
+    every?: KkniWhereInput
+    some?: KkniWhereInput
+    none?: KkniWhereInput
+  }
+
   export type InstansiOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
   export type ClassRoomOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type KkniOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -53166,6 +54588,7 @@ export namespace Prisma {
     majorId?: SortOrder
     collabs?: SortOrder
     disable?: SortOrder
+    kkniId?: SortOrder
   }
 
   export type DudiMaxOrderByAggregateInput = {
@@ -53175,6 +54598,7 @@ export namespace Prisma {
     instansiId?: SortOrder
     majorId?: SortOrder
     disable?: SortOrder
+    kkniId?: SortOrder
   }
 
   export type DudiMinOrderByAggregateInput = {
@@ -53184,6 +54608,7 @@ export namespace Prisma {
     instansiId?: SortOrder
     majorId?: SortOrder
     disable?: SortOrder
+    kkniId?: SortOrder
   }
 
   export type DudiIndicatorCompositeListFilter = {
@@ -53234,6 +54659,44 @@ export namespace Prisma {
   }
 
   export type DudiLearningSumOrderByAggregateInput = {
+    no?: SortOrder
+  }
+
+  export type KkniCountOrderByAggregateInput = {
+    id?: SortOrder
+    konsentrasiId?: SortOrder
+    no?: SortOrder
+    code?: SortOrder
+    name?: SortOrder
+    description?: SortOrder
+    disable?: SortOrder
+  }
+
+  export type KkniAvgOrderByAggregateInput = {
+    no?: SortOrder
+  }
+
+  export type KkniMaxOrderByAggregateInput = {
+    id?: SortOrder
+    konsentrasiId?: SortOrder
+    no?: SortOrder
+    code?: SortOrder
+    name?: SortOrder
+    description?: SortOrder
+    disable?: SortOrder
+  }
+
+  export type KkniMinOrderByAggregateInput = {
+    id?: SortOrder
+    konsentrasiId?: SortOrder
+    no?: SortOrder
+    code?: SortOrder
+    name?: SortOrder
+    description?: SortOrder
+    disable?: SortOrder
+  }
+
+  export type KkniSumOrderByAggregateInput = {
     no?: SortOrder
   }
 
@@ -53349,6 +54812,12 @@ export namespace Prisma {
     create?: XOR<DudiCreateWithoutTrackerInput, DudiUncheckedCreateWithoutTrackerInput>
     connectOrCreate?: DudiCreateOrConnectWithoutTrackerInput
     connect?: DudiWhereUniqueInput
+  }
+
+  export type KkniCreateNestedOneWithoutTrackerInput = {
+    create?: XOR<KkniCreateWithoutTrackerInput, KkniUncheckedCreateWithoutTrackerInput>
+    connectOrCreate?: KkniCreateOrConnectWithoutTrackerInput
+    connect?: KkniWhereUniqueInput
   }
 
   export type EnumPointTrackerFieldUpdateOperationsInput = {
@@ -53547,6 +55016,16 @@ export namespace Prisma {
     delete?: boolean
     connect?: DudiWhereUniqueInput
     update?: XOR<DudiUpdateWithoutTrackerInput, DudiUncheckedUpdateWithoutTrackerInput>
+  }
+
+  export type KkniUpdateOneWithoutTrackerNestedInput = {
+    create?: XOR<KkniCreateWithoutTrackerInput, KkniUncheckedCreateWithoutTrackerInput>
+    connectOrCreate?: KkniCreateOrConnectWithoutTrackerInput
+    upsert?: KkniUpsertWithoutTrackerInput
+    disconnect?: boolean
+    delete?: boolean
+    connect?: KkniWhereUniqueInput
+    update?: XOR<KkniUpdateWithoutTrackerInput, KkniUncheckedUpdateWithoutTrackerInput>
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -54896,6 +56375,13 @@ export namespace Prisma {
     connect?: Enumerable<DudiWhereUniqueInput>
   }
 
+  export type KkniCreateNestedManyWithoutKonsentrasiInput = {
+    create?: XOR<Enumerable<KkniCreateWithoutKonsentrasiInput>, Enumerable<KkniUncheckedCreateWithoutKonsentrasiInput>>
+    connectOrCreate?: Enumerable<KkniCreateOrConnectWithoutKonsentrasiInput>
+    createMany?: KkniCreateManyKonsentrasiInputEnvelope
+    connect?: Enumerable<KkniWhereUniqueInput>
+  }
+
   export type KonsentrasiKeahlianCreateinstansiIdsInput = {
     set: Enumerable<string>
   }
@@ -54939,6 +56425,13 @@ export namespace Prisma {
     connectOrCreate?: Enumerable<DudiCreateOrConnectWithoutMajorInput>
     createMany?: DudiCreateManyMajorInputEnvelope
     connect?: Enumerable<DudiWhereUniqueInput>
+  }
+
+  export type KkniUncheckedCreateNestedManyWithoutKonsentrasiInput = {
+    create?: XOR<Enumerable<KkniCreateWithoutKonsentrasiInput>, Enumerable<KkniUncheckedCreateWithoutKonsentrasiInput>>
+    connectOrCreate?: Enumerable<KkniCreateOrConnectWithoutKonsentrasiInput>
+    createMany?: KkniCreateManyKonsentrasiInputEnvelope
+    connect?: Enumerable<KkniWhereUniqueInput>
   }
 
   export type ProgramKeahlianUpdateOneRequiredWithoutKonsentrasiNestedInput = {
@@ -55032,6 +56525,20 @@ export namespace Prisma {
     deleteMany?: Enumerable<DudiScalarWhereInput>
   }
 
+  export type KkniUpdateManyWithoutKonsentrasiNestedInput = {
+    create?: XOR<Enumerable<KkniCreateWithoutKonsentrasiInput>, Enumerable<KkniUncheckedCreateWithoutKonsentrasiInput>>
+    connectOrCreate?: Enumerable<KkniCreateOrConnectWithoutKonsentrasiInput>
+    upsert?: Enumerable<KkniUpsertWithWhereUniqueWithoutKonsentrasiInput>
+    createMany?: KkniCreateManyKonsentrasiInputEnvelope
+    set?: Enumerable<KkniWhereUniqueInput>
+    disconnect?: Enumerable<KkniWhereUniqueInput>
+    delete?: Enumerable<KkniWhereUniqueInput>
+    connect?: Enumerable<KkniWhereUniqueInput>
+    update?: Enumerable<KkniUpdateWithWhereUniqueWithoutKonsentrasiInput>
+    updateMany?: Enumerable<KkniUpdateManyWithWhereWithoutKonsentrasiInput>
+    deleteMany?: Enumerable<KkniScalarWhereInput>
+  }
+
   export type KonsentrasiKeahlianUpdateinstansiIdsInput = {
     set?: Enumerable<string>
     push?: string | Enumerable<string>
@@ -55118,6 +56625,20 @@ export namespace Prisma {
     update?: Enumerable<DudiUpdateWithWhereUniqueWithoutMajorInput>
     updateMany?: Enumerable<DudiUpdateManyWithWhereWithoutMajorInput>
     deleteMany?: Enumerable<DudiScalarWhereInput>
+  }
+
+  export type KkniUncheckedUpdateManyWithoutKonsentrasiNestedInput = {
+    create?: XOR<Enumerable<KkniCreateWithoutKonsentrasiInput>, Enumerable<KkniUncheckedCreateWithoutKonsentrasiInput>>
+    connectOrCreate?: Enumerable<KkniCreateOrConnectWithoutKonsentrasiInput>
+    upsert?: Enumerable<KkniUpsertWithWhereUniqueWithoutKonsentrasiInput>
+    createMany?: KkniCreateManyKonsentrasiInputEnvelope
+    set?: Enumerable<KkniWhereUniqueInput>
+    disconnect?: Enumerable<KkniWhereUniqueInput>
+    delete?: Enumerable<KkniWhereUniqueInput>
+    connect?: Enumerable<KkniWhereUniqueInput>
+    update?: Enumerable<KkniUpdateWithWhereUniqueWithoutKonsentrasiInput>
+    updateMany?: Enumerable<KkniUpdateManyWithWhereWithoutKonsentrasiInput>
+    deleteMany?: Enumerable<KkniScalarWhereInput>
   }
 
   export type InstansiCreateNestedOneWithoutRoleInput = {
@@ -59080,6 +60601,12 @@ export namespace Prisma {
     connect?: Enumerable<TrackerWhereUniqueInput>
   }
 
+  export type KkniCreateNestedOneWithoutDudiInput = {
+    create?: XOR<KkniCreateWithoutDudiInput, KkniUncheckedCreateWithoutDudiInput>
+    connectOrCreate?: KkniCreateOrConnectWithoutDudiInput
+    connect?: KkniWhereUniqueInput
+  }
+
   export type DudiLearningUncheckedCreateNestedManyWithoutRefInput = {
     create?: XOR<Enumerable<DudiLearningCreateWithoutRefInput>, Enumerable<DudiLearningUncheckedCreateWithoutRefInput>>
     connectOrCreate?: Enumerable<DudiLearningCreateOrConnectWithoutRefInput>
@@ -59153,6 +60680,16 @@ export namespace Prisma {
     deleteMany?: Enumerable<TrackerScalarWhereInput>
   }
 
+  export type KkniUpdateOneWithoutDudiNestedInput = {
+    create?: XOR<KkniCreateWithoutDudiInput, KkniUncheckedCreateWithoutDudiInput>
+    connectOrCreate?: KkniCreateOrConnectWithoutDudiInput
+    upsert?: KkniUpsertWithoutDudiInput
+    disconnect?: boolean
+    delete?: boolean
+    connect?: KkniWhereUniqueInput
+    update?: XOR<KkniUpdateWithoutDudiInput, KkniUncheckedUpdateWithoutDudiInput>
+  }
+
   export type DudiLearningUncheckedUpdateManyWithoutRefNestedInput = {
     create?: XOR<Enumerable<DudiLearningCreateWithoutRefInput>, Enumerable<DudiLearningUncheckedCreateWithoutRefInput>>
     connectOrCreate?: Enumerable<DudiLearningCreateOrConnectWithoutRefInput>
@@ -59210,6 +60747,104 @@ export namespace Prisma {
     upsert?: DudiUpsertWithoutLearningInput
     connect?: DudiWhereUniqueInput
     update?: XOR<DudiUpdateWithoutLearningInput, DudiUncheckedUpdateWithoutLearningInput>
+  }
+
+  export type KonsentrasiKeahlianCreateNestedOneWithoutKkniInput = {
+    create?: XOR<KonsentrasiKeahlianCreateWithoutKkniInput, KonsentrasiKeahlianUncheckedCreateWithoutKkniInput>
+    connectOrCreate?: KonsentrasiKeahlianCreateOrConnectWithoutKkniInput
+    connect?: KonsentrasiKeahlianWhereUniqueInput
+  }
+
+  export type DudiCreateNestedManyWithoutKkniInput = {
+    create?: XOR<Enumerable<DudiCreateWithoutKkniInput>, Enumerable<DudiUncheckedCreateWithoutKkniInput>>
+    connectOrCreate?: Enumerable<DudiCreateOrConnectWithoutKkniInput>
+    createMany?: DudiCreateManyKkniInputEnvelope
+    connect?: Enumerable<DudiWhereUniqueInput>
+  }
+
+  export type TrackerCreateNestedManyWithoutKkniInput = {
+    create?: XOR<Enumerable<TrackerCreateWithoutKkniInput>, Enumerable<TrackerUncheckedCreateWithoutKkniInput>>
+    connectOrCreate?: Enumerable<TrackerCreateOrConnectWithoutKkniInput>
+    createMany?: TrackerCreateManyKkniInputEnvelope
+    connect?: Enumerable<TrackerWhereUniqueInput>
+  }
+
+  export type DudiUncheckedCreateNestedManyWithoutKkniInput = {
+    create?: XOR<Enumerable<DudiCreateWithoutKkniInput>, Enumerable<DudiUncheckedCreateWithoutKkniInput>>
+    connectOrCreate?: Enumerable<DudiCreateOrConnectWithoutKkniInput>
+    createMany?: DudiCreateManyKkniInputEnvelope
+    connect?: Enumerable<DudiWhereUniqueInput>
+  }
+
+  export type TrackerUncheckedCreateNestedManyWithoutKkniInput = {
+    create?: XOR<Enumerable<TrackerCreateWithoutKkniInput>, Enumerable<TrackerUncheckedCreateWithoutKkniInput>>
+    connectOrCreate?: Enumerable<TrackerCreateOrConnectWithoutKkniInput>
+    createMany?: TrackerCreateManyKkniInputEnvelope
+    connect?: Enumerable<TrackerWhereUniqueInput>
+  }
+
+  export type KonsentrasiKeahlianUpdateOneRequiredWithoutKkniNestedInput = {
+    create?: XOR<KonsentrasiKeahlianCreateWithoutKkniInput, KonsentrasiKeahlianUncheckedCreateWithoutKkniInput>
+    connectOrCreate?: KonsentrasiKeahlianCreateOrConnectWithoutKkniInput
+    upsert?: KonsentrasiKeahlianUpsertWithoutKkniInput
+    connect?: KonsentrasiKeahlianWhereUniqueInput
+    update?: XOR<KonsentrasiKeahlianUpdateWithoutKkniInput, KonsentrasiKeahlianUncheckedUpdateWithoutKkniInput>
+  }
+
+  export type DudiUpdateManyWithoutKkniNestedInput = {
+    create?: XOR<Enumerable<DudiCreateWithoutKkniInput>, Enumerable<DudiUncheckedCreateWithoutKkniInput>>
+    connectOrCreate?: Enumerable<DudiCreateOrConnectWithoutKkniInput>
+    upsert?: Enumerable<DudiUpsertWithWhereUniqueWithoutKkniInput>
+    createMany?: DudiCreateManyKkniInputEnvelope
+    set?: Enumerable<DudiWhereUniqueInput>
+    disconnect?: Enumerable<DudiWhereUniqueInput>
+    delete?: Enumerable<DudiWhereUniqueInput>
+    connect?: Enumerable<DudiWhereUniqueInput>
+    update?: Enumerable<DudiUpdateWithWhereUniqueWithoutKkniInput>
+    updateMany?: Enumerable<DudiUpdateManyWithWhereWithoutKkniInput>
+    deleteMany?: Enumerable<DudiScalarWhereInput>
+  }
+
+  export type TrackerUpdateManyWithoutKkniNestedInput = {
+    create?: XOR<Enumerable<TrackerCreateWithoutKkniInput>, Enumerable<TrackerUncheckedCreateWithoutKkniInput>>
+    connectOrCreate?: Enumerable<TrackerCreateOrConnectWithoutKkniInput>
+    upsert?: Enumerable<TrackerUpsertWithWhereUniqueWithoutKkniInput>
+    createMany?: TrackerCreateManyKkniInputEnvelope
+    set?: Enumerable<TrackerWhereUniqueInput>
+    disconnect?: Enumerable<TrackerWhereUniqueInput>
+    delete?: Enumerable<TrackerWhereUniqueInput>
+    connect?: Enumerable<TrackerWhereUniqueInput>
+    update?: Enumerable<TrackerUpdateWithWhereUniqueWithoutKkniInput>
+    updateMany?: Enumerable<TrackerUpdateManyWithWhereWithoutKkniInput>
+    deleteMany?: Enumerable<TrackerScalarWhereInput>
+  }
+
+  export type DudiUncheckedUpdateManyWithoutKkniNestedInput = {
+    create?: XOR<Enumerable<DudiCreateWithoutKkniInput>, Enumerable<DudiUncheckedCreateWithoutKkniInput>>
+    connectOrCreate?: Enumerable<DudiCreateOrConnectWithoutKkniInput>
+    upsert?: Enumerable<DudiUpsertWithWhereUniqueWithoutKkniInput>
+    createMany?: DudiCreateManyKkniInputEnvelope
+    set?: Enumerable<DudiWhereUniqueInput>
+    disconnect?: Enumerable<DudiWhereUniqueInput>
+    delete?: Enumerable<DudiWhereUniqueInput>
+    connect?: Enumerable<DudiWhereUniqueInput>
+    update?: Enumerable<DudiUpdateWithWhereUniqueWithoutKkniInput>
+    updateMany?: Enumerable<DudiUpdateManyWithWhereWithoutKkniInput>
+    deleteMany?: Enumerable<DudiScalarWhereInput>
+  }
+
+  export type TrackerUncheckedUpdateManyWithoutKkniNestedInput = {
+    create?: XOR<Enumerable<TrackerCreateWithoutKkniInput>, Enumerable<TrackerUncheckedCreateWithoutKkniInput>>
+    connectOrCreate?: Enumerable<TrackerCreateOrConnectWithoutKkniInput>
+    upsert?: Enumerable<TrackerUpsertWithWhereUniqueWithoutKkniInput>
+    createMany?: TrackerCreateManyKkniInputEnvelope
+    set?: Enumerable<TrackerWhereUniqueInput>
+    disconnect?: Enumerable<TrackerWhereUniqueInput>
+    delete?: Enumerable<TrackerWhereUniqueInput>
+    connect?: Enumerable<TrackerWhereUniqueInput>
+    update?: Enumerable<TrackerUpdateWithWhereUniqueWithoutKkniInput>
+    updateMany?: Enumerable<TrackerUpdateManyWithWhereWithoutKkniInput>
+    deleteMany?: Enumerable<TrackerScalarWhereInput>
   }
 
   export type NestedStringFilter = {
@@ -60300,6 +61935,7 @@ export namespace Prisma {
     classRoom?: ClassRoomCreateNestedManyWithoutMajorInput
     mapel?: MataPelajaranCreateNestedManyWithoutKeahlianInput
     dudi?: DudiCreateNestedManyWithoutMajorInput
+    kkni?: KkniCreateNestedManyWithoutKonsentrasiInput
   }
 
   export type KonsentrasiKeahlianUncheckedCreateWithoutTrackerInput = {
@@ -60315,6 +61951,7 @@ export namespace Prisma {
     classRoom?: ClassRoomUncheckedCreateNestedManyWithoutMajorInput
     mapel?: MataPelajaranUncheckedCreateNestedManyWithoutKeahlianInput
     dudi?: DudiUncheckedCreateNestedManyWithoutMajorInput
+    kkni?: KkniUncheckedCreateNestedManyWithoutKonsentrasiInput
   }
 
   export type KonsentrasiKeahlianCreateOrConnectWithoutTrackerInput = {
@@ -60688,6 +62325,7 @@ export namespace Prisma {
     instansi: InstansiCreateNestedOneWithoutDudiInput
     major: KonsentrasiKeahlianCreateNestedOneWithoutDudiInput
     learning?: DudiLearningCreateNestedManyWithoutRefInput
+    kkni?: KkniCreateNestedOneWithoutDudiInput
   }
 
   export type DudiUncheckedCreateWithoutTrackerInput = {
@@ -60701,12 +62339,40 @@ export namespace Prisma {
     collabs?: DudiCreatecollabsInput | Enumerable<string>
     timework: XOR<DudiTimeWorkCreateEnvelopeInput, DudiTimeWorkCreateInput>
     disable?: boolean
+    kkniId?: string | null
     learning?: DudiLearningUncheckedCreateNestedManyWithoutRefInput
   }
 
   export type DudiCreateOrConnectWithoutTrackerInput = {
     where: DudiWhereUniqueInput
     create: XOR<DudiCreateWithoutTrackerInput, DudiUncheckedCreateWithoutTrackerInput>
+  }
+
+  export type KkniCreateWithoutTrackerInput = {
+    id?: string
+    no: number
+    code: string
+    name: string
+    description?: string | null
+    disable?: boolean
+    konsentrasi: KonsentrasiKeahlianCreateNestedOneWithoutKkniInput
+    dudi?: DudiCreateNestedManyWithoutKkniInput
+  }
+
+  export type KkniUncheckedCreateWithoutTrackerInput = {
+    id?: string
+    konsentrasiId: string
+    no: number
+    code: string
+    name: string
+    description?: string | null
+    disable?: boolean
+    dudi?: DudiUncheckedCreateNestedManyWithoutKkniInput
+  }
+
+  export type KkniCreateOrConnectWithoutTrackerInput = {
+    where: KkniWhereUniqueInput
+    create: XOR<KkniCreateWithoutTrackerInput, KkniUncheckedCreateWithoutTrackerInput>
   }
 
   export type UserUpsertWithoutTrackerInput = {
@@ -60992,6 +62658,7 @@ export namespace Prisma {
     classRoom?: ClassRoomUpdateManyWithoutMajorNestedInput
     mapel?: MataPelajaranUpdateManyWithoutKeahlianNestedInput
     dudi?: DudiUpdateManyWithoutMajorNestedInput
+    kkni?: KkniUpdateManyWithoutKonsentrasiNestedInput
   }
 
   export type KonsentrasiKeahlianUncheckedUpdateWithoutTrackerInput = {
@@ -61006,6 +62673,7 @@ export namespace Prisma {
     classRoom?: ClassRoomUncheckedUpdateManyWithoutMajorNestedInput
     mapel?: MataPelajaranUncheckedUpdateManyWithoutKeahlianNestedInput
     dudi?: DudiUncheckedUpdateManyWithoutMajorNestedInput
+    kkni?: KkniUncheckedUpdateManyWithoutKonsentrasiNestedInput
   }
 
   export type SchoolYearUpsertWithoutTrackerInput = {
@@ -61360,6 +63028,7 @@ export namespace Prisma {
     instansi?: InstansiUpdateOneRequiredWithoutDudiNestedInput
     major?: KonsentrasiKeahlianUpdateOneRequiredWithoutDudiNestedInput
     learning?: DudiLearningUpdateManyWithoutRefNestedInput
+    kkni?: KkniUpdateOneWithoutDudiNestedInput
   }
 
   export type DudiUncheckedUpdateWithoutTrackerInput = {
@@ -61372,7 +63041,33 @@ export namespace Prisma {
     collabs?: DudiUpdatecollabsInput | Enumerable<string>
     timework?: XOR<DudiTimeWorkUpdateEnvelopeInput, DudiTimeWorkCreateInput>
     disable?: BoolFieldUpdateOperationsInput | boolean
+    kkniId?: NullableStringFieldUpdateOperationsInput | string | null
     learning?: DudiLearningUncheckedUpdateManyWithoutRefNestedInput
+  }
+
+  export type KkniUpsertWithoutTrackerInput = {
+    update: XOR<KkniUpdateWithoutTrackerInput, KkniUncheckedUpdateWithoutTrackerInput>
+    create: XOR<KkniCreateWithoutTrackerInput, KkniUncheckedCreateWithoutTrackerInput>
+  }
+
+  export type KkniUpdateWithoutTrackerInput = {
+    no?: IntFieldUpdateOperationsInput | number
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    disable?: BoolFieldUpdateOperationsInput | boolean
+    konsentrasi?: KonsentrasiKeahlianUpdateOneRequiredWithoutKkniNestedInput
+    dudi?: DudiUpdateManyWithoutKkniNestedInput
+  }
+
+  export type KkniUncheckedUpdateWithoutTrackerInput = {
+    konsentrasiId?: StringFieldUpdateOperationsInput | string
+    no?: IntFieldUpdateOperationsInput | number
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    disable?: BoolFieldUpdateOperationsInput | boolean
+    dudi?: DudiUncheckedUpdateManyWithoutKkniNestedInput
   }
 
   export type CoordinateCreateInput = {
@@ -61392,6 +63087,7 @@ export namespace Prisma {
     tracker?: TrackerCreateNestedManyWithoutKonsentrasiInput
     mapel?: MataPelajaranCreateNestedManyWithoutKeahlianInput
     dudi?: DudiCreateNestedManyWithoutMajorInput
+    kkni?: KkniCreateNestedManyWithoutKonsentrasiInput
   }
 
   export type KonsentrasiKeahlianUncheckedCreateWithoutInstansiInput = {
@@ -61407,6 +63103,7 @@ export namespace Prisma {
     tracker?: TrackerUncheckedCreateNestedManyWithoutKonsentrasiInput
     mapel?: MataPelajaranUncheckedCreateNestedManyWithoutKeahlianInput
     dudi?: DudiUncheckedCreateNestedManyWithoutMajorInput
+    kkni?: KkniUncheckedCreateNestedManyWithoutKonsentrasiInput
   }
 
   export type KonsentrasiKeahlianCreateOrConnectWithoutInstansiInput = {
@@ -61586,6 +63283,7 @@ export namespace Prisma {
     perangkat?: TDeviceCreateNestedOneWithoutTrackerInput
     kalender?: CalendarCreateNestedOneWithoutTrackerInput
     dudi?: DudiCreateNestedOneWithoutTrackerInput
+    kkni?: KkniCreateNestedOneWithoutTrackerInput
   }
 
   export type TrackerUncheckedCreateWithoutInstansiInput = {
@@ -61611,6 +63309,7 @@ export namespace Prisma {
     perangkatId?: string | null
     kalenderId?: string | null
     dudiId?: string | null
+    kkniId?: string | null
   }
 
   export type TrackerCreateOrConnectWithoutInstansiInput = {
@@ -61645,6 +63344,7 @@ export namespace Prisma {
     perangkat?: TDeviceCreateNestedOneWithoutTrackerInput
     kalender?: CalendarCreateNestedOneWithoutTrackerInput
     dudi?: DudiCreateNestedOneWithoutTrackerInput
+    kkni?: KkniCreateNestedOneWithoutTrackerInput
   }
 
   export type TrackerUncheckedCreateWithoutRefInput = {
@@ -61670,6 +63370,7 @@ export namespace Prisma {
     perangkatId?: string | null
     kalenderId?: string | null
     dudiId?: string | null
+    kkniId?: string | null
   }
 
   export type TrackerCreateOrConnectWithoutRefInput = {
@@ -61859,6 +63560,7 @@ export namespace Prisma {
     major: KonsentrasiKeahlianCreateNestedOneWithoutDudiInput
     learning?: DudiLearningCreateNestedManyWithoutRefInput
     tracker?: TrackerCreateNestedManyWithoutDudiInput
+    kkni?: KkniCreateNestedOneWithoutDudiInput
   }
 
   export type DudiUncheckedCreateWithoutInstansiInput = {
@@ -61871,6 +63573,7 @@ export namespace Prisma {
     collabs?: DudiCreatecollabsInput | Enumerable<string>
     timework: XOR<DudiTimeWorkCreateEnvelopeInput, DudiTimeWorkCreateInput>
     disable?: boolean
+    kkniId?: string | null
     learning?: DudiLearningUncheckedCreateNestedManyWithoutRefInput
     tracker?: TrackerUncheckedCreateNestedManyWithoutDudiInput
   }
@@ -62087,6 +63790,7 @@ export namespace Prisma {
     perangkatId?: StringNullableFilter | string | null
     kalenderId?: StringNullableFilter | string | null
     dudiId?: StringNullableFilter | string | null
+    kkniId?: StringNullableFilter | string | null
   }
 
   export type TrackerUpsertWithWhereUniqueWithoutRefInput = {
@@ -62243,6 +63947,7 @@ export namespace Prisma {
     majorId?: StringFilter | string
     collabs?: StringNullableListFilter
     disable?: BoolFilter | boolean
+    kkniId?: StringNullableFilter | string | null
   }
 
   export type ProgramKeahlianCreateWithoutMapelInput = {
@@ -62282,6 +63987,7 @@ export namespace Prisma {
     classRoom?: ClassRoomCreateNestedManyWithoutMajorInput
     tracker?: TrackerCreateNestedManyWithoutKonsentrasiInput
     dudi?: DudiCreateNestedManyWithoutMajorInput
+    kkni?: KkniCreateNestedManyWithoutKonsentrasiInput
   }
 
   export type KonsentrasiKeahlianUncheckedCreateWithoutMapelInput = {
@@ -62297,6 +64003,7 @@ export namespace Prisma {
     classRoom?: ClassRoomUncheckedCreateNestedManyWithoutMajorInput
     tracker?: TrackerUncheckedCreateNestedManyWithoutKonsentrasiInput
     dudi?: DudiUncheckedCreateNestedManyWithoutMajorInput
+    kkni?: KkniUncheckedCreateNestedManyWithoutKonsentrasiInput
   }
 
   export type KonsentrasiKeahlianCreateOrConnectWithoutMapelInput = {
@@ -62436,6 +64143,7 @@ export namespace Prisma {
     perangkat?: TDeviceCreateNestedOneWithoutTrackerInput
     kalender?: CalendarCreateNestedOneWithoutTrackerInput
     dudi?: DudiCreateNestedOneWithoutTrackerInput
+    kkni?: KkniCreateNestedOneWithoutTrackerInput
   }
 
   export type TrackerUncheckedCreateWithoutMapelInput = {
@@ -62461,6 +64169,7 @@ export namespace Prisma {
     perangkatId?: string | null
     kalenderId?: string | null
     dudiId?: string | null
+    kkniId?: string | null
   }
 
   export type TrackerCreateOrConnectWithoutMapelInput = {
@@ -62632,6 +64341,7 @@ export namespace Prisma {
     classRoom?: ClassRoomUpdateManyWithoutMajorNestedInput
     tracker?: TrackerUpdateManyWithoutKonsentrasiNestedInput
     dudi?: DudiUpdateManyWithoutMajorNestedInput
+    kkni?: KkniUpdateManyWithoutKonsentrasiNestedInput
   }
 
   export type KonsentrasiKeahlianUncheckedUpdateWithoutMapelInput = {
@@ -62646,6 +64356,7 @@ export namespace Prisma {
     classRoom?: ClassRoomUncheckedUpdateManyWithoutMajorNestedInput
     tracker?: TrackerUncheckedUpdateManyWithoutKonsentrasiNestedInput
     dudi?: DudiUncheckedUpdateManyWithoutMajorNestedInput
+    kkni?: KkniUncheckedUpdateManyWithoutKonsentrasiNestedInput
   }
 
   export type InstansiUpsertWithoutUnikMapelsInput = {
@@ -62892,6 +64603,7 @@ export namespace Prisma {
     perangkat?: TDeviceCreateNestedOneWithoutTrackerInput
     kalender?: CalendarCreateNestedOneWithoutTrackerInput
     dudi?: DudiCreateNestedOneWithoutTrackerInput
+    kkni?: KkniCreateNestedOneWithoutTrackerInput
   }
 
   export type TrackerUncheckedCreateWithoutElemenInput = {
@@ -62917,6 +64629,7 @@ export namespace Prisma {
     perangkatId?: string | null
     kalenderId?: string | null
     dudiId?: string | null
+    kkniId?: string | null
   }
 
   export type TrackerCreateOrConnectWithoutElemenInput = {
@@ -63286,6 +64999,7 @@ export namespace Prisma {
     perangkat?: TDeviceCreateNestedOneWithoutTrackerInput
     kalender?: CalendarCreateNestedOneWithoutTrackerInput
     dudi?: DudiCreateNestedOneWithoutTrackerInput
+    kkni?: KkniCreateNestedOneWithoutTrackerInput
   }
 
   export type TrackerUncheckedCreateWithoutCpInput = {
@@ -63311,6 +65025,7 @@ export namespace Prisma {
     perangkatId?: string | null
     kalenderId?: string | null
     dudiId?: string | null
+    kkniId?: string | null
   }
 
   export type TrackerCreateOrConnectWithoutCpInput = {
@@ -63434,6 +65149,7 @@ export namespace Prisma {
     perangkat?: TDeviceCreateNestedOneWithoutTrackerInput
     kalender?: CalendarCreateNestedOneWithoutTrackerInput
     dudi?: DudiCreateNestedOneWithoutTrackerInput
+    kkni?: KkniCreateNestedOneWithoutTrackerInput
   }
 
   export type TrackerUncheckedCreateWithoutBidangInput = {
@@ -63459,6 +65175,7 @@ export namespace Prisma {
     perangkatId?: string | null
     kalenderId?: string | null
     dudiId?: string | null
+    kkniId?: string | null
   }
 
   export type TrackerCreateOrConnectWithoutBidangInput = {
@@ -63546,6 +65263,7 @@ export namespace Prisma {
     tracker?: TrackerCreateNestedManyWithoutKonsentrasiInput
     mapel?: MataPelajaranCreateNestedManyWithoutKeahlianInput
     dudi?: DudiCreateNestedManyWithoutMajorInput
+    kkni?: KkniCreateNestedManyWithoutKonsentrasiInput
   }
 
   export type KonsentrasiKeahlianUncheckedCreateWithoutProgramInput = {
@@ -63561,6 +65279,7 @@ export namespace Prisma {
     tracker?: TrackerUncheckedCreateNestedManyWithoutKonsentrasiInput
     mapel?: MataPelajaranUncheckedCreateNestedManyWithoutKeahlianInput
     dudi?: DudiUncheckedCreateNestedManyWithoutMajorInput
+    kkni?: KkniUncheckedCreateNestedManyWithoutKonsentrasiInput
   }
 
   export type KonsentrasiKeahlianCreateOrConnectWithoutProgramInput = {
@@ -63595,6 +65314,7 @@ export namespace Prisma {
     perangkat?: TDeviceCreateNestedOneWithoutTrackerInput
     kalender?: CalendarCreateNestedOneWithoutTrackerInput
     dudi?: DudiCreateNestedOneWithoutTrackerInput
+    kkni?: KkniCreateNestedOneWithoutTrackerInput
   }
 
   export type TrackerUncheckedCreateWithoutProgramInput = {
@@ -63620,6 +65340,7 @@ export namespace Prisma {
     perangkatId?: string | null
     kalenderId?: string | null
     dudiId?: string | null
+    kkniId?: string | null
   }
 
   export type TrackerCreateOrConnectWithoutProgramInput = {
@@ -63921,6 +65642,7 @@ export namespace Prisma {
     perangkat?: TDeviceCreateNestedOneWithoutTrackerInput
     kalender?: CalendarCreateNestedOneWithoutTrackerInput
     dudi?: DudiCreateNestedOneWithoutTrackerInput
+    kkni?: KkniCreateNestedOneWithoutTrackerInput
   }
 
   export type TrackerUncheckedCreateWithoutKonsentrasiInput = {
@@ -63946,6 +65668,7 @@ export namespace Prisma {
     perangkatId?: string | null
     kalenderId?: string | null
     dudiId?: string | null
+    kkniId?: string | null
   }
 
   export type TrackerCreateOrConnectWithoutKonsentrasiInput = {
@@ -64014,6 +65737,7 @@ export namespace Prisma {
     instansi: InstansiCreateNestedOneWithoutDudiInput
     learning?: DudiLearningCreateNestedManyWithoutRefInput
     tracker?: TrackerCreateNestedManyWithoutDudiInput
+    kkni?: KkniCreateNestedOneWithoutDudiInput
   }
 
   export type DudiUncheckedCreateWithoutMajorInput = {
@@ -64026,6 +65750,7 @@ export namespace Prisma {
     collabs?: DudiCreatecollabsInput | Enumerable<string>
     timework: XOR<DudiTimeWorkCreateEnvelopeInput, DudiTimeWorkCreateInput>
     disable?: boolean
+    kkniId?: string | null
     learning?: DudiLearningUncheckedCreateNestedManyWithoutRefInput
     tracker?: TrackerUncheckedCreateNestedManyWithoutDudiInput
   }
@@ -64037,6 +65762,37 @@ export namespace Prisma {
 
   export type DudiCreateManyMajorInputEnvelope = {
     data: Enumerable<DudiCreateManyMajorInput>
+  }
+
+  export type KkniCreateWithoutKonsentrasiInput = {
+    id?: string
+    no: number
+    code: string
+    name: string
+    description?: string | null
+    disable?: boolean
+    dudi?: DudiCreateNestedManyWithoutKkniInput
+    tracker?: TrackerCreateNestedManyWithoutKkniInput
+  }
+
+  export type KkniUncheckedCreateWithoutKonsentrasiInput = {
+    id?: string
+    no: number
+    code: string
+    name: string
+    description?: string | null
+    disable?: boolean
+    dudi?: DudiUncheckedCreateNestedManyWithoutKkniInput
+    tracker?: TrackerUncheckedCreateNestedManyWithoutKkniInput
+  }
+
+  export type KkniCreateOrConnectWithoutKonsentrasiInput = {
+    where: KkniWhereUniqueInput
+    create: XOR<KkniCreateWithoutKonsentrasiInput, KkniUncheckedCreateWithoutKonsentrasiInput>
+  }
+
+  export type KkniCreateManyKonsentrasiInputEnvelope = {
+    data: Enumerable<KkniCreateManyKonsentrasiInput>
   }
 
   export type ProgramKeahlianUpsertWithoutKonsentrasiInput = {
@@ -64188,6 +65944,35 @@ export namespace Prisma {
   export type DudiUpdateManyWithWhereWithoutMajorInput = {
     where: DudiScalarWhereInput
     data: XOR<DudiUpdateManyMutationInput, DudiUncheckedUpdateManyWithoutDudiInput>
+  }
+
+  export type KkniUpsertWithWhereUniqueWithoutKonsentrasiInput = {
+    where: KkniWhereUniqueInput
+    update: XOR<KkniUpdateWithoutKonsentrasiInput, KkniUncheckedUpdateWithoutKonsentrasiInput>
+    create: XOR<KkniCreateWithoutKonsentrasiInput, KkniUncheckedCreateWithoutKonsentrasiInput>
+  }
+
+  export type KkniUpdateWithWhereUniqueWithoutKonsentrasiInput = {
+    where: KkniWhereUniqueInput
+    data: XOR<KkniUpdateWithoutKonsentrasiInput, KkniUncheckedUpdateWithoutKonsentrasiInput>
+  }
+
+  export type KkniUpdateManyWithWhereWithoutKonsentrasiInput = {
+    where: KkniScalarWhereInput
+    data: XOR<KkniUpdateManyMutationInput, KkniUncheckedUpdateManyWithoutKkniInput>
+  }
+
+  export type KkniScalarWhereInput = {
+    AND?: Enumerable<KkniScalarWhereInput>
+    OR?: Enumerable<KkniScalarWhereInput>
+    NOT?: Enumerable<KkniScalarWhereInput>
+    id?: StringFilter | string
+    konsentrasiId?: StringFilter | string
+    no?: IntFilter | number
+    code?: StringFilter | string
+    name?: StringFilter | string
+    description?: StringNullableFilter | string | null
+    disable?: BoolFilter | boolean
   }
 
   export type InstansiCreateWithoutRoleInput = {
@@ -64428,6 +66213,7 @@ export namespace Prisma {
     perangkat?: TDeviceCreateNestedOneWithoutTrackerInput
     kalender?: CalendarCreateNestedOneWithoutTrackerInput
     dudi?: DudiCreateNestedOneWithoutTrackerInput
+    kkni?: KkniCreateNestedOneWithoutTrackerInput
   }
 
   export type TrackerUncheckedCreateWithoutUserInput = {
@@ -64453,6 +66239,7 @@ export namespace Prisma {
     perangkatId?: string | null
     kalenderId?: string | null
     dudiId?: string | null
+    kkniId?: string | null
   }
 
   export type TrackerCreateOrConnectWithoutUserInput = {
@@ -66721,6 +68508,7 @@ export namespace Prisma {
     perangkat?: TDeviceCreateNestedOneWithoutTrackerInput
     kalender?: CalendarCreateNestedOneWithoutTrackerInput
     dudi?: DudiCreateNestedOneWithoutTrackerInput
+    kkni?: KkniCreateNestedOneWithoutTrackerInput
   }
 
   export type TrackerUncheckedCreateWithoutTpInput = {
@@ -66746,6 +68534,7 @@ export namespace Prisma {
     perangkatId?: string | null
     kalenderId?: string | null
     dudiId?: string | null
+    kkniId?: string | null
   }
 
   export type TrackerCreateOrConnectWithoutTpInput = {
@@ -67230,6 +69019,7 @@ export namespace Prisma {
     perangkat?: TDeviceCreateNestedOneWithoutTrackerInput
     kalender?: CalendarCreateNestedOneWithoutTrackerInput
     dudi?: DudiCreateNestedOneWithoutTrackerInput
+    kkni?: KkniCreateNestedOneWithoutTrackerInput
   }
 
   export type TrackerUncheckedCreateWithoutTeacherInput = {
@@ -67255,6 +69045,7 @@ export namespace Prisma {
     perangkatId?: string | null
     kalenderId?: string | null
     dudiId?: string | null
+    kkniId?: string | null
   }
 
   export type TrackerCreateOrConnectWithoutTeacherInput = {
@@ -67589,6 +69380,7 @@ export namespace Prisma {
     tracker?: TrackerCreateNestedManyWithoutKonsentrasiInput
     mapel?: MataPelajaranCreateNestedManyWithoutKeahlianInput
     dudi?: DudiCreateNestedManyWithoutMajorInput
+    kkni?: KkniCreateNestedManyWithoutKonsentrasiInput
   }
 
   export type KonsentrasiKeahlianUncheckedCreateWithoutClassRoomInput = {
@@ -67604,6 +69396,7 @@ export namespace Prisma {
     tracker?: TrackerUncheckedCreateNestedManyWithoutKonsentrasiInput
     mapel?: MataPelajaranUncheckedCreateNestedManyWithoutKeahlianInput
     dudi?: DudiUncheckedCreateNestedManyWithoutMajorInput
+    kkni?: KkniUncheckedCreateNestedManyWithoutKonsentrasiInput
   }
 
   export type KonsentrasiKeahlianCreateOrConnectWithoutClassRoomInput = {
@@ -67703,6 +69496,7 @@ export namespace Prisma {
     perangkat?: TDeviceCreateNestedOneWithoutTrackerInput
     kalender?: CalendarCreateNestedOneWithoutTrackerInput
     dudi?: DudiCreateNestedOneWithoutTrackerInput
+    kkni?: KkniCreateNestedOneWithoutTrackerInput
   }
 
   export type TrackerUncheckedCreateWithoutKelasInput = {
@@ -67728,6 +69522,7 @@ export namespace Prisma {
     perangkatId?: string | null
     kalenderId?: string | null
     dudiId?: string | null
+    kkniId?: string | null
   }
 
   export type TrackerCreateOrConnectWithoutKelasInput = {
@@ -67914,6 +69709,7 @@ export namespace Prisma {
     tracker?: TrackerUpdateManyWithoutKonsentrasiNestedInput
     mapel?: MataPelajaranUpdateManyWithoutKeahlianNestedInput
     dudi?: DudiUpdateManyWithoutMajorNestedInput
+    kkni?: KkniUpdateManyWithoutKonsentrasiNestedInput
   }
 
   export type KonsentrasiKeahlianUncheckedUpdateWithoutClassRoomInput = {
@@ -67928,6 +69724,7 @@ export namespace Prisma {
     tracker?: TrackerUncheckedUpdateManyWithoutKonsentrasiNestedInput
     mapel?: MataPelajaranUncheckedUpdateManyWithoutKeahlianNestedInput
     dudi?: DudiUncheckedUpdateManyWithoutMajorNestedInput
+    kkni?: KkniUncheckedUpdateManyWithoutKonsentrasiNestedInput
   }
 
   export type StudentUpsertWithWhereUniqueWithoutClassRoomInput = {
@@ -68107,6 +69904,7 @@ export namespace Prisma {
     tracker?: TrackerCreateNestedManyWithoutKonsentrasiInput
     mapel?: MataPelajaranCreateNestedManyWithoutKeahlianInput
     dudi?: DudiCreateNestedManyWithoutMajorInput
+    kkni?: KkniCreateNestedManyWithoutKonsentrasiInput
   }
 
   export type KonsentrasiKeahlianUncheckedCreateWithoutStudentInput = {
@@ -68122,6 +69920,7 @@ export namespace Prisma {
     tracker?: TrackerUncheckedCreateNestedManyWithoutKonsentrasiInput
     mapel?: MataPelajaranUncheckedCreateNestedManyWithoutKeahlianInput
     dudi?: DudiUncheckedCreateNestedManyWithoutMajorInput
+    kkni?: KkniUncheckedCreateNestedManyWithoutKonsentrasiInput
   }
 
   export type KonsentrasiKeahlianCreateOrConnectWithoutStudentInput = {
@@ -68312,6 +70111,7 @@ export namespace Prisma {
     perangkat?: TDeviceCreateNestedOneWithoutTrackerInput
     kalender?: CalendarCreateNestedOneWithoutTrackerInput
     dudi?: DudiCreateNestedOneWithoutTrackerInput
+    kkni?: KkniCreateNestedOneWithoutTrackerInput
   }
 
   export type TrackerUncheckedCreateWithoutMuridInput = {
@@ -68337,6 +70137,7 @@ export namespace Prisma {
     perangkatId?: string | null
     kalenderId?: string | null
     dudiId?: string | null
+    kkniId?: string | null
   }
 
   export type TrackerCreateOrConnectWithoutMuridInput = {
@@ -68447,6 +70248,7 @@ export namespace Prisma {
     tracker?: TrackerUpdateManyWithoutKonsentrasiNestedInput
     mapel?: MataPelajaranUpdateManyWithoutKeahlianNestedInput
     dudi?: DudiUpdateManyWithoutMajorNestedInput
+    kkni?: KkniUpdateManyWithoutKonsentrasiNestedInput
   }
 
   export type KonsentrasiKeahlianUncheckedUpdateWithoutStudentInput = {
@@ -68461,6 +70263,7 @@ export namespace Prisma {
     tracker?: TrackerUncheckedUpdateManyWithoutKonsentrasiNestedInput
     mapel?: MataPelajaranUncheckedUpdateManyWithoutKeahlianNestedInput
     dudi?: DudiUncheckedUpdateManyWithoutMajorNestedInput
+    kkni?: KkniUncheckedUpdateManyWithoutKonsentrasiNestedInput
   }
 
   export type ClassRoomUpsertWithWhereUniqueWithoutStudentsInput = {
@@ -68691,6 +70494,7 @@ export namespace Prisma {
     perangkat?: TDeviceCreateNestedOneWithoutTrackerInput
     kalender?: CalendarCreateNestedOneWithoutTrackerInput
     dudi?: DudiCreateNestedOneWithoutTrackerInput
+    kkni?: KkniCreateNestedOneWithoutTrackerInput
   }
 
   export type TrackerUncheckedCreateWithoutJadwalInput = {
@@ -68716,6 +70520,7 @@ export namespace Prisma {
     perangkatId?: string | null
     kalenderId?: string | null
     dudiId?: string | null
+    kkniId?: string | null
   }
 
   export type TrackerCreateOrConnectWithoutJadwalInput = {
@@ -69025,6 +70830,7 @@ export namespace Prisma {
     perangkat?: TDeviceCreateNestedOneWithoutTrackerInput
     kalender?: CalendarCreateNestedOneWithoutTrackerInput
     dudi?: DudiCreateNestedOneWithoutTrackerInput
+    kkni?: KkniCreateNestedOneWithoutTrackerInput
   }
 
   export type TrackerUncheckedCreateWithoutMengajarInput = {
@@ -69050,6 +70856,7 @@ export namespace Prisma {
     perangkatId?: string | null
     kalenderId?: string | null
     dudiId?: string | null
+    kkniId?: string | null
   }
 
   export type TrackerCreateOrConnectWithoutMengajarInput = {
@@ -69768,6 +71575,7 @@ export namespace Prisma {
     perangkat?: TDeviceCreateNestedOneWithoutTrackerInput
     kalender?: CalendarCreateNestedOneWithoutTrackerInput
     dudi?: DudiCreateNestedOneWithoutTrackerInput
+    kkni?: KkniCreateNestedOneWithoutTrackerInput
   }
 
   export type TrackerUncheckedCreateWithoutTujuanInput = {
@@ -69793,6 +71601,7 @@ export namespace Prisma {
     perangkatId?: string | null
     kalenderId?: string | null
     dudiId?: string | null
+    kkniId?: string | null
   }
 
   export type TrackerCreateOrConnectWithoutTujuanInput = {
@@ -71564,6 +73373,7 @@ export namespace Prisma {
     tujuan?: ObjectiveCreateNestedOneWithoutTrackerInput
     kalender?: CalendarCreateNestedOneWithoutTrackerInput
     dudi?: DudiCreateNestedOneWithoutTrackerInput
+    kkni?: KkniCreateNestedOneWithoutTrackerInput
   }
 
   export type TrackerUncheckedCreateWithoutPerangkatInput = {
@@ -71589,6 +73399,7 @@ export namespace Prisma {
     tujuanId?: string | null
     kalenderId?: string | null
     dudiId?: string | null
+    kkniId?: string | null
   }
 
   export type TrackerCreateOrConnectWithoutPerangkatInput = {
@@ -72430,6 +74241,7 @@ export namespace Prisma {
     tujuan?: ObjectiveCreateNestedOneWithoutTrackerInput
     perangkat?: TDeviceCreateNestedOneWithoutTrackerInput
     dudi?: DudiCreateNestedOneWithoutTrackerInput
+    kkni?: KkniCreateNestedOneWithoutTrackerInput
   }
 
   export type TrackerUncheckedCreateWithoutKalenderInput = {
@@ -72455,6 +74267,7 @@ export namespace Prisma {
     tujuanId?: string | null
     perangkatId?: string | null
     dudiId?: string | null
+    kkniId?: string | null
   }
 
   export type TrackerCreateOrConnectWithoutKalenderInput = {
@@ -72629,6 +74442,7 @@ export namespace Prisma {
     classRoom?: ClassRoomCreateNestedManyWithoutMajorInput
     tracker?: TrackerCreateNestedManyWithoutKonsentrasiInput
     mapel?: MataPelajaranCreateNestedManyWithoutKeahlianInput
+    kkni?: KkniCreateNestedManyWithoutKonsentrasiInput
   }
 
   export type KonsentrasiKeahlianUncheckedCreateWithoutDudiInput = {
@@ -72644,6 +74458,7 @@ export namespace Prisma {
     classRoom?: ClassRoomUncheckedCreateNestedManyWithoutMajorInput
     tracker?: TrackerUncheckedCreateNestedManyWithoutKonsentrasiInput
     mapel?: MataPelajaranUncheckedCreateNestedManyWithoutKeahlianInput
+    kkni?: KkniUncheckedCreateNestedManyWithoutKonsentrasiInput
   }
 
   export type KonsentrasiKeahlianCreateOrConnectWithoutDudiInput = {
@@ -72699,6 +74514,7 @@ export namespace Prisma {
     tujuan?: ObjectiveCreateNestedOneWithoutTrackerInput
     perangkat?: TDeviceCreateNestedOneWithoutTrackerInput
     kalender?: CalendarCreateNestedOneWithoutTrackerInput
+    kkni?: KkniCreateNestedOneWithoutTrackerInput
   }
 
   export type TrackerUncheckedCreateWithoutDudiInput = {
@@ -72724,6 +74540,7 @@ export namespace Prisma {
     tujuanId?: string | null
     perangkatId?: string | null
     kalenderId?: string | null
+    kkniId?: string | null
   }
 
   export type TrackerCreateOrConnectWithoutDudiInput = {
@@ -72733,6 +74550,33 @@ export namespace Prisma {
 
   export type TrackerCreateManyDudiInputEnvelope = {
     data: Enumerable<TrackerCreateManyDudiInput>
+  }
+
+  export type KkniCreateWithoutDudiInput = {
+    id?: string
+    no: number
+    code: string
+    name: string
+    description?: string | null
+    disable?: boolean
+    konsentrasi: KonsentrasiKeahlianCreateNestedOneWithoutKkniInput
+    tracker?: TrackerCreateNestedManyWithoutKkniInput
+  }
+
+  export type KkniUncheckedCreateWithoutDudiInput = {
+    id?: string
+    konsentrasiId: string
+    no: number
+    code: string
+    name: string
+    description?: string | null
+    disable?: boolean
+    tracker?: TrackerUncheckedCreateNestedManyWithoutKkniInput
+  }
+
+  export type KkniCreateOrConnectWithoutDudiInput = {
+    where: KkniWhereUniqueInput
+    create: XOR<KkniCreateWithoutDudiInput, KkniUncheckedCreateWithoutDudiInput>
   }
 
   export type ContactDudiUpdateInput = {
@@ -72813,6 +74657,7 @@ export namespace Prisma {
     classRoom?: ClassRoomUpdateManyWithoutMajorNestedInput
     tracker?: TrackerUpdateManyWithoutKonsentrasiNestedInput
     mapel?: MataPelajaranUpdateManyWithoutKeahlianNestedInput
+    kkni?: KkniUpdateManyWithoutKonsentrasiNestedInput
   }
 
   export type KonsentrasiKeahlianUncheckedUpdateWithoutDudiInput = {
@@ -72827,6 +74672,7 @@ export namespace Prisma {
     classRoom?: ClassRoomUncheckedUpdateManyWithoutMajorNestedInput
     tracker?: TrackerUncheckedUpdateManyWithoutKonsentrasiNestedInput
     mapel?: MataPelajaranUncheckedUpdateManyWithoutKeahlianNestedInput
+    kkni?: KkniUncheckedUpdateManyWithoutKonsentrasiNestedInput
   }
 
   export type DudiLearningUpsertWithWhereUniqueWithoutRefInput = {
@@ -72872,6 +74718,31 @@ export namespace Prisma {
     data: XOR<TrackerUpdateManyMutationInput, TrackerUncheckedUpdateManyWithoutTrackerInput>
   }
 
+  export type KkniUpsertWithoutDudiInput = {
+    update: XOR<KkniUpdateWithoutDudiInput, KkniUncheckedUpdateWithoutDudiInput>
+    create: XOR<KkniCreateWithoutDudiInput, KkniUncheckedCreateWithoutDudiInput>
+  }
+
+  export type KkniUpdateWithoutDudiInput = {
+    no?: IntFieldUpdateOperationsInput | number
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    disable?: BoolFieldUpdateOperationsInput | boolean
+    konsentrasi?: KonsentrasiKeahlianUpdateOneRequiredWithoutKkniNestedInput
+    tracker?: TrackerUpdateManyWithoutKkniNestedInput
+  }
+
+  export type KkniUncheckedUpdateWithoutDudiInput = {
+    konsentrasiId?: StringFieldUpdateOperationsInput | string
+    no?: IntFieldUpdateOperationsInput | number
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    disable?: BoolFieldUpdateOperationsInput | boolean
+    tracker?: TrackerUncheckedUpdateManyWithoutKkniNestedInput
+  }
+
   export type DudiCreateWithoutLearningInput = {
     id?: string
     name: string
@@ -72884,6 +74755,7 @@ export namespace Prisma {
     instansi: InstansiCreateNestedOneWithoutDudiInput
     major: KonsentrasiKeahlianCreateNestedOneWithoutDudiInput
     tracker?: TrackerCreateNestedManyWithoutDudiInput
+    kkni?: KkniCreateNestedOneWithoutDudiInput
   }
 
   export type DudiUncheckedCreateWithoutLearningInput = {
@@ -72897,6 +74769,7 @@ export namespace Prisma {
     collabs?: DudiCreatecollabsInput | Enumerable<string>
     timework: XOR<DudiTimeWorkCreateEnvelopeInput, DudiTimeWorkCreateInput>
     disable?: boolean
+    kkniId?: string | null
     tracker?: TrackerUncheckedCreateNestedManyWithoutDudiInput
   }
 
@@ -72930,6 +74803,7 @@ export namespace Prisma {
     instansi?: InstansiUpdateOneRequiredWithoutDudiNestedInput
     major?: KonsentrasiKeahlianUpdateOneRequiredWithoutDudiNestedInput
     tracker?: TrackerUpdateManyWithoutDudiNestedInput
+    kkni?: KkniUpdateOneWithoutDudiNestedInput
   }
 
   export type DudiUncheckedUpdateWithoutLearningInput = {
@@ -72942,7 +74816,210 @@ export namespace Prisma {
     collabs?: DudiUpdatecollabsInput | Enumerable<string>
     timework?: XOR<DudiTimeWorkUpdateEnvelopeInput, DudiTimeWorkCreateInput>
     disable?: BoolFieldUpdateOperationsInput | boolean
+    kkniId?: NullableStringFieldUpdateOperationsInput | string | null
     tracker?: TrackerUncheckedUpdateManyWithoutDudiNestedInput
+  }
+
+  export type KonsentrasiKeahlianCreateWithoutKkniInput = {
+    id?: string
+    code: string
+    name: string
+    tahun: number
+    disable?: boolean
+    program: ProgramKeahlianCreateNestedOneWithoutKonsentrasiInput
+    student?: StudentCreateNestedManyWithoutMajorInput
+    instansi?: InstansiCreateNestedManyWithoutMajorsInput
+    classRoom?: ClassRoomCreateNestedManyWithoutMajorInput
+    tracker?: TrackerCreateNestedManyWithoutKonsentrasiInput
+    mapel?: MataPelajaranCreateNestedManyWithoutKeahlianInput
+    dudi?: DudiCreateNestedManyWithoutMajorInput
+  }
+
+  export type KonsentrasiKeahlianUncheckedCreateWithoutKkniInput = {
+    id?: string
+    code: string
+    name: string
+    programId: string
+    tahun: number
+    instansiIds?: KonsentrasiKeahlianCreateinstansiIdsInput | Enumerable<string>
+    disable?: boolean
+    student?: StudentUncheckedCreateNestedManyWithoutMajorInput
+    instansi?: InstansiUncheckedCreateNestedManyWithoutMajorsInput
+    classRoom?: ClassRoomUncheckedCreateNestedManyWithoutMajorInput
+    tracker?: TrackerUncheckedCreateNestedManyWithoutKonsentrasiInput
+    mapel?: MataPelajaranUncheckedCreateNestedManyWithoutKeahlianInput
+    dudi?: DudiUncheckedCreateNestedManyWithoutMajorInput
+  }
+
+  export type KonsentrasiKeahlianCreateOrConnectWithoutKkniInput = {
+    where: KonsentrasiKeahlianWhereUniqueInput
+    create: XOR<KonsentrasiKeahlianCreateWithoutKkniInput, KonsentrasiKeahlianUncheckedCreateWithoutKkniInput>
+  }
+
+  export type DudiCreateWithoutKkniInput = {
+    id?: string
+    name: string
+    street: string
+    address: XOR<AddressCreateEnvelopeInput, AddressCreateInput>
+    contact: XOR<ContactDudiCreateEnvelopeInput, ContactDudiCreateInput>
+    collabs?: DudiCreatecollabsInput | Enumerable<string>
+    timework: XOR<DudiTimeWorkCreateEnvelopeInput, DudiTimeWorkCreateInput>
+    disable?: boolean
+    instansi: InstansiCreateNestedOneWithoutDudiInput
+    major: KonsentrasiKeahlianCreateNestedOneWithoutDudiInput
+    learning?: DudiLearningCreateNestedManyWithoutRefInput
+    tracker?: TrackerCreateNestedManyWithoutDudiInput
+  }
+
+  export type DudiUncheckedCreateWithoutKkniInput = {
+    id?: string
+    name: string
+    street: string
+    address: XOR<AddressCreateEnvelopeInput, AddressCreateInput>
+    instansiId: string
+    majorId: string
+    contact: XOR<ContactDudiCreateEnvelopeInput, ContactDudiCreateInput>
+    collabs?: DudiCreatecollabsInput | Enumerable<string>
+    timework: XOR<DudiTimeWorkCreateEnvelopeInput, DudiTimeWorkCreateInput>
+    disable?: boolean
+    learning?: DudiLearningUncheckedCreateNestedManyWithoutRefInput
+    tracker?: TrackerUncheckedCreateNestedManyWithoutDudiInput
+  }
+
+  export type DudiCreateOrConnectWithoutKkniInput = {
+    where: DudiWhereUniqueInput
+    create: XOR<DudiCreateWithoutKkniInput, DudiUncheckedCreateWithoutKkniInput>
+  }
+
+  export type DudiCreateManyKkniInputEnvelope = {
+    data: Enumerable<DudiCreateManyKkniInput>
+  }
+
+  export type TrackerCreateWithoutKkniInput = {
+    id?: string
+    point: PointTracker
+    type: TypeTracker
+    createdAt?: Date | string
+    user: UserCreateNestedOneWithoutTrackerInput
+    ref: InstansiCreateNestedOneWithoutHistoryInput
+    instansi?: InstansiCreateNestedOneWithoutTrackerInput
+    mapel?: MataPelajaranCreateNestedOneWithoutTrackerInput
+    elemen?: ElementCreateNestedOneWithoutTrackerInput
+    cp?: AchievementCreateNestedOneWithoutTrackerInput
+    bidang?: BidangKeahlianCreateNestedOneWithoutTrackerInput
+    program?: ProgramKeahlianCreateNestedOneWithoutTrackerInput
+    konsentrasi?: KonsentrasiKeahlianCreateNestedOneWithoutTrackerInput
+    tp?: SchoolYearCreateNestedOneWithoutTrackerInput
+    teacher?: TeacherCreateNestedOneWithoutTrackerInput
+    kelas?: ClassRoomCreateNestedOneWithoutTrackerInput
+    murid?: StudentCreateNestedOneWithoutTrackerInput
+    jadwal?: ScheduleCreateNestedOneWithoutTrackerInput
+    mengajar?: TeachingCreateNestedOneWithoutTrackerInput
+    tujuan?: ObjectiveCreateNestedOneWithoutTrackerInput
+    perangkat?: TDeviceCreateNestedOneWithoutTrackerInput
+    kalender?: CalendarCreateNestedOneWithoutTrackerInput
+    dudi?: DudiCreateNestedOneWithoutTrackerInput
+  }
+
+  export type TrackerUncheckedCreateWithoutKkniInput = {
+    id?: string
+    point: PointTracker
+    type: TypeTracker
+    userId: string
+    refId: string
+    instansiId?: string | null
+    createdAt?: Date | string
+    mapelId?: string | null
+    elementId?: string | null
+    cpId?: string | null
+    bidangId?: string | null
+    programId?: string | null
+    konsentrasiId?: string | null
+    tpId?: string | null
+    teacherId?: string | null
+    kelasId?: string | null
+    muridId?: string | null
+    jadwalId?: string | null
+    mengajarId?: string | null
+    tujuanId?: string | null
+    perangkatId?: string | null
+    kalenderId?: string | null
+    dudiId?: string | null
+  }
+
+  export type TrackerCreateOrConnectWithoutKkniInput = {
+    where: TrackerWhereUniqueInput
+    create: XOR<TrackerCreateWithoutKkniInput, TrackerUncheckedCreateWithoutKkniInput>
+  }
+
+  export type TrackerCreateManyKkniInputEnvelope = {
+    data: Enumerable<TrackerCreateManyKkniInput>
+  }
+
+  export type KonsentrasiKeahlianUpsertWithoutKkniInput = {
+    update: XOR<KonsentrasiKeahlianUpdateWithoutKkniInput, KonsentrasiKeahlianUncheckedUpdateWithoutKkniInput>
+    create: XOR<KonsentrasiKeahlianCreateWithoutKkniInput, KonsentrasiKeahlianUncheckedCreateWithoutKkniInput>
+  }
+
+  export type KonsentrasiKeahlianUpdateWithoutKkniInput = {
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    tahun?: IntFieldUpdateOperationsInput | number
+    disable?: BoolFieldUpdateOperationsInput | boolean
+    program?: ProgramKeahlianUpdateOneRequiredWithoutKonsentrasiNestedInput
+    student?: StudentUpdateManyWithoutMajorNestedInput
+    instansi?: InstansiUpdateManyWithoutMajorsNestedInput
+    classRoom?: ClassRoomUpdateManyWithoutMajorNestedInput
+    tracker?: TrackerUpdateManyWithoutKonsentrasiNestedInput
+    mapel?: MataPelajaranUpdateManyWithoutKeahlianNestedInput
+    dudi?: DudiUpdateManyWithoutMajorNestedInput
+  }
+
+  export type KonsentrasiKeahlianUncheckedUpdateWithoutKkniInput = {
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    programId?: StringFieldUpdateOperationsInput | string
+    tahun?: IntFieldUpdateOperationsInput | number
+    instansiIds?: KonsentrasiKeahlianUpdateinstansiIdsInput | Enumerable<string>
+    disable?: BoolFieldUpdateOperationsInput | boolean
+    student?: StudentUncheckedUpdateManyWithoutMajorNestedInput
+    instansi?: InstansiUncheckedUpdateManyWithoutMajorsNestedInput
+    classRoom?: ClassRoomUncheckedUpdateManyWithoutMajorNestedInput
+    tracker?: TrackerUncheckedUpdateManyWithoutKonsentrasiNestedInput
+    mapel?: MataPelajaranUncheckedUpdateManyWithoutKeahlianNestedInput
+    dudi?: DudiUncheckedUpdateManyWithoutMajorNestedInput
+  }
+
+  export type DudiUpsertWithWhereUniqueWithoutKkniInput = {
+    where: DudiWhereUniqueInput
+    update: XOR<DudiUpdateWithoutKkniInput, DudiUncheckedUpdateWithoutKkniInput>
+    create: XOR<DudiCreateWithoutKkniInput, DudiUncheckedCreateWithoutKkniInput>
+  }
+
+  export type DudiUpdateWithWhereUniqueWithoutKkniInput = {
+    where: DudiWhereUniqueInput
+    data: XOR<DudiUpdateWithoutKkniInput, DudiUncheckedUpdateWithoutKkniInput>
+  }
+
+  export type DudiUpdateManyWithWhereWithoutKkniInput = {
+    where: DudiScalarWhereInput
+    data: XOR<DudiUpdateManyMutationInput, DudiUncheckedUpdateManyWithoutDudiInput>
+  }
+
+  export type TrackerUpsertWithWhereUniqueWithoutKkniInput = {
+    where: TrackerWhereUniqueInput
+    update: XOR<TrackerUpdateWithoutKkniInput, TrackerUncheckedUpdateWithoutKkniInput>
+    create: XOR<TrackerCreateWithoutKkniInput, TrackerUncheckedCreateWithoutKkniInput>
+  }
+
+  export type TrackerUpdateWithWhereUniqueWithoutKkniInput = {
+    where: TrackerWhereUniqueInput
+    data: XOR<TrackerUpdateWithoutKkniInput, TrackerUncheckedUpdateWithoutKkniInput>
+  }
+
+  export type TrackerUpdateManyWithWhereWithoutKkniInput = {
+    where: TrackerScalarWhereInput
+    data: XOR<TrackerUpdateManyMutationInput, TrackerUncheckedUpdateManyWithoutTrackerInput>
   }
 
   export type CoordinateCompositeFilter = {
@@ -73035,6 +75112,7 @@ export namespace Prisma {
     perangkatId?: string | null
     kalenderId?: string | null
     dudiId?: string | null
+    kkniId?: string | null
   }
 
   export type TrackerCreateManyRefInput = {
@@ -73060,6 +75138,7 @@ export namespace Prisma {
     perangkatId?: string | null
     kalenderId?: string | null
     dudiId?: string | null
+    kkniId?: string | null
   }
 
   export type MataPelajaranCreateManyInstansiInput = {
@@ -73125,6 +75204,7 @@ export namespace Prisma {
     collabs?: DudiCreatecollabsInput | Enumerable<string>
     timework: XOR<DudiTimeWorkCreateEnvelopeInput, DudiTimeWorkCreateInput>
     disable?: boolean
+    kkniId?: string | null
   }
 
   export type CoordinateUpdateEnvelopeInput = {
@@ -73143,6 +75223,7 @@ export namespace Prisma {
     tracker?: TrackerUpdateManyWithoutKonsentrasiNestedInput
     mapel?: MataPelajaranUpdateManyWithoutKeahlianNestedInput
     dudi?: DudiUpdateManyWithoutMajorNestedInput
+    kkni?: KkniUpdateManyWithoutKonsentrasiNestedInput
   }
 
   export type KonsentrasiKeahlianUncheckedUpdateWithoutInstansiInput = {
@@ -73157,6 +75238,7 @@ export namespace Prisma {
     tracker?: TrackerUncheckedUpdateManyWithoutKonsentrasiNestedInput
     mapel?: MataPelajaranUncheckedUpdateManyWithoutKeahlianNestedInput
     dudi?: DudiUncheckedUpdateManyWithoutMajorNestedInput
+    kkni?: KkniUncheckedUpdateManyWithoutKonsentrasiNestedInput
   }
 
   export type KonsentrasiKeahlianUncheckedUpdateManyWithoutMajorsInput = {
@@ -73334,6 +75416,7 @@ export namespace Prisma {
     perangkat?: TDeviceUpdateOneWithoutTrackerNestedInput
     kalender?: CalendarUpdateOneWithoutTrackerNestedInput
     dudi?: DudiUpdateOneWithoutTrackerNestedInput
+    kkni?: KkniUpdateOneWithoutTrackerNestedInput
   }
 
   export type TrackerUncheckedUpdateWithoutInstansiInput = {
@@ -73358,6 +75441,7 @@ export namespace Prisma {
     perangkatId?: NullableStringFieldUpdateOperationsInput | string | null
     kalenderId?: NullableStringFieldUpdateOperationsInput | string | null
     dudiId?: NullableStringFieldUpdateOperationsInput | string | null
+    kkniId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type TrackerUncheckedUpdateManyWithoutTrackerInput = {
@@ -73382,6 +75466,7 @@ export namespace Prisma {
     perangkatId?: NullableStringFieldUpdateOperationsInput | string | null
     kalenderId?: NullableStringFieldUpdateOperationsInput | string | null
     dudiId?: NullableStringFieldUpdateOperationsInput | string | null
+    kkniId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type TrackerUpdateWithoutRefInput = {
@@ -73406,6 +75491,7 @@ export namespace Prisma {
     perangkat?: TDeviceUpdateOneWithoutTrackerNestedInput
     kalender?: CalendarUpdateOneWithoutTrackerNestedInput
     dudi?: DudiUpdateOneWithoutTrackerNestedInput
+    kkni?: KkniUpdateOneWithoutTrackerNestedInput
   }
 
   export type TrackerUncheckedUpdateWithoutRefInput = {
@@ -73430,6 +75516,7 @@ export namespace Prisma {
     perangkatId?: NullableStringFieldUpdateOperationsInput | string | null
     kalenderId?: NullableStringFieldUpdateOperationsInput | string | null
     dudiId?: NullableStringFieldUpdateOperationsInput | string | null
+    kkniId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type TrackerUncheckedUpdateManyWithoutHistoryInput = {
@@ -73454,6 +75541,7 @@ export namespace Prisma {
     perangkatId?: NullableStringFieldUpdateOperationsInput | string | null
     kalenderId?: NullableStringFieldUpdateOperationsInput | string | null
     dudiId?: NullableStringFieldUpdateOperationsInput | string | null
+    kkniId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type MataPelajaranUpdateWithoutInstansiInput = {
@@ -73650,6 +75738,7 @@ export namespace Prisma {
     major?: KonsentrasiKeahlianUpdateOneRequiredWithoutDudiNestedInput
     learning?: DudiLearningUpdateManyWithoutRefNestedInput
     tracker?: TrackerUpdateManyWithoutDudiNestedInput
+    kkni?: KkniUpdateOneWithoutDudiNestedInput
   }
 
   export type DudiUncheckedUpdateWithoutInstansiInput = {
@@ -73661,6 +75750,7 @@ export namespace Prisma {
     collabs?: DudiUpdatecollabsInput | Enumerable<string>
     timework?: XOR<DudiTimeWorkUpdateEnvelopeInput, DudiTimeWorkCreateInput>
     disable?: BoolFieldUpdateOperationsInput | boolean
+    kkniId?: NullableStringFieldUpdateOperationsInput | string | null
     learning?: DudiLearningUncheckedUpdateManyWithoutRefNestedInput
     tracker?: TrackerUncheckedUpdateManyWithoutDudiNestedInput
   }
@@ -73674,6 +75764,7 @@ export namespace Prisma {
     collabs?: DudiUpdatecollabsInput | Enumerable<string>
     timework?: XOR<DudiTimeWorkUpdateEnvelopeInput, DudiTimeWorkCreateInput>
     disable?: BoolFieldUpdateOperationsInput | boolean
+    kkniId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type ElementCreateManyMapelInput = {
@@ -73714,6 +75805,7 @@ export namespace Prisma {
     perangkatId?: string | null
     kalenderId?: string | null
     dudiId?: string | null
+    kkniId?: string | null
   }
 
   export type ObjectiveCreateManyMapelInput = {
@@ -73828,6 +75920,7 @@ export namespace Prisma {
     perangkat?: TDeviceUpdateOneWithoutTrackerNestedInput
     kalender?: CalendarUpdateOneWithoutTrackerNestedInput
     dudi?: DudiUpdateOneWithoutTrackerNestedInput
+    kkni?: KkniUpdateOneWithoutTrackerNestedInput
   }
 
   export type TrackerUncheckedUpdateWithoutMapelInput = {
@@ -73852,6 +75945,7 @@ export namespace Prisma {
     perangkatId?: NullableStringFieldUpdateOperationsInput | string | null
     kalenderId?: NullableStringFieldUpdateOperationsInput | string | null
     dudiId?: NullableStringFieldUpdateOperationsInput | string | null
+    kkniId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type ObjectiveUpdateWithoutMapelInput = {
@@ -74000,6 +76094,7 @@ export namespace Prisma {
     perangkatId?: string | null
     kalenderId?: string | null
     dudiId?: string | null
+    kkniId?: string | null
   }
 
   export type ObjectiveCreateManyElemenInput = {
@@ -74072,6 +76167,7 @@ export namespace Prisma {
     perangkat?: TDeviceUpdateOneWithoutTrackerNestedInput
     kalender?: CalendarUpdateOneWithoutTrackerNestedInput
     dudi?: DudiUpdateOneWithoutTrackerNestedInput
+    kkni?: KkniUpdateOneWithoutTrackerNestedInput
   }
 
   export type TrackerUncheckedUpdateWithoutElemenInput = {
@@ -74096,6 +76192,7 @@ export namespace Prisma {
     perangkatId?: NullableStringFieldUpdateOperationsInput | string | null
     kalenderId?: NullableStringFieldUpdateOperationsInput | string | null
     dudiId?: NullableStringFieldUpdateOperationsInput | string | null
+    kkniId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type TeachingUpdateWithoutElemenInput = {
@@ -74241,6 +76338,7 @@ export namespace Prisma {
     perangkatId?: string | null
     kalenderId?: string | null
     dudiId?: string | null
+    kkniId?: string | null
   }
 
   export type ObjectiveUpdateWithoutAchievementInput = {
@@ -74325,6 +76423,7 @@ export namespace Prisma {
     perangkat?: TDeviceUpdateOneWithoutTrackerNestedInput
     kalender?: CalendarUpdateOneWithoutTrackerNestedInput
     dudi?: DudiUpdateOneWithoutTrackerNestedInput
+    kkni?: KkniUpdateOneWithoutTrackerNestedInput
   }
 
   export type TrackerUncheckedUpdateWithoutCpInput = {
@@ -74349,6 +76448,7 @@ export namespace Prisma {
     perangkatId?: NullableStringFieldUpdateOperationsInput | string | null
     kalenderId?: NullableStringFieldUpdateOperationsInput | string | null
     dudiId?: NullableStringFieldUpdateOperationsInput | string | null
+    kkniId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type ProgramKeahlianCreateManyBidangInput = {
@@ -74381,6 +76481,7 @@ export namespace Prisma {
     perangkatId?: string | null
     kalenderId?: string | null
     dudiId?: string | null
+    kkniId?: string | null
   }
 
   export type ProgramKeahlianUpdateWithoutBidangInput = {
@@ -74429,6 +76530,7 @@ export namespace Prisma {
     perangkat?: TDeviceUpdateOneWithoutTrackerNestedInput
     kalender?: CalendarUpdateOneWithoutTrackerNestedInput
     dudi?: DudiUpdateOneWithoutTrackerNestedInput
+    kkni?: KkniUpdateOneWithoutTrackerNestedInput
   }
 
   export type TrackerUncheckedUpdateWithoutBidangInput = {
@@ -74453,6 +76555,7 @@ export namespace Prisma {
     perangkatId?: NullableStringFieldUpdateOperationsInput | string | null
     kalenderId?: NullableStringFieldUpdateOperationsInput | string | null
     dudiId?: NullableStringFieldUpdateOperationsInput | string | null
+    kkniId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type KonsentrasiKeahlianCreateManyProgramInput = {
@@ -74487,6 +76590,7 @@ export namespace Prisma {
     perangkatId?: string | null
     kalenderId?: string | null
     dudiId?: string | null
+    kkniId?: string | null
   }
 
   export type MataPelajaranCreateManyProgramInput = {
@@ -74513,6 +76617,7 @@ export namespace Prisma {
     tracker?: TrackerUpdateManyWithoutKonsentrasiNestedInput
     mapel?: MataPelajaranUpdateManyWithoutKeahlianNestedInput
     dudi?: DudiUpdateManyWithoutMajorNestedInput
+    kkni?: KkniUpdateManyWithoutKonsentrasiNestedInput
   }
 
   export type KonsentrasiKeahlianUncheckedUpdateWithoutProgramInput = {
@@ -74527,6 +76632,7 @@ export namespace Prisma {
     tracker?: TrackerUncheckedUpdateManyWithoutKonsentrasiNestedInput
     mapel?: MataPelajaranUncheckedUpdateManyWithoutKeahlianNestedInput
     dudi?: DudiUncheckedUpdateManyWithoutMajorNestedInput
+    kkni?: KkniUncheckedUpdateManyWithoutKonsentrasiNestedInput
   }
 
   export type KonsentrasiKeahlianUncheckedUpdateManyWithoutKonsentrasiInput = {
@@ -74559,6 +76665,7 @@ export namespace Prisma {
     perangkat?: TDeviceUpdateOneWithoutTrackerNestedInput
     kalender?: CalendarUpdateOneWithoutTrackerNestedInput
     dudi?: DudiUpdateOneWithoutTrackerNestedInput
+    kkni?: KkniUpdateOneWithoutTrackerNestedInput
   }
 
   export type TrackerUncheckedUpdateWithoutProgramInput = {
@@ -74583,6 +76690,7 @@ export namespace Prisma {
     perangkatId?: NullableStringFieldUpdateOperationsInput | string | null
     kalenderId?: NullableStringFieldUpdateOperationsInput | string | null
     dudiId?: NullableStringFieldUpdateOperationsInput | string | null
+    kkniId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type MataPelajaranUpdateWithoutProgramInput = {
@@ -74680,6 +76788,7 @@ export namespace Prisma {
     perangkatId?: string | null
     kalenderId?: string | null
     dudiId?: string | null
+    kkniId?: string | null
   }
 
   export type MataPelajaranCreateManyKeahlianInput = {
@@ -74704,6 +76813,16 @@ export namespace Prisma {
     contact: XOR<ContactDudiCreateEnvelopeInput, ContactDudiCreateInput>
     collabs?: DudiCreatecollabsInput | Enumerable<string>
     timework: XOR<DudiTimeWorkCreateEnvelopeInput, DudiTimeWorkCreateInput>
+    disable?: boolean
+    kkniId?: string | null
+  }
+
+  export type KkniCreateManyKonsentrasiInput = {
+    id?: string
+    no: number
+    code: string
+    name: string
+    description?: string | null
     disable?: boolean
   }
 
@@ -74855,6 +76974,7 @@ export namespace Prisma {
     perangkat?: TDeviceUpdateOneWithoutTrackerNestedInput
     kalender?: CalendarUpdateOneWithoutTrackerNestedInput
     dudi?: DudiUpdateOneWithoutTrackerNestedInput
+    kkni?: KkniUpdateOneWithoutTrackerNestedInput
   }
 
   export type TrackerUncheckedUpdateWithoutKonsentrasiInput = {
@@ -74879,6 +76999,7 @@ export namespace Prisma {
     perangkatId?: NullableStringFieldUpdateOperationsInput | string | null
     kalenderId?: NullableStringFieldUpdateOperationsInput | string | null
     dudiId?: NullableStringFieldUpdateOperationsInput | string | null
+    kkniId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type MataPelajaranUpdateWithoutKeahlianInput = {
@@ -74926,6 +77047,7 @@ export namespace Prisma {
     instansi?: InstansiUpdateOneRequiredWithoutDudiNestedInput
     learning?: DudiLearningUpdateManyWithoutRefNestedInput
     tracker?: TrackerUpdateManyWithoutDudiNestedInput
+    kkni?: KkniUpdateOneWithoutDudiNestedInput
   }
 
   export type DudiUncheckedUpdateWithoutMajorInput = {
@@ -74937,8 +77059,37 @@ export namespace Prisma {
     collabs?: DudiUpdatecollabsInput | Enumerable<string>
     timework?: XOR<DudiTimeWorkUpdateEnvelopeInput, DudiTimeWorkCreateInput>
     disable?: BoolFieldUpdateOperationsInput | boolean
+    kkniId?: NullableStringFieldUpdateOperationsInput | string | null
     learning?: DudiLearningUncheckedUpdateManyWithoutRefNestedInput
     tracker?: TrackerUncheckedUpdateManyWithoutDudiNestedInput
+  }
+
+  export type KkniUpdateWithoutKonsentrasiInput = {
+    no?: IntFieldUpdateOperationsInput | number
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    disable?: BoolFieldUpdateOperationsInput | boolean
+    dudi?: DudiUpdateManyWithoutKkniNestedInput
+    tracker?: TrackerUpdateManyWithoutKkniNestedInput
+  }
+
+  export type KkniUncheckedUpdateWithoutKonsentrasiInput = {
+    no?: IntFieldUpdateOperationsInput | number
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    disable?: BoolFieldUpdateOperationsInput | boolean
+    dudi?: DudiUncheckedUpdateManyWithoutKkniNestedInput
+    tracker?: TrackerUncheckedUpdateManyWithoutKkniNestedInput
+  }
+
+  export type KkniUncheckedUpdateManyWithoutKkniInput = {
+    no?: IntFieldUpdateOperationsInput | number
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    disable?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type UserCreateManyRoleInput = {
@@ -75023,6 +77174,7 @@ export namespace Prisma {
     perangkatId?: string | null
     kalenderId?: string | null
     dudiId?: string | null
+    kkniId?: string | null
   }
 
   export type ObjectiveCreateManyUserInput = {
@@ -75106,6 +77258,7 @@ export namespace Prisma {
     perangkat?: TDeviceUpdateOneWithoutTrackerNestedInput
     kalender?: CalendarUpdateOneWithoutTrackerNestedInput
     dudi?: DudiUpdateOneWithoutTrackerNestedInput
+    kkni?: KkniUpdateOneWithoutTrackerNestedInput
   }
 
   export type TrackerUncheckedUpdateWithoutUserInput = {
@@ -75130,6 +77283,7 @@ export namespace Prisma {
     perangkatId?: NullableStringFieldUpdateOperationsInput | string | null
     kalenderId?: NullableStringFieldUpdateOperationsInput | string | null
     dudiId?: NullableStringFieldUpdateOperationsInput | string | null
+    kkniId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type ObjectiveUpdateWithoutUserInput = {
@@ -75721,6 +77875,7 @@ export namespace Prisma {
     perangkatId?: string | null
     kalenderId?: string | null
     dudiId?: string | null
+    kkniId?: string | null
   }
 
   export type TDeviceCreateManyYearInput = {
@@ -75946,6 +78101,7 @@ export namespace Prisma {
     perangkat?: TDeviceUpdateOneWithoutTrackerNestedInput
     kalender?: CalendarUpdateOneWithoutTrackerNestedInput
     dudi?: DudiUpdateOneWithoutTrackerNestedInput
+    kkni?: KkniUpdateOneWithoutTrackerNestedInput
   }
 
   export type TrackerUncheckedUpdateWithoutTpInput = {
@@ -75970,6 +78126,7 @@ export namespace Prisma {
     perangkatId?: NullableStringFieldUpdateOperationsInput | string | null
     kalenderId?: NullableStringFieldUpdateOperationsInput | string | null
     dudiId?: NullableStringFieldUpdateOperationsInput | string | null
+    kkniId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type TDeviceUpdateWithoutYearInput = {
@@ -76048,6 +78205,7 @@ export namespace Prisma {
     perangkatId?: string | null
     kalenderId?: string | null
     dudiId?: string | null
+    kkniId?: string | null
   }
 
   export type TeachingCreateManyTeacherInput = {
@@ -76157,6 +78315,7 @@ export namespace Prisma {
     perangkat?: TDeviceUpdateOneWithoutTrackerNestedInput
     kalender?: CalendarUpdateOneWithoutTrackerNestedInput
     dudi?: DudiUpdateOneWithoutTrackerNestedInput
+    kkni?: KkniUpdateOneWithoutTrackerNestedInput
   }
 
   export type TrackerUncheckedUpdateWithoutTeacherInput = {
@@ -76181,6 +78340,7 @@ export namespace Prisma {
     perangkatId?: NullableStringFieldUpdateOperationsInput | string | null
     kalenderId?: NullableStringFieldUpdateOperationsInput | string | null
     dudiId?: NullableStringFieldUpdateOperationsInput | string | null
+    kkniId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type TeachingUpdateWithoutTeacherInput = {
@@ -76242,6 +78402,7 @@ export namespace Prisma {
     perangkatId?: string | null
     kalenderId?: string | null
     dudiId?: string | null
+    kkniId?: string | null
   }
 
   export type RoomPropertyUpdateInput = {
@@ -76325,6 +78486,7 @@ export namespace Prisma {
     perangkat?: TDeviceUpdateOneWithoutTrackerNestedInput
     kalender?: CalendarUpdateOneWithoutTrackerNestedInput
     dudi?: DudiUpdateOneWithoutTrackerNestedInput
+    kkni?: KkniUpdateOneWithoutTrackerNestedInput
   }
 
   export type TrackerUncheckedUpdateWithoutKelasInput = {
@@ -76349,6 +78511,7 @@ export namespace Prisma {
     perangkatId?: NullableStringFieldUpdateOperationsInput | string | null
     kalenderId?: NullableStringFieldUpdateOperationsInput | string | null
     dudiId?: NullableStringFieldUpdateOperationsInput | string | null
+    kkniId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type TeachingUpdateWithoutClassRoomInput = {
@@ -76439,6 +78602,7 @@ export namespace Prisma {
     perangkatId?: string | null
     kalenderId?: string | null
     dudiId?: string | null
+    kkniId?: string | null
   }
 
   export type ClassRoomUpdateWithoutStudentsInput = {
@@ -76524,6 +78688,7 @@ export namespace Prisma {
     perangkat?: TDeviceUpdateOneWithoutTrackerNestedInput
     kalender?: CalendarUpdateOneWithoutTrackerNestedInput
     dudi?: DudiUpdateOneWithoutTrackerNestedInput
+    kkni?: KkniUpdateOneWithoutTrackerNestedInput
   }
 
   export type TrackerUncheckedUpdateWithoutMuridInput = {
@@ -76548,6 +78713,7 @@ export namespace Prisma {
     perangkatId?: NullableStringFieldUpdateOperationsInput | string | null
     kalenderId?: NullableStringFieldUpdateOperationsInput | string | null
     dudiId?: NullableStringFieldUpdateOperationsInput | string | null
+    kkniId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type TrackerCreateManyJadwalInput = {
@@ -76573,6 +78739,7 @@ export namespace Prisma {
     perangkatId?: string | null
     kalenderId?: string | null
     dudiId?: string | null
+    kkniId?: string | null
   }
 
   export type TeachingCreateManyRefInput = {
@@ -76608,6 +78775,7 @@ export namespace Prisma {
     perangkat?: TDeviceUpdateOneWithoutTrackerNestedInput
     kalender?: CalendarUpdateOneWithoutTrackerNestedInput
     dudi?: DudiUpdateOneWithoutTrackerNestedInput
+    kkni?: KkniUpdateOneWithoutTrackerNestedInput
   }
 
   export type TrackerUncheckedUpdateWithoutJadwalInput = {
@@ -76632,6 +78800,7 @@ export namespace Prisma {
     perangkatId?: NullableStringFieldUpdateOperationsInput | string | null
     kalenderId?: NullableStringFieldUpdateOperationsInput | string | null
     dudiId?: NullableStringFieldUpdateOperationsInput | string | null
+    kkniId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type TeachingUpdateWithoutRefInput = {
@@ -76683,6 +78852,7 @@ export namespace Prisma {
     perangkatId?: string | null
     kalenderId?: string | null
     dudiId?: string | null
+    kkniId?: string | null
   }
 
   export type TDeviceCreateManyTeachingInput = {
@@ -76788,6 +78958,7 @@ export namespace Prisma {
     perangkat?: TDeviceUpdateOneWithoutTrackerNestedInput
     kalender?: CalendarUpdateOneWithoutTrackerNestedInput
     dudi?: DudiUpdateOneWithoutTrackerNestedInput
+    kkni?: KkniUpdateOneWithoutTrackerNestedInput
   }
 
   export type TrackerUncheckedUpdateWithoutMengajarInput = {
@@ -76812,6 +78983,7 @@ export namespace Prisma {
     perangkatId?: NullableStringFieldUpdateOperationsInput | string | null
     kalenderId?: NullableStringFieldUpdateOperationsInput | string | null
     dudiId?: NullableStringFieldUpdateOperationsInput | string | null
+    kkniId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type TDeviceUpdateWithoutTeachingInput = {
@@ -76908,6 +79080,7 @@ export namespace Prisma {
     perangkatId?: string | null
     kalenderId?: string | null
     dudiId?: string | null
+    kkniId?: string | null
   }
 
   export type OresourceCreateManyRefInput = {
@@ -76977,6 +79150,7 @@ export namespace Prisma {
     perangkat?: TDeviceUpdateOneWithoutTrackerNestedInput
     kalender?: CalendarUpdateOneWithoutTrackerNestedInput
     dudi?: DudiUpdateOneWithoutTrackerNestedInput
+    kkni?: KkniUpdateOneWithoutTrackerNestedInput
   }
 
   export type TrackerUncheckedUpdateWithoutTujuanInput = {
@@ -77001,6 +79175,7 @@ export namespace Prisma {
     perangkatId?: NullableStringFieldUpdateOperationsInput | string | null
     kalenderId?: NullableStringFieldUpdateOperationsInput | string | null
     dudiId?: NullableStringFieldUpdateOperationsInput | string | null
+    kkniId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type OresourceUpdateWithoutRefInput = {
@@ -77566,6 +79741,7 @@ export namespace Prisma {
     tujuanId?: string | null
     kalenderId?: string | null
     dudiId?: string | null
+    kkniId?: string | null
   }
 
   export type TDeviceDataCreateManyRefInput = {
@@ -77651,6 +79827,7 @@ export namespace Prisma {
     tujuan?: ObjectiveUpdateOneWithoutTrackerNestedInput
     kalender?: CalendarUpdateOneWithoutTrackerNestedInput
     dudi?: DudiUpdateOneWithoutTrackerNestedInput
+    kkni?: KkniUpdateOneWithoutTrackerNestedInput
   }
 
   export type TrackerUncheckedUpdateWithoutPerangkatInput = {
@@ -77675,6 +79852,7 @@ export namespace Prisma {
     tujuanId?: NullableStringFieldUpdateOperationsInput | string | null
     kalenderId?: NullableStringFieldUpdateOperationsInput | string | null
     dudiId?: NullableStringFieldUpdateOperationsInput | string | null
+    kkniId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type TDeviceDataUpdateWithoutRefInput = {
@@ -77770,6 +79948,7 @@ export namespace Prisma {
     tujuanId?: string | null
     perangkatId?: string | null
     dudiId?: string | null
+    kkniId?: string | null
   }
 
   export type ClassRoomUpdateWithoutEventInput = {
@@ -77889,6 +80068,7 @@ export namespace Prisma {
     tujuan?: ObjectiveUpdateOneWithoutTrackerNestedInput
     perangkat?: TDeviceUpdateOneWithoutTrackerNestedInput
     dudi?: DudiUpdateOneWithoutTrackerNestedInput
+    kkni?: KkniUpdateOneWithoutTrackerNestedInput
   }
 
   export type TrackerUncheckedUpdateWithoutKalenderInput = {
@@ -77913,6 +80093,7 @@ export namespace Prisma {
     tujuanId?: NullableStringFieldUpdateOperationsInput | string | null
     perangkatId?: NullableStringFieldUpdateOperationsInput | string | null
     dudiId?: NullableStringFieldUpdateOperationsInput | string | null
+    kkniId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type DudiLearningCreateManyRefInput = {
@@ -77946,6 +80127,7 @@ export namespace Prisma {
     tujuanId?: string | null
     perangkatId?: string | null
     kalenderId?: string | null
+    kkniId?: string | null
   }
 
   export type DudiTimeWorkUpdateholidaysInput = {
@@ -77996,6 +80178,7 @@ export namespace Prisma {
     tujuan?: ObjectiveUpdateOneWithoutTrackerNestedInput
     perangkat?: TDeviceUpdateOneWithoutTrackerNestedInput
     kalender?: CalendarUpdateOneWithoutTrackerNestedInput
+    kkni?: KkniUpdateOneWithoutTrackerNestedInput
   }
 
   export type TrackerUncheckedUpdateWithoutDudiInput = {
@@ -78020,12 +80203,130 @@ export namespace Prisma {
     tujuanId?: NullableStringFieldUpdateOperationsInput | string | null
     perangkatId?: NullableStringFieldUpdateOperationsInput | string | null
     kalenderId?: NullableStringFieldUpdateOperationsInput | string | null
+    kkniId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type DudiIndicatorUpdateInput = {
     no?: IntFieldUpdateOperationsInput | number
     code?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type DudiCreateManyKkniInput = {
+    id?: string
+    name: string
+    street: string
+    address: XOR<AddressCreateEnvelopeInput, AddressCreateInput>
+    instansiId: string
+    majorId: string
+    contact: XOR<ContactDudiCreateEnvelopeInput, ContactDudiCreateInput>
+    collabs?: DudiCreatecollabsInput | Enumerable<string>
+    timework: XOR<DudiTimeWorkCreateEnvelopeInput, DudiTimeWorkCreateInput>
+    disable?: boolean
+  }
+
+  export type TrackerCreateManyKkniInput = {
+    id?: string
+    point: PointTracker
+    type: TypeTracker
+    userId: string
+    refId: string
+    instansiId?: string | null
+    createdAt?: Date | string
+    mapelId?: string | null
+    elementId?: string | null
+    cpId?: string | null
+    bidangId?: string | null
+    programId?: string | null
+    konsentrasiId?: string | null
+    tpId?: string | null
+    teacherId?: string | null
+    kelasId?: string | null
+    muridId?: string | null
+    jadwalId?: string | null
+    mengajarId?: string | null
+    tujuanId?: string | null
+    perangkatId?: string | null
+    kalenderId?: string | null
+    dudiId?: string | null
+  }
+
+  export type DudiUpdateWithoutKkniInput = {
+    name?: StringFieldUpdateOperationsInput | string
+    street?: StringFieldUpdateOperationsInput | string
+    address?: XOR<AddressUpdateEnvelopeInput, AddressCreateInput>
+    contact?: XOR<ContactDudiUpdateEnvelopeInput, ContactDudiCreateInput>
+    collabs?: DudiUpdatecollabsInput | Enumerable<string>
+    timework?: XOR<DudiTimeWorkUpdateEnvelopeInput, DudiTimeWorkCreateInput>
+    disable?: BoolFieldUpdateOperationsInput | boolean
+    instansi?: InstansiUpdateOneRequiredWithoutDudiNestedInput
+    major?: KonsentrasiKeahlianUpdateOneRequiredWithoutDudiNestedInput
+    learning?: DudiLearningUpdateManyWithoutRefNestedInput
+    tracker?: TrackerUpdateManyWithoutDudiNestedInput
+  }
+
+  export type DudiUncheckedUpdateWithoutKkniInput = {
+    name?: StringFieldUpdateOperationsInput | string
+    street?: StringFieldUpdateOperationsInput | string
+    address?: XOR<AddressUpdateEnvelopeInput, AddressCreateInput>
+    instansiId?: StringFieldUpdateOperationsInput | string
+    majorId?: StringFieldUpdateOperationsInput | string
+    contact?: XOR<ContactDudiUpdateEnvelopeInput, ContactDudiCreateInput>
+    collabs?: DudiUpdatecollabsInput | Enumerable<string>
+    timework?: XOR<DudiTimeWorkUpdateEnvelopeInput, DudiTimeWorkCreateInput>
+    disable?: BoolFieldUpdateOperationsInput | boolean
+    learning?: DudiLearningUncheckedUpdateManyWithoutRefNestedInput
+    tracker?: TrackerUncheckedUpdateManyWithoutDudiNestedInput
+  }
+
+  export type TrackerUpdateWithoutKkniInput = {
+    point?: EnumPointTrackerFieldUpdateOperationsInput | PointTracker
+    type?: EnumTypeTrackerFieldUpdateOperationsInput | TypeTracker
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutTrackerNestedInput
+    ref?: InstansiUpdateOneRequiredWithoutHistoryNestedInput
+    instansi?: InstansiUpdateOneWithoutTrackerNestedInput
+    mapel?: MataPelajaranUpdateOneWithoutTrackerNestedInput
+    elemen?: ElementUpdateOneWithoutTrackerNestedInput
+    cp?: AchievementUpdateOneWithoutTrackerNestedInput
+    bidang?: BidangKeahlianUpdateOneWithoutTrackerNestedInput
+    program?: ProgramKeahlianUpdateOneWithoutTrackerNestedInput
+    konsentrasi?: KonsentrasiKeahlianUpdateOneWithoutTrackerNestedInput
+    tp?: SchoolYearUpdateOneWithoutTrackerNestedInput
+    teacher?: TeacherUpdateOneWithoutTrackerNestedInput
+    kelas?: ClassRoomUpdateOneWithoutTrackerNestedInput
+    murid?: StudentUpdateOneWithoutTrackerNestedInput
+    jadwal?: ScheduleUpdateOneWithoutTrackerNestedInput
+    mengajar?: TeachingUpdateOneWithoutTrackerNestedInput
+    tujuan?: ObjectiveUpdateOneWithoutTrackerNestedInput
+    perangkat?: TDeviceUpdateOneWithoutTrackerNestedInput
+    kalender?: CalendarUpdateOneWithoutTrackerNestedInput
+    dudi?: DudiUpdateOneWithoutTrackerNestedInput
+  }
+
+  export type TrackerUncheckedUpdateWithoutKkniInput = {
+    point?: EnumPointTrackerFieldUpdateOperationsInput | PointTracker
+    type?: EnumTypeTrackerFieldUpdateOperationsInput | TypeTracker
+    userId?: StringFieldUpdateOperationsInput | string
+    refId?: StringFieldUpdateOperationsInput | string
+    instansiId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    mapelId?: NullableStringFieldUpdateOperationsInput | string | null
+    elementId?: NullableStringFieldUpdateOperationsInput | string | null
+    cpId?: NullableStringFieldUpdateOperationsInput | string | null
+    bidangId?: NullableStringFieldUpdateOperationsInput | string | null
+    programId?: NullableStringFieldUpdateOperationsInput | string | null
+    konsentrasiId?: NullableStringFieldUpdateOperationsInput | string | null
+    tpId?: NullableStringFieldUpdateOperationsInput | string | null
+    teacherId?: NullableStringFieldUpdateOperationsInput | string | null
+    kelasId?: NullableStringFieldUpdateOperationsInput | string | null
+    muridId?: NullableStringFieldUpdateOperationsInput | string | null
+    jadwalId?: NullableStringFieldUpdateOperationsInput | string | null
+    mengajarId?: NullableStringFieldUpdateOperationsInput | string | null
+    tujuanId?: NullableStringFieldUpdateOperationsInput | string | null
+    perangkatId?: NullableStringFieldUpdateOperationsInput | string | null
+    kalenderId?: NullableStringFieldUpdateOperationsInput | string | null
+    dudiId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type CoordinateWhereInput = {

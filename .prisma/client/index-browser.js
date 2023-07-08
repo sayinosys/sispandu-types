@@ -158,7 +158,8 @@ exports.Prisma.DudiScalarFieldEnum = {
   instansiId: 'instansiId',
   majorId: 'majorId',
   collabs: 'collabs',
-  disable: 'disable'
+  disable: 'disable',
+  kkniId: 'kkniId'
 };
 
 exports.Prisma.ElementScalarFieldEnum = {
@@ -197,6 +198,16 @@ exports.Prisma.InstansiScalarFieldEnum = {
   religion: 'religion',
   major: 'major',
   majorIds: 'majorIds',
+  disable: 'disable'
+};
+
+exports.Prisma.KkniScalarFieldEnum = {
+  id: 'id',
+  konsentrasiId: 'konsentrasiId',
+  no: 'no',
+  code: 'code',
+  name: 'name',
+  description: 'description',
   disable: 'disable'
 };
 
@@ -455,7 +466,8 @@ exports.Prisma.TrackerScalarFieldEnum = {
   tujuanId: 'tujuanId',
   perangkatId: 'perangkatId',
   kalenderId: 'kalenderId',
-  dudiId: 'dudiId'
+  dudiId: 'dudiId',
+  kkniId: 'kkniId'
 };
 
 exports.Prisma.UploadScalarFieldEnum = {
@@ -570,7 +582,8 @@ exports.PointTracker = {
   a_asesmen: 'a_asesmen',
   perangkat: 'perangkat',
   kalender: 'kalender',
-  dudi: 'dudi'
+  dudi: 'dudi',
+  kkni: 'kkni'
 };
 
 exports.Religion = {
@@ -665,7 +678,8 @@ exports.Prisma.ModelName = {
   TDeviceData: 'TDeviceData',
   Calendar: 'Calendar',
   Dudi: 'Dudi',
-  DudiLearning: 'DudiLearning'
+  DudiLearning: 'DudiLearning',
+  Kkni: 'Kkni'
 };
 
 /**

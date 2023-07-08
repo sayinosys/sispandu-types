@@ -42,6 +42,7 @@ enum PointTracker {
   perangkat
   kalender
   dudi
+  kkni
 }
 
 model Tracker {
@@ -87,6 +88,8 @@ model Tracker {
   kalenderId    String?              @db.ObjectId
   dudi          Dudi?                @relation(fields: [dudiId], references: [id])
   dudiId        String?              @db.ObjectId
+  kkni          Kkni?                @relation(fields: [kkniId], references: [id])
+  kkniId        String?              @db.ObjectId
 
   @@index([point])
   @@index([userId])
@@ -267,6 +270,7 @@ model KonsentrasiKeahlian {
   disable     Boolean         @default(false)
   mapel       MataPelajaran[]
   dudi        Dudi[]
+  kkni        Kkni[]
 
   @@unique([programId, name], name: "nameKonsentrasi")
   @@index([disable])
@@ -981,6 +985,8 @@ model Dudi {
   learning   DudiLearning[]
   disable    Boolean             @default(false)
   tracker    Tracker[]
+  kkni       Kkni?               @relation(fields: [kkniId], references: [id])
+  kkniId     String?             @db.ObjectId
 }
 
 model DudiLearning {
@@ -997,4 +1003,17 @@ type DudiIndicator {
   no   Int
   code String
   name String
+}
+
+model Kkni {
+  id            String              @id @default(auto()) @map("_id") @db.ObjectId
+  konsentrasi   KonsentrasiKeahlian @relation(fields: [konsentrasiId], references: [id])
+  konsentrasiId String              @db.ObjectId
+  no            Int
+  code          String
+  name          String
+  description   String?
+  dudi          Dudi[]
+  disable       Boolean             @default(false)
+  tracker       Tracker[]
 }
